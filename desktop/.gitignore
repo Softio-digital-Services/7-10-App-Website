@@ -1,0 +1,51 @@
+# Build output
+bin/
+obj/
+publish/
+build_output.txt
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Legacy SQL Server LocalDB artifacts (app uses SQLite)
+Database/*.mdf
+Database/*.ldf
+Database/*.log
+Database/*.ps1
+Database/*.bat
+Database/*.sql
+
+# NuGet
+packages/
+*.nupkg
+
+# User-specific files
+*.rsuser
+
+# Publish and Installer output
+publish-output/
+InstallerOutput/
+# dist/ is tracked (shipped app + installer)
+dist/app-build/
+dist/app/Logs/
+dist/app/Data/*.db-shm
+dist/app/Data/*.db-wal
+scratch/
+
+# Local backups / crash dumps
+_backup_pre_otargi_web/
+crash.txt
+server_error.txt
+*.db
+
+# Local SQLite databases (ship empty — created on first run)
+Data/*.db
+**/Data/inventory.db
+dist/app/Data/*.db
+
+
+dist/

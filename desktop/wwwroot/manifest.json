@@ -1,0 +1,25 @@
+{
+  "name": "7-10 Inventory",
+  "short_name": "7-10",
+  "description": "7-10 Store inventory and POS management",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#ffffff",
+  "theme_color": "#C62828",
+  "icons": [
+    {
+      "src": "/Assets/logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/Assets/logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "categories": ["business", "productivity"]
+}
