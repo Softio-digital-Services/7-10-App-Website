@@ -9,7 +9,7 @@ namespace InventorySystem.Helpers
     /// </summary>
     public static class LicenseManager
     {
-        private const string ProductCode = "OSIMS"; // Generic Inventory Management System
+        private const string ProductCode = "STPMS"; // Seven Ten Products Management System
         private const int TrialDays = 30;
 
         /// <summary>
