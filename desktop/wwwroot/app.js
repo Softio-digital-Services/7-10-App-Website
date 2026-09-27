@@ -17,6 +17,22 @@ const T = {
         back_products: 'Back to Products', add_edit_product: 'Add/Edit Product',
         add_product_sub: 'Add a new product to your inventory.', edit_product_sub: 'Update this product.',
         pe_name: 'Product Name', cost_price: 'Cost Price', selling_price: 'Selling Price',
+        source_kind: 'How do you get this?', source_bought: 'Bought from a supplier', source_made: 'Fabricated',
+        cost_supplier: 'Supplier price', cost_make: 'Cost to make',
+        source_bought_hint: 'This price is what the supplier charged for one piece.',
+        source_made_hint: 'This price is what it costs to make one piece.',
+        materials: 'Materials',
+        materials_hint: 'Fabric and other materials used to make one piece.',
+        mat_name: 'Material',
+        mat_qty: 'Qty for one piece',
+        mat_unit: 'Cost each',
+        mat_line: 'Line cost',
+        mat_add: 'Add material',
+        mat_total: 'Materials for one piece',
+        mat_use_cost: 'Use as cost to make',
+        mat_empty: 'No materials yet.',
+        mat_need_name: 'Enter the material name.',
+        mat_ph: 'Cotton fabric',
         desc_optional: 'Description (optional)', product_images: 'Product Images',
         upload_hint: 'Click to upload or drag and drop', upload_types: 'PNG, JPG or JPEG',
         image_preview: 'Image Preview', no_images: 'No images added yet',
@@ -50,6 +66,39 @@ const T = {
         ord_all_methods: 'All methods',
         ord_method: 'Method',
         ord_status: 'Status',
+        ps_nav: 'Profit shares',
+        ps_sub: 'Split profit after sales and expenses across the people you choose.',
+        ps_period: 'Period',
+        ps_year: 'Year',
+        ps_month: 'Month',
+        ps_collection: 'Collection',
+        ps_sales: 'Sales',
+        ps_cost: 'Product cost',
+        ps_expenses: 'Expenses',
+        ps_profit: 'Profit to share',
+        ps_formula: 'Profit is sales, minus what the products cost, minus expenses for the period you select. Cancelled orders are left out.',
+        ps_parties: 'Parties',
+        ps_add_party: 'Add party',
+        ps_party_ph: 'Investor, operations, CEO…',
+        ps_percent: 'Percent',
+        ps_share: 'Share',
+        ps_percent_ok: 'Percentages add up to 100%.',
+        ps_percent_short: 'Percentages add up to {0}%. {1}% is not assigned.',
+        ps_percent_over: 'Percentages add up to {0}%, which is more than the whole profit.',
+        ps_empty: 'Add a party, then set the percentage they receive.',
+        ps_add_collection: 'Add collection',
+        ps_col_hint: 'A named period, such as a season or a drop.',
+        ps_from: 'From',
+        ps_to: 'To',
+        ps_no_collection: 'Add a collection before using this filter.',
+        ps_need_name: 'Enter a name.',
+        ps_need_dates: 'Choose a start and an end date.',
+        ps_saved: 'Saved',
+        ps_distribution: 'Distribution',
+        ps_edit_collection: 'Edit collection',
+        ps_delete_party: 'Remove this party?',
+        ps_delete_collection: 'Remove this collection?',
+        ps_unassigned: 'Not assigned',
         ord_delivery: 'Delivery',
         ord_pickup: 'Pickup',
         ord_col_new: 'New',
@@ -87,6 +136,9 @@ const T = {
         ord_feedback: 'Customer feedback',
         ord_feedback_hint: 'Ask how the order went, then close it.',
         ord_complete: 'Complete order',
+        ord_pay_first: 'This order is still unpaid. Mark it paid before completing it.',
+        ord_marked_paid: 'Payment recorded',
+        ord_ev_payment: 'Marked paid',
         ord_add_note: 'Add note',
         ord_cancel: 'Cancel order',
         ord_paid_now: 'Paid now',
@@ -125,6 +177,12 @@ const T = {
         ord_cash: 'Cash',
         ord_card: 'Card',
         ord_transfer: 'Transfer',
+        ord_on_delivery: 'Payment on delivery',
+        ord_on_pickup: 'Payment on pickup',
+        ord_pay_later_delivery: 'Collected when the order is delivered. It stays unpaid until then.',
+        ord_pay_later_pickup: 'Collected when the customer picks up the order. It stays unpaid until then.',
+        ord_collected_as: 'Collected as',
+        ord_choose_method: 'Choose cash, card, or transfer.',
         ord_comment_ph: 'What did the customer say?',
         ord_note_ph: 'Add a note for the team',
         ord_locked: 'This step opens after the previous one is done.',
@@ -144,7 +202,7 @@ const T = {
         vs_last_month: 'vs last month', search_global: 'Search products, orders, suppliers...',
         username: 'Username', password: 'Password', login_btn: 'Sign In', logout: 'Logout',
         nav_dashboard: 'Dashboard', nav_inventory: 'Inventory', nav_pos: 'POS', nav_sales: 'Sales',
-        nav_products: 'Products', nav_purchase_orders: 'Purchase Orders', nav_analytics: 'Analytics',
+        nav_products: 'Products', nav_purchases: 'Purchases', nav_purchase_orders: 'Purchase Orders', nav_analytics: 'Analytics',
         nav_group_catalog: 'Catalog', nav_group_shop: 'Shop', nav_group_insights: 'Insights',
         nav_reports: 'Reports', nav_history: 'History', nav_quotations: 'Quotations',
         nav_customers: 'Customers', nav_suppliers: 'Suppliers', nav_expenses: 'Expenses',
@@ -471,6 +529,22 @@ const T = {
         back_products: 'العودة إلى المنتجات', add_edit_product: 'إضافة/تعديل منتج',
         add_product_sub: 'أضف منتجاً جديداً إلى المخزون.', edit_product_sub: 'حدّث بيانات هذا المنتج.',
         pe_name: 'اسم المنتج', cost_price: 'سعر التكلفة', selling_price: 'سعر البيع',
+        source_kind: 'كيف تحصل على هذا؟', source_bought: 'شراء من مورد', source_made: 'تصنيع',
+        cost_supplier: 'سعر المورد', cost_make: 'تكلفة الصنع',
+        source_bought_hint: 'هذا السعر هو ما دفعته للمورد مقابل القطعة.',
+        source_made_hint: 'هذا السعر هو تكلفة صنع القطعة.',
+        materials: 'المواد',
+        materials_hint: 'القماش والمواد الأخرى المستخدمة لصنع قطعة واحدة.',
+        mat_name: 'المادة',
+        mat_qty: 'الكمية للقطعة',
+        mat_unit: 'تكلفة الوحدة',
+        mat_line: 'تكلفة السطر',
+        mat_add: 'إضافة مادة',
+        mat_total: 'مواد القطعة الواحدة',
+        mat_use_cost: 'استخدمها كتكلفة الصنع',
+        mat_empty: 'لا توجد مواد بعد.',
+        mat_need_name: 'أدخل اسم المادة.',
+        mat_ph: 'قماش قطني',
         desc_optional: 'الوصف (اختياري)', product_images: 'صور المنتج',
         upload_hint: 'انقر للرفع أو اسحب الملفات', upload_types: 'PNG أو JPG أو JPEG',
         image_preview: 'معاينة الصور', no_images: 'لا توجد صور بعد',
@@ -504,6 +578,39 @@ const T = {
         ord_all_methods: 'كل الطرق',
         ord_method: 'الطريقة',
         ord_status: 'الحالة',
+        ps_nav: 'توزيع الأرباح',
+        ps_sub: 'وزّع الربح بعد المبيعات والمصروفات على الجهات التي تحددها.',
+        ps_period: 'الفترة',
+        ps_year: 'السنة',
+        ps_month: 'الشهر',
+        ps_collection: 'المجموعة',
+        ps_sales: 'المبيعات',
+        ps_cost: 'تكلفة المنتجات',
+        ps_expenses: 'المصروفات',
+        ps_profit: 'الربح للتوزيع',
+        ps_formula: 'الربح هو المبيعات بعد طرح تكلفة المنتجات والمصروفات للفترة التي تختارها. الطلبات الملغاة لا تُحسب.',
+        ps_parties: 'الجهات',
+        ps_add_party: 'إضافة جهة',
+        ps_party_ph: 'مستثمر، تشغيل، مدير…',
+        ps_percent: 'النسبة',
+        ps_share: 'الحصة',
+        ps_percent_ok: 'النسب مجموعها 100٪.',
+        ps_percent_short: 'مجموع النسب {0}٪. المتبقي {1}٪ غير موزّع.',
+        ps_percent_over: 'مجموع النسب {0}٪، وهو أكثر من كامل الربح.',
+        ps_empty: 'أضف جهة ثم حدّد النسبة التي تحصل عليها.',
+        ps_add_collection: 'إضافة مجموعة',
+        ps_col_hint: 'فترة باسم، مثل موسم أو تشكيلة.',
+        ps_from: 'من',
+        ps_to: 'إلى',
+        ps_no_collection: 'أضف مجموعة قبل استخدام هذا الفلتر.',
+        ps_need_name: 'أدخل اسماً.',
+        ps_need_dates: 'اختر تاريخ البداية والنهاية.',
+        ps_saved: 'تم الحفظ',
+        ps_distribution: 'التوزيع',
+        ps_edit_collection: 'تعديل المجموعة',
+        ps_delete_party: 'إزالة هذه الجهة؟',
+        ps_delete_collection: 'إزالة هذه المجموعة؟',
+        ps_unassigned: 'غير موزّع',
         ord_delivery: 'توصيل',
         ord_pickup: 'استلام',
         ord_col_new: 'جديد',
@@ -541,6 +648,9 @@ const T = {
         ord_feedback: 'تقييم العميل',
         ord_feedback_hint: 'اسأل عن التجربة ثم أغلق الطلب.',
         ord_complete: 'إكمال الطلب',
+        ord_pay_first: 'هذا الطلب غير مدفوع. علّمه كمدفوع قبل إكماله.',
+        ord_marked_paid: 'تم تسجيل الدفع',
+        ord_ev_payment: 'تم تسجيل الدفع',
         ord_add_note: 'إضافة ملاحظة',
         ord_cancel: 'إلغاء الطلب',
         ord_paid_now: 'مدفوع الآن',
@@ -579,6 +689,12 @@ const T = {
         ord_cash: 'نقداً',
         ord_card: 'بطاقة',
         ord_transfer: 'تحويل',
+        ord_on_delivery: 'الدفع عند التوصيل',
+        ord_on_pickup: 'الدفع عند الاستلام',
+        ord_pay_later_delivery: 'يُحصَّل عند التوصيل ويبقى غير مدفوع حتى ذلك الحين.',
+        ord_pay_later_pickup: 'يُحصَّل عند الاستلام ويبقى غير مدفوع حتى ذلك الحين.',
+        ord_collected_as: 'حُصّل كـ',
+        ord_choose_method: 'اختر نقداً أو بطاقة أو تحويلاً.',
         ord_comment_ph: 'ماذا قال العميل؟',
         ord_note_ph: 'ملاحظة للفريق',
         ord_locked: 'تُفتح هذه الخطوة بعد إكمال السابقة.',
@@ -598,7 +714,7 @@ const T = {
         vs_last_month: 'مقارنة بالشهر الماضي', search_global: 'ابحث في المنتجات والطلبات والموردين...',
         username: 'اسم المستخدم', password: 'كلمة المرور', login_btn: 'دخول', logout: 'خروج',
         nav_dashboard: 'لوحة التحكم', nav_inventory: 'المخزون', nav_pos: 'نقطة البيع', nav_sales: 'المبيعات',
-        nav_products: 'المنتجات', nav_purchase_orders: 'أوامر الشراء', nav_analytics: 'التحليلات',
+        nav_products: 'المنتجات', nav_purchases: 'المشتريات', nav_purchase_orders: 'أوامر الشراء', nav_analytics: 'التحليلات',
         nav_group_catalog: 'الكتالوج', nav_group_shop: 'المتجر', nav_group_insights: 'الرؤى',
         nav_reports: 'التقارير', nav_history: 'السجل', nav_quotations: 'عروض الأسعار',
         nav_customers: 'العملاء', nav_suppliers: 'الموردون', nav_expenses: 'المصروفات',
@@ -956,6 +1072,7 @@ let catalogStock = {};
 let pdCurrentId = null;
 let pdHistoryRows = [];
 let expenses = [], quotations = [], currencies = [], barcodeItems = [], expenseCategories = [];
+let purchasePane = 'orders';
 let dashboard = null, reportSummary = null, reportTop = [];
 let cart = [], invCat = 'all', posCat = 'all', invFilter = 'all', invView = 'card';
 let invSelected = new Set();
@@ -1594,6 +1711,7 @@ function productExportRow(p) {
         quantity_in_stock: p.stock ?? 0,
         selling_price: p.price ?? 0,
         purchase_price: p.cost ?? 0,
+        source_kind: p.source === 'made' ? 'made' : 'bought',
         minimum_stock_level: p.minStock ?? 0,
         reorder_quantity: p.reorderQuantity ?? 0,
         location: p.location || '',
@@ -1792,6 +1910,8 @@ function applyI18n() {
     if (langLabel) langLabel.textContent = lang === 'en' ? 'العربية' : 'English';
     updateSettingsLangLabel();
     try { scaleManager?.render?.(); } catch { /* scale not ready yet */ }
+    if (typeof showPurchasePane === 'function') showPurchasePane(purchasePane);
+    if (typeof updateProductSourceUi === 'function') updateProductSourceUi();
 }
 
 function openModal(id) {
@@ -2982,13 +3102,27 @@ function clearPosTotalManual() {
     posTotalManual = null;
 }
 
+function payMethodLabel(method) {
+    const map = { Cash: 'ord_cash', Card: 'ord_card', Transfer: 'ord_transfer', OnDelivery: 'ord_on_delivery', OnPickup: 'ord_on_pickup' };
+    const key = map[method];
+    return key ? tr(key) : (method || '');
+}
+
+function collectedMethodOptions(selected) {
+    const current = ['Cash', 'Card', 'Transfer'].includes(selected) ? selected : 'Cash';
+    return [['Cash', 'ord_cash'], ['Card', 'ord_card'], ['Transfer', 'ord_transfer']].map(([value, key]) =>
+        `<option value="${value}" ${value === current ? 'selected' : ''}>${tr(key)}</option>`).join('');
+}
+
 function renderSales() {
     document.getElementById('sales-body').innerHTML = sales.length ? sales.map(o => {
         const isPaid = String(o.paymentStatus || 'Paid').toLowerCase() === 'paid';
+        const method = payMethodLabel(o.paymentMethod);
         return `<tr><td>#${o.orderId}</td><td>${formatDate(o.date)}</td><td>${escapeHtml(o.customer)}</td>
         <td>${money(o.total)}</td>
-        <td><span class="badge ${isPaid ? 'in-stock' : 'low-stock'}">${isPaid ? tr('paid') : tr('unpaid')}</span></td>
+        <td><span class="badge ${isPaid ? 'in-stock' : 'low-stock'}">${isPaid ? tr('paid') : tr('unpaid')}</span>${method ? `<div class="sale-pay-name">${escapeHtml(method)}</div>` : ''}</td>
         <td><div class="table-actions">
+            ${isPaid ? '' : `<select class="form-control sale-pay-method" data-pay-method="${o.orderId}">${collectedMethodOptions(o.paymentMethod)}</select><button type="button" class="btn btn-primary btn-sm" data-pay-order="${o.orderId}">${tr('mark_paid')}</button>`}
             <button type="button" class="btn btn-secondary btn-sm" data-view-order="${o.orderId}">${tr('view')}</button>
             <button type="button" class="btn btn-secondary btn-sm" data-return="${o.orderId}">${tr('return')}</button>
         </div></td></tr>`;
@@ -2996,6 +3130,14 @@ function renderSales() {
         : `<tr><td colspan="6" class="empty-state">${tr('empty_list')}</td></tr>`;
     document.querySelectorAll('[data-return]').forEach(btn => btn.onclick = () => openReturn(Number(btn.dataset.return)));
     document.querySelectorAll('[data-view-order]').forEach(btn => btn.onclick = () => viewOrder(Number(btn.dataset.viewOrder)));
+    document.querySelectorAll('[data-pay-order]').forEach(btn => btn.onclick = () => markSalePaid(Number(btn.dataset.payOrder)));
+}
+
+async function markSalePaid(orderId) {
+    const method = document.querySelector(`[data-pay-method="${orderId}"]`)?.value || 'Cash';
+    await api('/api/orders/' + orderId + '/mark-paid', { method: 'POST', body: JSON.stringify({ paymentMethod: method }) });
+    toast(tr('ord_marked_paid'), 'success');
+    await loadData();
 }
 
 function historyColLabel(key) {
@@ -6347,6 +6489,11 @@ function setupNavigation() {
 }
 
 async function navigateTo(target, updateHash = true) {
+    let requestedPane = null;
+    if (target === 'expenses') {
+        requestedPane = 'expenses';
+        target = 'purchase-orders';
+    }
     const item = document.querySelector(`.nav-menu .nav-item[data-target="${target}"]`);
     if (!item || item.style.display === 'none') return;
     if (!document.getElementById(target)) return;
@@ -6355,8 +6502,10 @@ async function navigateTo(target, updateHash = true) {
     document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
     item.classList.add('active');
     document.getElementById(target).classList.add('active');
+    const pane = requestedPane || (target === 'purchase-orders' ? purchasePane : null);
     if (updateHash) {
-        const next = '#/' + target;
+        const hashTarget = pane === 'expenses' ? 'expenses' : target;
+        const next = '#/' + hashTarget;
         if (location.hash !== next) history.replaceState(null, '', next);
     }
     if (target === 'reports') { await loadReports(); renderReports(); }
@@ -6384,6 +6533,8 @@ async function navigateTo(target, updateHash = true) {
     }
     if (target === 'products') showProductsList();
     if (target === 'orders' && typeof showOrdersBoard === 'function') showOrdersBoard();
+    if (target === 'profit-shares' && typeof loadProfitShares === 'function') loadProfitShares();
+    if (target === 'purchase-orders') showPurchasePane(pane || 'orders');
     if (target === 'products' || target === 'purchase-orders' || target === 'analytics' || target === 'orders') renderFashion();
 }
 
@@ -7351,7 +7502,7 @@ function dismissAllNotifications(list) {
 
 function openNotifTarget(target) {
     const page = NOTIF_TARGETS[target] || target;
-    if (!page || !document.getElementById(page)) return;
+    if (!page || (page !== 'expenses' && !document.getElementById(page))) return;
     closeModal('notif-modal');
     navigateTo(page, true);
 }
@@ -8477,14 +8628,16 @@ async function showProductDetail(id) {
         [tr('col_sku'), p.sku || '—'],
         [tr('col_category'), p.category || '—'],
         [tr('col_brand'), p.brand || '—'],
-        [tr('col_supplier'), p.supplierName || '—'],
-        [tr('cost_price'), money(p.cost)],
+        [tr('source_kind'), sourceName(p)],
+        [tr('col_supplier'), p.source === 'made' ? '—' : (p.supplierName || '—')],
+        [costFieldLabel(p), money(p.cost)],
         [tr('selling_price'), money(p.price)],
         [tr('col_desc'), p.description || '—']
     ];
     document.getElementById('pd-specs').innerHTML = specs.map(([k, v]) =>
         `<dt>${escapeHtml(k)}</dt><dd>${escapeHtml(v)}</dd>`).join('');
     renderProductProps(p, []);
+    renderDetailMaterials(p);
 
     const styleKey = (p.styleCode || p.name || '').trim().toLowerCase();
     const family = products.filter(x => (x.styleCode || x.name || '').trim().toLowerCase() === styleKey && !x.isInactive);
@@ -8601,6 +8754,25 @@ function filteredPurchaseOrders() {
     if (status !== 'all') rows = rows.filter(p => (p.status || '') === status);
     return rows;
 }
+function showPurchasePane(pane) {
+    purchasePane = pane === 'expenses' ? 'expenses' : 'orders';
+    const orders = document.getElementById('po-pane');
+    const exps = document.getElementById('exp-pane');
+    const orderActions = document.getElementById('po-actions');
+    const expActions = document.getElementById('exp-actions');
+    if (orders) orders.hidden = purchasePane !== 'orders';
+    if (exps) exps.hidden = purchasePane !== 'expenses';
+    if (orderActions) orderActions.hidden = purchasePane !== 'orders';
+    if (expActions) expActions.hidden = purchasePane !== 'expenses';
+    document.querySelectorAll('#purchase-orders [data-purchase-pane]').forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('data-purchase-pane') === purchasePane);
+    });
+    const title = document.getElementById('purchase-title');
+    const sub = document.getElementById('purchase-sub');
+    if (title) title.textContent = tr(purchasePane === 'expenses' ? 'nav_expenses' : 'nav_purchase_orders');
+    if (sub) sub.textContent = tr(purchasePane === 'expenses' ? 'exp_subtitle' : 'po_sub');
+}
+
 function renderPurchaseOrders() {
     const body = document.getElementById('po-body');
     if (!body) return;
@@ -8895,6 +9067,223 @@ function setEditorUom(preferred) {
     const match = opts.find(o => o.value.toLowerCase() === prevKey.toLowerCase());
     uom.value = match ? match.value : 'pcs';
 }
+function productSource() {
+    return document.querySelector('input[name="pe-source"]:checked')?.value === 'made' ? 'made' : 'bought';
+}
+function sourceName(p) {
+    return (p?.source === 'made') ? tr('source_made') : tr('source_bought');
+}
+function costFieldLabel(p) {
+    return (p?.source === 'made') ? tr('cost_make') : tr('cost_supplier');
+}
+function updateProductSourceUi() {
+    const made = productSource() === 'made';
+    const label = document.getElementById('pe-cost-label');
+    if (label) label.textContent = tr(made ? 'cost_make' : 'cost_supplier');
+    const hint = document.getElementById('pe-source-hint');
+    if (hint) hint.textContent = tr(made ? 'source_made_hint' : 'source_bought_hint');
+    const supplierWrap = document.getElementById('pe-supplier-wrap');
+    if (supplierWrap) supplierWrap.hidden = made;
+    if (made) {
+        const panel = document.getElementById('pe-supplier-purchases');
+        if (panel) panel.hidden = true;
+    }
+    const materials = document.getElementById('pe-materials');
+    if (materials) materials.hidden = !made;
+    if (made) renderProductMaterials();
+}
+
+let editorMaterials = [];
+
+function materialSupplierOptions(selected) {
+    const sid = selected ? String(selected) : '';
+    return '<option value="">—</option>' + (suppliers || []).map(s =>
+        `<option value="${s.id}"${String(s.id) === sid ? ' selected' : ''}>${escapeHtml(s.name)}</option>`).join('');
+}
+
+function materialLineCost(row) {
+    return (Number(row.quantity) || 0) * (Number(row.unitCost) || 0);
+}
+
+function renderProductMaterials() {
+    const host = document.getElementById('pe-material-rows');
+    const totalEl = document.getElementById('pe-material-total');
+    const supplier = document.getElementById('mat-supplier');
+    if (supplier) supplier.innerHTML = materialSupplierOptions(supplier.value);
+    if (!host) return;
+    const rows = editorMaterials || [];
+    host.innerHTML = rows.length ? rows.map(row => `
+        <div class="mat-row" data-id="${escapeHtml(row.id)}">
+            <input class="form-control mat-name" type="text" maxlength="80" value="${escapeHtml(row.name || '')}">
+            <select class="form-control mat-supplier">${materialSupplierOptions(row.supplierId)}</select>
+            <input class="form-control mat-qty" type="number" min="0" step="0.01" value="${Number(row.quantity) || 0}">
+            <input class="form-control mat-cost" type="number" min="0" step="0.01" value="${Number(row.unitCost) || 0}">
+            <strong class="mat-line">${money(materialLineCost(row))}</strong>
+            <button type="button" class="oe-remove mat-del" data-id="${escapeHtml(row.id)}" aria-label="Delete"><span class="material-symbols-rounded">delete</span></button>
+        </div>`).join('') : `<p class="ps-empty">${escapeHtml(tr('mat_empty'))}</p>`;
+    const total = rows.reduce((sum, row) => sum + materialLineCost(row), 0);
+    if (totalEl) totalEl.textContent = rows.length ? `${tr('mat_total')}: ${money(total)}` : '';
+}
+
+async function loadProductMaterials(partId) {
+    try {
+        editorMaterials = await api('/api/products/' + partId + '/materials') || [];
+    } catch {
+        editorMaterials = [];
+    }
+    renderProductMaterials();
+}
+
+async function addProductMaterial() {
+    const name = document.getElementById('mat-name')?.value.trim();
+    const qty = Number(document.getElementById('mat-qty')?.value);
+    const unitCost = Number(document.getElementById('mat-cost')?.value);
+    const supplierRaw = document.getElementById('mat-supplier')?.value;
+    if (!name) { toast(tr('mat_need_name'), 'error'); return; }
+    if (!Number.isFinite(qty) || qty <= 0) { toast(tr('mat_qty'), 'error'); return; }
+    if (!Number.isFinite(unitCost) || unitCost < 0) return;
+    const supplierId = supplierRaw ? Number(supplierRaw) : null;
+    const supplierName = (suppliers || []).find(s => Number(s.id) === supplierId)?.name || '';
+    if (catalogEditorId) {
+        try {
+            await api('/api/products/' + catalogEditorId + '/materials', {
+                method: 'POST',
+                body: JSON.stringify({ name, supplierId, quantity: qty, unitCost })
+            });
+            await loadProductMaterials(catalogEditorId);
+        } catch (err) {
+            toast(err.message, 'error');
+            return;
+        }
+    } else {
+        editorMaterials.push({ id: 'new-' + Date.now(), name, supplierId, supplierName, quantity: qty, unitCost });
+        renderProductMaterials();
+    }
+    const nameEl = document.getElementById('mat-name');
+    const costEl = document.getElementById('mat-cost');
+    const qtyEl = document.getElementById('mat-qty');
+    if (nameEl) nameEl.value = '';
+    if (costEl) costEl.value = '0';
+    if (qtyEl) qtyEl.value = '1';
+}
+
+async function saveDraftMaterials(partId) {
+    const drafts = (editorMaterials || []).filter(row => String(row.id).startsWith('new-'));
+    for (const row of drafts) {
+        await api('/api/products/' + partId + '/materials', {
+            method: 'POST',
+            body: JSON.stringify({
+                name: row.name,
+                supplierId: row.supplierId || null,
+                quantity: Number(row.quantity) || 0,
+                unitCost: Number(row.unitCost) || 0
+            })
+        });
+    }
+}
+
+function paintMaterialTotals() {
+    let total = 0;
+    document.querySelectorAll('#pe-material-rows .mat-row').forEach(row => {
+        const qty = Number(row.querySelector('.mat-qty')?.value) || 0;
+        const cost = Number(row.querySelector('.mat-cost')?.value) || 0;
+        const line = qty * cost;
+        total += line;
+        const cell = row.querySelector('.mat-line');
+        if (cell) cell.textContent = money(line);
+    });
+    const totalEl = document.getElementById('pe-material-total');
+    if (totalEl) totalEl.textContent = document.querySelector('#pe-material-rows .mat-row') ? `${tr('mat_total')}: ${money(total)}` : '';
+}
+
+async function onMaterialChange(e) {
+    const row = e.target.closest('.mat-row');
+    if (!row || !e.target.classList.contains('form-control')) return;
+    const id = row.dataset.id;
+    const name = row.querySelector('.mat-name')?.value.trim();
+    const qty = Number(row.querySelector('.mat-qty')?.value);
+    const unitCost = Number(row.querySelector('.mat-cost')?.value);
+    const supplierRaw = row.querySelector('.mat-supplier')?.value;
+    const supplierId = supplierRaw ? Number(supplierRaw) : null;
+    if (!name || !Number.isFinite(qty) || qty <= 0 || !Number.isFinite(unitCost) || unitCost < 0) return;
+    if (String(id).startsWith('new-')) {
+        const item = editorMaterials.find(r => String(r.id) === String(id));
+        if (!item) return;
+        item.name = name;
+        item.quantity = qty;
+        item.unitCost = unitCost;
+        item.supplierId = supplierId;
+        paintMaterialTotals();
+        return;
+    }
+    try {
+        await api('/api/products/' + catalogEditorId + '/materials/' + id + '/update', {
+            method: 'POST',
+            body: JSON.stringify({ name, supplierId, quantity: qty, unitCost })
+        });
+        await loadProductMaterials(catalogEditorId);
+    } catch (err) {
+        toast(err.message, 'error');
+    }
+}
+
+async function onMaterialClick(e) {
+    const btn = e.target.closest('.mat-del');
+    if (!btn) return;
+    const id = btn.dataset.id;
+    if (!await confirmDialog(tr('confirm_delete'))) return;
+    if (String(id).startsWith('new-')) {
+        editorMaterials = editorMaterials.filter(row => String(row.id) !== String(id));
+        renderProductMaterials();
+        return;
+    }
+    try {
+        await api('/api/products/' + catalogEditorId + '/materials/' + id + '/delete', { method: 'POST' });
+        await loadProductMaterials(catalogEditorId);
+    } catch (err) {
+        toast(err.message, 'error');
+    }
+}
+
+function materialsTotal() {
+    const rows = [...document.querySelectorAll('#pe-material-rows .mat-row')];
+    if (rows.length) {
+        return rows.reduce((sum, row) => sum + (Number(row.querySelector('.mat-qty')?.value) || 0) * (Number(row.querySelector('.mat-cost')?.value) || 0), 0);
+    }
+    return (editorMaterials || []).reduce((sum, row) => sum + materialLineCost(row), 0);
+}
+
+function useMaterialsAsCost() {
+    const total = materialsTotal();
+    const cost = document.getElementById('pe-cost');
+    if (cost) cost.value = total.toFixed(2);
+    if (typeof calculateEditorMargins === 'function') calculateEditorMargins();
+}
+
+async function renderDetailMaterials(product) {
+    const host = document.getElementById('pd-materials');
+    if (!host) return;
+    if (!product || product.source !== 'made') { host.hidden = true; host.innerHTML = ''; return; }
+    let rows = [];
+    try { rows = await api('/api/products/' + product.id + '/materials') || []; } catch { rows = []; }
+    host.hidden = false;
+    const total = rows.reduce((sum, row) => sum + (Number(row.lineCost) || materialLineCost(row)), 0);
+    host.innerHTML = `<h3>${escapeHtml(tr('materials'))}</h3>
+        <p class="form-hint">${escapeHtml(tr('materials_hint'))}</p>
+        ${rows.length ? `<div class="table-wrapper"><table class="catalog-table"><thead><tr>
+            <th>${escapeHtml(tr('mat_name'))}</th><th>${escapeHtml(tr('col_supplier'))}</th>
+            <th>${escapeHtml(tr('mat_qty'))}</th><th>${escapeHtml(tr('mat_unit'))}</th><th>${escapeHtml(tr('mat_line'))}</th>
+        </tr></thead><tbody>${rows.map(row => `<tr>
+            <td>${escapeHtml(row.name || '')}</td>
+            <td>${escapeHtml(row.supplierName || '—')}</td>
+            <td>${escapeHtml(String(row.quantity))}</td>
+            <td>${money(row.unitCost)}</td>
+            <td>${money(row.lineCost != null ? row.lineCost : materialLineCost(row))}</td>
+        </tr>`).join('')}</tbody></table></div>
+        <p class="mat-total-line">${escapeHtml(tr('mat_total'))}: ${money(total)}</p>`
+        : `<p class="ps-empty">${escapeHtml(tr('mat_empty'))}</p>`}`;
+}
+
 function updateEditorTypeUi() {
     const service = editorType() === 'Service';
     const track = document.getElementById('pe-track');
@@ -8974,6 +9363,9 @@ function fillEditorDetails(existing) {
     set('pe-price4', existing?.price4 ?? 0);
     const link = document.getElementById('pe-supplier-purchase-id');
     if (link) link.value = '';
+    const source = document.querySelector(`input[name="pe-source"][value="${existing?.source === 'made' ? 'made' : 'bought'}"]`);
+    if (source) source.checked = true;
+    updateProductSourceUi();
     const supplier = document.getElementById('pe-supplier');
     if (supplier) {
         fillSupplierSelect(supplier);
@@ -8984,6 +9376,11 @@ function fillEditorDetails(existing) {
     calculateEditorMargins();
 }
 async function refreshEditorSupplierPurchases() {
+    if (productSource() === 'made') {
+        const panel = document.getElementById('pe-supplier-purchases');
+        if (panel) panel.hidden = true;
+        return;
+    }
     const panel = document.getElementById('pe-supplier-purchases');
     const list = document.getElementById('pe-supplier-purchases-list');
     const sid = document.getElementById('pe-supplier')?.value;
@@ -9072,7 +9469,7 @@ function renderProductProps(p, levels) {
         : '—';
     host.innerHTML = [
         rows(tr('prices'), [
-            [tr('cost_price'), money(p.cost)],
+            [costFieldLabel(p), money(p.cost)],
             [tr('selling_price'), money(p.price)],
             [tr('price2'), money(p.price2 || 0)],
             [tr('price3'), money(p.price3 || 0)],
@@ -9091,6 +9488,7 @@ function renderProductProps(p, levels) {
             [tr('expiry_date'), p.expiry ? String(p.expiry).substring(0, 10) : '—']
         ]),
         rows(tr('item_details'), [
+            [tr('source_kind'), sourceName(p)],
             [tr('item_type'), p.itemType || 'Product'],
             [tr('style_code'), p.styleCode || '—'],
             [tr('col_barcode'), p.barcode || '—'],
@@ -9106,6 +9504,7 @@ async function openProductEditor(id) {
     catalogEditorId = id || null;
     catalogStock = {};
     catalogImages = [];
+    editorMaterials = [];
     const existing = id ? products.find(x => x.id === id) : null;
     if (id && !existing) return;
     document.getElementById('products-list').hidden = true;
@@ -9132,6 +9531,7 @@ async function openProductEditor(id) {
     if (existing?.image) catalogImages = [existing.image];
     renderEditorPreview();
     refreshEditorSupplierPurchases();
+    renderProductMaterials();
     if (!id) return;
     try {
         const levels = await api('/api/products/' + id + '/stock');
@@ -9148,6 +9548,7 @@ async function openProductEditor(id) {
         if (withStock) document.getElementById('pe-warehouse').value = String(withStock.warehouseId);
         syncEditorQty();
     } catch (e) { toast(e.message, 'error'); }
+    loadProductMaterials(id);
 }
 async function saveProductEditor() {
     const existing = catalogEditorId ? products.find(x => x.id === catalogEditorId) : null;
@@ -9197,6 +9598,7 @@ async function saveProductEditor() {
         supplierId: supplierVal ? Number(supplierVal) : null,
         supplierPurchaseItemId: purchaseLink > 0 ? purchaseLink : null,
         styleCode: document.getElementById('pe-style')?.value.trim() || '',
+        source: productSource(),
         warehouseId: tracked ? warehouseId : null,
         warehouseQty: tracked ? Math.max(0, Number(qtyRaw) || 0) : null,
         gallery: catalogImages.slice()
@@ -9204,8 +9606,13 @@ async function saveProductEditor() {
     const btn = document.getElementById('btn-editor-save');
     if (btn) btn.disabled = true;
     try {
+        let savedId = catalogEditorId;
         if (catalogEditorId) await api('/api/products/' + catalogEditorId + '/update', { method: 'POST', body: JSON.stringify(payload) });
-        else await api('/api/add-item', { method: 'POST', body: JSON.stringify(payload) });
+        else {
+            const created = await api('/api/add-item', { method: 'POST', body: JSON.stringify(payload) });
+            savedId = created?.id || 0;
+        }
+        if (savedId && productSource() === 'made') await saveDraftMaterials(savedId);
         toast(tr('saved_ok'), 'success');
         showProductsList();
         await loadData();
@@ -9226,6 +9633,14 @@ async function bulkDeleteProducts() {
 
 function setupFashionUi() {
     if (typeof setupOrdersUi === 'function') setupOrdersUi();
+    document.querySelectorAll('#purchase-orders [data-purchase-pane]').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const pane = btn.getAttribute('data-purchase-pane');
+            showPurchasePane(pane);
+            const next = pane === 'expenses' ? '#/expenses' : '#/purchase-orders';
+            if (location.hash !== next) history.replaceState(null, '', next);
+        });
+    });
     const search = document.getElementById('global-search');
     const results = document.getElementById('global-search-results');
     if (search && results) {
@@ -9296,6 +9711,16 @@ function setupFashionUi() {
     });
     document.getElementById('btn-pe-add-uom')?.addEventListener('click', addEditorUom);
     document.querySelectorAll('input[name="pe-type"], input[name="pe-sell-by"]').forEach(el => el.addEventListener('change', updateEditorTypeUi));
+    document.querySelectorAll('input[name="pe-source"]').forEach(el => el.addEventListener('change', () => {
+        updateProductSourceUi();
+        if (productSource() === 'bought') refreshEditorSupplierPurchases();
+    }));
+    document.getElementById('btn-mat-add')?.addEventListener('click', addProductMaterial);
+    document.getElementById('mat-name')?.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); addProductMaterial(); } });
+    document.getElementById('btn-mat-use-cost')?.addEventListener('click', useMaterialsAsCost);
+    document.getElementById('pe-material-rows')?.addEventListener('input', paintMaterialTotals);
+    document.getElementById('pe-material-rows')?.addEventListener('change', onMaterialChange);
+    document.getElementById('pe-material-rows')?.addEventListener('click', onMaterialClick);
     document.getElementById('pe-track')?.addEventListener('change', updateEditorTypeUi);
     document.getElementById('pe-supplier')?.addEventListener('change', refreshEditorSupplierPurchases);
     ['pe-cost', 'pe-price2', 'pe-price3', 'pe-price4'].forEach(id => {

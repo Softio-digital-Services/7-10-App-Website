@@ -39,6 +39,14 @@
     <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.2903.40" />
   </ItemGroup>
 
+  <!-- The WebView2 package also references its WPF assembly, which asks for a
+       different WindowsBase than this WinForms app. The app uses WinForms WebView2 only. -->
+  <Target Name="DropUnusedWebView2Wpf" BeforeTargets="ResolveAssemblyReferences">
+    <ItemGroup>
+      <Reference Remove="@(Reference)" Condition="$([System.String]::Copy('%(Identity)').Contains('Microsoft.Web.WebView2.Wpf'))" />
+    </ItemGroup>
+  </Target>
+
   <ItemGroup>
     <Content Include="Assets\**" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="wwwroot\**" CopyToOutputDirectory="PreserveNewest" />

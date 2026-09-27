@@ -15,6 +15,8 @@ namespace InventorySystem.Services
         public static void Map(WebApplication app)
         {
             ShopOrderApi.Map(app);
+            ProfitShareApi.Map(app);
+            ProductMaterialApi.Map(app);
             app.MapGet("/api/purchase-orders", () =>
             {
                 try

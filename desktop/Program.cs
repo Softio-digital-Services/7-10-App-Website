@@ -672,6 +672,7 @@ namespace InventorySystem
                                      p.item_type, p.is_sales_item, p.is_purchase_item, p.is_inactive, p.tax_rate,
                                      p.is_stock_tracked, COALESCE(p.sell_by_weight, 0) AS sell_by_weight, p.price2, p.price3, p.price4, p.supplier_id,
                                      COALESCE(p.brand,'') AS brand, COALESCE(p.size,'') AS size, COALESCE(p.color,'') AS color, COALESCE(p.style_code,'') AS style_code,
+                                     COALESCE(p.source_kind,'bought') AS source_kind,
                                      COALESCE(c.category_name, 'General') AS category,
                                      c.category_image, s.supplier_name
                               FROM parts p
@@ -759,7 +760,8 @@ namespace InventorySystem
                                 brand = row["brand"]?.ToString() ?? "",
                                 size = row["size"]?.ToString() ?? "",
                                 color = row["color"]?.ToString() ?? "",
-                                styleCode = row["style_code"]?.ToString() ?? ""
+                                styleCode = row["style_code"]?.ToString() ?? "",
+                                source = string.Equals(row["source_kind"]?.ToString(), "made", StringComparison.OrdinalIgnoreCase) ? "made" : "bought"
                             });
                         }
 
@@ -1007,7 +1009,7 @@ namespace InventorySystem
                     try
                     {
                         var dt = DatabaseHelper.ExecuteDataTable(
-                            @"SELECT o.order_id, o.order_date, o.total_amount, o.payment_status,
+                            @"SELECT o.order_id, o.order_date, o.total_amount, o.payment_status, o.payment_method,
                                      COALESCE(c.full_name, 'Cash Customer') as customer_name
                               FROM orders o
                               LEFT JOIN customers c ON o.customer_id = c.customer_id
@@ -1024,7 +1026,8 @@ namespace InventorySystem
                                 date = row["order_date"],
                                 total = Convert.ToDecimal(row["total_amount"]),
                                 customer = row["customer_name"].ToString(),
-                                paymentStatus = pay
+                                paymentStatus = pay,
+                                paymentMethod = row["payment_method"]?.ToString() ?? ""
                             });
                         }
                         return Microsoft.AspNetCore.Http.Results.Ok(sales);
@@ -3191,6 +3194,7 @@ namespace InventorySystem
             public string Size { get; set; }
             public string Color { get; set; }
             public string StyleCode { get; set; }
+            public string Source { get; set; }
             public int? WarehouseId { get; set; }
             public int? WarehouseQty { get; set; }
             public System.Collections.Generic.List<string> Gallery { get; set; }
@@ -3248,7 +3252,8 @@ namespace InventorySystem
                 Brand = body.Brand ?? "",
                 Size = body.Size ?? "",
                 Color = body.Color ?? "",
-                StyleCode = body.StyleCode ?? ""
+                StyleCode = body.StyleCode ?? "",
+                SourceKind = string.Equals(body.Source, "made", StringComparison.OrdinalIgnoreCase) ? "made" : "bought"
             };
         }
 

@@ -440,6 +440,16 @@ namespace InventorySystem
                 if (!ColumnExists("parts", "size")) ExecuteNonQuery("ALTER TABLE parts ADD COLUMN size TEXT;");
                 if (!ColumnExists("parts", "color")) ExecuteNonQuery("ALTER TABLE parts ADD COLUMN color TEXT;");
                 if (!ColumnExists("parts", "style_code")) ExecuteNonQuery("ALTER TABLE parts ADD COLUMN style_code TEXT;");
+                if (!ColumnExists("parts", "source_kind")) ExecuteNonQuery("ALTER TABLE parts ADD COLUMN source_kind TEXT DEFAULT 'bought';");
+                ExecuteNonQuery(@"
+                    CREATE TABLE IF NOT EXISTS product_materials (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        part_id INTEGER NOT NULL,
+                        name TEXT NOT NULL,
+                        supplier_id INTEGER,
+                        quantity REAL NOT NULL DEFAULT 1,
+                        unit_cost REAL NOT NULL DEFAULT 0
+                    );");
 
                 if (!ColumnExists("purchase_orders", "po_number")) ExecuteNonQuery("ALTER TABLE purchase_orders ADD COLUMN po_number TEXT;");
                 if (!ColumnExists("purchase_orders", "delivery_date")) ExecuteNonQuery("ALTER TABLE purchase_orders ADD COLUMN delivery_date TEXT;");
@@ -475,6 +485,20 @@ namespace InventorySystem
                         created_at TEXT DEFAULT (datetime('now','localtime'))
                     );");
                 if (!ColumnExists("order_events", "detail")) ExecuteNonQuery("ALTER TABLE order_events ADD COLUMN detail TEXT;");
+                ExecuteNonQuery(@"
+                    CREATE TABLE IF NOT EXISTS profit_parties (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        name TEXT NOT NULL,
+                        percent REAL NOT NULL DEFAULT 0,
+                        sort_order INTEGER DEFAULT 0
+                    );");
+                ExecuteNonQuery(@"
+                    CREATE TABLE IF NOT EXISTS profit_collections (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        name TEXT NOT NULL,
+                        date_from TEXT NOT NULL,
+                        date_to TEXT NOT NULL
+                    );");
 
                 ExecuteNonQuery(@"
                     CREATE TABLE IF NOT EXISTS warehouses (

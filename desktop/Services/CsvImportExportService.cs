@@ -88,6 +88,11 @@ namespace InventorySystem.Services
             return false;
         }
 
+        private static string NormalizeSource(string value)
+        {
+            return string.Equals(value, "made", StringComparison.OrdinalIgnoreCase) ? "made" : "bought";
+        }
+
         private static string MergeString(string existing, Dictionary<string, string> row, params string[] keys)
         {
             if (!ColumnInRow(row, keys)) return existing;
@@ -150,7 +155,8 @@ namespace InventorySystem.Services
                 Price3 = MergeDecimal(existing.Price3, row, "price3", "Price3"),
                 Price4 = MergeDecimal(existing.Price4, row, "price4", "Price4"),
                 PartImage = existing.PartImage,
-                SupplierId = existing.SupplierId
+                SupplierId = existing.SupplierId,
+                SourceKind = NormalizeSource(MergeString(existing.SourceKind, row, "source_kind", "source", "SourceKind"))
             };
 
             if (ColumnInRow(row, "part_image", "image", "Image", "PartImage", "imagepath"))
@@ -225,7 +231,8 @@ namespace InventorySystem.Services
                 SellByWeight = sellByWeight,
                 Price2 = ParseDecimal(Cell(row, "price2", "Price2")),
                 Price3 = ParseDecimal(Cell(row, "price3", "Price3")),
-                Price4 = ParseDecimal(Cell(row, "price4", "Price4"))
+                Price4 = ParseDecimal(Cell(row, "price4", "Price4")),
+                SourceKind = NormalizeSource(Cell(row, "source_kind", "source", "SourceKind"))
             };
 
             if (!string.IsNullOrWhiteSpace(imageRaw))
@@ -701,6 +708,7 @@ namespace InventorySystem.Services
                        COALESCE(p.price2, 0) AS price2,
                        COALESCE(p.price3, 0) AS price3,
                        COALESCE(p.price4, 0) AS price4,
+                       COALESCE(p.source_kind, 'bought') AS source_kind,
                        COALESCE(p.part_image, '') AS part_image,
                        COALESCE(p.status, 'Active') AS status
                 FROM parts p

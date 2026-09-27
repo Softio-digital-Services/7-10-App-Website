@@ -43,6 +43,7 @@ namespace InventorySystem.Data
         public string Size { get; set; } = "";
         public string Color { get; set; } = "";
         public string StyleCode { get; set; } = "";
+        public string SourceKind { get; set; } = "bought";
 
         public static List<PartData> GetAllParts(string categoryName = null, int limit = 0, int offset = 0)
         {
@@ -178,7 +179,8 @@ namespace InventorySystem.Data
                 Brand             = Safe<string>(r, "brand", ""),
                 Size              = Safe<string>(r, "size", ""),
                 Color             = Safe<string>(r, "color", ""),
-                StyleCode         = Safe<string>(r, "style_code", "")
+                StyleCode         = Safe<string>(r, "style_code", ""),
+                SourceKind        = Safe<string>(r, "source_kind", "bought")
             };
         }
     }

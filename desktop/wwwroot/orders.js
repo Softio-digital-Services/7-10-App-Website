@@ -57,6 +57,10 @@ function orderEventText(ev) {
     if (ev.type === 'stage') return ordTr('ord_ev_stage').replace('{0}', orderStageLabel(ev.detail));
     if (ev.type === 'packed') return ordTr('ord_ev_packed');
     if (ev.type === 'feedback') return ordTr('ord_ev_feedback').replace('{0}', ev.detail || '');
+    if (ev.type === 'payment') {
+        const method = ev.detail && ev.detail !== 'Paid' && typeof payMethodLabel === 'function' ? payMethodLabel(ev.detail) : '';
+        return method ? ordTr('ord_ev_payment') + ' · ' + method : ordTr('ord_ev_payment');
+    }
     if (ev.type === 'cancel') return ordTr('ord_ev_cancel');
     return ev.message || '';
 }
@@ -191,7 +195,7 @@ function orderDetailsHtml(order) {
         <div class="order-facts">
             <div><span>${ordEscape(ordTr('col_date'))}</span><strong>${ordEscape(ordDate(order.date))}</strong></div>
             <div><span>${ordEscape(ordTr('ord_est_date'))}</span><strong>${ordEscape(order.deliveryDate ? shortDate(order.deliveryDate) : '—')}</strong></div>
-            <div><span>${ordEscape(ordTr('ord_pay_method'))}</span><strong>${ordEscape(order.paymentMethod || '—')}</strong></div>
+            <div><span>${ordEscape(ordTr('ord_pay_method'))}</span><strong>${ordEscape(orderPayLabel(order.paymentMethod))}</strong></div>
             <div><span>${ordEscape(ordTr('ord_payment'))}</span><strong>${ordEscape(order.paymentStatus || '')}</strong></div>
         </div>
         ${place}
@@ -265,8 +269,11 @@ function orderTrackHtml(order) {
     if (!live) {
         return `<h3>${ordEscape(ordTr('ord_step_track'))}</h3><p><strong>${ordEscape(ordTr('ord_status'))}</strong><br>${ordEscape(trackLabel(order.trackingStatus, order.type))}</p>`;
     }
+    const paid = String(order.paymentStatus || '').toLowerCase() === 'paid';
+    const collect = paid ? '' : `<div class="form-group"><label>${ordEscape(ordTr('ord_collected_as'))}</label>${collectedPaySelect('order-collect-method', order.paymentMethod)}<p class="editor-sub">${ordEscape(ordTr('ord_choose_method'))}</p></div>`;
     return `<h3>${ordEscape(ordTr('ord_step_track'))}</h3>
         <div class="form-group"><label>${ordEscape(ordTr('ord_status'))}</label>${select}</div>
+        ${collect}
         <div class="form-group"><label>${ordEscape(ordTr('ord_notes'))}</label><input id="order-track-note" class="form-control" placeholder="${ordEscape(ordTr('ord_note_ph'))}"></div>
         <div class="order-actions"><button type="button" class="btn btn-primary" data-order-action="track">${ordEscape(ordTr('ord_mark_update'))}</button></div>`;
 }
@@ -285,8 +292,13 @@ function orderFeedbackHtml(order) {
         return `<h3>${ordEscape(ordTr('ord_feedback'))}</h3><p class="ob-empty">${ordEscape(ordTr('ord_locked'))}</p>`;
     }
     const stars = [1, 2, 3, 4, 5].map(n => `<button type="button" class="star ${n <= (order.stage === 'Completed' ? order.rating : orderRating) ? 'is-on' : ''}" data-star="${n}" ${order.stage === 'Completed' ? 'disabled' : ''}>★</button>`).join('');
+    const paid = String(order.paymentStatus || '').toLowerCase() === 'paid';
     if (order.stage === 'Completed') {
         return `<h3>${ordEscape(ordTr('ord_feedback'))}</h3><div class="stars">${stars}</div><p>${ordEscape(order.feedback || '')}</p>`;
+    }
+    if (!paid) {
+        return `<h3>${ordEscape(ordTr('ord_feedback'))}</h3>
+            <p class="editor-sub">${ordEscape(ordTr('ord_pay_first'))}</p>`;
     }
     return `<h3>${ordEscape(ordTr('ord_feedback'))}</h3>
         <p class="editor-sub">${ordEscape(ordTr('ord_feedback_hint'))}</p>
@@ -310,8 +322,9 @@ function orderSideHtml(order) {
         <div class="card">
             <h3>${ordEscape(ordTr('ord_payment'))}</h3>
             <div class="rev-row"><span>${ordEscape(ordTr('ord_items_count').replace('{0}', (order.items || []).length))}</span><b>${ordMoney(order.total)}</b></div>
-            <div class="rev-row"><span>${ordEscape(ordTr('ord_pay_method'))}</span><b>${ordEscape(order.paymentMethod || '—')}</b></div>
+            <div class="rev-row"><span>${ordEscape(ordTr('ord_pay_method'))}</span><b>${ordEscape(orderPayLabel(order.paymentMethod))}</b></div>
             <div class="rev-row total"><span>${paid ? ordEscape(ordTr('paid')) : ordEscape(ordTr('unpaid'))}</span><b>${ordMoney(order.total)}</b></div>
+            ${!paid && order.stage !== 'Cancelled' ? `<div class="form-group"><label>${ordEscape(ordTr('ord_collected_as'))}</label>${collectedPaySelect('order-pay-method', order.paymentMethod)}</div><div class="order-actions"><button type="button" class="btn btn-primary" data-order-action="pay">${ordEscape(ordTr('mark_paid'))}</button></div>` : ''}
         </div>
         <div class="card">
             <h3>${ordEscape(ordTr('ord_timeline'))}</h3>
@@ -364,12 +377,53 @@ function fillOrderCustomers(selectedId) {
     if (customer && address && !address.value.trim()) address.value = customer.address || '';
 }
 
+function orderPayLabel(method) {
+    return typeof payMethodLabel === 'function' ? (payMethodLabel(method) || '—') : (method || '—');
+}
+
+function collectedPaySelect(id, current) {
+    const selected = ['Cash', 'Card', 'Transfer'].includes(current) ? current : 'Cash';
+    return `<select id="${id}" class="form-control">${[['Cash', 'ord_cash'], ['Card', 'ord_card'], ['Transfer', 'ord_transfer']].map(([value, key]) => `<option value="${value}" ${value === selected ? 'selected' : ''}>${ordEscape(ordTr(key))}</option>`).join('')}</select>`;
+}
+
+function payLaterMethod(method) {
+    return method === 'OnDelivery' || method === 'OnPickup';
+}
+
 function syncOrderMethod() {
     const method = document.querySelector('input[name="oe-method"]:checked')?.value || 'Delivery';
     const address = document.getElementById('oe-address-wrap');
     const pickup = document.getElementById('oe-pickup-wrap');
     if (address) address.hidden = method !== 'Delivery';
     if (pickup) pickup.hidden = method !== 'Pickup';
+    syncOrderPayOptions();
+}
+
+function syncOrderPayOptions() {
+    const fulfillment = document.querySelector('input[name="oe-method"]:checked')?.value || 'Delivery';
+    const select = document.getElementById('oe-pay');
+    if (!select) return;
+    const laterValue = fulfillment === 'Pickup' ? 'OnPickup' : 'OnDelivery';
+    const laterKey = fulfillment === 'Pickup' ? 'ord_on_pickup' : 'ord_on_delivery';
+    const current = select.value;
+    const options = [['Cash', 'ord_cash'], ['Card', 'ord_card'], ['Transfer', 'ord_transfer'], [laterValue, laterKey]];
+    select.innerHTML = options.map(([value, key]) => `<option value="${value}">${ordEscape(ordTr(key))}</option>`).join('');
+    select.value = options.some(([value]) => value === current) ? current : 'Cash';
+    syncPaidNow();
+}
+
+function syncPaidNow() {
+    const value = document.getElementById('oe-pay')?.value || 'Cash';
+    const later = payLaterMethod(value);
+    const wrap = document.getElementById('oe-paid-wrap');
+    const hint = document.getElementById('oe-pay-hint');
+    const paid = document.getElementById('oe-paid');
+    if (wrap) wrap.hidden = later;
+    if (later && paid) paid.checked = false;
+    if (hint) {
+        hint.hidden = !later;
+        hint.textContent = later ? ordTr(value === 'OnPickup' ? 'ord_pay_later_pickup' : 'ord_pay_later_delivery') : '';
+    }
 }
 
 function paintOrderLines() {
@@ -419,7 +473,7 @@ async function saveShopOrder() {
                 pickupNote: document.getElementById('oe-pickup').value.trim(),
                 deliveryDate: document.getElementById('oe-date').value,
                 paymentMethod: document.getElementById('oe-pay').value,
-                isPaid: document.getElementById('oe-paid').checked,
+                isPaid: payLaterMethod(document.getElementById('oe-pay').value) ? false : document.getElementById('oe-paid').checked,
                 notes: document.getElementById('oe-notes').value.trim(),
                 actor: orderActor(),
                 items
@@ -487,11 +541,23 @@ async function onOrdersClick(e) {
                 trackingNumber: document.getElementById('order-tracking')?.value || '',
                 note: document.getElementById('order-pickup-note')?.value || ''
             }, true);
-        } else if (kind === 'track' && activeOrder) {
+        }         else if (kind === 'track' && activeOrder) {
+            const status = document.getElementById('order-track-status')?.value || '';
+            const finishing = status === 'Delivered' || status === 'Collected';
+            const paid = String(activeOrder.paymentStatus || '').toLowerCase() === 'paid';
+            const method = document.getElementById('order-collect-method')?.value || '';
+            if (finishing && !paid && !method) { toast(ordTr('ord_choose_method'), 'error'); return; }
             await postShopOrder('/api/shop-orders/' + activeOrder.id + '/track', {
-                status: document.getElementById('order-track-status')?.value || '',
-                note: document.getElementById('order-track-note')?.value || ''
+                status,
+                note: document.getElementById('order-track-note')?.value || '',
+                paymentMethod: finishing && !paid ? method : ''
             }, true);
+        } else if (kind === 'pay' && activeOrder) {
+            const method = document.getElementById('order-pay-method')?.value || '';
+            if (!method) { toast(ordTr('ord_choose_method'), 'error'); return; }
+            await postShopOrder('/api/shop-orders/' + activeOrder.id + '/pay', { paymentMethod: method }, false);
+            toast(ordTr('ord_marked_paid'), 'success');
+            if (typeof loadData === 'function') await loadData();
         } else if (kind === 'complete' && activeOrder) {
             await postShopOrder('/api/shop-orders/' + activeOrder.id + '/feedback', {
                 rating: orderRating,
@@ -516,6 +582,7 @@ async function onOrdersClick(e) {
 function onOrdersChange(e) {
     if (e.target.id === 'order-filter-method') { renderShopOrders(); return; }
     if (e.target.name === 'oe-method') { syncOrderMethod(); return; }
+    if (e.target.id === 'oe-pay') { syncPaidNow(); return; }
     if (e.target.id === 'oe-customer') {
         const customer = orderCustomers().find(c => Number(c.id) === Number(e.target.value));
         const address = document.getElementById('oe-address');

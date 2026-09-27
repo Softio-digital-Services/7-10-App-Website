@@ -136,16 +136,16 @@ namespace InventorySystem.Services
             if (isNew)
             {
                 sql = @"INSERT INTO parts (part_name, part_number, description, category_id, supplier_id, purchase_price, selling_price, quantity_in_stock, minimum_stock_level, reorder_quantity, location, shelf, part_image, barcode, status, date_added,
-                                          item_type, unit_of_measure, batch_number, expiry_date, is_sales_item, is_purchase_item, is_inactive, tax_rate, is_stock_tracked, sell_by_weight, price2, price3, price4, brand, size, color, style_code) 
+                                          item_type, unit_of_measure, batch_number, expiry_date, is_sales_item, is_purchase_item, is_inactive, tax_rate, is_stock_tracked, sell_by_weight, price2, price3, price4, brand, size, color, style_code, source_kind) 
                         VALUES (@name, @num, @desc, @cat, @sup, @cost, @price1, @stock, @min, @reorder, @loc, @shelf, @img, @barcode, @status, datetime('now'),
-                                @type, @uom, @batch, @expiry, @sales, @purchase, @inactive, @tax, @tracked, @sellByWeight, @price2, @price3, @price4, @brand, @size, @color, @style)";
+                                @type, @uom, @batch, @expiry, @sales, @purchase, @inactive, @tax, @tracked, @sellByWeight, @price2, @price3, @price4, @brand, @size, @color, @style, @source)";
             }
             else
             {
                 sql = @"UPDATE parts SET part_name=@name, part_number=@num, description=@desc, category_id=@cat, supplier_id=@sup, purchase_price=@cost, selling_price=@price1, 
                                          quantity_in_stock=@stock, minimum_stock_level=@min, reorder_quantity=@reorder, location=@loc, shelf=@shelf, barcode=@barcode, status=@status,
                                          item_type=@type, unit_of_measure=@uom, batch_number=@batch, expiry_date=@expiry, is_sales_item=@sales, is_purchase_item=@purchase, 
-                                         is_inactive=@inactive, tax_rate=@tax, is_stock_tracked=@tracked, sell_by_weight=@sellByWeight, price2=@price2, price3=@price3, price4=@price4, brand=@brand, size=@size, color=@color, style_code=@style";
+                                         is_inactive=@inactive, tax_rate=@tax, is_stock_tracked=@tracked, sell_by_weight=@sellByWeight, price2=@price2, price3=@price3, price4=@price4, brand=@brand, size=@size, color=@color, style_code=@style, source_kind=@source";
                 if (p.PartImage != null) sql += ", part_image=@img";
                 sql += " WHERE id=@id";
             }
@@ -182,7 +182,8 @@ namespace InventorySystem.Services
                 new SqliteParameter("@brand",    p.Brand ?? ""),
                 new SqliteParameter("@size",     p.Size ?? ""),
                 new SqliteParameter("@color",    p.Color ?? ""),
-                new SqliteParameter("@style",    p.StyleCode ?? "")
+                new SqliteParameter("@style",    p.StyleCode ?? ""),
+                new SqliteParameter("@source",   string.Equals(p.SourceKind, "made", StringComparison.OrdinalIgnoreCase) ? "made" : "bought")
             };
             if (isNew || p.PartImage != null) parms.Add(new SqliteParameter("@img", p.PartImage ?? (object)DBNull.Value));
             if (!isNew) parms.Add(new SqliteParameter("@id", p.Id));

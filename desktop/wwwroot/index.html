@@ -20,7 +20,7 @@
     <link rel="stylesheet" href="css/fonts/fonts.css">
     
     
-    <link rel="stylesheet" href="css/style.css?v=20260927ordui">
+    <link rel="stylesheet" href="css/style.css?v=20260927paym">
     <style id="inv-toolbar-fix">
         /* Inventory toolbar: search + scrollable actions with thin under slide bar */
         #inventory .page-search-row {
@@ -265,7 +265,7 @@
                     <span class="material-symbols-rounded nav-icon" aria-hidden="true">local_shipping</span><span class="label" data-i18n="nav_suppliers">Suppliers</span>
                 </a>
                 <a href="#" class="nav-item" data-target="purchase-orders" data-roles="admin,staff,accountant">
-                    <span class="material-symbols-rounded nav-icon" aria-hidden="true">receipt_long</span><span class="label" data-i18n="nav_purchase_orders">Purchase Orders</span>
+                    <span class="material-symbols-rounded nav-icon" aria-hidden="true">receipt_long</span><span class="label" data-i18n="nav_purchases">Purchases</span>
                 </a>
                 <div class="nav-label" data-i18n="nav_group_shop">Shop</div>
                 <a href="#" class="nav-item" data-target="pos" data-roles="admin,staff">
@@ -287,14 +287,14 @@
                 <a href="#" class="nav-item" data-target="analytics" data-roles="admin,staff,accountant">
                     <span class="material-symbols-rounded nav-icon" aria-hidden="true">monitoring</span><span class="label" data-i18n="nav_analytics">Analytics</span>
                 </a>
+                <a href="#" class="nav-item" data-target="profit-shares" data-roles="admin,staff,accountant">
+                    <span class="material-symbols-rounded nav-icon" aria-hidden="true">pie_chart</span><span class="label" data-i18n="ps_nav">Profit shares</span>
+                </a>
                 <a href="#" class="nav-item" data-target="reports" data-roles="admin,staff,accountant">
                     <span class="material-symbols-rounded nav-icon" aria-hidden="true">bar_chart</span><span class="label" data-i18n="nav_reports">Reports</span>
                 </a>
                 <a href="#" class="nav-item" data-target="history" data-roles="admin,staff,accountant">
                     <span class="material-symbols-rounded nav-icon" aria-hidden="true">history</span><span class="label" data-i18n="nav_history">History</span>
-                </a>
-                <a href="#" class="nav-item" data-target="expenses" data-roles="admin,staff,accountant">
-                    <span class="material-symbols-rounded nav-icon" aria-hidden="true">payments</span><span class="label" data-i18n="nav_expenses">Expenses</span>
                 </a>
                 <a href="#" class="nav-item" data-target="currencies" data-roles="admin">
                     <span class="material-symbols-rounded nav-icon" aria-hidden="true">currency_exchange</span><span class="label" data-i18n="nav_currencies">Currencies</span>
@@ -523,6 +523,7 @@
                             </div>
                         </div>
                         <div id="pd-more-props" class="pd-more-props"></div>
+                        <div id="pd-materials" class="pd-materials" hidden></div>
                         <h3 class="pd-history-title" data-i18n="inv_history">Inventory History</h3>
                         <div class="table-wrapper">
                             <table class="catalog-table">
@@ -600,14 +601,38 @@
                                         <select id="pe-warehouse" class="form-control" required></select>
                                     </div>
                                 </div>
+                                <div class="form-group">
+                                    <label data-i18n="source_kind">How do you get this?</label>
+                                    <div class="pe-checks">
+                                        <label class="p-radio"><input type="radio" name="pe-source" value="bought" checked> <span data-i18n="source_bought">Bought from a supplier</span></label>
+                                        <label class="p-radio"><input type="radio" name="pe-source" value="made"> <span data-i18n="source_made">Fabricated</span></label>
+                                    </div>
+                                    <p class="form-hint" id="pe-source-hint"></p>
+                                </div>
                                 <div class="form-row">
                                     <div class="form-group">
-                                        <label><span data-i18n="cost_price">Cost Price</span><span class="req">*</span></label>
+                                        <label><span id="pe-cost-label">Supplier price</span><span class="req">*</span></label>
                                         <input id="pe-cost" class="form-control" type="number" min="0" step="0.01" data-i18n-ph="enter_cost" placeholder="Enter cost price" required>
                                     </div>
                                     <div class="form-group">
                                         <label><span data-i18n="selling_price">Selling Price</span><span class="req">*</span></label>
                                         <input id="pe-price" class="form-control" type="number" min="0" step="0.01" data-i18n-ph="enter_sell" placeholder="Enter selling price" required>
+                                    </div>
+                                </div>
+                                <div id="pe-materials" class="editor-section" hidden>
+                                    <h3 data-i18n="materials">Materials</h3>
+                                    <p class="form-hint" data-i18n="materials_hint">Fabric and other materials used to make one piece.</p>
+                                    <div id="pe-material-rows"></div>
+                                    <div class="mat-add">
+                                        <label class="oe-field"><span data-i18n="mat_name">Material</span><input id="mat-name" class="form-control" type="text" maxlength="80" data-i18n-ph="mat_ph" placeholder="Cotton fabric"></label>
+                                        <label class="oe-field"><span data-i18n="col_supplier">Supplier</span><select id="mat-supplier" class="form-control"></select></label>
+                                        <label class="oe-field"><span data-i18n="mat_qty">Qty for one piece</span><input id="mat-qty" class="form-control" type="number" min="0" step="0.01" value="1"></label>
+                                        <label class="oe-field"><span data-i18n="mat_unit">Cost each</span><input id="mat-cost" class="form-control" type="number" min="0" step="0.01" value="0"></label>
+                                        <button type="button" class="btn btn-primary" id="btn-mat-add"><span class="material-symbols-rounded">add</span><span data-i18n="mat_add">Add material</span></button>
+                                    </div>
+                                    <div class="mat-total">
+                                        <span id="pe-material-total"></span>
+                                        <button type="button" class="btn btn-secondary" id="btn-mat-use-cost" data-i18n="mat_use_cost">Use as cost to make</button>
                                     </div>
                                 </div>
                                 <div class="form-group">
@@ -694,7 +719,7 @@
                                             <label data-i18n="low_level">Low level</label>
                                             <input id="pe-min" class="form-control" type="number" min="0" value="0">
                                         </div>
-                                        <div class="form-group">
+                                        <div class="form-group" id="pe-supplier-wrap">
                                             <label data-i18n="col_supplier">Supplier</label>
                                             <select id="pe-supplier" class="form-control"><option value="">—</option></select>
                                         </div>
@@ -751,13 +776,26 @@
             <section id="purchase-orders" class="view-section">
                 <div class="page-header">
                     <div>
-                        <h1 data-i18n="nav_purchase_orders">Purchase Orders</h1>
-                        <p data-i18n="po_sub">Track and manage all your purchase orders with suppliers.</p>
+                        <h1 id="purchase-title">Purchase Orders</h1>
+                        <p id="purchase-sub">Track and manage all your purchase orders with suppliers.</p>
                     </div>
-                    <div class="page-actions">
+                    <div class="page-actions" id="po-actions">
                         <button class="btn btn-primary" id="btn-new-po" data-roles="admin,staff"><span class="material-symbols-rounded">add</span><span data-i18n="new_po">New Purchase Order</span></button>
                     </div>
+                    <div class="page-actions" id="exp-actions" hidden>
+                        <button class="btn btn-manage" id="btn-manage-exp-cats" data-roles="admin"><span class="material-symbols-rounded">category</span><span data-i18n="manage_categories">Manage Categories</span></button>
+                        <button class="btn btn-refresh" id="btn-refresh-expenses"><span class="material-symbols-rounded">refresh</span><span data-i18n="refresh">Refresh</span></button>
+                        <input type="file" id="exp-import-file" accept=".csv,text/csv" hidden>
+                        <button class="btn btn-secondary btn-import" id="btn-import-expenses"><span class="material-symbols-rounded">download</span><span data-i18n="import">Import</span></button>
+                        <button class="btn btn-secondary btn-export" id="btn-export-expenses"><span class="material-symbols-rounded">upload</span><span data-i18n="export">Export</span></button>
+                        <button class="btn btn-add" id="btn-add-expense"><span class="material-symbols-rounded">add</span><span data-i18n="add_expense">Add Expense</span></button>
+                    </div>
                 </div>
+                <div class="purchase-switch" role="tablist">
+                    <button type="button" class="purchase-switch-btn active" data-purchase-pane="orders" data-i18n="nav_purchase_orders">Purchase Orders</button>
+                    <button type="button" class="purchase-switch-btn" data-purchase-pane="expenses" data-i18n="nav_expenses">Expenses</button>
+                </div>
+                <div id="po-pane">
                 <div class="ff-filters po-filters">
                     <input type="search" id="po-search" class="form-control" data-i18n-ph="po_search" placeholder="Search purchase orders...">
                     <select id="po-filter-supplier" class="form-control"></select>
@@ -795,6 +833,15 @@
                             </select>
                         </div>
                     </div>
+                </div>
+                </div>
+                <div id="exp-pane" hidden>
+                    <div class="card table-wrapper"><table><thead><tr>
+                        <th data-i18n="col_date">Date</th><th data-i18n="col_category">Category</th>
+                        <th data-i18n="col_amount">Amount</th><th data-i18n="col_desc">Description</th>
+                        <th data-i18n="col_type">Type</th>
+                        <th data-i18n="col_status">Status</th><th data-i18n="col_actions">Actions</th>
+                    </tr></thead><tbody id="exp-body"></tbody></table></div>
                 </div>
             </section>
 
@@ -840,6 +887,74 @@
                             <select id="an-rev-month" class="form-control"></select>
                         </div>
                         <div id="an-breakdown" class="rev-list"></div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="profit-shares" class="view-section">
+                <div class="page-header">
+                    <div>
+                        <h1 data-i18n="ps_nav">Profit shares</h1>
+                        <p data-i18n="ps_sub">Split profit after sales and expenses across the people you choose.</p>
+                    </div>
+                </div>
+                <div class="ff-filters" id="ps-filters">
+                    <select id="ps-mode" class="form-control" aria-label="Period">
+                        <option value="year" data-i18n="ps_year">Year</option>
+                        <option value="month" data-i18n="ps_month">Month</option>
+                        <option value="collection" data-i18n="ps_collection">Collection</option>
+                    </select>
+                    <select id="ps-year" class="form-control" aria-label="Year"></select>
+                    <select id="ps-month" class="form-control" aria-label="Month" hidden></select>
+                    <select id="ps-collection" class="form-control" aria-label="Collection" hidden></select>
+                    <button type="button" class="btn btn-secondary" id="ps-col-add" hidden><span class="material-symbols-rounded">add</span><span data-i18n="ps_add_collection">Add collection</span></button>
+                    <button type="button" class="btn btn-secondary" id="ps-col-edit" hidden><span class="material-symbols-rounded">edit</span><span data-i18n="ps_edit_collection">Edit collection</span></button>
+                </div>
+                <div id="ps-col-form" class="card ps-col-form" hidden>
+                    <h3 id="ps-col-form-title" data-i18n="ps_add_collection">Add collection</h3>
+                    <p class="ps-hint" data-i18n="ps_col_hint">A named period, such as a season or a drop.</p>
+                    <div class="ps-col-grid">
+                        <label class="oe-field"><span data-i18n="col_name">Name</span><input id="ps-col-name" class="form-control" type="text" maxlength="80"></label>
+                        <label class="oe-field"><span data-i18n="ps_from">From</span><input id="ps-col-from" class="form-control" type="date"></label>
+                        <label class="oe-field"><span data-i18n="ps_to">To</span><input id="ps-col-to" class="form-control" type="date"></label>
+                    </div>
+                    <div class="ps-col-actions">
+                        <button type="button" class="btn btn-primary" id="ps-col-save" data-i18n="save">Save</button>
+                        <button type="button" class="btn btn-secondary" id="ps-col-cancel" data-i18n="cancel">Cancel</button>
+                        <button type="button" class="btn btn-danger" id="ps-col-delete" hidden data-i18n="delete">Delete</button>
+                    </div>
+                </div>
+                <p class="ps-formula" data-i18n="ps_formula">Profit is sales, minus what the products cost, minus expenses for the period you select. Cancelled orders are left out.</p>
+                <div class="inv-kpis" id="ps-kpis"></div>
+                <div class="ff-split">
+                    <div class="card">
+                        <div class="card-head">
+                            <h3 data-i18n="ps_parties">Parties</h3>
+                        </div>
+                        <div class="table-wrapper">
+                            <table class="catalog-table ps-table">
+                                <thead><tr>
+                                    <th data-i18n="col_name">Name</th>
+                                    <th data-i18n="ps_percent">Percent</th>
+                                    <th data-i18n="ps_share">Share</th>
+                                    <th></th>
+                                </tr></thead>
+                                <tbody id="ps-party-rows"></tbody>
+                            </table>
+                        </div>
+                        <p id="ps-percent-note" class="ps-note"></p>
+                        <div class="ps-add-row">
+                            <input id="ps-new-name" class="form-control" type="text" maxlength="80" data-i18n-ph="ps_party_ph" placeholder="Investor, operations, CEO…">
+                            <input id="ps-new-percent" class="form-control" type="number" min="0" max="100" step="0.01" placeholder="%" aria-label="Percent">
+                            <button type="button" class="btn btn-primary" id="ps-add-party"><span class="material-symbols-rounded">add</span><span data-i18n="ps_add_party">Add party</span></button>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-head">
+                            <h3 data-i18n="ps_distribution">Distribution</h3>
+                            <span id="ps-period-label" class="ps-period"></span>
+                        </div>
+                        <div id="ps-bars" class="ps-bars"></div>
                     </div>
                 </div>
             </section>
@@ -1198,10 +1313,12 @@
                                         <option value="Cash" data-i18n="ord_cash">Cash</option>
                                         <option value="Card" data-i18n="ord_card">Card</option>
                                         <option value="Transfer" data-i18n="ord_transfer">Transfer</option>
+                                        <option value="OnDelivery" data-i18n="ord_on_delivery">Payment on delivery</option>
                                     </select>
+                                    <p class="editor-sub" id="oe-pay-hint" hidden></p>
                                 </div>
                             </div>
-                            <label class="p-check"><input type="checkbox" id="oe-paid"><span data-i18n="ord_paid_now">Paid now</span></label>
+                            <label class="p-check" id="oe-paid-wrap"><input type="checkbox" id="oe-paid"><span data-i18n="ord_paid_now">Paid now</span></label>
                             <div class="form-group" style="margin-top:0.9rem;">
                                 <label data-i18n="ord_notes">Order notes</label>
                                 <textarea id="oe-notes" class="form-control" rows="2"></textarea>
@@ -1338,25 +1455,6 @@
                     <th data-i18n="col_phone">Phone</th><th data-i18n="col_email">Email</th>
                     <th data-i18n="col_balance">Balance</th><th data-i18n="col_actions">Actions</th>
                 </tr></thead><tbody id="supp-body"></tbody></table></div>
-            </section>
-
-            <section id="expenses" class="view-section">
-                <div class="page-header">
-                    <div class="page-actions">
-                        <button class="btn btn-manage" id="btn-manage-exp-cats" data-roles="admin"><span class="material-symbols-rounded">category</span><span data-i18n="manage_categories">Manage Categories</span></button>
-                        <button class="btn btn-refresh" id="btn-refresh-expenses"><span class="material-symbols-rounded">refresh</span><span data-i18n="refresh">Refresh</span></button>
-                        <input type="file" id="exp-import-file" accept=".csv,text/csv" hidden>
-                        <button class="btn btn-secondary btn-import" id="btn-import-expenses"><span class="material-symbols-rounded">download</span><span data-i18n="import">Import</span></button>
-                        <button class="btn btn-secondary btn-export" id="btn-export-expenses"><span class="material-symbols-rounded">upload</span><span data-i18n="export">Export</span></button>
-                        <button class="btn btn-add" id="btn-add-expense"><span class="material-symbols-rounded">add</span><span data-i18n="add_expense">Add Expense</span></button>
-                    </div>
-                </div>
-                <div class="card table-wrapper"><table><thead><tr>
-                    <th data-i18n="col_date">Date</th><th data-i18n="col_category">Category</th>
-                    <th data-i18n="col_amount">Amount</th><th data-i18n="col_desc">Description</th>
-                    <th data-i18n="col_type">Type</th>
-                    <th data-i18n="col_status">Status</th><th data-i18n="col_actions">Actions</th>
-                </tr></thead><tbody id="exp-body"></tbody></table></div>
             </section>
 
             <section id="currencies" class="view-section">
@@ -2803,7 +2901,8 @@ Accepted By: __________________________</p>
 
     <div id="toast" class="toast"></div>
     <script src="js/signalr.min.js"></script>
-    <script src="app.js?v=20260927ordui" charset="utf-8"></script>
-    <script src="orders.js?v=20260927ordui" charset="utf-8"></script>
+    <script src="app.js?v=20260927paym" charset="utf-8"></script>
+    <script src="orders.js?v=20260927paym" charset="utf-8"></script>
+    <script src="profit.js?v=20260927ps2" charset="utf-8"></script>
 </body>
 </html>

@@ -25,6 +25,8 @@ namespace InventorySystem.Services
             app.MapPost("/api/shop-orders/{id:int}/dispatch", Dispatch);
             app.MapPost("/api/shop-orders/{id:int}/track", Track);
             app.MapPost("/api/shop-orders/{id:int}/feedback", Feedback);
+            app.MapPost("/api/shop-orders/{id:int}/pay", Pay);
+            app.MapPost("/api/orders/{id:int}/mark-paid", Pay);
             app.MapPost("/api/shop-orders/{id:int}/note", AddNote);
             app.MapPost("/api/shop-orders/{id:int}/cancel", Cancel);
         }
@@ -146,14 +148,15 @@ namespace InventorySystem.Services
                     DateTime.TryParse(body.DeliveryDate, CultureInfo.InvariantCulture, DateTimeStyles.AssumeLocal, out var parsed))
                     when = parsed;
 
+                string pay = ArrangeMethod(body.PaymentMethod, type);
+                bool isPaid = body.IsPaid && !PayLater(pay);
                 int orderId = new OrderService().PlaceOrder(
-                    body.CustomerId, lines, total, body.IsPaid, "Open", null,
+                    body.CustomerId, lines, total, isPaid, "Open", null,
                     type == "Delivery" ? body.Address?.Trim() : null, when);
                 if (orderId <= 0)
                     orderId = DatabaseHelper.ExecuteScalar<int>("SELECT COALESCE(MAX(order_id),0) FROM orders");
 
                 string channel = type == "Delivery" ? "Online" : "Retail";
-                string pay = string.IsNullOrWhiteSpace(body.PaymentMethod) ? "Cash" : body.PaymentMethod.Trim();
                 DatabaseHelper.ExecuteNonQuery(@"
                     UPDATE orders
                     SET fulfillment_type = @type, fulfillment_stage = 'New', channel = @channel,
@@ -293,6 +296,13 @@ namespace InventorySystem.Services
                 string status = body?.Status?.Trim() ?? "";
                 if (status.Length == 0) return Fail("Choose a status.");
                 bool done = status == "Delivered" || status == "Collected";
+                if (done && !S(row, "payment_status").Equals("Paid", StringComparison.OrdinalIgnoreCase))
+                {
+                    string collected = CollectedMethod(body.PaymentMethod, S(row, "payment_method"));
+                    if (collected == null) return Fail("Choose cash, card, or transfer.");
+                    string paidError = SettlePaid(row, id, collected, body.Actor);
+                    if (paidError != null) return Fail(paidError);
+                }
                 string next = done ? "AwaitingFeedback" : stage;
                 DatabaseHelper.ExecuteNonQuery(
                     "UPDATE orders SET tracking_status = @s, fulfillment_stage = @stage WHERE order_id = @id",
@@ -314,6 +324,8 @@ namespace InventorySystem.Services
                 var row = Header(id);
                 if (row == null) return Results.NotFound();
                 if (S(row, "fulfillment_stage") != "AwaitingFeedback") return Fail("Collect feedback after delivery or pickup.");
+                if (!S(row, "payment_status").Equals("Paid", StringComparison.OrdinalIgnoreCase))
+                    return Fail("Collect payment before completing this order.");
                 int rating = body?.Rating ?? 0;
                 if (rating < 1 || rating > 5) return Fail("Choose a rating from 1 to 5.");
                 DatabaseHelper.ExecuteNonQuery(@"
@@ -325,6 +337,39 @@ namespace InventorySystem.Services
                     new SqliteParameter("@id", id));
                 AddEvent(id, "feedback", (body.Comment ?? "").Trim(), rating.ToString(CultureInfo.InvariantCulture), body.Actor);
                 return Results.Ok(Load(id));
+            }
+            catch (Exception ex) { return Results.Problem(ex.Message); }
+        }
+
+        private static async System.Threading.Tasks.Task<IResult> Pay(int id, HttpRequest request)
+        {
+            try
+            {
+                var body = await Read<ActorPayload>(request);
+                var rowDt = DatabaseHelper.ExecuteDataTable(
+                    "SELECT * FROM orders WHERE order_id = @id",
+                    new SqliteParameter("@id", id));
+                if (rowDt.Rows.Count == 0) return Results.NotFound();
+                var row = rowDt.Rows[0];
+                string orderStatus = S(row, "status");
+                string stage = S(row, "fulfillment_stage");
+                if (orderStatus.Equals("Cancelled", StringComparison.OrdinalIgnoreCase) ||
+                    stage.Equals("Cancelled", StringComparison.OrdinalIgnoreCase))
+                    return Fail("This order is cancelled.");
+                if (orderStatus.Equals("Draft", StringComparison.OrdinalIgnoreCase) ||
+                    orderStatus.Equals("Quotation", StringComparison.OrdinalIgnoreCase))
+                    return Fail("This order is not a sale yet.");
+
+                if (!S(row, "payment_status").Equals("Paid", StringComparison.OrdinalIgnoreCase))
+                {
+                    string collected = CollectedMethod(body?.PaymentMethod, S(row, "payment_method"));
+                    if (collected == null) return Fail("Choose cash, card, or transfer.");
+                    string paidError = SettlePaid(row, id, collected, body?.Actor);
+                    if (paidError != null) return Fail(paidError);
+                }
+
+                if (Header(id) != null) return Results.Ok(Load(id));
+                return Results.Ok(new { paymentStatus = "Paid" });
             }
             catch (Exception ex) { return Results.Problem(ex.Message); }
         }
@@ -388,6 +433,72 @@ namespace InventorySystem.Services
                 return Results.Ok(Load(id));
             }
             catch (Exception ex) { return Results.Problem(ex.Message); }
+        }
+
+        private static string ArrangeMethod(string requested, string fulfillment)
+        {
+            string raw = requested?.Trim() ?? "";
+            if (raw.Equals("Card", StringComparison.OrdinalIgnoreCase)) return "Card";
+            if (raw.Equals("Transfer", StringComparison.OrdinalIgnoreCase)) return "Transfer";
+            if (raw.Equals("OnDelivery", StringComparison.OrdinalIgnoreCase) || raw.Equals("OnPickup", StringComparison.OrdinalIgnoreCase))
+                return fulfillment == "Pickup" ? "OnPickup" : "OnDelivery";
+            return "Cash";
+        }
+
+        private static bool PayLater(string method) => method == "OnDelivery" || method == "OnPickup";
+
+        private static string CollectedMethod(string requested, string current)
+        {
+            string raw = string.IsNullOrWhiteSpace(requested) ? current : requested;
+            if (string.IsNullOrWhiteSpace(raw)) return null;
+            if (raw.Equals("Cash", StringComparison.OrdinalIgnoreCase)) return "Cash";
+            if (raw.Equals("Card", StringComparison.OrdinalIgnoreCase)) return "Card";
+            if (raw.Equals("Transfer", StringComparison.OrdinalIgnoreCase)) return "Transfer";
+            return null;
+        }
+
+        private static string SettlePaid(System.Data.DataRow row, int id, string collected, string actor)
+        {
+            if (S(row, "payment_status").Equals("Paid", StringComparison.OrdinalIgnoreCase)) return null;
+            int customerId = row["customer_id"] == DBNull.Value ? 0 : Convert.ToInt32(row["customer_id"]);
+            decimal total = M(row, "total_amount");
+            if (customerId > 0 && total > 0.004m)
+            {
+                try
+                {
+                    new CustomerDebtService().ApplyPayment(
+                        customerId,
+                        total,
+                        "Order #" + id,
+                        new List<CustomerDebtService.AllocationDto>
+                        {
+                            new CustomerDebtService.AllocationDto { OrderId = id, Amount = total }
+                        });
+                }
+                catch (InvalidOperationException ex) when (ex.Message.IndexOf("Nothing to apply", StringComparison.OrdinalIgnoreCase) >= 0)
+                {
+                    DatabaseHelper.ExecuteNonQuery(
+                        "UPDATE orders SET payment_status = 'Paid', amount_paid = total_amount WHERE order_id = @id",
+                        new SqliteParameter("@id", id));
+                }
+            }
+            else
+            {
+                DatabaseHelper.ExecuteNonQuery(
+                    "UPDATE order_items SET amount_paid = quantity * price WHERE order_id = @id",
+                    new SqliteParameter("@id", id));
+                DatabaseHelper.ExecuteNonQuery(
+                    "UPDATE orders SET payment_status = 'Paid', amount_paid = total_amount WHERE order_id = @id",
+                    new SqliteParameter("@id", id));
+            }
+            DatabaseHelper.ExecuteNonQuery(
+                "UPDATE orders SET payment_method = @m WHERE order_id = @id",
+                new SqliteParameter("@m", collected),
+                new SqliteParameter("@id", id));
+            AddEvent(id, "payment", "Marked paid", collected, actor);
+            GlobalEvents.RaiseOrdersUpdated();
+            if (customerId > 0) GlobalEvents.RaiseCustomersUpdated();
+            return null;
         }
 
         private static void SetStage(int id, string stage)
@@ -554,10 +665,10 @@ namespace InventorySystem.Services
             public decimal Price { get; set; }
         }
 
-        private class ActorPayload { public string Actor { get; set; } }
+        private class ActorPayload { public string Actor { get; set; } public string PaymentMethod { get; set; } }
         private class CheckPayload { public int CheckId { get; set; } public bool Checked { get; set; } }
         private class DispatchPayload { public string Carrier { get; set; } public string TrackingNumber { get; set; } public string Note { get; set; } public string Actor { get; set; } }
-        private class TrackPayload { public string Status { get; set; } public string Note { get; set; } public string Actor { get; set; } }
+        private class TrackPayload { public string Status { get; set; } public string Note { get; set; } public string Actor { get; set; } public string PaymentMethod { get; set; } }
         private class FeedbackPayload { public int Rating { get; set; } public string Comment { get; set; } public string Actor { get; set; } }
         private class NotePayload { public string Message { get; set; } public string Actor { get; set; } }
     }
