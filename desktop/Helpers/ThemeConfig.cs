@@ -52,12 +52,12 @@ namespace InventorySystem
         // ==========================================
         
         // Primary Brand Color (7-10 olive — matches logo background)
-        public static Color PrimaryColor { get; } = Color.FromArgb(122, 117, 79); // #7A754F
-        public static Color PrimaryHoverColor { get; } = Color.FromArgb(92, 88, 64); // #5C5840
+        public static Color PrimaryColor { get; } = Color.FromArgb(62, 107, 74); // #3E6B4A
+        public static Color PrimaryHoverColor { get; } = Color.FromArgb(47, 85, 56); // #2F5538
 
         // Gradient Colors for Primary Buttons
-        public static Color GradientStart { get; } = Color.FromArgb(143, 138, 98); // #8F8A62
-        public static Color GradientEnd { get; } = Color.FromArgb(122, 117, 79);   // #7A754F
+        public static Color GradientStart { get; } = Color.FromArgb(107, 154, 116); // #6B9A74
+        public static Color GradientEnd { get; } = Color.FromArgb(62, 107, 74);   // #3E6B4A
 
         // Secondary / Text Colors
         public static Color SecondaryColor { get; } = Color.FromArgb(100, 116, 139); // Slate Gray
@@ -69,7 +69,7 @@ namespace InventorySystem
         // Backgrounds
         public static Color BackgroundColor { get; } = Color.FromArgb(255, 255, 255); 
         public static Color SidebarColor { get; } = Color.FromArgb(255, 255, 255);     
-        public static Color HeaderColor { get; } = Color.FromArgb(198, 40, 40);      
+        public static Color HeaderColor { get; } = Color.FromArgb(62, 107, 74);      
         public static Color ActiveBackColor { get; } = Color.FromArgb(245, 245, 245); 
 
         

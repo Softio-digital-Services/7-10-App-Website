@@ -39,6 +39,10 @@ namespace InventorySystem.Data
         public decimal Price2 { get; set; } = 0;
         public decimal Price3 { get; set; } = 0;
         public decimal Price4 { get; set; } = 0;
+        public string Brand { get; set; } = "";
+        public string Size { get; set; } = "";
+        public string Color { get; set; } = "";
+        public string StyleCode { get; set; } = "";
 
         public static List<PartData> GetAllParts(string categoryName = null, int limit = 0, int offset = 0)
         {
@@ -170,7 +174,11 @@ namespace InventorySystem.Data
                 SellByWeight      = Safe<int>(r, "sell_by_weight", 0) == 1,
                 Price2            = Safe<decimal>(r, "price2", 0),
                 Price3            = Safe<decimal>(r, "price3", 0),
-                Price4            = Safe<decimal>(r, "price4", 0)
+                Price4            = Safe<decimal>(r, "price4", 0),
+                Brand             = Safe<string>(r, "brand", ""),
+                Size              = Safe<string>(r, "size", ""),
+                Color             = Safe<string>(r, "color", ""),
+                StyleCode         = Safe<string>(r, "style_code", "")
             };
         }
     }

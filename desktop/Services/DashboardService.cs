@@ -326,5 +326,21 @@ namespace InventorySystem.Services
 
             return notifications;
         }
+
+        public decimal GetOrderRevenueForMonthOffset(int offsetMonths)
+        {
+            string mod = offsetMonths == 0 ? "+0 months" : offsetMonths + " months";
+            return DatabaseHelper.ExecuteScalar<decimal>(
+                "SELECT COALESCE(SUM(total_amount), 0) FROM orders WHERE strftime('%Y-%m', order_date) = strftime('%Y-%m', 'now', @m) AND COALESCE(status,'') NOT IN ('Quotation','Draft','Cancelled')",
+                new SqliteParameter("@m", mod));
+        }
+
+        public int GetOrderCountForMonthOffset(int offsetMonths)
+        {
+            string mod = offsetMonths == 0 ? "+0 months" : offsetMonths + " months";
+            return DatabaseHelper.ExecuteScalar<int>(
+                "SELECT COUNT(*) FROM orders WHERE strftime('%Y-%m', order_date) = strftime('%Y-%m', 'now', @m) AND COALESCE(status,'') NOT IN ('Quotation','Draft','Cancelled')",
+                new SqliteParameter("@m", mod));
+        }
     }
 }

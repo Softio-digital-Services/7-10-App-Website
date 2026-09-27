@@ -2,9 +2,150 @@
 const API = '';
 const T = {
     en: {
-        login_title: 'Sign In', login_subtitle: 'Inventory management portal',
+        login_title: 'Welcome Back', login_subtitle: 'Sign in to continue to your dashboard.',
+        login_hero: 'Smart Inventory, Seamless Fashion.',
+        login_hero_sub: 'Track products, manage stock, monitor suppliers and gain insights — all in one dashboard.',
+        remember_me: 'Remember me', welcome_back: 'Welcome back, {0}',
+        dash_hello: "Here's what's happening with your inventory today.",
+        annual_sales: 'Annual Sales Overview', revenue_by_category: 'Revenue By Category',
+        recent_pos: 'Recent Purchase Orders', recent_activity: 'Recent Activities',
+        products_sub: 'Manage products, stock, pricing and availability.',
+        prod_search: 'Search products...', filter_status: 'Status', filter_price: 'Price', reset_filter: 'Reset filter',
+        col_product: 'Product Name', col_action: 'Action',
+        price_under: 'Under 25', price_25: '25 – 50', price_50: '50 – 100', price_100: '100+',
+        showing_products: 'Showing {0} to {1} of {2} products',
+        back_products: 'Back to Products', add_edit_product: 'Add/Edit Product',
+        add_product_sub: 'Add a new product to your inventory.', edit_product_sub: 'Update this product.',
+        pe_name: 'Product Name', cost_price: 'Cost Price', selling_price: 'Selling Price',
+        desc_optional: 'Description (optional)', product_images: 'Product Images',
+        upload_hint: 'Click to upload or drag and drop', upload_types: 'PNG, JPG or JPEG',
+        image_preview: 'Image Preview', no_images: 'No images added yet',
+        no_images_sub: 'Upload product images to get a preview.',
+        hist_datetime: 'Date & Time', hist_reference: 'Reference', hist_details: 'Details',
+        hist_balance: 'Balance', hist_by: 'Performed by', view_more_history: 'View more history',
+        sizes_label: 'Sizes', colors_label: 'Colors', save_product: 'Save Product',
+        select_brand: 'Select brand', select_size: 'Select size', select_color: 'Select color',
+        select_warehouse: 'Select warehouse', enter_name: 'Enter product name',
+        enter_sku: 'Enter SKU of the product', enter_qty: 'Enter quantity',
+        enter_cost: 'Enter cost price', enter_sell: 'Enter selling price',
+        enter_desc: 'Enter how the product description...',
+        required_fields: 'Fill in the required fields.', selected: 'selected',
+        item_details: 'Item details', style_hint: 'Groups sizes and colors', yes: 'Yes', no: 'No',
+        col_brand: 'Brand', col_po: 'PO Number', col_size: 'Size', col_color: 'Color',
+        style_code: 'Style code', reset_filters: 'Reset', inv_history: 'Inventory History',
+        col_warehouse: 'Warehouse', col_balance: 'Balance', col_user: 'By',
+        po_sub: 'Track and manage all your purchase orders with suppliers.',
+        po_search: 'Search purchase orders...',
+        showing_pos: 'Showing {0} to {1} of {2} purchase orders',
+        view_all_sellers: 'View all best sellers',
+        show_less: 'Show less',
+        select_month: 'Select month',
+        online_hint: 'Revenue from online orders',
+        retail_hint: 'Revenue from in-store orders',
+        wholesale_hint: 'Revenue from wholesale orders',
+        returns_hint: 'Refunds and returned orders',
+        nav_orders: 'Orders',
+        ord_sub: 'Create an order, pack it, send it, then close it with customer feedback.',
+        ord_search: 'Search orders...',
+        ord_all_methods: 'All methods',
+        ord_method: 'Method',
+        ord_status: 'Status',
+        ord_delivery: 'Delivery',
+        ord_pickup: 'Pickup',
+        ord_col_new: 'New',
+        ord_col_preparing: 'Preparing',
+        ord_col_tracking: 'Send & track',
+        ord_col_finalize: 'Finalize',
+        ord_step_details: 'Details',
+        ord_step_prepare: 'Prepare',
+        ord_step_send: 'Send',
+        ord_step_track: 'Track',
+        ord_step_feedback: 'Feedback',
+        ord_start: 'Start preparing',
+        ord_packing: 'Packaging checklist',
+        ord_packing_hint: 'Check every line before the order leaves the bench.',
+        ord_check_match: 'Product matches the order',
+        ord_check_size: 'Size is correct',
+        ord_check_color: 'Color is correct',
+        ord_check_qty: 'Quantity is correct',
+        ord_check_packed: 'Folded and packed',
+        ord_check_label: 'Label is attached',
+        ord_pack_done: 'Packing complete',
+        ord_checks_left: '{0} checks left',
+        ord_send: 'Send for delivery',
+        ord_ready_pickup: 'Ready for pickup',
+        ord_carrier: 'Carrier',
+        ord_tracking: 'Tracking number',
+        ord_mark_update: 'Update tracking',
+        ord_waiting: 'Waiting for customer',
+        ord_arrived: 'Customer arrived',
+        ord_collected: 'Collected',
+        ord_label_created: 'Label created',
+        ord_transit: 'In transit',
+        ord_out: 'Out for delivery',
+        ord_delivered: 'Delivered',
+        ord_feedback: 'Customer feedback',
+        ord_feedback_hint: 'Ask how the order went, then close it.',
+        ord_complete: 'Complete order',
+        ord_add_note: 'Add note',
+        ord_cancel: 'Cancel order',
+        ord_paid_now: 'Paid now',
+        ord_est_date: 'Estimated date',
+        ord_pickup_note: 'Pickup note',
+        ord_add_line: 'Add product',
+        ord_back: 'Back to Orders',
+        ord_stage_new: 'New',
+        ord_stage_preparing: 'Preparing',
+        ord_stage_ready: 'Ready to send',
+        ord_stage_out: 'Out for delivery',
+        ord_stage_pickup: 'Ready for pickup',
+        ord_stage_feedback: 'Awaiting feedback',
+        ord_stage_done: 'Completed',
+        ord_stage_cancelled: 'Cancelled',
+        ord_empty: 'No orders in this step yet.',
+        ord_select_customer: 'Select customer',
+        ord_select_product: 'Select product',
+        ord_address: 'Shipping address',
+        ord_notes: 'Order notes',
+        ord_need_items: 'Add at least one product.',
+        ord_need_customer: 'Select a customer.',
+        ord_need_address: 'Add a shipping address for delivery.',
+        ord_items: 'Items',
+        ord_timeline: 'Timeline',
+        ord_customer: 'Customer information',
+        ord_payment: 'Payment',
+        ord_ev_created: 'Order created',
+        ord_ev_stage: 'Moved to {0}',
+        ord_ev_packed: 'Packing complete',
+        ord_ev_feedback: 'Feedback saved · {0}/5',
+        ord_ev_cancel: 'Order cancelled',
+        ord_items_count: '{0} items',
+        ord_new_title: 'New order',
+        ord_new_sub: 'Customer, products, and how the order will be fulfilled.',
+        ord_cash: 'Cash',
+        ord_card: 'Card',
+        ord_transfer: 'Transfer',
+        ord_comment_ph: 'What did the customer say?',
+        ord_note_ph: 'Add a note for the team',
+        ord_locked: 'This step opens after the previous one is done.',
+        ord_cancel_ask: 'Cancel this order and return the items to stock?',
+        ord_pay_method: 'Payment method',
+        new_po: 'New Purchase Order', col_order_date: 'Order Date', col_delivery: 'Delivery',
+        analytics_sub: 'Analyse your sales performance and make data-driven decisions.',
+        monthly_sales: 'Monthly Sales', product_category: 'Product Category',
+        best_sellers: 'Best Sellers', units_sold: 'Units Sold', revenue_breakdown: 'Revenue Breakdown',
+        inv_stock_sub: 'Track stock levels across warehouses.',
+        stock_transfer: 'Stock Transfer', warehouse_summary: 'Warehouse Summary',
+        stock_levels: 'Stock Levels', inv_alerts: 'Inventory Alerts', reorder_level: 'Reorder',
+        add_line: 'Add line', source_warehouse: 'Source warehouse', dest_warehouse: 'Destination warehouse',
+        transfer_stock: 'Transfer Stock', receive_po: 'Receive', cancel_po: 'Cancel',
+        retail_store: 'Retail Store', wholesale: 'Wholesale', online_store: 'Online Store',
+        returns_refunds: 'Returns & Refunds', total_revenue: 'Total Revenue',
+        vs_last_month: 'vs last month', search_global: 'Search products, orders, suppliers...',
         username: 'Username', password: 'Password', login_btn: 'Sign In', logout: 'Logout',
         nav_dashboard: 'Dashboard', nav_inventory: 'Inventory', nav_pos: 'POS', nav_sales: 'Sales',
+        nav_products: 'Products', nav_purchase_orders: 'Purchase Orders', nav_analytics: 'Analytics',
+        nav_group_catalog: 'Catalog', nav_group_shop: 'Shop', nav_group_insights: 'Insights',
         nav_reports: 'Reports', nav_history: 'History', nav_quotations: 'Quotations',
         nav_customers: 'Customers', nav_suppliers: 'Suppliers', nav_expenses: 'Expenses',
         nav_currencies: 'Currencies', nav_barcodes: 'Barcodes', nav_users: 'Users', nav_settings: 'Settings',
@@ -315,9 +456,150 @@ const T = {
         copy_url: 'Copy URL'
     },
     ar: {
-        login_title: 'تسجيل الدخول', login_subtitle: 'بوابة إدارة المخزون',
+        login_title: 'مرحباً بعودتك', login_subtitle: 'سجّل الدخول للمتابعة إلى لوحة التحكم.',
+        login_hero: 'مخزون ذكي، أزياء بلا تعقيد.',
+        login_hero_sub: 'تتبّع المنتجات، أدِر المخزون، وراقب الموردين من لوحة واحدة.',
+        remember_me: 'تذكرني', welcome_back: 'مرحباً بعودتك، {0}',
+        dash_hello: 'هذا ما يحدث في مخزونك اليوم.',
+        annual_sales: 'المبيعات السنوية', revenue_by_category: 'الإيراد حسب الفئة',
+        recent_pos: 'أحدث أوامر الشراء', recent_activity: 'النشاط الأخير',
+        products_sub: 'إدارة المنتجات والأسعار والتوفر.',
+        prod_search: 'ابحث عن المنتجات...', filter_status: 'الحالة', filter_price: 'السعر', reset_filter: 'إعادة ضبط الفلتر',
+        col_product: 'اسم المنتج', col_action: 'إجراء',
+        price_under: 'أقل من 25', price_25: '25 – 50', price_50: '50 – 100', price_100: '100+',
+        showing_products: 'عرض {0} إلى {1} من {2} منتج',
+        back_products: 'العودة إلى المنتجات', add_edit_product: 'إضافة/تعديل منتج',
+        add_product_sub: 'أضف منتجاً جديداً إلى المخزون.', edit_product_sub: 'حدّث بيانات هذا المنتج.',
+        pe_name: 'اسم المنتج', cost_price: 'سعر التكلفة', selling_price: 'سعر البيع',
+        desc_optional: 'الوصف (اختياري)', product_images: 'صور المنتج',
+        upload_hint: 'انقر للرفع أو اسحب الملفات', upload_types: 'PNG أو JPG أو JPEG',
+        image_preview: 'معاينة الصور', no_images: 'لا توجد صور بعد',
+        no_images_sub: 'ارفع صور المنتج لتظهر المعاينة.',
+        hist_datetime: 'التاريخ والوقت', hist_reference: 'المرجع', hist_details: 'التفاصيل',
+        hist_balance: 'الرصيد', hist_by: 'بواسطة', view_more_history: 'عرض المزيد من السجل',
+        sizes_label: 'المقاسات', colors_label: 'الألوان', save_product: 'حفظ المنتج',
+        select_brand: 'اختر العلامة', select_size: 'اختر المقاس', select_color: 'اختر اللون',
+        select_warehouse: 'اختر المستودع', enter_name: 'أدخل اسم المنتج',
+        enter_sku: 'أدخل رمز المنتج', enter_qty: 'أدخل الكمية',
+        enter_cost: 'أدخل سعر التكلفة', enter_sell: 'أدخل سعر البيع',
+        enter_desc: 'أدخل وصف المنتج...',
+        required_fields: 'أكمل الحقول المطلوبة.', selected: 'محدد',
+        item_details: 'تفاصيل الصنف', style_hint: 'يجمع المقاسات والألوان', yes: 'نعم', no: 'لا',
+        col_brand: 'العلامة', col_po: 'رقم الأمر', col_size: 'المقاس', col_color: 'اللون',
+        style_code: 'رمز الموديل', reset_filters: 'إعادة ضبط', inv_history: 'سجل المخزون',
+        col_warehouse: 'المستودع', col_balance: 'الرصيد', col_user: 'بواسطة',
+        po_sub: 'تتبّع كل أوامر الشراء مع الموردين.',
+        po_search: 'ابحث في أوامر الشراء...',
+        showing_pos: 'عرض {0} إلى {1} من {2} أمر شراء',
+        view_all_sellers: 'عرض كل الأكثر مبيعاً',
+        show_less: 'عرض أقل',
+        select_month: 'اختر الشهر',
+        online_hint: 'إيراد الطلبات الإلكترونية',
+        retail_hint: 'إيراد مبيعات المتجر',
+        wholesale_hint: 'إيراد مبيعات الجملة',
+        returns_hint: 'المرتجعات والمبالغ المستردة',
+        nav_orders: 'الطلبات',
+        ord_sub: 'أنشئ الطلب، جهّزه، أرسله، ثم أغلقه بتقييم العميل.',
+        ord_search: 'ابحث في الطلبات...',
+        ord_all_methods: 'كل الطرق',
+        ord_method: 'الطريقة',
+        ord_status: 'الحالة',
+        ord_delivery: 'توصيل',
+        ord_pickup: 'استلام',
+        ord_col_new: 'جديد',
+        ord_col_preparing: 'تجهيز',
+        ord_col_tracking: 'إرسال وتتبع',
+        ord_col_finalize: 'إنهاء',
+        ord_step_details: 'التفاصيل',
+        ord_step_prepare: 'التجهيز',
+        ord_step_send: 'الإرسال',
+        ord_step_track: 'التتبع',
+        ord_step_feedback: 'التقييم',
+        ord_start: 'ابدأ التجهيز',
+        ord_packing: 'قائمة التغليف',
+        ord_packing_hint: 'راجع كل صنف قبل أن يغادر الطلب طاولة التجهيز.',
+        ord_check_match: 'المنتج مطابق للطلب',
+        ord_check_size: 'المقاس صحيح',
+        ord_check_color: 'اللون صحيح',
+        ord_check_qty: 'الكمية صحيحة',
+        ord_check_packed: 'مطوي ومعبأ',
+        ord_check_label: 'الملصق مثبت',
+        ord_pack_done: 'اكتمل التغليف',
+        ord_checks_left: 'متبقّي {0} فحوصات',
+        ord_send: 'إرسال للتوصيل',
+        ord_ready_pickup: 'جاهز للاستلام',
+        ord_carrier: 'شركة الشحن',
+        ord_tracking: 'رقم التتبع',
+        ord_mark_update: 'تحديث التتبع',
+        ord_waiting: 'بانتظار العميل',
+        ord_arrived: 'العميل وصل',
+        ord_collected: 'تم الاستلام',
+        ord_label_created: 'تم إنشاء البوليصة',
+        ord_transit: 'في الطريق',
+        ord_out: 'خرج للتوصيل',
+        ord_delivered: 'تم التوصيل',
+        ord_feedback: 'تقييم العميل',
+        ord_feedback_hint: 'اسأل عن التجربة ثم أغلق الطلب.',
+        ord_complete: 'إكمال الطلب',
+        ord_add_note: 'إضافة ملاحظة',
+        ord_cancel: 'إلغاء الطلب',
+        ord_paid_now: 'مدفوع الآن',
+        ord_est_date: 'التاريخ المتوقع',
+        ord_pickup_note: 'ملاحظة الاستلام',
+        ord_add_line: 'إضافة منتج',
+        ord_back: 'العودة إلى الطلبات',
+        ord_stage_new: 'جديد',
+        ord_stage_preparing: 'قيد التجهيز',
+        ord_stage_ready: 'جاهز للإرسال',
+        ord_stage_out: 'خرج للتوصيل',
+        ord_stage_pickup: 'جاهز للاستلام',
+        ord_stage_feedback: 'بانتظار التقييم',
+        ord_stage_done: 'مكتمل',
+        ord_stage_cancelled: 'ملغى',
+        ord_empty: 'لا توجد طلبات في هذه الخطوة.',
+        ord_select_customer: 'اختر العميل',
+        ord_select_product: 'اختر المنتج',
+        ord_address: 'عنوان الشحن',
+        ord_notes: 'ملاحظات الطلب',
+        ord_need_items: 'أضف منتجاً واحداً على الأقل.',
+        ord_need_customer: 'اختر عميلاً.',
+        ord_need_address: 'أضف عنوان الشحن للتوصيل.',
+        ord_items: 'الأصناف',
+        ord_timeline: 'الخط الزمني',
+        ord_customer: 'بيانات العميل',
+        ord_payment: 'الدفع',
+        ord_ev_created: 'تم إنشاء الطلب',
+        ord_ev_stage: 'انتقل إلى {0}',
+        ord_ev_packed: 'اكتمل التغليف',
+        ord_ev_feedback: 'تم حفظ التقييم · {0}/5',
+        ord_ev_cancel: 'تم إلغاء الطلب',
+        ord_items_count: '{0} أصناف',
+        ord_new_title: 'طلب جديد',
+        ord_new_sub: 'العميل والمنتجات وطريقة تنفيذ الطلب.',
+        ord_cash: 'نقداً',
+        ord_card: 'بطاقة',
+        ord_transfer: 'تحويل',
+        ord_comment_ph: 'ماذا قال العميل؟',
+        ord_note_ph: 'ملاحظة للفريق',
+        ord_locked: 'تُفتح هذه الخطوة بعد إكمال السابقة.',
+        ord_cancel_ask: 'إلغاء هذا الطلب وإعادة الأصناف إلى المخزون؟',
+        ord_pay_method: 'طريقة الدفع',
+        new_po: 'أمر شراء جديد', col_order_date: 'تاريخ الطلب', col_delivery: 'التسليم',
+        analytics_sub: 'حلّل أداء المبيعات.',
+        monthly_sales: 'المبيعات الشهرية', product_category: 'فئة المنتج',
+        best_sellers: 'الأكثر مبيعاً', units_sold: 'الوحدات', revenue_breakdown: 'توزيع الإيراد',
+        inv_stock_sub: 'تتبّع المخزون عبر المستودعات.',
+        stock_transfer: 'تحويل مخزون', warehouse_summary: 'ملخص المستودعات',
+        stock_levels: 'مستويات المخزون', inv_alerts: 'تنبيهات المخزون', reorder_level: 'حد إعادة الطلب',
+        add_line: 'إضافة سطر', source_warehouse: 'من مستودع', dest_warehouse: 'إلى مستودع',
+        transfer_stock: 'تحويل', receive_po: 'استلام', cancel_po: 'إلغاء',
+        retail_store: 'المتجر', wholesale: 'الجملة', online_store: 'المتجر الإلكتروني',
+        returns_refunds: 'المرتجعات', total_revenue: 'إجمالي الإيراد',
+        vs_last_month: 'مقارنة بالشهر الماضي', search_global: 'ابحث في المنتجات والطلبات والموردين...',
         username: 'اسم المستخدم', password: 'كلمة المرور', login_btn: 'دخول', logout: 'خروج',
         nav_dashboard: 'لوحة التحكم', nav_inventory: 'المخزون', nav_pos: 'نقطة البيع', nav_sales: 'المبيعات',
+        nav_products: 'المنتجات', nav_purchase_orders: 'أوامر الشراء', nav_analytics: 'التحليلات',
+        nav_group_catalog: 'الكتالوج', nav_group_shop: 'المتجر', nav_group_insights: 'الرؤى',
         nav_reports: 'التقارير', nav_history: 'السجل', nav_quotations: 'عروض الأسعار',
         nav_customers: 'العملاء', nav_suppliers: 'الموردون', nav_expenses: 'المصروفات',
         nav_currencies: 'العملات', nav_barcodes: 'الباركود', nav_users: 'المستخدمون', nav_settings: 'الإعدادات',
@@ -660,6 +942,19 @@ const LABEL_PRESETS = {
     '100x50': { w: 100, h: 50 }
 };
 let products = [], categories = [], sales = [], customers = [], suppliers = [], users = [];
+let purchaseOrders = [], inventorySummary = {}, analyticsData = {}, warehouses = [];
+let poPage = 1;
+let poPageSize = 10;
+let viewingPoId = null;
+let showAllSellers = false;
+let productPage = 1;
+let productPageSize = 10;
+let productSelection = new Set();
+let catalogEditorId = null;
+let catalogImages = [];
+let catalogStock = {};
+let pdCurrentId = null;
+let pdHistoryRows = [];
 let expenses = [], quotations = [], currencies = [], barcodeItems = [], expenseCategories = [];
 let dashboard = null, reportSummary = null, reportTop = [];
 let cart = [], invCat = 'all', posCat = 'all', invFilter = 'all', invView = 'card';
@@ -1588,6 +1883,8 @@ function showApp() {
     }
     const tools = document.getElementById('titlebar-tools');
     if (tools) tools.hidden = false;
+    const searchWrap = document.getElementById('global-search-wrap');
+    if (searchWrap) searchWrap.hidden = false;
     if (currentUser) {
         const name = currentUser.fullName || currentUser.username;
         const curUser = document.getElementById('current-user');
@@ -1614,6 +1911,8 @@ function hideApp() {
     }
     const tools = document.getElementById('titlebar-tools');
     if (tools) tools.hidden = true;
+    const searchWrap = document.getElementById('global-search-wrap');
+    if (searchWrap) searchWrap.hidden = true;
     currentUser = null;
     sessionStorage.removeItem('otargi_user');
     const userInput = document.getElementById('login-user');
@@ -1695,6 +1994,10 @@ function productFromPayload(payload, id) {
         price3: payload.price3 || 0,
         price4: payload.price4 || 0,
         supplierId: payload.supplierId ?? null,
+        brand: payload.brand || '',
+        size: payload.size || '',
+        color: payload.color || '',
+        styleCode: payload.styleCode || '',
         status: payload.isInactive ? 'Inactive' : 'Active'
     });
 }
@@ -1750,6 +2053,21 @@ async function loadDataCore() {
     if (usr) users = usr || [];
     if (bc) barcodeItems = bc || [];
     else barcodeItems = products.map(x => ({ id: x.id, name: x.name, sku: x.sku, price: x.price, barcode: x.barcode, stock: x.stock }));
+
+    try {
+        const extra = await Promise.allSettled([
+            api('/api/purchase-orders'),
+            api('/api/inventory/summary'),
+            api('/api/analytics'),
+            api('/api/warehouses'),
+            api('/api/shop-orders')
+        ]);
+        if (extra[0].status === 'fulfilled') purchaseOrders = extra[0].value || [];
+        if (extra[1].status === 'fulfilled') inventorySummary = extra[1].value || {};
+        if (extra[2].status === 'fulfilled') analyticsData = extra[2].value || {};
+        if (extra[3].status === 'fulfilled') warehouses = extra[3].value || [];
+        if (extra[4].status === 'fulfilled' && typeof setShopOrders === 'function') setShopOrders(extra[4].value || []);
+    } catch (e) { console.error('fashion data', e); }
 
     renderDashboard();
     const connectTask = loadConnectInfo();
@@ -1956,6 +2274,7 @@ function renderAll() {
     try { renderBarcodes(); } catch (e) { console.error(e); }
     try { renderUsers(); } catch (e) { console.error(e); }
     try { renderLicense(); } catch (e) { console.error(e); }
+    try { renderFashion(); } catch (e) { console.error(e); }
     try { updateBadges(); } catch (e) { console.error(e); }
 }
 
@@ -1995,17 +2314,26 @@ function renderDashboardSkeleton() {
 
 function renderDashboard() {
     const d = dashboard || {};
-    document.getElementById('stats-grid').innerHTML = `
+    const welcome = document.getElementById('dash-welcome');
+    if (welcome && currentUser) {
+        welcome.textContent = tr('welcome_back').replace('{0}', currentUser.fullName || currentUser.username || '');
+    }
+    const salesDelta = monthDelta(Number(d.salesMonth) || 0, Number(d.salesPrevMonth) || 0);
+    const ordersDelta = monthDelta(Number(d.ordersMonth) || 0, Number(d.ordersPrevMonth) || 0);
+    const grid = document.getElementById('stats-grid');
+    if (grid) grid.innerHTML = `
+        <div class="stat-card"><div class="icon"><span class="material-symbols-rounded">checkroom</span></div>
+            <div class="label">${tr('nav_products')}</div><div class="value">${d.totalItems ?? 0}</div></div>
         <div class="stat-card"><div class="icon"><span class="material-symbols-rounded">payments</span></div>
-            <div class="label">${tr('today_sales')}</div><div class="value">${money(d.todaySales)}</div></div>
+            <div class="label">${tr('rep_sales')}</div><div class="value">${money(d.salesMonth ?? d.todaySales)}</div>
+            <div class="stat-sub">${deltaText(salesDelta)}</div></div>
+        <div class="stat-card"><div class="icon"><span class="material-symbols-rounded">shopping_bag</span></div>
+            <div class="label">${tr('pos_orders')}</div><div class="value">${d.ordersMonth ?? d.ordersToday ?? 0}</div>
+            <div class="stat-sub">${deltaText(ordersDelta)}</div></div>
         <div class="stat-card"><div class="icon"><span class="material-symbols-rounded">inventory</span></div>
             <div class="label">${tr('inventory_value')}</div><div class="value">${money(d.inventoryValue)}</div></div>
-        <div class="stat-card"><div class="icon"><span class="material-symbols-rounded">category</span></div>
-            <div class="label">${tr('total_items')}</div><div class="value">${d.totalItems ?? 0}</div></div>
         <div class="stat-card"><div class="icon"><span class="material-symbols-rounded">warning</span></div>
-            <div class="label">${tr('low_stock_count')}</div><div class="value">${d.lowStock ?? 0}</div></div>
-        <div class="stat-card"><div class="icon"><span class="material-symbols-rounded">shopping_bag</span></div>
-            <div class="label">${tr('orders_today')}</div><div class="value">${d.ordersToday ?? 0}</div></div>`;
+            <div class="label">${tr('low_stock_count')}</div><div class="value">${d.lowStock ?? 0}</div></div>`;
 
     const topProducts = normalizeDashRows(d.topProducts);
     const topCategories = normalizeDashRows(d.topCategories);
@@ -2030,9 +2358,11 @@ function renderDashboard() {
             : `<tr><td colspan="3" class="empty-state">${tr('empty_list')}</td></tr>`;
     }
 
-    document.getElementById('dash-sales-body').innerHTML = (sales.slice(0, 8).map(o => `
+    const salesBodyEl = document.getElementById('dash-sales-body');
+    if (salesBodyEl) salesBodyEl.innerHTML = (sales.slice(0, 8).map(o => `
         <tr><td>#${o.orderId}</td><td>${formatDate(o.date)}</td><td>${escapeHtml(o.customer)}</td><td>${money(o.total)}</td></tr>`).join(''))
         || `<tr><td colspan="4" class="empty-state">${tr('empty_list')}</td></tr>`;
+    renderDashExtras();
 }
 
 function normalizeDashRows(rows) {
@@ -4170,7 +4500,11 @@ function buildProductPayload() {
         supplierPurchaseItemId: (() => {
             const v = Number(document.getElementById('p-supplier-purchase-id')?.value);
             return v > 0 ? v : null;
-        })()
+        })(),
+        brand: document.getElementById('p-brand')?.value.trim() || '',
+        size: document.getElementById('p-size')?.value.trim() || '',
+        color: document.getElementById('p-color')?.value.trim() || '',
+        styleCode: document.getElementById('p-style')?.value.trim() || ''
     };
 }
 
@@ -4188,6 +4522,14 @@ function fillProductForm(p) {
     document.getElementById('p-min-stock').value = p.minStock ?? 0;
     document.getElementById('p-barcode').value = p.barcode || '';
     document.getElementById('p-sku').value = p.sku || '';
+    const brand = document.getElementById('p-brand');
+    const size = document.getElementById('p-size');
+    const color = document.getElementById('p-color');
+    const style = document.getElementById('p-style');
+    if (brand) brand.value = p.brand || '';
+    if (size) size.value = p.size || '';
+    if (color) color.value = p.color || '';
+    if (style) style.value = p.styleCode || '';
     document.getElementById('p-location').value = p.location || '';
     document.getElementById('p-shelf').value = p.shelf || '';
     document.getElementById('p-batch').value = p.batch || '';
@@ -6020,6 +6362,7 @@ async function navigateTo(target, updateHash = true) {
     if (target === 'reports') { await loadReports(); renderReports(); }
     if (target === 'history') { await loadHistory(); renderHistory(); }
     if (target === 'inventory') {
+        renderInventoryOverview();
         requestAnimationFrame(() => {
             if (typeof updateInvActionsSlide === 'function') updateInvActionsSlide();
         });
@@ -6039,9 +6382,24 @@ async function navigateTo(target, updateHash = true) {
     if (target === 'pos') {
         setTimeout(() => document.getElementById('pos-search')?.focus(), 50);
     }
+    if (target === 'products') showProductsList();
+    if (target === 'orders' && typeof showOrdersBoard === 'function') showOrdersBoard();
+    if (target === 'products' || target === 'purchase-orders' || target === 'analytics' || target === 'orders') renderFashion();
 }
 
 function setupAuth() {
+    const remembered = localStorage.getItem('seventen_user');
+    if (remembered) {
+        const userInput = document.getElementById('login-user');
+        const remember = document.getElementById('login-remember');
+        if (userInput) userInput.value = remembered;
+        if (remember) remember.checked = true;
+    }
+    document.getElementById('btn-toggle-pass')?.addEventListener('click', () => {
+        const input = document.getElementById('login-pass');
+        if (!input) return;
+        input.type = input.type === 'password' ? 'text' : 'password';
+    });
     document.getElementById('login-form').addEventListener('submit', async e => {
         e.preventDefault();
         const err = document.getElementById('login-error');
@@ -6049,15 +6407,18 @@ function setupAuth() {
         const btn = e.target.querySelector('button[type="submit"]');
         if (btn) btn.disabled = true;
         try {
+            const typedUser = document.getElementById('login-user').value.trim();
             const user = await api('/api/login', {
                 method: 'POST',
                 body: JSON.stringify({
-                    username: document.getElementById('login-user').value.trim(),
+                    username: typedUser,
                     password: document.getElementById('login-pass').value
                 })
             });
             currentUser = user;
             sessionStorage.setItem('otargi_user', JSON.stringify(user));
+            if (document.getElementById('login-remember')?.checked) localStorage.setItem('seventen_user', typedUser);
+            else localStorage.removeItem('seventen_user');
             applyFeatureFlags(user.features || { scaleEnabled: false, quickSaleEnabled: false });
             document.getElementById('login-pass').value = '';
             document.getElementById('login-user').value = '';
@@ -6082,6 +6443,7 @@ function setupAuth() {
 }
 
 function setupActions() {
+    setupFashionUi();
     const btnLang = document.getElementById('btn-lang');
     if (btnLang) btnLang.onclick = () => toggleLanguage();
     document.getElementById('btn-settings-lang')?.addEventListener('click', () => toggleLanguage());
@@ -6278,8 +6640,14 @@ function setupActions() {
         try {
             if (cid) await api('/api/customers/' + cid + '/update', { method: 'POST', body: JSON.stringify(payload) });
             else await api('/api/customers', { method: 'POST', body: JSON.stringify(payload) });
+            const pickForOrder = !cid && window._orderCustomerPick;
+            window._orderCustomerPick = false;
             closeModal('customer-modal'); toast(tr('saved_ok'), 'success'); await loadData();
             populatePosCustomer();
+            if (pickForOrder && typeof fillOrderCustomers === 'function') {
+                const newest = [...customers].sort((a, b) => (b.id || 0) - (a.id || 0))[0];
+                if (newest) fillOrderCustomers(newest.id);
+            }
             // Select newly added customer when created from POS
             if (!cid) {
                 const sorted = [...customers].sort((a, b) => (b.id || 0) - (a.id || 0));
@@ -7884,3 +8252,1155 @@ window.showApp = showApp;
 window.hideApp = hideApp;
 window.loadData = loadData;
 window.applyI18n = applyI18n;
+
+const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const DONUT_COLORS = ['#3E6B4A','#6B9A74','#A8C5B0','#2F5538','#8AA58A','#D5E4D8'];
+
+function monthDelta(current, prev) {
+    const a = Number(current) || 0;
+    const b = Number(prev) || 0;
+    if (!b) return a ? 100 : 0;
+    return ((a - b) / Math.abs(b)) * 100;
+}
+function deltaText(n) {
+    const sign = n > 0 ? '+' : '';
+    return `${sign}${n.toFixed(1)}% ${tr('vs_last_month')}`;
+}
+function paintBars(el, values, opts) {
+    if (!el) return;
+    const nums = (values || []).map(v => Number(v) || 0);
+    const max = Math.max(...nums, 1);
+    const highlight = opts && Number.isInteger(opts.highlight) ? opts.highlight : -1;
+    const bars = nums.map((v, i) =>
+        `<div class="bar ${i === highlight ? 'is-on' : ''}" style="height:${Math.max(4, (v / max) * 100)}%" title="${money(v)}"><span>${MONTHS[i] || ''}</span></div>`
+    ).join('');
+    if (opts && opts.axis) {
+        const ticks = [1, 0.75, 0.5, 0.25, 0].map(p => money(max * p));
+        el.innerHTML = `<div class="bar-axis">${ticks.map(t => `<span>${t}</span>`).join('')}</div><div class="bar-plot">${bars}</div>`;
+    } else {
+        el.innerHTML = bars;
+    }
+}
+function paintDonut(el, legend, slices) {
+    if (!el) return;
+    const rows = (slices || []).filter(s => Number(s.value) > 0);
+    const total = rows.reduce((sum, s) => sum + Number(s.value), 0) || 1;
+    let acc = 0;
+    const stops = (rows.length ? rows : [{ value: 1, label: '—' }]).map((s, i) => {
+        const start = acc;
+        acc += (Number(s.value) / total) * 100;
+        return `${DONUT_COLORS[i % DONUT_COLORS.length]} ${start.toFixed(2)}% ${acc.toFixed(2)}%`;
+    });
+    el.style.background = `conic-gradient(${stops.join(',')})`;
+    el.style.boxShadow = 'inset 0 0 0 28px #fff';
+    if (legend) {
+        legend.innerHTML = rows.length
+            ? rows.map((s, i) => `<li><i style="background:${DONUT_COLORS[i % DONUT_COLORS.length]}"></i><span>${escapeHtml(s.label)}</span><b>${Math.round(Number(s.value) / total * 100)}%</b></li>`).join('')
+            : `<li>${tr('empty_list')}</li>`;
+    }
+}
+function poBadge(status) {
+    const key = String(status || 'Pending').toLowerCase();
+    return `<span class="badge ${key}">${escapeHtml(status || 'Pending')}</span>`;
+}
+function renderDashExtras() {
+    const months = analyticsData?.months || [];
+    paintBars(document.getElementById('dash-annual-chart'), months.length ? months : new Array(12).fill(0));
+    const cats = (analyticsData?.categories || []).map(c => ({ label: c.name, value: Number(c.total) || 0 }));
+    const fallback = normalizeDashRows(dashboard?.topCategories).map(r => ({ label: r.name, value: Number(r.totalSales) || 0 }));
+    paintDonut(document.getElementById('dash-donut'), document.getElementById('dash-donut-legend'), cats.length ? cats : fallback);
+    const poBody = document.getElementById('dash-po-body');
+    if (poBody) {
+        const rows = (purchaseOrders || []).slice(0, 5);
+        poBody.innerHTML = rows.length ? rows.map(p => `<tr>
+            <td>${escapeHtml(p.number || ('#' + p.id))}</td>
+            <td>${escapeHtml(p.supplier || '—')}</td>
+            <td>${formatDate(p.orderDate)}</td>
+            <td>${poBadge(p.status)}</td>
+            <td>${money(p.total)}</td>
+        </tr>`).join('') : `<tr><td colspan="5" class="empty-state">${tr('empty_list')}</td></tr>`;
+    }
+    const activity = document.getElementById('dash-activity');
+    if (activity) {
+        const items = dashboard?.recentActivity || [];
+        activity.innerHTML = items.length ? items.map(a => `<li>
+            <strong>${escapeHtml(a.action_type || a.actionType || '')}</strong> ${escapeHtml(a.description || '')}
+            <small>${escapeHtml(a.timestamp || '')}</small>
+        </li>`).join('') : `<li>${tr('empty_list')}</li>`;
+    }
+}
+
+function productStatusKey(p) {
+    if (p.stock <= 0) return 'out';
+    if (p.minStock > 0 && p.stock <= p.minStock) return 'low';
+    return 'in';
+}
+function priceBand(price) {
+    const n = Number(price) || 0;
+    if (n < 25) return 'under25';
+    if (n < 50) return '25-50';
+    if (n < 100) return '50-100';
+    return '100plus';
+}
+function mediaUrl(path) {
+    if (!path) return '';
+    const value = String(path);
+    if (value.startsWith('/') || value.startsWith('http')) return value;
+    return '/' + value.replace(/^\/+/, '');
+}
+function colorHex(name) {
+    const key = String(name || '').trim().toLowerCase();
+    const map = {
+        black: '#1c1c1c', white: '#f7f7f7', navy: '#1e3a5f', 'navy blue': '#1e3a5f',
+        olive: '#5e7f62', 'olive green': '#5e7f62', grey: '#9aa0a6', gray: '#9aa0a6',
+        'haze grey': '#b7b7b7', 'haze gray': '#b7b7b7', red: '#c44536', blue: '#2f5d8c',
+        green: '#3e6b4a', beige: '#e6d3b3', brown: '#6b4f3a', pink: '#d48aa0', yellow: '#e2c044'
+    };
+    if (map[key]) return map[key];
+    if (/^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(key)) return key;
+    return '#c5c9c4';
+}
+function productThumb(p) {
+    if (!p.image) return `<span class="prod-thumb empty"><span class="material-symbols-rounded">checkroom</span></span>`;
+    return `<img class="prod-thumb" src="${escapeHtml(mediaUrl(p.image))}" alt="">`;
+}
+function renderProducts() {
+    const body = document.getElementById('products-body');
+    if (!body) return;
+    const q = (document.getElementById('prod-search')?.value || '').trim().toLowerCase();
+    const cat = document.getElementById('prod-filter-cat')?.value || 'all';
+    const brand = document.getElementById('prod-filter-brand')?.value || 'all';
+    const status = document.getElementById('prod-filter-status')?.value || 'all';
+    const price = document.getElementById('prod-filter-price')?.value || 'all';
+    const supplier = document.getElementById('prod-filter-supplier')?.value || 'all';
+    fillSelect('prod-filter-cat', [tr('col_category'), ...categories], cat, true);
+    const brands = [...new Set(products.map(p => p.brand).filter(Boolean))].sort();
+    fillSelect('prod-filter-brand', [tr('col_brand'), ...brands], brand, true);
+    const supplierNames = [...new Set(products.map(p => p.supplierName).filter(Boolean))].sort();
+    fillSelect('prod-filter-supplier', [tr('col_supplier'), ...supplierNames], supplier, true);
+
+    let rows = products.filter(p => !p.isInactive && p.status !== 'Inactive');
+    if (q) rows = rows.filter(p => `${p.name} ${p.sku} ${p.brand} ${p.color}`.toLowerCase().includes(q));
+    if (cat !== 'all') rows = rows.filter(p => p.category === cat);
+    if (brand !== 'all') rows = rows.filter(p => p.brand === brand);
+    if (supplier !== 'all') rows = rows.filter(p => p.supplierName === supplier);
+    if (status !== 'all') rows = rows.filter(p => productStatusKey(p) === status);
+    if (price !== 'all') rows = rows.filter(p => priceBand(p.price) === price);
+
+    const known = new Set(rows.map(p => p.id));
+    productSelection.forEach(id => { if (!known.has(id)) productSelection.delete(id); });
+
+    const sizeEl = document.getElementById('prod-page-size');
+    const pageSize = Math.max(1, Number(sizeEl?.value) || productPageSize || 10);
+    productPageSize = pageSize;
+    const pages = Math.max(1, Math.ceil(rows.length / pageSize));
+    if (productPage > pages) productPage = pages;
+    const start = (productPage - 1) * pageSize;
+    const slice = rows.slice(start, start + pageSize);
+    body.innerHTML = slice.length ? slice.map(p => `<tr>
+        <td class="col-check"><input type="checkbox" data-pick="${p.id}" ${productSelection.has(p.id) ? 'checked' : ''}></td>
+        <td><button type="button" class="prod-name" data-view-product="${p.id}">${productThumb(p)}<span>${escapeHtml(p.name)}</span></button></td>
+        <td>${escapeHtml(p.sku || '—')}</td>
+        <td>${escapeHtml(p.category || '—')}</td>
+        <td>${escapeHtml(p.brand || '—')}</td>
+        <td>${p.stock ?? 0}</td>
+        <td>${money(p.price)}</td>
+        <td>${stockBadge(p)}</td>
+        <td class="table-actions">
+            <button type="button" class="icon-btn" data-edit-product="${p.id}" title="${escapeHtml(tr('edit'))}"><span class="material-symbols-rounded">edit</span></button>
+            <button type="button" class="icon-btn" data-view-product="${p.id}" title="${escapeHtml(tr('view'))}"><span class="material-symbols-rounded">visibility</span></button>
+        </td>
+    </tr>`).join('') : `<tr><td colspan="9" class="empty-state">${tr('empty_list')}</td></tr>`;
+    body.querySelectorAll('[data-view-product]').forEach(btn => btn.onclick = () => showProductDetail(Number(btn.dataset.viewProduct)));
+    body.querySelectorAll('[data-edit-product]').forEach(btn => btn.onclick = () => openProductEditor(Number(btn.dataset.editProduct)));
+    body.querySelectorAll('[data-pick]').forEach(box => box.onchange = () => {
+        const id = Number(box.dataset.pick);
+        if (box.checked) productSelection.add(id); else productSelection.delete(id);
+        updateProductBulk();
+        syncProductCheckAll(slice);
+    });
+    const label = document.getElementById('products-pager-label');
+    if (label) {
+        label.textContent = rows.length
+            ? tr('showing_products').replace('{0}', start + 1).replace('{1}', Math.min(start + pageSize, rows.length)).replace('{2}', rows.length)
+            : '';
+    }
+    const pager = document.getElementById('products-pager');
+    if (pager) {
+        pager.innerHTML = Array.from({ length: pages }, (_, i) =>
+            `<button type="button" class="${i + 1 === productPage ? 'active' : ''}" data-page="${i + 1}">${i + 1}</button>`).join('');
+        pager.querySelectorAll('button').forEach(btn => btn.onclick = () => { productPage = Number(btn.dataset.page); renderProducts(); });
+    }
+    updateProductBulk();
+    syncProductCheckAll(slice);
+}
+function syncProductCheckAll(slice) {
+    const all = document.getElementById('prod-check-all');
+    if (!all) return;
+    const ids = (slice || []).map(p => p.id);
+    const picked = ids.filter(id => productSelection.has(id)).length;
+    all.checked = ids.length > 0 && picked === ids.length;
+    all.indeterminate = picked > 0 && picked < ids.length;
+}
+function updateProductBulk() {
+    const bar = document.getElementById('prod-bulk');
+    const count = document.getElementById('prod-bulk-count');
+    if (!bar) return;
+    const n = productSelection.size;
+    bar.hidden = n === 0;
+    if (count) count.textContent = n ? `${n} ${tr('selected')}` : '';
+}
+function fillSelect(id, labels, current, firstIsAll) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const key = labels.join('|');
+    if (el.dataset.built !== key) {
+        el.innerHTML = labels.map((label, i) => {
+            const value = i === 0 && firstIsAll ? 'all' : label;
+            return `<option value="${escapeHtml(value)}">${escapeHtml(label)}</option>`;
+        }).join('');
+        el.dataset.built = key;
+    }
+    const wanted = current || 'all';
+    if ([...el.options].some(o => o.value === wanted)) el.value = wanted;
+}
+async function showProductDetail(id) {
+    const p = products.find(x => x.id === id);
+    if (!p) return;
+    pdCurrentId = id;
+    document.getElementById('products-list').hidden = true;
+    document.getElementById('product-editor').hidden = true;
+    document.getElementById('product-detail').hidden = false;
+    document.getElementById('pd-name').textContent = p.name || '';
+    document.getElementById('pd-status').innerHTML = stockBadge(p);
+    const specs = [
+        [tr('col_sku'), p.sku || '—'],
+        [tr('col_category'), p.category || '—'],
+        [tr('col_brand'), p.brand || '—'],
+        [tr('col_supplier'), p.supplierName || '—'],
+        [tr('cost_price'), money(p.cost)],
+        [tr('selling_price'), money(p.price)],
+        [tr('col_desc'), p.description || '—']
+    ];
+    document.getElementById('pd-specs').innerHTML = specs.map(([k, v]) =>
+        `<dt>${escapeHtml(k)}</dt><dd>${escapeHtml(v)}</dd>`).join('');
+    renderProductProps(p, []);
+
+    const styleKey = (p.styleCode || p.name || '').trim().toLowerCase();
+    const family = products.filter(x => (x.styleCode || x.name || '').trim().toLowerCase() === styleKey && !x.isInactive);
+    const sizes = [...new Set(family.map(x => x.size).filter(Boolean))];
+    const colors = [...new Set(family.map(x => x.color).filter(Boolean))];
+    const sizeBlock = document.getElementById('pd-size-block');
+    const colorBlock = document.getElementById('pd-color-block');
+    const sizeRow = document.getElementById('pd-sizes');
+    const colorRow = document.getElementById('pd-colors');
+    sizeBlock.hidden = sizes.length === 0;
+    colorBlock.hidden = colors.length === 0;
+    sizeRow.innerHTML = sizes.map(s => `<button type="button" class="size-chip ${s === p.size ? 'on' : ''}" data-size="${escapeHtml(s)}">${escapeHtml(s)}</button>`).join('');
+    colorRow.innerHTML = colors.map(c => `<button type="button" class="swatch ${c === p.color ? 'on' : ''}" data-color="${escapeHtml(c)}" style="--swatch:${colorHex(c)}"><i></i><span>${escapeHtml(c)}</span></button>`).join('');
+    sizeRow.querySelectorAll('button').forEach(btn => btn.onclick = () => {
+        const next = family.find(x => x.size === btn.dataset.size && (!p.color || x.color === p.color)) || family.find(x => x.size === btn.dataset.size);
+        if (next) showProductDetail(next.id);
+    });
+    colorRow.querySelectorAll('button').forEach(btn => btn.onclick = () => {
+        const next = family.find(x => x.color === btn.dataset.color && (!p.size || x.size === p.size)) || family.find(x => x.color === btn.dataset.color);
+        if (next) showProductDetail(next.id);
+    });
+
+    let images = [];
+    let levels = [];
+    try { images = await api('/api/products/' + id + '/images'); } catch { images = []; }
+    try { levels = await api('/api/products/' + id + '/stock'); } catch { levels = []; }
+    renderProductProps(p, levels || []);
+    if (p.image && !images.some(path => mediaUrl(path) === mediaUrl(p.image))) images.unshift(p.image);
+    const main = document.getElementById('pd-main');
+    const thumbs = document.getElementById('pd-thumbs');
+    const paintMain = (path) => {
+        main.innerHTML = path
+            ? `<img src="${escapeHtml(mediaUrl(path))}" alt="">`
+            : `<span class="material-symbols-rounded">checkroom</span>`;
+    };
+    paintMain(images[0] || '');
+    thumbs.innerHTML = images.map((path, i) =>
+        `<button type="button" class="pd-thumb ${i === 0 ? 'on' : ''}" data-img="${escapeHtml(path)}"><img src="${escapeHtml(mediaUrl(path))}" alt=""></button>`).join('');
+    thumbs.querySelectorAll('button').forEach(btn => btn.onclick = () => {
+        thumbs.querySelectorAll('button').forEach(b => b.classList.remove('on'));
+        btn.classList.add('on');
+        paintMain(btn.dataset.img);
+    });
+
+    const history = document.getElementById('pd-history');
+    const more = document.getElementById('pd-more');
+    history.innerHTML = `<tr><td colspan="8">${tr('loading')}</td></tr>`;
+    if (more) more.hidden = true;
+    try {
+        pdHistoryRows = await api('/api/products/' + id + '/history') || [];
+        paintProductHistory(false);
+    } catch {
+        pdHistoryRows = [];
+        history.innerHTML = `<tr><td colspan="8" class="empty-state">${tr('empty_list')}</td></tr>`;
+    }
+}
+function paintProductHistory(showAll) {
+    const history = document.getElementById('pd-history');
+    const more = document.getElementById('pd-more');
+    if (!history) return;
+    const rows = pdHistoryRows || [];
+    const visible = showAll ? rows : rows.slice(0, 5);
+    history.innerHTML = visible.length ? visible.map(r => {
+        const qty = Number(r.quantity) || 0;
+        const qtyClass = qty > 0 ? 'qty-plus' : qty < 0 ? 'qty-minus' : '';
+        const qtyText = qty > 0 ? '+' + qty : String(qty);
+        return `<tr>
+            <td>${escapeHtml(formatDate(r.date))}</td>
+            <td>${escapeHtml(r.reference || '—')}</td>
+            <td>${escapeHtml(r.type || '')}</td>
+            <td>${escapeHtml(r.warehouse || '—')}</td>
+            <td>${escapeHtml(r.notes || '—')}</td>
+            <td class="${qtyClass}">${qtyText}</td>
+            <td>${r.balance ?? '—'}</td>
+            <td>${escapeHtml(r.user || '—')}</td>
+        </tr>`;
+    }).join('') : `<tr><td colspan="8" class="empty-state">${tr('empty_list')}</td></tr>`;
+    if (more) {
+        more.hidden = showAll || rows.length <= 5;
+        more.onclick = () => paintProductHistory(true);
+    }
+}
+function showProductsList() {
+    const list = document.getElementById('products-list');
+    const detail = document.getElementById('product-detail');
+    const editor = document.getElementById('product-editor');
+    if (list) list.hidden = false;
+    if (detail) detail.hidden = true;
+    if (editor) editor.hidden = true;
+}
+
+function shortDate(d) {
+    if (!d) return '—';
+    const dt = new Date(d);
+    if (Number.isNaN(dt.getTime())) return '—';
+    return dt.toLocaleDateString(lang === 'ar' ? 'ar' : 'en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+}
+function downloadCsv(filename, rows) {
+    const csv = rows.map(row => row.map(cell => `"${String(cell ?? '').replace(/"/g, '""')}"`).join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = filename;
+    link.click();
+    URL.revokeObjectURL(link.href);
+}
+function filteredPurchaseOrders() {
+    const q = (document.getElementById('po-search')?.value || '').trim().toLowerCase();
+    const supplier = document.getElementById('po-filter-supplier')?.value || 'all';
+    const status = document.getElementById('po-filter-status')?.value || 'all';
+    let rows = purchaseOrders.slice();
+    if (q) rows = rows.filter(p => `${p.number} ${p.supplier}`.toLowerCase().includes(q));
+    if (supplier !== 'all') rows = rows.filter(p => p.supplier === supplier);
+    if (status !== 'all') rows = rows.filter(p => (p.status || '') === status);
+    return rows;
+}
+function renderPurchaseOrders() {
+    const body = document.getElementById('po-body');
+    if (!body) return;
+    const supplier = document.getElementById('po-filter-supplier')?.value || 'all';
+    const names = [...new Set(purchaseOrders.map(p => p.supplier).filter(Boolean))].sort();
+    fillSelect('po-filter-supplier', [tr('col_supplier'), ...names], supplier, true);
+    const rows = filteredPurchaseOrders();
+    const sizeEl = document.getElementById('po-page-size');
+    const pageSize = Math.max(1, Number(sizeEl?.value) || poPageSize || 10);
+    poPageSize = pageSize;
+    const pages = Math.max(1, Math.ceil(rows.length / pageSize));
+    if (poPage > pages) poPage = pages;
+    const start = (poPage - 1) * pageSize;
+    const slice = rows.slice(start, start + pageSize);
+    body.innerHTML = slice.length ? slice.map(p => `<tr>
+        <td>${escapeHtml(p.number || ('#' + p.id))}</td>
+        <td>${escapeHtml(p.supplier || '—')}</td>
+        <td>${shortDate(p.orderDate)}</td>
+        <td>${p.deliveryDate ? shortDate(p.deliveryDate) : '—'}</td>
+        <td>${poBadge(p.status)}</td>
+        <td>${money(p.total)}</td>
+        <td class="table-actions">
+            <button type="button" class="icon-btn" data-view-po="${p.id}" title="${escapeHtml(tr('view'))}"><span class="material-symbols-rounded">visibility</span></button>
+            <button type="button" class="icon-btn" data-download-po="${p.id}" title="${escapeHtml(tr('export'))}"><span class="material-symbols-rounded">download</span></button>
+        </td>
+    </tr>`).join('') : `<tr><td colspan="7" class="empty-state">${tr('empty_list')}</td></tr>`;
+    body.querySelectorAll('[data-view-po]').forEach(btn => btn.onclick = () => viewPo(Number(btn.dataset.viewPo)));
+    body.querySelectorAll('[data-download-po]').forEach(btn => btn.onclick = () => downloadPo(Number(btn.dataset.downloadPo)));
+    const label = document.getElementById('po-pager-label');
+    if (label) {
+        label.textContent = rows.length
+            ? tr('showing_pos').replace('{0}', start + 1).replace('{1}', Math.min(start + pageSize, rows.length)).replace('{2}', rows.length)
+            : '';
+    }
+    const pager = document.getElementById('po-pager');
+    if (pager) {
+        pager.innerHTML = Array.from({ length: pages }, (_, i) =>
+            `<button type="button" class="${i + 1 === poPage ? 'active' : ''}" data-page="${i + 1}">${i + 1}</button>`).join('');
+        pager.querySelectorAll('button').forEach(btn => btn.onclick = () => { poPage = Number(btn.dataset.page); renderPurchaseOrders(); });
+    }
+}
+function exportPurchaseOrders() {
+    const rows = filteredPurchaseOrders();
+    downloadCsv('purchase-orders.csv', [
+        ['PO Number', 'Supplier', 'Order Date', 'Delivery Date', 'Status', 'Price'],
+        ...rows.map(p => [p.number || p.id, p.supplier || '', shortDate(p.orderDate), p.deliveryDate ? shortDate(p.deliveryDate) : '', p.status || '', p.total ?? 0])
+    ]);
+}
+async function viewPo(id) {
+    try {
+        const po = await api('/api/purchase-orders/' + id);
+        viewingPoId = id;
+        const title = document.getElementById('po-view-title');
+        if (title) title.textContent = po.number || ('#' + po.id);
+        const meta = document.getElementById('po-view-meta');
+        if (meta) meta.innerHTML = `<span>${escapeHtml(po.supplier || '—')}</span><span>${shortDate(po.orderDate)}</span><span>${po.deliveryDate ? shortDate(po.deliveryDate) : '—'}</span>${poBadge(po.status)}<strong>${money(po.total)}</strong>`;
+        const items = document.getElementById('po-view-items');
+        if (items) {
+            items.innerHTML = (po.items || []).length ? po.items.map(it => `<tr>
+                <td>${escapeHtml(it.name || '—')}</td><td>${escapeHtml(it.sku || '—')}</td>
+                <td>${it.quantity}</td><td>${money(it.cost)}</td>
+            </tr>`).join('') : `<tr><td colspan="4" class="empty-state">${tr('empty_list')}</td></tr>`;
+        }
+        const pending = String(po.status || '').toLowerCase() === 'pending';
+        const receive = document.getElementById('btn-po-view-receive');
+        const cancel = document.getElementById('btn-po-view-cancel');
+        if (receive) receive.hidden = !pending;
+        if (cancel) cancel.hidden = !pending;
+        openModal('po-view-modal');
+    } catch (e) { toast(e.message, 'error'); }
+}
+async function downloadPo(id) {
+    try {
+        const po = await api('/api/purchase-orders/' + id);
+        downloadCsv((po.number || ('po-' + id)) + '.csv', [
+            ['PO Number', 'Supplier', 'Order Date', 'Delivery Date', 'Status', 'Product', 'SKU', 'Qty', 'Cost'],
+            ...(po.items || []).map(it => [po.number, po.supplier, shortDate(po.orderDate), po.deliveryDate ? shortDate(po.deliveryDate) : '', po.status, it.name, it.sku, it.quantity, it.cost])
+        ]);
+    } catch (e) { toast(e.message, 'error'); }
+}
+async function receivePo(id) {
+    try {
+        await api('/api/purchase-orders/' + id + '/receive', { method: 'POST' });
+        closeModal('po-view-modal');
+        toast(tr('saved_ok'), 'success');
+        await loadData();
+    } catch (e) { toast(e.message, 'error'); }
+}
+async function cancelPo(id) {
+    if (!await confirmDialog(tr('confirm_delete'))) return;
+    try {
+        await api('/api/purchase-orders/' + id + '/cancel', { method: 'POST' });
+        closeModal('po-view-modal');
+        toast(tr('saved_ok'), 'success');
+        await loadData();
+    } catch (e) { toast(e.message, 'error'); }
+}
+
+function fillMonthSelect(id) {
+    const el = document.getElementById(id);
+    if (!el || el.dataset.built === '1') return;
+    el.innerHTML = `<option value="all">${escapeHtml(tr('select_month'))}</option>` +
+        MONTHS.map((name, i) => `<option value="${i}">${name}</option>`).join('');
+    el.dataset.built = '1';
+}
+function revenueSlice() {
+    const month = document.getElementById('an-rev-month')?.value || 'all';
+    if (month === 'all') {
+        return {
+            retail: analyticsData?.retail || 0,
+            wholesale: analyticsData?.wholesale || 0,
+            online: analyticsData?.online || 0,
+            refunds: analyticsData?.refunds || 0,
+            total: analyticsData?.total || 0
+        };
+    }
+    return (analyticsData?.byMonth || [])[Number(month)] || { retail: 0, wholesale: 0, online: 0, refunds: 0, total: 0 };
+}
+function renderAnalytics() {
+    fillMonthSelect('an-chart-month');
+    fillMonthSelect('an-rev-month');
+    const months = analyticsData?.months || new Array(12).fill(0);
+    const chartMonth = document.getElementById('an-chart-month')?.value;
+    const highlight = chartMonth && chartMonth !== 'all' ? Number(chartMonth) : -1;
+    paintBars(document.getElementById('an-bars'), months, { axis: true, highlight });
+    paintDonut(
+        document.getElementById('an-donut'),
+        document.getElementById('an-legend'),
+        (analyticsData?.categories || []).map(c => ({ label: c.name, value: Number(c.total) || 0 }))
+    );
+    const sellers = document.getElementById('an-sellers');
+    if (sellers) {
+        const rows = analyticsData?.sellers || [];
+        const visible = showAllSellers ? rows : rows.slice(0, 4);
+        sellers.innerHTML = visible.length ? visible.map(r => `<tr>
+            <td>${escapeHtml(r.name)}</td><td>${escapeHtml(r.sku || '—')}</td>
+            <td>${r.units}</td><td>${money(r.revenue)}</td>
+        </tr>`).join('') : `<tr><td colspan="4" class="empty-state">${tr('empty_list')}</td></tr>`;
+        const more = document.getElementById('btn-an-all-sellers');
+        if (more) {
+            more.hidden = rows.length <= 4;
+            more.textContent = showAllSellers ? tr('show_less') : tr('view_all_sellers');
+        }
+    }
+    const breakdown = document.getElementById('an-breakdown');
+    if (breakdown) {
+        const slice = revenueSlice();
+        const lines = [
+            [tr('online_store'), tr('online_hint'), slice.online],
+            [tr('retail_store'), tr('retail_hint'), slice.retail],
+            [tr('wholesale'), tr('wholesale_hint'), slice.wholesale],
+            [tr('returns_refunds'), tr('returns_hint'), slice.refunds]
+        ];
+        breakdown.innerHTML = lines.map(([label, hint, value]) =>
+            `<div class="rev-row"><div><strong>${label}</strong><small>${hint}</small></div><span>${money(value || 0)}</span></div>`
+        ).join('') + `<div class="rev-row total"><div><strong>${tr('total_revenue')}</strong></div><span>${money(slice.total || 0)}</span></div>`;
+    }
+}
+
+function renderInventoryOverview() {
+    const s = inventorySummary || {};
+    const kpis = document.getElementById('inv-kpis');
+    if (kpis) {
+        const cards = [
+            [tr('total_items'), s.units || 0],
+            [tr('in_stock'), s.inStock || 0],
+            [tr('low_stock'), s.lowStock || 0],
+            [tr('out_of_stock'), s.outOfStock || 0]
+        ];
+        kpis.innerHTML = cards.map(([label, value]) => `<div class="inv-kpi"><span>${label}</span><strong>${value}</strong></div>`).join('');
+    }
+    const wh = document.getElementById('inv-warehouses');
+    if (wh) {
+        const rows = s.warehouses || [];
+        wh.innerHTML = rows.length ? rows.map(w => `<tr>
+            <td>${escapeHtml(w.name)}</td><td>${w.totalItems}</td><td>${w.inStock}</td><td>${w.lowStock}</td><td>${w.outOfStock}</td>
+        </tr>`).join('') : `<tr><td colspan="5" class="empty-state">${tr('empty_list')}</td></tr>`;
+    }
+    paintDonut(document.getElementById('inv-donut'), document.getElementById('inv-donut-legend'), [
+        { label: tr('in_stock'), value: s.inStock || 0 },
+        { label: tr('low_stock'), value: s.lowStock || 0 },
+        { label: tr('out_of_stock'), value: s.outOfStock || 0 }
+    ]);
+    const alerts = document.getElementById('inv-alerts');
+    if (alerts) {
+        const rows = s.alerts || [];
+        alerts.innerHTML = rows.length ? rows.map(a => `<tr>
+            <td>${escapeHtml(a.name)}</td><td>${escapeHtml(a.sku || '—')}</td>
+            <td>${escapeHtml(a.warehouse || '')}</td><td>${a.stock}</td><td>${a.reorder}</td>
+            <td>${a.status === 'Out of Stock' ? `<span class="badge out-of-stock">${tr('out_of_stock')}</span>` : `<span class="badge low-stock">${tr('low_stock')}</span>`}</td>
+        </tr>`).join('') : `<tr><td colspan="6" class="empty-state">${tr('empty_list')}</td></tr>`;
+    }
+}
+
+function shopBind() {
+    return { lang, currentUser, products, customers, tr, money, escapeHtml, formatDate };
+}
+
+function renderFashion() {
+    renderDashExtras();
+    renderProducts();
+    renderPurchaseOrders();
+    renderAnalytics();
+    renderInventoryOverview();
+    if (typeof renderShopOrders === 'function') renderShopOrders();
+}
+
+const CATALOG_SIZES = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
+const CATALOG_COLORS = ['Black', 'White', 'Navy blue', 'Olive green', 'Haze grey', 'Red', 'Blue', 'Beige', 'Brown', 'Pink'];
+
+function fillEditorChoices(existing) {
+    const cat = document.getElementById('pe-category');
+    if (cat) fillCategorySelect(cat);
+    if (existing?.category && cat && ![...cat.options].some(o => o.value === existing.category)) {
+        cat.insertAdjacentHTML('beforeend', `<option value="${escapeHtml(existing.category)}">${escapeHtml(existing.category)}</option>`);
+    }
+    const brands = [...new Set(products.map(p => p.brand).filter(Boolean))].sort();
+    const list = document.getElementById('pe-brand-list');
+    if (list) list.innerHTML = brands.map(b => `<option value="${escapeHtml(b)}"></option>`).join('');
+    const size = document.getElementById('pe-size');
+    const sizes = CATALOG_SIZES.slice();
+    products.forEach(p => { if (p.size && !sizes.includes(p.size)) sizes.push(p.size); });
+    if (size) size.innerHTML = `<option value="">${escapeHtml(tr('select_size'))}</option>` + sizes.map(s => `<option value="${escapeHtml(s)}">${escapeHtml(s)}</option>`).join('');
+    const color = document.getElementById('pe-color');
+    const colors = CATALOG_COLORS.slice();
+    products.forEach(p => { if (p.color && !colors.includes(p.color)) colors.push(p.color); });
+    if (color) color.innerHTML = `<option value="">${escapeHtml(tr('select_color'))}</option>` + colors.map(c => `<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join('');
+    const wh = document.getElementById('pe-warehouse');
+    if (wh) wh.innerHTML = (warehouses || []).map(w => `<option value="${w.id}">${escapeHtml(w.name)}</option>`).join('');
+}
+function syncEditorQty() {
+    if (!catalogEditorId) return;
+    const id = Number(document.getElementById('pe-warehouse')?.value);
+    const qty = document.getElementById('pe-qty');
+    if (qty && catalogStock[id] != null) qty.value = catalogStock[id];
+}
+function renderEditorPreview() {
+    const grid = document.getElementById('pe-preview');
+    const empty = document.getElementById('pe-empty');
+    const count = document.getElementById('pe-preview-count');
+    if (count) count.textContent = `(${catalogImages.length})`;
+    if (empty) empty.hidden = catalogImages.length > 0;
+    if (!grid) return;
+    grid.innerHTML = catalogImages.map((path, i) => `<div class="preview-item">
+        <img src="${escapeHtml(mediaUrl(path))}" alt="">
+        <button type="button" data-remove-image="${i}" aria-label="Remove">×</button>
+    </div>`).join('');
+    grid.querySelectorAll('[data-remove-image]').forEach(btn => btn.onclick = () => {
+        catalogImages.splice(Number(btn.dataset.removeImage), 1);
+        renderEditorPreview();
+    });
+}
+async function addEditorFiles(fileList) {
+    const files = [...(fileList || [])].filter(f => /^image\//.test(f.type)).slice(0, Math.max(0, 6 - catalogImages.length));
+    for (const file of files) {
+        try {
+            const uploaded = await uploadProductImage(file);
+            const path = uploaded.url || uploaded.path;
+            if (path) catalogImages.push(path);
+        } catch (e) { toast(e.message, 'error'); }
+    }
+    renderEditorPreview();
+}
+function editorType() {
+    return document.querySelector('input[name="pe-type"]:checked')?.value || 'Product';
+}
+function editorSellBy() {
+    return document.querySelector('input[name="pe-sell-by"]:checked')?.value || 'piece';
+}
+function setEditorUom(preferred) {
+    const uom = document.getElementById('pe-uom');
+    const addBtn = document.getElementById('btn-pe-add-uom');
+    if (!uom) return;
+    const service = editorType() === 'Service';
+    const byWeight = !service && editorSellBy() === 'weight';
+    const prev = preferred != null ? preferred : uom.value;
+    if (byWeight) {
+        uom.innerHTML = '<option value="g">g (grams)</option>';
+        uom.value = 'g';
+        uom.disabled = true;
+        if (addBtn) addBtn.hidden = true;
+        return;
+    }
+    let opts = getPieceUomOptions();
+    const prevKey = String(prev || '').trim();
+    if (prevKey && prevKey.toLowerCase() !== 'kg' && !opts.some(o => o.value.toLowerCase() === prevKey.toLowerCase())) {
+        opts = [...opts, { value: prevKey, label: prevKey }];
+    }
+    uom.innerHTML = opts.map(o => `<option value="${escapeHtml(o.value)}">${escapeHtml(o.label)}</option>`).join('');
+    uom.disabled = service;
+    if (addBtn) addBtn.hidden = service;
+    const match = opts.find(o => o.value.toLowerCase() === prevKey.toLowerCase());
+    uom.value = match ? match.value : 'pcs';
+}
+function updateEditorTypeUi() {
+    const service = editorType() === 'Service';
+    const track = document.getElementById('pe-track');
+    const qty = document.getElementById('pe-qty');
+    const min = document.getElementById('pe-min');
+    const sell = document.getElementById('pe-sell-by-wrap');
+    if (sell) sell.hidden = service;
+    if (service) {
+        if (track) { track.checked = false; track.disabled = true; }
+        const piece = document.querySelector('input[name="pe-sell-by"][value="piece"]');
+        if (piece) piece.checked = true;
+    } else if (track) track.disabled = false;
+    const tracked = !service && !!track?.checked;
+    if (qty) qty.disabled = !tracked;
+    if (min) min.disabled = !tracked;
+    setEditorUom();
+}
+function calculateEditorMargins() {
+    const cost = Number(document.getElementById('pe-cost')?.value) || 0;
+    [2, 3, 4].forEach(i => {
+        const price = Number(document.getElementById('pe-price' + i)?.value) || 0;
+        const profit = price - cost;
+        const gross = price > 0 ? (profit / price) * 100 : 0;
+        const grossEl = document.getElementById('pe-gross' + i);
+        const profitEl = document.getElementById('pe-profit' + i);
+        if (grossEl) grossEl.value = gross.toFixed(1) + '%';
+        if (profitEl) profitEl.value = profit.toFixed(2);
+    });
+}
+function fillEditorSku() {
+    const cat = document.getElementById('pe-category')?.value?.trim() || 'GEN';
+    const name = document.getElementById('pe-name')?.value?.trim() || 'PRD';
+    const catPrefix = cat.length >= 3 ? cat.substring(0, 3).toUpperCase() : cat.toUpperCase().padEnd(3, 'X');
+    const namePrefix = name.length >= 3 ? name.substring(0, 3).toUpperCase() : name.toUpperCase().padEnd(3, 'X');
+    const now = new Date();
+    const ts = String(now.getFullYear()).slice(-2)
+        + String(now.getMonth() + 1).padStart(2, '0')
+        + String(now.getDate()).padStart(2, '0')
+        + String(now.getHours()).padStart(2, '0')
+        + String(now.getMinutes()).padStart(2, '0');
+    const sku = document.getElementById('pe-sku');
+    if (sku) sku.value = `${catPrefix}-${namePrefix}-${ts}`;
+}
+function fillEditorDetails(existing) {
+    const isService = !!(existing && (existing.itemType === 'Service' || existing.isService));
+    const type = document.querySelector(`input[name="pe-type"][value="${isService ? 'Service' : 'Product'}"]`);
+    if (type) type.checked = true;
+    const sell = document.querySelector(`input[name="pe-sell-by"][value="${existing && isSellByWeight(existing) ? 'weight' : 'piece'}"]`);
+    if (sell) sell.checked = true;
+    const sales = document.getElementById('pe-sales');
+    const purchase = document.getElementById('pe-purchase');
+    const inactive = document.getElementById('pe-inactive');
+    const track = document.getElementById('pe-track');
+    if (sales) sales.checked = existing ? existing.isSalesItem !== false : true;
+    if (purchase) purchase.checked = !!existing?.isPurchaseItem;
+    if (inactive) inactive.checked = !!existing?.isInactive;
+    if (track) track.checked = existing ? existing.isStockTracked !== false && !isService : true;
+    const style = document.getElementById('pe-style');
+    if (style) style.value = existing?.styleCode || '';
+    const tax = document.getElementById('pe-tax');
+        if (tax) {
+            const rate = String(existing?.taxRate ?? 0);
+            if (![...tax.options].some(o => o.value === rate)) {
+                tax.insertAdjacentHTML('beforeend', `<option value="${escapeHtml(rate)}">${escapeHtml(rate)}%</option>`);
+            }
+            tax.value = rate;
+        }
+    const set = (id, value) => { const el = document.getElementById(id); if (el) el.value = value ?? ''; };
+    set('pe-barcode', existing?.barcode || '');
+    set('pe-expiry', existing?.expiry ? String(existing.expiry).substring(0, 10) : '');
+    set('pe-batch', existing?.batch || '');
+    set('pe-location', existing?.location || '');
+    set('pe-shelf', existing?.shelf || '');
+    set('pe-min', existing ? (existing.minStock ?? 0) : 0);
+    set('pe-price2', existing?.price2 ?? 0);
+    set('pe-price3', existing?.price3 ?? 0);
+    set('pe-price4', existing?.price4 ?? 0);
+    const link = document.getElementById('pe-supplier-purchase-id');
+    if (link) link.value = '';
+    const supplier = document.getElementById('pe-supplier');
+    if (supplier) {
+        fillSupplierSelect(supplier);
+        supplier.value = existing?.supplierId ? String(existing.supplierId) : '';
+    }
+    updateEditorTypeUi();
+    setEditorUom(existing?.uom || '');
+    calculateEditorMargins();
+}
+async function refreshEditorSupplierPurchases() {
+    const panel = document.getElementById('pe-supplier-purchases');
+    const list = document.getElementById('pe-supplier-purchases-list');
+    const sid = document.getElementById('pe-supplier')?.value;
+    const purchaseIdEl = document.getElementById('pe-supplier-purchase-id');
+    if (!panel || !list) return;
+    if (!sid || catalogEditorId) {
+        panel.hidden = true;
+        list.innerHTML = '';
+        if (purchaseIdEl && !catalogEditorId) purchaseIdEl.value = '';
+        return;
+    }
+    try {
+        const items = await api('/api/suppliers/' + sid + '/purchases');
+        if (!items?.length) { panel.hidden = true; list.innerHTML = ''; return; }
+        panel.hidden = false;
+        const selectedId = Number(purchaseIdEl?.value) || 0;
+        list.innerHTML = items.map(it => `
+            <button type="button" class="p-supplier-purchase-chip ${selectedId === it.id ? 'active' : ''}" data-id="${it.id}">
+                <span>${escapeHtml(it.name)} · ${escapeHtml(it.category || '')} · ${tr('col_qty')}: ${Number(it.quantity)}</span>
+                <span>${money(it.unitPrice)}</span>
+            </button>`).join('');
+        list.querySelectorAll('.p-supplier-purchase-chip').forEach(btn => {
+            btn.onclick = () => {
+                const it = items.find(x => x.id === Number(btn.dataset.id));
+                if (!it) return;
+                document.getElementById('pe-name').value = it.name || '';
+                document.getElementById('pe-cost').value = Number(it.unitPrice) || 0;
+                document.getElementById('pe-qty').value = Number(it.quantity) || 0;
+                const cat = document.getElementById('pe-category');
+                if (cat && it.category) {
+                    if (![...cat.options].some(o => o.value === it.category)) {
+                        cat.insertAdjacentHTML('beforeend', `<option value="${escapeHtml(it.category)}">${escapeHtml(it.category)}</option>`);
+                    }
+                    cat.value = it.category;
+                }
+                const track = document.getElementById('pe-track');
+                if (track) track.checked = true;
+                const purchase = document.getElementById('pe-purchase');
+                if (purchase) purchase.checked = true;
+                if (purchaseIdEl) purchaseIdEl.value = String(it.id || '');
+                updateEditorTypeUi();
+                calculateEditorMargins();
+                list.querySelectorAll('.p-supplier-purchase-chip').forEach(c => c.classList.toggle('active', Number(c.dataset.id) === Number(it.id)));
+            };
+        });
+    } catch {
+        panel.hidden = true;
+        list.innerHTML = '';
+    }
+}
+async function addEditorUom() {
+    if (editorSellBy() === 'weight' || editorType() === 'Service') return;
+    const name = await promptDialog({
+        title: tr('add_uom'),
+        message: tr('add_uom_hint'),
+        confirmText: tr('add'),
+        placeholder: 'carton'
+    });
+    if (!name) return;
+    const cleaned = name.trim().replace(/\s+/g, ' ');
+    if (!cleaned) return;
+    const existing = getPieceUomOptions().map(o => o.value.toLowerCase());
+    if (existing.includes(cleaned.toLowerCase()) || cleaned.toLowerCase() === 'kg') {
+        toast(tr('uom_exists'), 'error');
+        setEditorUom(cleaned);
+        return;
+    }
+    try {
+        await api('/api/uoms', { method: 'POST', body: JSON.stringify({ name: cleaned }) });
+        if (!cachedUoms.some(u => String(u).toLowerCase() === cleaned.toLowerCase())) cachedUoms = [...cachedUoms, cleaned];
+        setEditorUom(cleaned);
+        toast(tr('uom_added'), 'success');
+    } catch (e) {
+        if (!cachedUoms.some(u => String(u).toLowerCase() === cleaned.toLowerCase())) cachedUoms = [...cachedUoms, cleaned];
+        setEditorUom(cleaned);
+        toast(e.message || tr('uom_added'), e.message ? 'error' : 'success');
+    }
+}
+function renderProductProps(p, levels) {
+    const host = document.getElementById('pd-more-props');
+    if (!host || !p) return;
+    const yn = (v) => v ? tr('yes') : tr('no');
+    const rows = (title, pairs) => `<section class="pd-group"><h4>${escapeHtml(title)}</h4><dl class="pd-specs">${pairs.map(([k, v]) => `<dt>${escapeHtml(k)}</dt><dd>${escapeHtml(v == null || v === '' ? '—' : v)}</dd>`).join('')}</dl></section>`;
+    const warehousesText = (levels || []).length
+        ? levels.map(r => `${r.name} ${r.quantity}`).join(' · ')
+        : '—';
+    host.innerHTML = [
+        rows(tr('prices'), [
+            [tr('cost_price'), money(p.cost)],
+            [tr('selling_price'), money(p.price)],
+            [tr('price2'), money(p.price2 || 0)],
+            [tr('price3'), money(p.price3 || 0)],
+            [tr('price4'), money(p.price4 || 0)],
+            [tr('tax_rate'), `${Number(p.taxRate) || 0}%`]
+        ]),
+        rows(tr('stock_control'), [
+            [tr('col_stock'), String(p.stock ?? 0)],
+            [tr('col_warehouse'), warehousesText],
+            [tr('low_level'), String(p.minStock ?? 0)],
+            [tr('track_stock'), yn(p.isStockTracked !== false && p.itemType !== 'Service')],
+            [tr('uom'), p.uom || 'pcs'],
+            [tr('col_location'), p.location || '—'],
+            [tr('shelf'), p.shelf || '—'],
+            [tr('batch_no'), p.batch || '—'],
+            [tr('expiry_date'), p.expiry ? String(p.expiry).substring(0, 10) : '—']
+        ]),
+        rows(tr('item_details'), [
+            [tr('item_type'), p.itemType || 'Product'],
+            [tr('style_code'), p.styleCode || '—'],
+            [tr('col_barcode'), p.barcode || '—'],
+            [tr('sales_item'), yn(p.isSalesItem !== false)],
+            [tr('purchase_item'), yn(!!p.isPurchaseItem)],
+            [tr('inactive'), yn(!!p.isInactive)],
+            [tr('sell_by'), isSellByWeight(p) ? tr('sell_by_weight') : tr('sell_by_piece')]
+        ])
+    ].join('');
+}
+
+async function openProductEditor(id) {
+    catalogEditorId = id || null;
+    catalogStock = {};
+    catalogImages = [];
+    const existing = id ? products.find(x => x.id === id) : null;
+    if (id && !existing) return;
+    document.getElementById('products-list').hidden = true;
+    document.getElementById('product-detail').hidden = true;
+    document.getElementById('product-editor').hidden = false;
+    const title = document.getElementById('pe-title');
+    const sub = document.getElementById('pe-sub');
+    if (title) title.textContent = tr(id ? 'edit_product' : 'add_edit_product');
+    if (sub) sub.textContent = tr(id ? 'edit_product_sub' : 'add_product_sub');
+    fillEditorChoices(existing);
+    document.getElementById('pe-name').value = existing?.name || '';
+    document.getElementById('pe-sku').value = existing?.sku || '';
+    if (existing?.category) document.getElementById('pe-category').value = existing.category;
+    document.getElementById('pe-brand').value = existing?.brand || '';
+    document.getElementById('pe-size').value = existing?.size || '';
+    document.getElementById('pe-color').value = existing?.color || '';
+    document.getElementById('pe-cost').value = existing ? (existing.cost ?? 0) : '';
+    document.getElementById('pe-price').value = existing ? (existing.price ?? 0) : '';
+    document.getElementById('pe-desc').value = existing?.description || '';
+    document.getElementById('pe-qty').value = existing ? (existing.stock ?? 0) : '';
+    const main = (warehouses || []).find(w => w.code === 'MAIN') || (warehouses || [])[0];
+    if (main) document.getElementById('pe-warehouse').value = String(main.id);
+    fillEditorDetails(existing);
+    if (existing?.image) catalogImages = [existing.image];
+    renderEditorPreview();
+    refreshEditorSupplierPurchases();
+    if (!id) return;
+    try {
+        const levels = await api('/api/products/' + id + '/stock');
+        (levels || []).forEach(row => { catalogStock[row.warehouseId] = row.quantity; });
+        const images = await api('/api/products/' + id + '/images');
+        const merged = [];
+        if (existing.image) merged.push(existing.image);
+        (images || []).forEach(path => {
+            if (!merged.some(item => mediaUrl(item) === mediaUrl(path))) merged.push(path);
+        });
+        catalogImages = merged;
+        renderEditorPreview();
+        const withStock = (levels || []).find(row => row.quantity > 0) || (levels || [])[0];
+        if (withStock) document.getElementById('pe-warehouse').value = String(withStock.warehouseId);
+        syncEditorQty();
+    } catch (e) { toast(e.message, 'error'); }
+}
+async function saveProductEditor() {
+    const existing = catalogEditorId ? products.find(x => x.id === catalogEditorId) : null;
+    const name = document.getElementById('pe-name').value.trim();
+    let sku = document.getElementById('pe-sku').value.trim();
+    const category = document.getElementById('pe-category').value;
+    const brand = document.getElementById('pe-brand').value.trim();
+    const size = document.getElementById('pe-size').value;
+    const color = document.getElementById('pe-color').value;
+    const qtyRaw = document.getElementById('pe-qty').value;
+    const warehouseId = Number(document.getElementById('pe-warehouse').value);
+    const costRaw = document.getElementById('pe-cost').value;
+    const priceRaw = document.getElementById('pe-price').value;
+    const service = editorType() === 'Service';
+    const tracked = !service && !!document.getElementById('pe-track')?.checked;
+    if (!name || !category || costRaw === '' || priceRaw === '' || (tracked && (qtyRaw === '' || !warehouseId))) {
+        toast(tr('required_fields'), 'error');
+        return;
+    }
+    if (!sku) { fillEditorSku(); sku = document.getElementById('pe-sku').value.trim(); }
+    const purchaseLink = Number(document.getElementById('pe-supplier-purchase-id')?.value);
+    const supplierVal = document.getElementById('pe-supplier')?.value;
+    const payload = {
+        name, sku, category, brand, size, color,
+        description: document.getElementById('pe-desc').value.trim(),
+        price: Number(priceRaw) || 0,
+        cost: Number(costRaw) || 0,
+        stock: tracked ? (existing ? (existing.stock ?? 0) : 0) : 0,
+        minStock: tracked ? Number(document.getElementById('pe-min')?.value) || 0 : 0,
+        barcode: document.getElementById('pe-barcode')?.value.trim() || '',
+        image: catalogImages[0] || '',
+        location: document.getElementById('pe-location')?.value.trim() || '',
+        shelf: document.getElementById('pe-shelf')?.value.trim() || '',
+        uom: document.getElementById('pe-uom')?.value || '',
+        batch: document.getElementById('pe-batch')?.value.trim() || '',
+        expiry: document.getElementById('pe-expiry')?.value || '',
+        itemType: editorType(),
+        isSalesItem: !!document.getElementById('pe-sales')?.checked,
+        isPurchaseItem: !!document.getElementById('pe-purchase')?.checked,
+        isInactive: !!document.getElementById('pe-inactive')?.checked,
+        taxRate: Number(document.getElementById('pe-tax')?.value) || 0,
+        isStockTracked: tracked,
+        sellByWeight: !service && editorSellBy() === 'weight',
+        price2: Number(document.getElementById('pe-price2')?.value) || 0,
+        price3: Number(document.getElementById('pe-price3')?.value) || 0,
+        price4: Number(document.getElementById('pe-price4')?.value) || 0,
+        supplierId: supplierVal ? Number(supplierVal) : null,
+        supplierPurchaseItemId: purchaseLink > 0 ? purchaseLink : null,
+        styleCode: document.getElementById('pe-style')?.value.trim() || '',
+        warehouseId: tracked ? warehouseId : null,
+        warehouseQty: tracked ? Math.max(0, Number(qtyRaw) || 0) : null,
+        gallery: catalogImages.slice()
+    };
+    const btn = document.getElementById('btn-editor-save');
+    if (btn) btn.disabled = true;
+    try {
+        if (catalogEditorId) await api('/api/products/' + catalogEditorId + '/update', { method: 'POST', body: JSON.stringify(payload) });
+        else await api('/api/add-item', { method: 'POST', body: JSON.stringify(payload) });
+        toast(tr('saved_ok'), 'success');
+        showProductsList();
+        await loadData();
+    } catch (e) { toast(e.message, 'error'); }
+    finally { if (btn) btn.disabled = false; }
+}
+async function bulkDeleteProducts() {
+    const ids = [...productSelection];
+    if (!ids.length) return;
+    if (!await confirmDialog(tr('confirm_delete'))) return;
+    try {
+        await api('/api/products/bulk-delete', { method: 'POST', body: JSON.stringify({ ids }) });
+        productSelection.clear();
+        toast(tr('deleted_ok'), 'success');
+        await loadData();
+    } catch (e) { toast(e.message, 'error'); }
+}
+
+function setupFashionUi() {
+    if (typeof setupOrdersUi === 'function') setupOrdersUi();
+    const search = document.getElementById('global-search');
+    const results = document.getElementById('global-search-results');
+    if (search && results) {
+        search.placeholder = tr('search_global');
+        search.addEventListener('input', () => {
+            const q = search.value.trim().toLowerCase();
+            if (q.length < 2) { results.hidden = true; results.innerHTML = ''; return; }
+            const hits = [];
+            products.filter(p => `${p.name} ${p.sku}`.toLowerCase().includes(q)).slice(0, 5)
+                .forEach(p => hits.push({ label: p.name, hint: tr('nav_products'), target: 'products' }));
+            sales.filter(o => `${o.orderId} ${o.customer}`.toLowerCase().includes(q)).slice(0, 4)
+                .forEach(o => hits.push({ label: '#' + o.orderId + ' ' + (o.customer || ''), hint: tr('nav_sales'), target: 'sales' }));
+            suppliers.filter(s => (s.name || '').toLowerCase().includes(q)).slice(0, 4)
+                .forEach(s => hits.push({ label: s.name, hint: tr('nav_suppliers'), target: 'suppliers' }));
+            if (typeof shopOrders !== 'undefined') {
+                shopOrders.filter(o => `${o.id} ${o.customer}`.toLowerCase().includes(q)).slice(0, 4)
+                    .forEach(o => hits.push({ label: '#' + o.id + ' ' + (o.customer || ''), hint: tr('nav_orders'), target: 'orders' }));
+            }
+            results.hidden = !hits.length;
+            results.innerHTML = hits.map(h => `<button type="button" data-go="${h.target}">${escapeHtml(h.label)}<small>${escapeHtml(h.hint)}</small></button>`).join('');
+            results.querySelectorAll('button').forEach(btn => btn.onclick = () => {
+                results.hidden = true;
+                search.value = '';
+                navigateTo(btn.dataset.go, true);
+            });
+        });
+    }
+    document.getElementById('prod-search')?.addEventListener('input', () => { productPage = 1; renderProducts(); });
+    ['prod-filter-cat','prod-filter-brand','prod-filter-status','prod-filter-price','prod-filter-supplier'].forEach(id => {
+        document.getElementById(id)?.addEventListener('change', () => { productPage = 1; renderProducts(); });
+    });
+    document.getElementById('prod-page-size')?.addEventListener('change', () => { productPage = 1; renderProducts(); });
+    document.getElementById('prod-check-all')?.addEventListener('change', (e) => {
+        document.querySelectorAll('#products-body [data-pick]').forEach(box => {
+            box.checked = e.target.checked;
+            const id = Number(box.dataset.pick);
+            if (e.target.checked) productSelection.add(id); else productSelection.delete(id);
+        });
+        updateProductBulk();
+    });
+    document.getElementById('btn-bulk-delete')?.addEventListener('click', bulkDeleteProducts);
+    document.getElementById('btn-prod-reset')?.addEventListener('click', () => {
+        const searchBox = document.getElementById('prod-search');
+        if (searchBox) searchBox.value = '';
+        ['prod-filter-cat','prod-filter-brand','prod-filter-supplier'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) { delete el.dataset.built; el.value = 'all'; }
+        });
+        const status = document.getElementById('prod-filter-status');
+        if (status) status.value = 'all';
+        const price = document.getElementById('prod-filter-price');
+        if (price) price.value = 'all';
+        productPage = 1;
+        renderProducts();
+    });
+    document.getElementById('btn-add-product-page')?.addEventListener('click', () => openProductEditor(null));
+    document.getElementById('btn-product-back')?.addEventListener('click', showProductsList);
+    document.getElementById('btn-product-edit')?.addEventListener('click', () => { if (pdCurrentId) openProductEditor(pdCurrentId); });
+    document.getElementById('btn-editor-back')?.addEventListener('click', showProductsList);
+    document.getElementById('btn-editor-cancel')?.addEventListener('click', showProductsList);
+    document.getElementById('btn-editor-save')?.addEventListener('click', saveProductEditor);
+    document.getElementById('pe-form')?.addEventListener('submit', (e) => { e.preventDefault(); saveProductEditor(); });
+    document.getElementById('pe-warehouse')?.addEventListener('change', syncEditorQty);
+    document.getElementById('btn-pe-auto-sku')?.addEventListener('click', fillEditorSku);
+    document.getElementById('btn-pe-scan')?.addEventListener('click', () => {
+        toast(tr('scan'), 'success');
+        document.getElementById('pe-barcode')?.focus();
+    });
+    document.getElementById('btn-pe-add-uom')?.addEventListener('click', addEditorUom);
+    document.querySelectorAll('input[name="pe-type"], input[name="pe-sell-by"]').forEach(el => el.addEventListener('change', updateEditorTypeUi));
+    document.getElementById('pe-track')?.addEventListener('change', updateEditorTypeUi);
+    document.getElementById('pe-supplier')?.addEventListener('change', refreshEditorSupplierPurchases);
+    ['pe-cost', 'pe-price2', 'pe-price3', 'pe-price4'].forEach(id => {
+        document.getElementById(id)?.addEventListener('input', calculateEditorMargins);
+    });
+    const drop = document.getElementById('pe-drop');
+    const file = document.getElementById('pe-file');
+    drop?.addEventListener('click', () => file?.click());
+    drop?.addEventListener('dragover', (e) => { e.preventDefault(); drop.classList.add('drag'); });
+    drop?.addEventListener('dragleave', () => drop.classList.remove('drag'));
+    drop?.addEventListener('drop', (e) => {
+        e.preventDefault();
+        drop.classList.remove('drag');
+        addEditorFiles(e.dataTransfer?.files);
+    });
+    file?.addEventListener('change', () => { addEditorFiles(file.files); file.value = ''; });
+    document.getElementById('po-search')?.addEventListener('input', () => { poPage = 1; renderPurchaseOrders(); });
+    document.getElementById('po-filter-supplier')?.addEventListener('change', () => { poPage = 1; renderPurchaseOrders(); });
+    document.getElementById('po-filter-status')?.addEventListener('change', () => { poPage = 1; renderPurchaseOrders(); });
+    document.getElementById('po-page-size')?.addEventListener('change', () => { poPage = 1; renderPurchaseOrders(); });
+    document.getElementById('btn-po-export')?.addEventListener('click', exportPurchaseOrders);
+    document.getElementById('btn-new-po')?.addEventListener('click', openPoModal);
+    document.getElementById('btn-po-view-receive')?.addEventListener('click', () => { if (viewingPoId) receivePo(viewingPoId); });
+    document.getElementById('btn-po-view-cancel')?.addEventListener('click', () => { if (viewingPoId) cancelPo(viewingPoId); });
+    document.getElementById('an-chart-month')?.addEventListener('change', renderAnalytics);
+    document.getElementById('an-rev-month')?.addEventListener('change', renderAnalytics);
+    document.getElementById('btn-an-all-sellers')?.addEventListener('click', () => { showAllSellers = !showAllSellers; renderAnalytics(); });
+    document.getElementById('po-form')?.addEventListener('submit', submitPo);
+    document.getElementById('btn-po-add-line')?.addEventListener('click', () => addPoLine());
+    document.getElementById('btn-stock-transfer')?.addEventListener('click', openTransferModal);
+    document.getElementById('transfer-form')?.addEventListener('submit', submitTransfer);
+}
+
+function productOptions() {
+    return products.filter(p => !p.isInactive).map(p => `<option value="${p.id}">${escapeHtml(p.name)} ${p.sku ? '(' + p.sku + ')' : ''}</option>`).join('');
+}
+function addPoLine() {
+    const wrap = document.getElementById('po-lines');
+    if (!wrap) return;
+    const row = document.createElement('div');
+    row.className = 'po-line';
+    row.innerHTML = `<select class="form-control po-part">${productOptions()}</select>
+        <input class="form-control po-qty" type="number" min="1" value="1">
+        <input class="form-control po-cost" type="number" min="0" step="0.01" value="0">
+        <button type="button" class="btn btn-secondary btn-sm po-remove">×</button>`;
+    row.querySelector('.po-remove').onclick = () => row.remove();
+    wrap.appendChild(row);
+}
+function openPoModal() {
+    const sel = document.getElementById('po-supplier');
+    if (sel) sel.innerHTML = suppliers.map(s => `<option value="${s.id}">${escapeHtml(s.name)}</option>`).join('');
+    document.getElementById('po-notes').value = '';
+    document.getElementById('po-delivery').value = '';
+    document.getElementById('po-lines').innerHTML = '';
+    addPoLine();
+    openModal('po-modal');
+}
+async function submitPo(e) {
+    e.preventDefault();
+    const items = [...document.querySelectorAll('#po-lines .po-line')].map(row => ({
+        partId: Number(row.querySelector('.po-part').value),
+        quantity: Number(row.querySelector('.po-qty').value),
+        cost: Number(row.querySelector('.po-cost').value) || 0
+    })).filter(x => x.partId > 0 && x.quantity > 0);
+    try {
+        await api('/api/purchase-orders', {
+            method: 'POST',
+            body: JSON.stringify({
+                supplierId: Number(document.getElementById('po-supplier').value),
+                deliveryDate: document.getElementById('po-delivery').value,
+                notes: document.getElementById('po-notes').value.trim(),
+                items
+            })
+        });
+        closeModal('po-modal');
+        toast(tr('saved_ok'), 'success');
+        await loadData();
+        navigateTo('purchase-orders', true);
+    } catch (err) { toast(err.message, 'error'); }
+}
+function openTransferModal() {
+    const options = (warehouses || []).map(w => `<option value="${w.id}">${escapeHtml(w.name)}</option>`).join('');
+    document.getElementById('tr-from').innerHTML = options;
+    document.getElementById('tr-to').innerHTML = options;
+    if (warehouses.length > 1) document.getElementById('tr-to').selectedIndex = 1;
+    document.getElementById('tr-product').innerHTML = productOptions();
+    document.getElementById('tr-qty').value = 1;
+    document.getElementById('tr-note').value = '';
+    openModal('transfer-modal');
+}
+async function submitTransfer(e) {
+    e.preventDefault();
+    try {
+        await api('/api/stock-transfers', {
+            method: 'POST',
+            body: JSON.stringify({
+                fromWarehouseId: Number(document.getElementById('tr-from').value),
+                toWarehouseId: Number(document.getElementById('tr-to').value),
+                partId: Number(document.getElementById('tr-product').value),
+                quantity: Number(document.getElementById('tr-qty').value),
+                notes: document.getElementById('tr-note').value.trim()
+            })
+        });
+        closeModal('transfer-modal');
+        toast(tr('saved_ok'), 'success');
+        await loadData();
+    } catch (err) { toast(err.message, 'error'); }
+}

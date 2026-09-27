@@ -509,8 +509,13 @@ namespace InventorySystem
                             ordersToday = dash.GetOrdersCount("Today"),
                             pendingOrders = dash.GetPendingOrdersCount(),
                             ytdSales = dash.GetTotalSalesYTD(),
+                            salesMonth = dash.GetOrderRevenueForMonthOffset(0),
+                            salesPrevMonth = dash.GetOrderRevenueForMonthOffset(-1),
+                            ordersMonth = dash.GetOrderCountForMonthOffset(0),
+                            ordersPrevMonth = dash.GetOrderCountForMonthOffset(-1),
                             topProducts = DataTableToList(dash.GetTopSellingItems(5)),
-                            topCategories = DataTableToList(dash.GetSalesByCategory())
+                            topCategories = DataTableToList(dash.GetSalesByCategory()),
+                            recentActivity = DataTableToList(dash.GetRecentActivity(8))
                         });
                     }
                     catch (Exception ex)
@@ -666,6 +671,7 @@ namespace InventorySystem
                                      p.location, p.shelf, p.unit_of_measure, p.batch_number, p.expiry_date,
                                      p.item_type, p.is_sales_item, p.is_purchase_item, p.is_inactive, p.tax_rate,
                                      p.is_stock_tracked, COALESCE(p.sell_by_weight, 0) AS sell_by_weight, p.price2, p.price3, p.price4, p.supplier_id,
+                                     COALESCE(p.brand,'') AS brand, COALESCE(p.size,'') AS size, COALESCE(p.color,'') AS color, COALESCE(p.style_code,'') AS style_code,
                                      COALESCE(c.category_name, 'General') AS category,
                                      c.category_image, s.supplier_name
                               FROM parts p
@@ -744,12 +750,16 @@ namespace InventorySystem
                                 isInactive = inactive,
                                 taxRate = row["tax_rate"] == DBNull.Value ? 0m : Convert.ToDecimal(row["tax_rate"]),
                                 isStockTracked = row["is_stock_tracked"] == DBNull.Value || Convert.ToInt32(row["is_stock_tracked"]) == 1,
-                                sellByWeight = false,
+                                sellByWeight = row["sell_by_weight"] != DBNull.Value && Convert.ToInt32(row["sell_by_weight"]) == 1,
                                 price2 = row["price2"] == DBNull.Value ? 0m : Convert.ToDecimal(row["price2"]),
                                 price3 = row["price3"] == DBNull.Value ? 0m : Convert.ToDecimal(row["price3"]),
                                 price4 = row["price4"] == DBNull.Value ? 0m : Convert.ToDecimal(row["price4"]),
                                 supplierId = row["supplier_id"] == DBNull.Value ? (int?)null : Convert.ToInt32(row["supplier_id"]),
-                                supplierName = row["supplier_name"]?.ToString() ?? ""
+                                supplierName = row["supplier_name"]?.ToString() ?? "",
+                                brand = row["brand"]?.ToString() ?? "",
+                                size = row["size"]?.ToString() ?? "",
+                                color = row["color"]?.ToString() ?? "",
+                                styleCode = row["style_code"]?.ToString() ?? ""
                             });
                         }
 
@@ -778,6 +788,8 @@ namespace InventorySystem
                         return Microsoft.AspNetCore.Http.Results.Problem("DB error: " + ex.Message);
                     }
                 });
+
+                InventorySystem.Services.FashionApi.Map(app);
 
                 // - Login (POST) -
                 app.MapPost("/api/login", async (Microsoft.AspNetCore.Http.HttpRequest request) =>
@@ -870,6 +882,7 @@ namespace InventorySystem
                             try { new SupplierPurchaseService().LinkToPart(body.SupplierPurchaseItemId.Value, newId); }
                             catch { }
                         }
+                        ApplyCatalogExtras(body, newId);
                         _ = InventoryBroadcaster.Broadcast("InventoryChanged", $"Item '{body.Name}' added");
                         return Microsoft.AspNetCore.Http.Results.Ok(new { success = true, id = newId, barcode = part.Barcode });
                     }
@@ -1731,6 +1744,7 @@ namespace InventorySystem
                             try { new SupplierPurchaseService().LinkToPart(body.SupplierPurchaseItemId.Value, id); }
                             catch { }
                         }
+                        ApplyCatalogExtras(body, id);
                         _ = InventoryBroadcaster.Broadcast("InventoryChanged", $"Item '{body.Name}' updated");
                         return Microsoft.AspNetCore.Http.Results.Ok(new { success = true, barcode = part.Barcode });
                     }
@@ -3173,6 +3187,26 @@ namespace InventorySystem
             public decimal Price4 { get; set; }
             public int? SupplierId { get; set; }
             public int? SupplierPurchaseItemId { get; set; }
+            public string Brand { get; set; }
+            public string Size { get; set; }
+            public string Color { get; set; }
+            public string StyleCode { get; set; }
+            public int? WarehouseId { get; set; }
+            public int? WarehouseQty { get; set; }
+            public System.Collections.Generic.List<string> Gallery { get; set; }
+        }
+
+        private static void ApplyCatalogExtras(ProductPayload body, int id)
+        {
+            if (body == null || id <= 0) return;
+            if (body.WarehouseQty.HasValue)
+            {
+                int warehouseId = body.WarehouseId.GetValueOrDefault();
+                if (warehouseId <= 0) warehouseId = InventorySystem.Services.FashionStock.EnsureMainWarehouse();
+                InventorySystem.Services.FashionStock.SetWarehouseQty(id, warehouseId, body.WarehouseQty.Value);
+            }
+            if (body.Gallery != null)
+                InventorySystem.Services.FashionStock.ReplaceGallery(id, body.Gallery);
         }
 
         private static InventorySystem.Data.PartData MapProductPayload(ProductPayload body, int id)
@@ -3210,7 +3244,11 @@ namespace InventorySystem
                 Price4 = body.Price4,
                 PartImage = body.Image,
                 SupplierId = body.SupplierId,
-                Status = inactive ? "Inactive" : "Active"
+                Status = inactive ? "Inactive" : "Active",
+                Brand = body.Brand ?? "",
+                Size = body.Size ?? "",
+                Color = body.Color ?? "",
+                StyleCode = body.StyleCode ?? ""
             };
         }
 

@@ -9,9 +9,10 @@
     <style>
         html, body,
         #login-screen, .login-wrapper,
-        #app-container, .main-content, .sidebar {
-            background: #ffffff !important;
+        #app-container, .main-content {
+            background: #E7EDE4 !important;
         }
+        .sidebar { background: #ffffff !important; }
     </style>
     <link rel="icon" href="/Assets/icon.ico" type="image/x-icon">
     <link rel="apple-touch-icon" href="/Assets/logo-mark.png">
@@ -19,7 +20,7 @@
     <link rel="stylesheet" href="css/fonts/fonts.css">
     
     
-    <link rel="stylesheet" href="css/style.css?v=20260830outline">
+    <link rel="stylesheet" href="css/style.css?v=20260927ordui">
     <style id="inv-toolbar-fix">
         /* Inventory toolbar: search + scrollable actions with thin under slide bar */
         #inventory .page-search-row {
@@ -176,6 +177,11 @@
 <body>
     <header id="titlebar" class="titlebar">
         <div class="titlebar-drag" id="titlebar-drag"></div>
+        <div class="titlebar-search" id="global-search-wrap" hidden>
+            <span class="material-symbols-rounded" aria-hidden="true">search</span>
+            <input type="search" id="global-search" placeholder="Search products, orders, suppliers..." autocomplete="off">
+            <div class="global-search-results" id="global-search-results" hidden></div>
+        </div>
         <div class="titlebar-tools" id="titlebar-tools" hidden>
             <button type="button" class="tb-btn" id="btn-notif" title="Notifications">
                 <span class="material-symbols-rounded tb-icon" aria-hidden="true">notifications</span>
@@ -206,25 +212,35 @@
     </header>
 
     <div id="login-screen" class="login-wrapper">
-        <div class="login-card">
-            <div class="logo-container brand-hero">
+        <div class="login-split">
+            <aside class="login-hero">
                 <img class="brand-logo-login" src="/Assets/logo-mark.png" alt="7-10">
+                <h1 data-i18n="login_hero">Smart Inventory, Seamless Fashion.</h1>
+                <p data-i18n="login_hero_sub">Track products, manage stock, monitor suppliers and gain insights — all in one dashboard.</p>
+            </aside>
+            <div class="login-card">
+                <h2 data-i18n="login_title">Welcome Back</h2>
+                <p class="subtitle" data-i18n="login_subtitle">Sign in to continue to your dashboard.</p>
+                <div id="login-error" class="error-box"></div>
+                <form id="login-form" autocomplete="off">
+                    <div class="form-group">
+                        <label data-i18n="username">Username</label>
+                        <input type="text" id="login-user" class="form-control" autocomplete="username" data-i18n-ph="username" required>
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="password">Password</label>
+                        <div class="pass-wrap">
+                            <input type="password" id="login-pass" class="form-control" autocomplete="current-password" required>
+                            <button type="button" class="pass-toggle" id="btn-toggle-pass" aria-label="Show password"><span class="material-symbols-rounded">visibility</span></button>
+                        </div>
+                    </div>
+                    <div class="login-row">
+                        <label><input type="checkbox" id="login-remember"> <span data-i18n="remember_me">Remember me</span></label>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center;" data-i18n="login_btn">Sign In</button>
+                </form>
+                <p class="build-stamp" id="ui-build-stamp">UI build: 20260927-sage</p>
             </div>
-            <h2 data-i18n="login_title">Sign In</h2>
-            <p class="subtitle" data-i18n="login_subtitle">Inventory management portal</p>
-            <div id="login-error" class="error-box"></div>
-            <form id="login-form" autocomplete="off">
-                <div class="form-group">
-                    <label data-i18n="username">Username</label>
-                    <input type="text" id="login-user" class="form-control" autocomplete="off" required>
-                </div>
-                <div class="form-group">
-                    <label data-i18n="password">Password</label>
-                    <input type="password" id="login-pass" class="form-control" autocomplete="new-password" required>
-                </div>
-                <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center;" data-i18n="login_btn">Sign In</button>
-            </form>
-            <p class="build-stamp" id="ui-build-stamp" title="UI version — if this is old, close the app and run dist\app\SevenTenInventorySystem.exe">UI build: 20260830-outline</p>
         </div>
     </div>
 
@@ -237,30 +253,45 @@
                 <a href="#" class="nav-item active" data-target="dashboard" data-roles="admin,staff,accountant">
                     <span class="material-symbols-rounded nav-icon" aria-hidden="true">dashboard</span><span class="label" data-i18n="nav_dashboard">Dashboard</span>
                 </a>
+                <div class="nav-label" data-i18n="nav_group_catalog">Catalog</div>
+                <a href="#" class="nav-item" data-target="products" data-roles="admin,staff,accountant">
+                    <span class="material-symbols-rounded nav-icon" aria-hidden="true">checkroom</span><span class="label" data-i18n="nav_products">Products</span>
+                </a>
                 <a href="#" class="nav-item" data-target="inventory" data-roles="admin,staff,accountant">
                     <span class="material-symbols-rounded nav-icon" aria-hidden="true">inventory_2</span><span class="label" data-i18n="nav_inventory">Inventory</span>
                     <span class="nav-badge" id="badge-inventory" style="display:none;"></span>
                 </a>
+                <a href="#" class="nav-item" data-target="suppliers" data-roles="admin,staff,accountant">
+                    <span class="material-symbols-rounded nav-icon" aria-hidden="true">local_shipping</span><span class="label" data-i18n="nav_suppliers">Suppliers</span>
+                </a>
+                <a href="#" class="nav-item" data-target="purchase-orders" data-roles="admin,staff,accountant">
+                    <span class="material-symbols-rounded nav-icon" aria-hidden="true">receipt_long</span><span class="label" data-i18n="nav_purchase_orders">Purchase Orders</span>
+                </a>
+                <div class="nav-label" data-i18n="nav_group_shop">Shop</div>
                 <a href="#" class="nav-item" data-target="pos" data-roles="admin,staff">
                     <span class="material-symbols-rounded nav-icon" aria-hidden="true">point_of_sale</span><span class="label" data-i18n="nav_pos">POS</span>
                 </a>
+                <a href="#" class="nav-item" data-target="orders" data-roles="admin,staff,accountant">
+                    <span class="material-symbols-rounded nav-icon" aria-hidden="true">local_mall</span><span class="label" data-i18n="nav_orders">Orders</span>
+                </a>
                 <a href="#" class="nav-item" data-target="sales" data-roles="admin,staff,accountant">
                     <span class="material-symbols-rounded nav-icon" aria-hidden="true">shopping_cart</span><span class="label" data-i18n="nav_sales">Sales</span>
+                </a>
+                <a href="#" class="nav-item" data-target="customers" data-roles="admin,staff,accountant">
+                    <span class="material-symbols-rounded nav-icon" aria-hidden="true">group</span><span class="label" data-i18n="nav_customers">Customers</span>
+                </a>
+                <a href="#" class="nav-item" data-target="quotations" data-roles="admin,staff,accountant">
+                    <span class="material-symbols-rounded nav-icon" aria-hidden="true">request_quote</span><span class="label" data-i18n="nav_quotations">Quotations</span>
+                </a>
+                <div class="nav-label" data-i18n="nav_group_insights">Insights</div>
+                <a href="#" class="nav-item" data-target="analytics" data-roles="admin,staff,accountant">
+                    <span class="material-symbols-rounded nav-icon" aria-hidden="true">monitoring</span><span class="label" data-i18n="nav_analytics">Analytics</span>
                 </a>
                 <a href="#" class="nav-item" data-target="reports" data-roles="admin,staff,accountant">
                     <span class="material-symbols-rounded nav-icon" aria-hidden="true">bar_chart</span><span class="label" data-i18n="nav_reports">Reports</span>
                 </a>
                 <a href="#" class="nav-item" data-target="history" data-roles="admin,staff,accountant">
                     <span class="material-symbols-rounded nav-icon" aria-hidden="true">history</span><span class="label" data-i18n="nav_history">History</span>
-                </a>
-                <a href="#" class="nav-item" data-target="quotations" data-roles="admin,staff,accountant">
-                    <span class="material-symbols-rounded nav-icon" aria-hidden="true">request_quote</span><span class="label" data-i18n="nav_quotations">Quotations</span>
-                </a>
-                <a href="#" class="nav-item" data-target="customers" data-roles="admin,staff,accountant">
-                    <span class="material-symbols-rounded nav-icon" aria-hidden="true">group</span><span class="label" data-i18n="nav_customers">Customers</span>
-                </a>
-                <a href="#" class="nav-item" data-target="suppliers" data-roles="admin,staff,accountant">
-                    <span class="material-symbols-rounded nav-icon" aria-hidden="true">local_shipping</span><span class="label" data-i18n="nav_suppliers">Suppliers</span>
                 </a>
                 <a href="#" class="nav-item" data-target="expenses" data-roles="admin,staff,accountant">
                     <span class="material-symbols-rounded nav-icon" aria-hidden="true">payments</span><span class="label" data-i18n="nav_expenses">Expenses</span>
@@ -309,6 +340,10 @@
         <main class="main-content">
             <section id="dashboard" class="view-section active">
                 <div class="page-header">
+                    <div>
+                        <h1 id="dash-welcome">Welcome back</h1>
+                        <p data-i18n="dash_hello">Here's what's happening with your inventory today.</p>
+                    </div>
                     <div class="page-actions">
                         <button class="btn btn-refresh" id="btn-refresh-dashboard"><span class="material-symbols-rounded">refresh</span><span data-i18n="refresh">Refresh</span></button>
                     </div>
@@ -327,6 +362,32 @@
                         <div class="dash-connect-qr-wrap is-loading">
                             <img id="dash-connect-qr" class="dash-connect-qr" alt="Connect QR code" width="120" height="120" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Crect width='120' height='120' fill='%23f3f4f6'/%3E%3Crect x='18' y='18' width='28' height='28' fill='%239ca3af'/%3E%3Crect x='74' y='18' width='28' height='28' fill='%239ca3af'/%3E%3Crect x='18' y='74' width='28' height='28' fill='%239ca3af'/%3E%3Crect x='52' y='52' width='16' height='16' fill='%239ca3af'/%3E%3C/svg%3E">
                         </div>
+                    </div>
+                </div>
+                <div class="dash-mid-grid">
+                    <div class="card">
+                        <h3 data-i18n="annual_sales">Annual Sales Overview</h3>
+                        <div id="dash-annual-chart" class="bar-chart"></div>
+                    </div>
+                    <div class="card">
+                        <h3 data-i18n="revenue_by_category">Revenue By Category</h3>
+                        <div class="donut-row">
+                            <div id="dash-donut" class="donut"></div>
+                            <ul id="dash-donut-legend" class="donut-legend"></ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="ff-split">
+                    <div class="card">
+                        <h3 data-i18n="recent_pos">Recent Purchase Orders</h3>
+                        <div class="table-wrapper"><table><thead><tr>
+                            <th data-i18n="col_po">PO Number</th><th data-i18n="col_supplier">Supplier</th>
+                            <th data-i18n="col_date">Date</th><th data-i18n="col_status">Status</th><th data-i18n="col_total">Total</th>
+                        </tr></thead><tbody id="dash-po-body"></tbody></table></div>
+                    </div>
+                    <div class="card">
+                        <h3 data-i18n="recent_activity">Recent Activities</h3>
+                        <ul id="dash-activity" class="activity-list"></ul>
                     </div>
                 </div>
                 <div class="dash-tables-grid">
@@ -366,7 +427,458 @@
                 </div>
             </section>
 
+            <section id="products" class="view-section">
+                <div id="products-list">
+                    <div class="page-header">
+                        <div>
+                            <h1 data-i18n="nav_products">Products</h1>
+                            <p data-i18n="products_sub">Manage products, stock, pricing and availability.</p>
+                        </div>
+                        <div class="page-actions">
+                            <button class="btn btn-primary" id="btn-add-product-page" data-roles="admin"><span class="material-symbols-rounded">add</span><span data-i18n="add_product">Add Product</span></button>
+                        </div>
+                    </div>
+                    <div class="ff-filters">
+                        <input type="search" id="prod-search" class="form-control" data-i18n-ph="prod_search" placeholder="Search products...">
+                        <select id="prod-filter-cat" class="form-control"></select>
+                        <select id="prod-filter-brand" class="form-control"></select>
+                        <select id="prod-filter-status" class="form-control">
+                            <option value="all" data-i18n="filter_status">Status</option>
+                            <option value="in" data-i18n="in_stock">In Stock</option>
+                            <option value="low" data-i18n="low_stock">Low Stock</option>
+                            <option value="out" data-i18n="out_of_stock">Out of Stock</option>
+                        </select>
+                        <select id="prod-filter-price" class="form-control">
+                            <option value="all" data-i18n="filter_price">Price</option>
+                            <option value="under25" data-i18n="price_under">Under 25</option>
+                            <option value="25-50" data-i18n="price_25">25 – 50</option>
+                            <option value="50-100" data-i18n="price_50">50 – 100</option>
+                            <option value="100plus" data-i18n="price_100">100+</option>
+                        </select>
+                        <select id="prod-filter-supplier" class="form-control"></select>
+                        <button type="button" class="btn btn-secondary" id="btn-prod-reset" data-i18n="reset_filter">Reset filter</button>
+                    </div>
+                    <div class="card catalog-card">
+                        <div class="table-wrapper">
+                            <table class="catalog-table">
+                                <thead><tr>
+                                    <th class="col-check"><input type="checkbox" id="prod-check-all" aria-label="Select all"></th>
+                                    <th data-i18n="col_product">Product Name</th>
+                                    <th data-i18n="col_sku">SKU</th>
+                                    <th data-i18n="col_category">Category</th>
+                                    <th data-i18n="col_brand">Brand</th>
+                                    <th data-i18n="col_stock">Stock</th>
+                                    <th data-i18n="col_price">Price</th>
+                                    <th data-i18n="col_status">Status</th>
+                                    <th data-i18n="col_action">Action</th>
+                                </tr></thead>
+                                <tbody id="products-body"></tbody>
+                            </table>
+                        </div>
+                        <div class="catalog-footer">
+                            <div class="catalog-footer-left">
+                                <div id="prod-bulk" class="bulk-bar" hidden>
+                                    <span id="prod-bulk-count"></span>
+                                    <button type="button" class="btn btn-secondary btn-sm" id="btn-bulk-delete" data-i18n="bulk_delete">Delete selected</button>
+                                </div>
+                                <span id="products-pager-label"></span>
+                            </div>
+                            <div class="catalog-footer-right">
+                                <div class="pager-btns" id="products-pager"></div>
+                                <select id="prod-page-size" class="form-control page-size">
+                                    <option value="10">10 / page</option>
+                                    <option value="25">25 / page</option>
+                                    <option value="50">50 / page</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="product-detail" hidden>
+                    <div class="page-header">
+                        <button type="button" class="text-back" id="btn-product-back"><span class="material-symbols-rounded">arrow_back</span><span data-i18n="back_products">Back to Products</span></button>
+                        <button type="button" class="btn btn-primary" id="btn-product-edit" data-roles="admin"><span class="material-symbols-rounded">edit</span><span data-i18n="edit_product">Edit Product</span></button>
+                    </div>
+                    <div class="card">
+                        <div class="pd-layout">
+                            <div class="pd-gallery">
+                                <div id="pd-thumbs" class="pd-thumbs"></div>
+                                <div class="pd-main" id="pd-main"></div>
+                            </div>
+                            <div class="pd-info">
+                                <div class="pd-title">
+                                    <h2 id="pd-name"></h2>
+                                    <span id="pd-status"></span>
+                                </div>
+                                <dl id="pd-specs" class="pd-specs"></dl>
+                                <div id="pd-size-block">
+                                    <div class="pd-label" data-i18n="sizes_label">Sizes</div>
+                                    <div class="chip-row" id="pd-sizes"></div>
+                                </div>
+                                <div id="pd-color-block">
+                                    <div class="pd-label" data-i18n="colors_label">Colors</div>
+                                    <div class="swatch-row" id="pd-colors"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="pd-more-props" class="pd-more-props"></div>
+                        <h3 class="pd-history-title" data-i18n="inv_history">Inventory History</h3>
+                        <div class="table-wrapper">
+                            <table class="catalog-table">
+                                <thead><tr>
+                                    <th data-i18n="hist_datetime">Date &amp; Time</th>
+                                    <th data-i18n="hist_reference">Reference</th>
+                                    <th data-i18n="col_type">Type</th>
+                                    <th data-i18n="col_warehouse">Warehouse</th>
+                                    <th data-i18n="hist_details">Details</th>
+                                    <th data-i18n="col_qty">Quantity</th>
+                                    <th data-i18n="hist_balance">Balance</th>
+                                    <th data-i18n="hist_by">Performed by</th>
+                                </tr></thead>
+                                <tbody id="pd-history"></tbody>
+                            </table>
+                        </div>
+                        <button type="button" class="text-more" id="pd-more" hidden data-i18n="view_more_history">View more history</button>
+                    </div>
+                </div>
+
+                <div id="product-editor" hidden>
+                    <div class="page-header">
+                        <button type="button" class="text-back" id="btn-editor-back"><span class="material-symbols-rounded">arrow_back</span><span data-i18n="back_products">Back to Products</span></button>
+                        <div class="page-actions">
+                            <button type="button" class="btn btn-secondary" id="btn-editor-cancel" data-i18n="cancel">Cancel</button>
+                            <button type="button" class="btn btn-primary" id="btn-editor-save" data-i18n="save_product">Save Product</button>
+                        </div>
+                    </div>
+                    <h1 class="editor-title" id="pe-title" data-i18n="add_edit_product">Add/Edit Product</h1>
+                    <p class="editor-sub" id="pe-sub" data-i18n="add_product_sub">Add a new product to your inventory.</p>
+                    <div class="card">
+                        <div class="editor-grid">
+                            <form id="pe-form" class="editor-fields">
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label><span data-i18n="pe_name">Product Name</span><span class="req">*</span></label>
+                                        <input id="pe-name" class="form-control" data-i18n-ph="enter_name" placeholder="Enter product name" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label data-i18n="col_sku">SKU</label>
+                                        <div class="pe-inline">
+                                            <input id="pe-sku" class="form-control" data-i18n-ph="enter_sku" placeholder="Enter SKU of the product">
+                                            <button type="button" class="btn btn-secondary btn-sm" id="btn-pe-auto-sku" data-i18n="auto_sku">Auto</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label><span data-i18n="col_category">Category</span><span class="req">*</span></label>
+                                        <select id="pe-category" class="form-control" required></select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label data-i18n="col_brand">Brand</label>
+                                        <input id="pe-brand" class="form-control" list="pe-brand-list" data-i18n-ph="select_brand" placeholder="Select brand">
+                                        <datalist id="pe-brand-list"></datalist>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label data-i18n="col_size">Size</label>
+                                        <select id="pe-size" class="form-control"></select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label data-i18n="col_color">Color</label>
+                                        <select id="pe-color" class="form-control"></select>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label><span data-i18n="col_qty">Quantity</span><span class="req">*</span></label>
+                                        <input id="pe-qty" class="form-control" type="number" min="0" step="1" data-i18n-ph="enter_qty" placeholder="Enter quantity" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label><span data-i18n="col_warehouse">Warehouse</span><span class="req">*</span></label>
+                                        <select id="pe-warehouse" class="form-control" required></select>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label><span data-i18n="cost_price">Cost Price</span><span class="req">*</span></label>
+                                        <input id="pe-cost" class="form-control" type="number" min="0" step="0.01" data-i18n-ph="enter_cost" placeholder="Enter cost price" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label><span data-i18n="selling_price">Selling Price</span><span class="req">*</span></label>
+                                        <input id="pe-price" class="form-control" type="number" min="0" step="0.01" data-i18n-ph="enter_sell" placeholder="Enter selling price" required>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label data-i18n="desc_optional">Description (optional)</label>
+                                    <textarea id="pe-desc" class="form-control" rows="4" data-i18n-ph="enter_desc" placeholder="Enter how the product description..."></textarea>
+                                </div>
+
+                                <div class="editor-section">
+                                    <h3 data-i18n="item_details">Item details</h3>
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label data-i18n="item_type">Type</label>
+                                            <div class="pe-checks">
+                                                <label class="p-radio"><input type="radio" name="pe-type" value="Product" checked> <span data-i18n="type_product">Product</span></label>
+                                                <label class="p-radio"><input type="radio" name="pe-type" value="Service"> <span data-i18n="type_service">Service</span></label>
+                                            </div>
+                                        </div>
+                                        <div class="form-group" id="pe-sell-by-wrap">
+                                            <label data-i18n="sell_by">How is this sold?</label>
+                                            <div class="pe-checks">
+                                                <label class="p-radio"><input type="radio" name="pe-sell-by" value="piece" checked> <span data-i18n="sell_by_piece">Fixed price — piece, box, or pack</span></label>
+                                                <label class="p-radio"><input type="radio" name="pe-sell-by" value="weight"> <span data-i18n="sell_by_weight">By weight — price per kilogram</span></label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="pe-checks">
+                                        <label class="p-check"><input type="checkbox" id="pe-sales" checked> <span data-i18n="sales_item">Sales item</span></label>
+                                        <label class="p-check"><input type="checkbox" id="pe-purchase"> <span data-i18n="purchase_item">Purchase item</span></label>
+                                        <label class="p-check"><input type="checkbox" id="pe-inactive"> <span data-i18n="inactive">Inactive</span></label>
+                                        <label class="p-check"><input type="checkbox" id="pe-track" checked> <span data-i18n="track_stock">Track stock</span></label>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label data-i18n="style_code">Style code</label>
+                                            <input id="pe-style" class="form-control" data-i18n-ph="style_hint" placeholder="Groups sizes and colors">
+                                        </div>
+                                        <div class="form-group">
+                                            <label data-i18n="tax_rate">Tax Rate</label>
+                                            <select id="pe-tax" class="form-control">
+                                                <option value="0">0%</option>
+                                                <option value="5">5%</option>
+                                                <option value="15">15%</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label data-i18n="col_barcode">Barcode</label>
+                                            <div class="pe-inline">
+                                                <input id="pe-barcode" class="form-control">
+                                                <button type="button" class="btn btn-secondary btn-sm" id="btn-pe-scan" data-i18n="scan">Scan</button>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label data-i18n="expiry_date">Expiry Date</label>
+                                            <input id="pe-expiry" class="form-control" type="date">
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label data-i18n="batch_no">Batch No.</label>
+                                            <input id="pe-batch" class="form-control">
+                                        </div>
+                                        <div class="form-group">
+                                            <label data-i18n="col_location">Location</label>
+                                            <input id="pe-location" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label data-i18n="shelf">Shelf</label>
+                                            <input id="pe-shelf" class="form-control">
+                                        </div>
+                                        <div class="form-group">
+                                            <label data-i18n="uom">Unit of Measure</label>
+                                            <div class="pe-inline">
+                                                <select id="pe-uom" class="form-control"></select>
+                                                <button type="button" class="btn btn-secondary btn-sm" id="btn-pe-add-uom" data-i18n="add">Add</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label data-i18n="low_level">Low level</label>
+                                            <input id="pe-min" class="form-control" type="number" min="0" value="0">
+                                        </div>
+                                        <div class="form-group">
+                                            <label data-i18n="col_supplier">Supplier</label>
+                                            <select id="pe-supplier" class="form-control"><option value="">—</option></select>
+                                        </div>
+                                    </div>
+                                    <div id="pe-supplier-purchases" class="p-supplier-purchases" hidden>
+                                        <div class="form-hint" data-i18n="supplier_unadded_hint">Unadded products from this supplier — click to fill name, cost, and stock</div>
+                                        <div id="pe-supplier-purchases-list" class="p-supplier-purchases-list"></div>
+                                    </div>
+                                    <input type="hidden" id="pe-supplier-purchase-id" value="">
+                                    <div class="editor-section">
+                                        <h3 data-i18n="prices">Prices</h3>
+                                        <table class="price-tiers">
+                                            <thead><tr>
+                                                <th data-i18n="price_level">Level</th>
+                                                <th data-i18n="col_price">Price</th>
+                                                <th data-i18n="gross_pct">Gross %</th>
+                                                <th data-i18n="col_profit">Profit</th>
+                                            </tr></thead>
+                                            <tbody>
+                                                <tr><td data-i18n="price2">Price 2</td>
+                                                    <td><input class="form-control" id="pe-price2" type="number" step="0.01" min="0" value="0"></td>
+                                                    <td><input class="form-control" id="pe-gross2" readonly></td>
+                                                    <td><input class="form-control" id="pe-profit2" readonly></td></tr>
+                                                <tr><td data-i18n="price3">Price 3</td>
+                                                    <td><input class="form-control" id="pe-price3" type="number" step="0.01" min="0" value="0"></td>
+                                                    <td><input class="form-control" id="pe-gross3" readonly></td>
+                                                    <td><input class="form-control" id="pe-profit3" readonly></td></tr>
+                                                <tr><td data-i18n="price4">Price 4</td>
+                                                    <td><input class="form-control" id="pe-price4" type="number" step="0.01" min="0" value="0"></td>
+                                                    <td><input class="form-control" id="pe-gross4" readonly></td>
+                                                    <td><input class="form-control" id="pe-profit4" readonly></td></tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </form>
+                            <div class="editor-images">
+                                <div class="pd-label" data-i18n="product_images">Product Images</div>
+                                <div id="pe-drop" class="drop-zone">
+                                    <span class="material-symbols-rounded">cloud_upload</span>
+                                    <strong data-i18n="upload_hint">Click to upload or drag and drop</strong>
+                                    <small data-i18n="upload_types">PNG, JPG or JPEG</small>
+                                </div>
+                                <input id="pe-file" type="file" accept="image/png,image/jpeg,image/webp" multiple hidden>
+                                <div class="preview-head"><span data-i18n="image_preview">Image Preview</span> <span id="pe-preview-count">(0)</span></div>
+                                <div id="pe-preview" class="preview-grid"></div>
+                                <p id="pe-empty" class="preview-empty"><span data-i18n="no_images">No images added yet</span><small data-i18n="no_images_sub">Upload product images to get a preview.</small></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="purchase-orders" class="view-section">
+                <div class="page-header">
+                    <div>
+                        <h1 data-i18n="nav_purchase_orders">Purchase Orders</h1>
+                        <p data-i18n="po_sub">Track and manage all your purchase orders with suppliers.</p>
+                    </div>
+                    <div class="page-actions">
+                        <button class="btn btn-primary" id="btn-new-po" data-roles="admin,staff"><span class="material-symbols-rounded">add</span><span data-i18n="new_po">New Purchase Order</span></button>
+                    </div>
+                </div>
+                <div class="ff-filters po-filters">
+                    <input type="search" id="po-search" class="form-control" data-i18n-ph="po_search" placeholder="Search purchase orders...">
+                    <select id="po-filter-supplier" class="form-control"></select>
+                    <select id="po-filter-status" class="form-control">
+                        <option value="all" data-i18n="filter_status">Status</option>
+                        <option value="Pending">Pending</option>
+                        <option value="Received">Received</option>
+                        <option value="Cancelled">Cancelled</option>
+                    </select>
+                    <button type="button" class="btn btn-secondary po-export" id="btn-po-export"><span class="material-symbols-rounded">download</span><span data-i18n="export">Export</span></button>
+                </div>
+                <div class="card catalog-card">
+                    <div class="table-wrapper">
+                        <table class="catalog-table">
+                            <thead><tr>
+                                <th data-i18n="col_po">PO Number</th>
+                                <th data-i18n="col_supplier">Supplier</th>
+                                <th data-i18n="col_order_date">Order Date</th>
+                                <th data-i18n="col_delivery">Delivery Date</th>
+                                <th data-i18n="col_status">Status</th>
+                                <th data-i18n="col_price">Price</th>
+                                <th data-i18n="col_action">Action</th>
+                            </tr></thead>
+                            <tbody id="po-body"></tbody>
+                        </table>
+                    </div>
+                    <div class="catalog-footer">
+                        <span id="po-pager-label"></span>
+                        <div class="catalog-footer-right">
+                            <div class="pager-btns" id="po-pager"></div>
+                            <select id="po-page-size" class="form-control page-size">
+                                <option value="10">10 / page</option>
+                                <option value="25">25 / page</option>
+                                <option value="50">50 / page</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="analytics" class="view-section">
+                <div class="page-header">
+                    <div>
+                        <h1 data-i18n="nav_analytics">Sales Analytics</h1>
+                        <p data-i18n="analytics_sub">Analyse your sales performance and make data-driven decisions.</p>
+                    </div>
+                </div>
+                <div class="dash-mid-grid an-top">
+                    <div class="card">
+                        <div class="card-head">
+                            <h3 data-i18n="monthly_sales">Monthly Sales</h3>
+                            <select id="an-chart-month" class="form-control"></select>
+                        </div>
+                        <div id="an-bars" class="bar-chart bar-chart-axis"></div>
+                    </div>
+                    <div class="card">
+                        <div class="card-head">
+                            <h3 data-i18n="product_category">Product Category</h3>
+                        </div>
+                        <div class="donut-row">
+                            <div id="an-donut" class="donut"></div>
+                            <ul id="an-legend" class="donut-legend"></ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="ff-split an-bottom">
+                    <div class="card">
+                        <div class="card-head">
+                            <h3 data-i18n="best_sellers">Best Sellers</h3>
+                        </div>
+                        <div class="table-wrapper"><table class="catalog-table"><thead><tr>
+                            <th data-i18n="col_name">Product</th><th data-i18n="col_sku">SKU</th>
+                            <th data-i18n="units_sold">Units Sold</th><th data-i18n="col_sales">Revenue</th>
+                        </tr></thead><tbody id="an-sellers"></tbody></table></div>
+                        <button type="button" class="text-more" id="btn-an-all-sellers" data-i18n="view_all_sellers">View all best sellers</button>
+                    </div>
+                    <div class="card">
+                        <div class="card-head">
+                            <h3 data-i18n="revenue_breakdown">Revenue Breakdown</h3>
+                            <select id="an-rev-month" class="form-control"></select>
+                        </div>
+                        <div id="an-breakdown" class="rev-list"></div>
+                    </div>
+                </div>
+            </section>
+
             <section id="inventory" class="view-section">
+                <div class="page-header" style="margin-bottom:0.75rem;">
+                    <div>
+                        <h1 data-i18n="nav_inventory">Inventory</h1>
+                        <p data-i18n="inv_stock_sub">Track stock levels across warehouses.</p>
+                    </div>
+                    <div class="page-actions">
+                        <button class="btn btn-primary" id="btn-stock-transfer" data-roles="admin,staff"><span class="material-symbols-rounded">swap_horiz</span><span data-i18n="stock_transfer">Stock Transfer</span></button>
+                    </div>
+                </div>
+                <div class="inv-kpis" id="inv-kpis"></div>
+                <div class="ff-split">
+                    <div class="card">
+                        <h3 data-i18n="warehouse_summary">Warehouse Summary</h3>
+                        <div class="table-wrapper"><table><thead><tr>
+                            <th data-i18n="col_warehouse">Warehouse</th><th data-i18n="total_items">Total Items</th>
+                            <th data-i18n="in_stock">In Stock</th><th data-i18n="low_stock">Low Stock</th><th data-i18n="out_of_stock">Out of Stock</th>
+                        </tr></thead><tbody id="inv-warehouses"></tbody></table></div>
+                    </div>
+                    <div class="card">
+                        <h3 data-i18n="stock_levels">Stock Levels</h3>
+                        <div class="donut-row">
+                            <div id="inv-donut" class="donut"></div>
+                            <ul id="inv-donut-legend" class="donut-legend"></ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="card" style="margin-bottom:1rem;">
+                    <h3 data-i18n="inv_alerts">Inventory Alerts</h3>
+                    <div class="table-wrapper"><table><thead><tr>
+                        <th data-i18n="col_name">Product</th><th data-i18n="col_sku">SKU</th>
+                        <th data-i18n="col_warehouse">Warehouse</th><th data-i18n="col_stock">Stock</th>
+                        <th data-i18n="reorder_level">Reorder</th><th data-i18n="col_status">Status</th>
+                    </tr></thead><tbody id="inv-alerts"></tbody></table></div>
+                </div>
                 <div class="page-search-row">
                     <div class="search-box"><span class="material-symbols-rounded">search</span>
                         <input type="text" id="inv-search" class="form-control" data-i18n-ph="search_ph" placeholder="Search..."></div>
@@ -612,6 +1124,96 @@
                             </div>
                         </div>
                     </aside>
+                </div>
+            </section>
+
+            <section id="orders" class="view-section">
+                <div id="orders-board">
+                    <div class="page-header">
+                        <div>
+                            <h1 data-i18n="nav_orders">Orders</h1>
+                            <p data-i18n="ord_sub">Create an order, pack it, send it, then close it with customer feedback.</p>
+                        </div>
+                        <div class="page-actions">
+                            <button class="btn btn-primary" id="btn-new-order" type="button" data-order-action="new" data-roles="admin,staff"><span class="material-symbols-rounded">add</span><span data-i18n="new_order">New Order</span></button>
+                        </div>
+                    </div>
+                    <div class="ff-filters">
+                        <input type="search" id="order-search" class="form-control" data-i18n-ph="ord_search" placeholder="Search orders...">
+                        <select id="order-filter-method" class="form-control">
+                            <option value="all" data-i18n="ord_all_methods">All methods</option>
+                            <option value="Delivery" data-i18n="ord_delivery">Delivery</option>
+                            <option value="Pickup" data-i18n="ord_pickup">Pickup</option>
+                        </select>
+                    </div>
+                    <div class="order-board-wrap">
+                        <div class="order-board" id="order-board"></div>
+                    </div>
+                </div>
+                <div id="order-detail" hidden></div>
+                <div id="order-editor" hidden>
+                    <div class="page-header">
+                        <button type="button" class="text-back" id="btn-order-editor-back"><span class="material-symbols-rounded">arrow_back</span><span data-i18n="ord_back">Back to Orders</span></button>
+                        <div class="page-actions">
+                            <button type="button" class="btn btn-secondary" id="btn-order-editor-cancel" data-i18n="cancel">Cancel</button>
+                            <button type="button" class="btn btn-primary" id="btn-order-save" data-i18n="save">Save</button>
+                        </div>
+                    </div>
+                    <h2 class="editor-title" data-i18n="ord_new_title">New order</h2>
+                    <p class="editor-sub" data-i18n="ord_new_sub">Customer, products, and how the order will be fulfilled.</p>
+                    <div class="order-work">
+                        <div class="card order-card-pad">
+                            <div class="form-group">
+                                <label data-i18n="ord_customer">Customer</label>
+                                <div class="oe-customer-row">
+                                    <select id="oe-customer" class="form-control"></select>
+                                    <button type="button" class="oe-add-cust" id="btn-oe-add-customer" data-order-action="add-customer" data-i18n-title="add_customer" title="Add customer">
+                                        <span class="material-symbols-rounded">add</span>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label data-i18n="ord_method">Method</label>
+                                <div class="pe-checks">
+                                    <label class="p-radio"><input type="radio" name="oe-method" value="Delivery" checked><span data-i18n="ord_delivery">Delivery</span></label>
+                                    <label class="p-radio"><input type="radio" name="oe-method" value="Pickup"><span data-i18n="ord_pickup">Pickup</span></label>
+                                </div>
+                            </div>
+                            <div class="form-group" id="oe-address-wrap">
+                                <label data-i18n="ord_address">Shipping address</label>
+                                <textarea id="oe-address" class="form-control" rows="3"></textarea>
+                            </div>
+                            <div class="form-group" id="oe-pickup-wrap" hidden>
+                                <label data-i18n="ord_pickup_note">Pickup note</label>
+                                <textarea id="oe-pickup" class="form-control" rows="2"></textarea>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label data-i18n="ord_est_date">Estimated date</label>
+                                    <input type="date" id="oe-date" class="form-control">
+                                </div>
+                                <div class="form-group">
+                                    <label data-i18n="ord_pay_method">Payment method</label>
+                                    <select id="oe-pay" class="form-control">
+                                        <option value="Cash" data-i18n="ord_cash">Cash</option>
+                                        <option value="Card" data-i18n="ord_card">Card</option>
+                                        <option value="Transfer" data-i18n="ord_transfer">Transfer</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <label class="p-check"><input type="checkbox" id="oe-paid"><span data-i18n="ord_paid_now">Paid now</span></label>
+                            <div class="form-group" style="margin-top:0.9rem;">
+                                <label data-i18n="ord_notes">Order notes</label>
+                                <textarea id="oe-notes" class="form-control" rows="2"></textarea>
+                            </div>
+                        </div>
+                        <div class="card order-card-pad">
+                            <h3 data-i18n="ord_items">Items</h3>
+                            <div id="oe-lines"></div>
+                            <button type="button" class="btn btn-secondary" id="btn-oe-add" data-i18n="ord_add_line">Add product</button>
+                            <div class="rev-row total"><span data-i18n="total">Total</span><strong id="oe-total">$0.00</strong></div>
+                        </div>
+                    </div>
                 </div>
             </section>
 
@@ -1030,6 +1632,64 @@
         </main>
     </div>
 
+    <div class="modal-overlay" id="po-view-modal">
+        <div class="modal modal-lg">
+            <div class="modal-header"><h2 id="po-view-title">Purchase Order</h2>
+                <button class="close-btn" data-close="po-view-modal"><span class="material-symbols-rounded">close</span></button></div>
+            <div id="po-view-meta" class="po-view-meta"></div>
+            <div class="table-wrapper"><table class="catalog-table"><thead><tr>
+                <th data-i18n="col_name">Product</th><th data-i18n="col_sku">SKU</th>
+                <th data-i18n="col_qty">Qty</th><th data-i18n="col_cost">Cost</th>
+            </tr></thead><tbody id="po-view-items"></tbody></table></div>
+            <div class="modal-actions">
+                <button type="button" class="btn btn-secondary" id="btn-po-view-cancel" data-i18n="cancel_po">Cancel</button>
+                <button type="button" class="btn btn-primary" id="btn-po-view-receive" data-i18n="receive_po">Receive</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="po-modal">
+        <div class="modal modal-lg">
+            <div class="modal-header"><h2 data-i18n="new_po">New Purchase Order</h2>
+                <button class="close-btn" data-close="po-modal"><span class="material-symbols-rounded">close</span></button></div>
+            <form id="po-form">
+                <div class="form-row">
+                    <div class="form-group"><label data-i18n="col_supplier">Supplier</label><select class="form-control" id="po-supplier" required></select></div>
+                    <div class="form-group"><label data-i18n="col_delivery">Delivery Date</label><input type="date" class="form-control" id="po-delivery"></div>
+                </div>
+                <div class="form-group"><label data-i18n="col_desc">Notes</label><input class="form-control" id="po-notes"></div>
+                <div class="po-lines" id="po-lines"></div>
+                <button type="button" class="btn btn-secondary" id="btn-po-add-line" data-i18n="add_line">Add line</button>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" data-close="po-modal" data-i18n="cancel">Cancel</button>
+                    <button type="submit" class="btn btn-primary" data-i18n="save">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="transfer-modal">
+        <div class="modal">
+            <div class="modal-header"><h2 data-i18n="stock_transfer">Stock Transfer</h2>
+                <button class="close-btn" data-close="transfer-modal"><span class="material-symbols-rounded">close</span></button></div>
+            <form id="transfer-form">
+                <div class="form-row">
+                    <div class="form-group"><label data-i18n="source_warehouse">Source Warehouse</label><select class="form-control" id="tr-from" required></select></div>
+                    <div class="form-group"><label data-i18n="dest_warehouse">Destination Warehouse</label><select class="form-control" id="tr-to" required></select></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label data-i18n="col_name">Product</label><select class="form-control" id="tr-product" required></select></div>
+                    <div class="form-group"><label data-i18n="col_qty">Quantity</label><input class="form-control" id="tr-qty" type="number" min="1" value="1" required></div>
+                </div>
+                <div class="form-group"><label data-i18n="col_desc">Note</label><input class="form-control" id="tr-note"></div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" data-close="transfer-modal" data-i18n="cancel">Cancel</button>
+                    <button type="submit" class="btn btn-primary" data-i18n="transfer_stock">Transfer Stock</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <div class="modal-overlay" id="product-modal">
         <div class="modal modal-lg product-modal">
             <div class="modal-header"><h2 id="product-modal-title" data-i18n="add_product">Add Product</h2>
@@ -1102,6 +1762,14 @@
                         <div class="form-row">
                             <div class="form-group flex-grow"><label data-i18n="col_sku">SKU</label><input class="form-control" id="p-sku"></div>
                             <div class="form-group p-inline-btn"><label>&nbsp;</label><button type="button" class="btn btn-secondary btn-sm" id="btn-p-auto-sku" data-i18n="auto_sku">Auto</button></div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group"><label data-i18n="col_brand">Brand</label><input class="form-control" id="p-brand"></div>
+                            <div class="form-group"><label data-i18n="style_code">Style code</label><input class="form-control" id="p-style" placeholder="Groups sizes and colors"></div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group"><label data-i18n="col_size">Size</label><input class="form-control" id="p-size" placeholder="S, M, L"></div>
+                            <div class="form-group"><label data-i18n="col_color">Color</label><input class="form-control" id="p-color"></div>
                         </div>
                         <div class="form-row">
                             <div class="form-group flex-grow"><label data-i18n="col_barcode">Barcode</label><input class="form-control" id="p-barcode"></div>
@@ -2135,6 +2803,7 @@ Accepted By: __________________________</p>
 
     <div id="toast" class="toast"></div>
     <script src="js/signalr.min.js"></script>
-    <script src="app.js?v=20260821qsflag" charset="utf-8"></script>
+    <script src="app.js?v=20260927ordui" charset="utf-8"></script>
+    <script src="orders.js?v=20260927ordui" charset="utf-8"></script>
 </body>
 </html>

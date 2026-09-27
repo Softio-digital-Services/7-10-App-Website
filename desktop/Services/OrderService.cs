@@ -92,6 +92,8 @@ namespace InventorySystem.Services
                     new SqliteParameter("@qty", stockQty),
                     new SqliteParameter("@pid", item.PartId)
                 );
+                FashionStock.Reconcile(item.PartId);
+                FashionStock.LogMovement(item.PartId, "Sale", -stockQty, "Order #" + orderId);
             }
 
             // 4. Update Customer Balance (if unpaid)
@@ -212,6 +214,8 @@ namespace InventorySystem.Services
                     DatabaseHelper.ExecuteNonQuery("UPDATE parts SET quantity_in_stock = quantity_in_stock - @qty WHERE id = @pid AND is_stock_tracked = 1 AND (item_type IS NULL OR item_type != 'Service')", 
                         new SqliteParameter("@qty", item.Quantity), 
                         new SqliteParameter("@pid", item.PartId));
+                    FashionStock.Reconcile(item.PartId);
+                    FashionStock.LogMovement(item.PartId, "Sale", -item.Quantity, "Quote #" + orderId);
                 }
 
                 // 5. Log & Notify

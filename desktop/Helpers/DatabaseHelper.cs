@@ -435,6 +435,120 @@ namespace InventorySystem
                     );");
                 if (!ColumnExists("supplier_purchase_items", "category"))
                     ExecuteNonQuery("ALTER TABLE supplier_purchase_items ADD COLUMN category TEXT;");
+
+                if (!ColumnExists("parts", "brand")) ExecuteNonQuery("ALTER TABLE parts ADD COLUMN brand TEXT;");
+                if (!ColumnExists("parts", "size")) ExecuteNonQuery("ALTER TABLE parts ADD COLUMN size TEXT;");
+                if (!ColumnExists("parts", "color")) ExecuteNonQuery("ALTER TABLE parts ADD COLUMN color TEXT;");
+                if (!ColumnExists("parts", "style_code")) ExecuteNonQuery("ALTER TABLE parts ADD COLUMN style_code TEXT;");
+
+                if (!ColumnExists("purchase_orders", "po_number")) ExecuteNonQuery("ALTER TABLE purchase_orders ADD COLUMN po_number TEXT;");
+                if (!ColumnExists("purchase_orders", "delivery_date")) ExecuteNonQuery("ALTER TABLE purchase_orders ADD COLUMN delivery_date TEXT;");
+                if (!ColumnExists("purchase_orders", "warehouse_id")) ExecuteNonQuery("ALTER TABLE purchase_orders ADD COLUMN warehouse_id INTEGER;");
+
+                if (!ColumnExists("orders", "channel")) ExecuteNonQuery("ALTER TABLE orders ADD COLUMN channel TEXT DEFAULT 'Retail';");
+                if (!ColumnExists("orders", "notes")) ExecuteNonQuery("ALTER TABLE orders ADD COLUMN notes TEXT;");
+                if (!ColumnExists("orders", "fulfillment_type")) ExecuteNonQuery("ALTER TABLE orders ADD COLUMN fulfillment_type TEXT;");
+                if (!ColumnExists("orders", "fulfillment_stage")) ExecuteNonQuery("ALTER TABLE orders ADD COLUMN fulfillment_stage TEXT;");
+                if (!ColumnExists("orders", "carrier")) ExecuteNonQuery("ALTER TABLE orders ADD COLUMN carrier TEXT;");
+                if (!ColumnExists("orders", "tracking_number")) ExecuteNonQuery("ALTER TABLE orders ADD COLUMN tracking_number TEXT;");
+                if (!ColumnExists("orders", "tracking_status")) ExecuteNonQuery("ALTER TABLE orders ADD COLUMN tracking_status TEXT;");
+                if (!ColumnExists("orders", "pickup_note")) ExecuteNonQuery("ALTER TABLE orders ADD COLUMN pickup_note TEXT;");
+                if (!ColumnExists("orders", "feedback_rating")) ExecuteNonQuery("ALTER TABLE orders ADD COLUMN feedback_rating INTEGER;");
+                if (!ColumnExists("orders", "feedback_comment")) ExecuteNonQuery("ALTER TABLE orders ADD COLUMN feedback_comment TEXT;");
+                ExecuteNonQuery(@"
+                    CREATE TABLE IF NOT EXISTS order_pack_checks (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        order_id INTEGER NOT NULL,
+                        order_item_id INTEGER NOT NULL,
+                        check_key TEXT NOT NULL,
+                        is_checked INTEGER DEFAULT 0,
+                        checked_at TEXT
+                    );");
+                ExecuteNonQuery(@"
+                    CREATE TABLE IF NOT EXISTS order_events (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        order_id INTEGER NOT NULL,
+                        event_type TEXT,
+                        message TEXT,
+                        detail TEXT,
+                        actor TEXT,
+                        created_at TEXT DEFAULT (datetime('now','localtime'))
+                    );");
+                if (!ColumnExists("order_events", "detail")) ExecuteNonQuery("ALTER TABLE order_events ADD COLUMN detail TEXT;");
+
+                ExecuteNonQuery(@"
+                    CREATE TABLE IF NOT EXISTS warehouses (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        name TEXT NOT NULL,
+                        code TEXT,
+                        is_active INTEGER DEFAULT 1
+                    );");
+                ExecuteNonQuery(@"
+                    CREATE TABLE IF NOT EXISTS stock_levels (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        part_id INTEGER NOT NULL,
+                        warehouse_id INTEGER NOT NULL,
+                        quantity INTEGER DEFAULT 0,
+                        reorder_level INTEGER DEFAULT 0,
+                        UNIQUE(part_id, warehouse_id)
+                    );");
+                ExecuteNonQuery(@"
+                    CREATE TABLE IF NOT EXISTS stock_movements (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        part_id INTEGER,
+                        warehouse_id INTEGER,
+                        movement_type TEXT,
+                        quantity REAL,
+                        balance_after INTEGER,
+                        performed_by TEXT,
+                        notes TEXT,
+                        movement_date TEXT DEFAULT (datetime('now')),
+                        reference_type TEXT,
+                        reference_id INTEGER
+                    );");
+                if (!ColumnExists("stock_movements", "warehouse_id")) ExecuteNonQuery("ALTER TABLE stock_movements ADD COLUMN warehouse_id INTEGER;");
+                if (!ColumnExists("stock_movements", "balance_after")) ExecuteNonQuery("ALTER TABLE stock_movements ADD COLUMN balance_after INTEGER;");
+                if (!ColumnExists("stock_movements", "reference_type")) ExecuteNonQuery("ALTER TABLE stock_movements ADD COLUMN reference_type TEXT;");
+                if (!ColumnExists("stock_movements", "reference_id")) ExecuteNonQuery("ALTER TABLE stock_movements ADD COLUMN reference_id INTEGER;");
+                ExecuteNonQuery(@"
+                    CREATE TABLE IF NOT EXISTS stock_transfers (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        from_warehouse_id INTEGER,
+                        to_warehouse_id INTEGER,
+                        transfer_date TEXT DEFAULT (datetime('now')),
+                        notes TEXT,
+                        performed_by TEXT
+                    );");
+                ExecuteNonQuery(@"
+                    CREATE TABLE IF NOT EXISTS stock_transfer_items (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        transfer_id INTEGER,
+                        part_id INTEGER,
+                        quantity INTEGER
+                    );");
+                ExecuteNonQuery(@"
+                    CREATE TABLE IF NOT EXISTS product_images (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        part_id INTEGER NOT NULL,
+                        image_path TEXT NOT NULL,
+                        sort_order INTEGER DEFAULT 0
+                    );");
+
+                ExecuteNonQuery("INSERT INTO warehouses (name, code) SELECT 'Main', 'MAIN' WHERE NOT EXISTS (SELECT 1 FROM warehouses WHERE code = 'MAIN');");
+                ExecuteNonQuery("INSERT INTO warehouses (name, code) SELECT 'Store', 'STORE' WHERE NOT EXISTS (SELECT 1 FROM warehouses WHERE code = 'STORE');");
+                ExecuteNonQuery(@"
+                    INSERT INTO stock_levels (part_id, warehouse_id, quantity, reorder_level)
+                    SELECT p.id, w.id, COALESCE(p.quantity_in_stock, 0), COALESCE(p.minimum_stock_level, 0)
+                    FROM parts p
+                    JOIN warehouses w ON w.code = 'MAIN'
+                    WHERE p.date_deleted IS NULL
+                      AND NOT EXISTS (
+                          SELECT 1 FROM stock_levels sl WHERE sl.part_id = p.id AND sl.warehouse_id = w.id
+                      );");
+                ExecuteNonQuery(@"
+                    UPDATE purchase_orders
+                    SET po_number = 'PO-' || strftime('%Y', COALESCE(order_date, 'now')) || '-' || printf('%04d', po_id)
+                    WHERE po_number IS NULL OR po_number = '';");
             }
             catch (Exception ex)
             {

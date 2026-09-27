@@ -47,15 +47,8 @@ namespace InventorySystem.Services
                     DatabaseHelper.ExecuteNonQuery(sqlStock,
                         new SqliteParameter("@qty", item.Quantity),
                         new SqliteParameter("@pid", item.PartId));
-
-                    // Log stock movement
-                    string sqlLog = "INSERT INTO stock_movements (part_id, movement_type, quantity, performed_by, notes, movement_date) " +
-                                    "VALUES (@pid, 'RETURN', @qty, @user, @notes, datetime('now'))";
-                    DatabaseHelper.ExecuteNonQuery(sqlLog,
-                        new SqliteParameter("@pid", item.PartId),
-                        new SqliteParameter("@qty", item.Quantity),
-                        new SqliteParameter("@user", UserSession.Username),
-                        new SqliteParameter("@notes", "Returned from Order #" + orderId));
+                    FashionStock.Reconcile(item.PartId);
+                    FashionStock.LogMovement(item.PartId, "Return", item.Quantity, "Returned from Order #" + orderId);
                 }
 
                 // 4. Update Customer Balance if applicable
@@ -135,15 +128,8 @@ namespace InventorySystem.Services
                     DatabaseHelper.ExecuteNonQuery(sqlStock,
                         new SqliteParameter("@qty", item.Quantity),
                         new SqliteParameter("@pid", item.PartId));
-
-                    // Log stock movement
-                    string sqlLog = "INSERT INTO stock_movements (part_id, movement_type, quantity, performed_by, notes, movement_date) " +
-                                    "VALUES (@pid, 'RETURN', @qty, @user, @notes, datetime('now'))";
-                    DatabaseHelper.ExecuteNonQuery(sqlLog,
-                        new SqliteParameter("@pid", item.PartId),
-                        new SqliteParameter("@qty", item.Quantity),
-                        new SqliteParameter("@user", UserSession.Username),
-                        new SqliteParameter("@notes", "Unlinked Return (Blind Return)"));
+                    FashionStock.Reconcile(item.PartId);
+                    FashionStock.LogMovement(item.PartId, "Return", item.Quantity, "Unlinked return");
                 }
 
                 // 4. Update Customer Balance if applicable

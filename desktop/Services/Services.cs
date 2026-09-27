@@ -136,16 +136,16 @@ namespace InventorySystem.Services
             if (isNew)
             {
                 sql = @"INSERT INTO parts (part_name, part_number, description, category_id, supplier_id, purchase_price, selling_price, quantity_in_stock, minimum_stock_level, reorder_quantity, location, shelf, part_image, barcode, status, date_added,
-                                          item_type, unit_of_measure, batch_number, expiry_date, is_sales_item, is_purchase_item, is_inactive, tax_rate, is_stock_tracked, sell_by_weight, price2, price3, price4) 
+                                          item_type, unit_of_measure, batch_number, expiry_date, is_sales_item, is_purchase_item, is_inactive, tax_rate, is_stock_tracked, sell_by_weight, price2, price3, price4, brand, size, color, style_code) 
                         VALUES (@name, @num, @desc, @cat, @sup, @cost, @price1, @stock, @min, @reorder, @loc, @shelf, @img, @barcode, @status, datetime('now'),
-                                @type, @uom, @batch, @expiry, @sales, @purchase, @inactive, @tax, @tracked, @sellByWeight, @price2, @price3, @price4)";
+                                @type, @uom, @batch, @expiry, @sales, @purchase, @inactive, @tax, @tracked, @sellByWeight, @price2, @price3, @price4, @brand, @size, @color, @style)";
             }
             else
             {
                 sql = @"UPDATE parts SET part_name=@name, part_number=@num, description=@desc, category_id=@cat, supplier_id=@sup, purchase_price=@cost, selling_price=@price1, 
                                          quantity_in_stock=@stock, minimum_stock_level=@min, reorder_quantity=@reorder, location=@loc, shelf=@shelf, barcode=@barcode, status=@status,
                                          item_type=@type, unit_of_measure=@uom, batch_number=@batch, expiry_date=@expiry, is_sales_item=@sales, is_purchase_item=@purchase, 
-                                         is_inactive=@inactive, tax_rate=@tax, is_stock_tracked=@tracked, sell_by_weight=@sellByWeight, price2=@price2, price3=@price3, price4=@price4";
+                                         is_inactive=@inactive, tax_rate=@tax, is_stock_tracked=@tracked, sell_by_weight=@sellByWeight, price2=@price2, price3=@price3, price4=@price4, brand=@brand, size=@size, color=@color, style_code=@style";
                 if (p.PartImage != null) sql += ", part_image=@img";
                 sql += " WHERE id=@id";
             }
@@ -178,13 +178,26 @@ namespace InventorySystem.Services
                 new SqliteParameter("@sellByWeight", p.SellByWeight ? 1 : 0),
                 new SqliteParameter("@price2",   p.Price2),
                 new SqliteParameter("@price3",   p.Price3),
-                new SqliteParameter("@price4",   p.Price4)
+                new SqliteParameter("@price4",   p.Price4),
+                new SqliteParameter("@brand",    p.Brand ?? ""),
+                new SqliteParameter("@size",     p.Size ?? ""),
+                new SqliteParameter("@color",    p.Color ?? ""),
+                new SqliteParameter("@style",    p.StyleCode ?? "")
             };
             if (isNew || p.PartImage != null) parms.Add(new SqliteParameter("@img", p.PartImage ?? (object)DBNull.Value));
             if (!isNew) parms.Add(new SqliteParameter("@id", p.Id));
 
             if (!DatabaseHelper.ExecuteNonQuery(sql, parms.ToArray()))
                 throw new Exception("Failed to save product/service. Database operation failed.");
+
+            int savedId = p.Id;
+            if (isNew)
+            {
+                savedId = DatabaseHelper.ExecuteScalar<int>(
+                    "SELECT id FROM parts WHERE part_name = @n AND date_deleted IS NULL ORDER BY id DESC LIMIT 1",
+                    new SqliteParameter("@n", p.PartName));
+            }
+            if (savedId > 0) FashionStock.Reconcile(savedId);
 
             LogTransaction(isNew ? "ADD" : "EDIT", $"{(isNew ? "Added" : "Updated")} {p.ItemType}: {p.PartName} ({p.PartNumber})", p.PartName);
             GlobalEvents.RaiseInventoryUpdated();
@@ -310,6 +323,8 @@ namespace InventorySystem.Services
 
                 string partNameResult = DatabaseHelper.ExecuteScalar<string>($"SELECT part_name FROM parts WHERE id = {partId}") ?? "Unknown";
                 string action = change > 0 ? "ADJUST_IN" : "ADJUST_OUT";
+                FashionStock.Reconcile(partId);
+                FashionStock.LogMovement(partId, change >= 0 ? "Adjustment" : "Adjustment", change, reason);
                 LogTransaction(action, $"Adjusted stock of {partNameResult} by {change}. Reason: {reason}", partNameResult);
                 GlobalEvents.RaiseInventoryUpdated();
             }
