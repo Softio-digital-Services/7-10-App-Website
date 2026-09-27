@@ -1,4 +1,4 @@
-import { notifyCommentReply, notifyNewComment, sendEmail } from "@/lib/email";
+import { esc, notifyCommentReply, notifyContactMessage, notifyNewComment, sendEmail } from "@/lib/email";
 
 export async function notifyNewProductRequest(request: {
   productName: string;
@@ -12,9 +12,9 @@ export async function notifyNewProductRequest(request: {
   await sendEmail({
     to: admin,
     subject: `Product request: ${request.productName}`,
-    html: `<p><strong>${request.memberName}</strong> (${request.memberEmail}) requested:</p>
-      <blockquote>${request.message}</blockquote>
-      <p>Product: <strong>${request.productName}</strong></p>`,
+    html: `<p><strong>${esc(request.memberName)}</strong> (${esc(request.memberEmail)}) requested:</p>
+      <blockquote>${esc(request.message)}</blockquote>
+      <p>Product: <strong>${esc(request.productName)}</strong></p>`,
   });
 }
 
@@ -27,7 +27,7 @@ export async function notifyRequestReply(request: {
     to: request.memberEmail,
     subject: `Reply to your request for ${request.productName}`,
     html: `<p>The store replied to your product request:</p>
-      <blockquote>${request.response}</blockquote>`,
+      <blockquote>${esc(request.response)}</blockquote>`,
   });
 }
 
@@ -38,27 +38,10 @@ export async function notifyBackInStock(product: {
 }) {
   await sendEmail({
     to: product.email,
-    subject: `${product.name} is back in stock`,
-    html: `<p>Good news! <strong>${product.name}</strong> is back in stock.</p>
+    subject: `${product.name} is back in stock — 7.10`,
+    html: `<p>Good news! <strong>${esc(product.name)}</strong> is back in stock.</p>
       <p><a href="${product.productUrl}">Shop now</a></p>`,
   });
 }
 
-export async function notifyContactMessage(message: {
-  name: string;
-  email: string;
-  subject: string;
-  body: string;
-}) {
-  const admin = process.env.ADMIN_EMAIL ?? process.env.SMTP_USER ?? "";
-  if (!admin) return;
-
-  await sendEmail({
-    to: admin,
-    subject: `Contact: ${message.subject}`,
-    html: `<p>From <strong>${message.name}</strong> (${message.email})</p>
-      <p>${message.body}</p>`,
-  });
-}
-
-export { notifyNewComment, notifyCommentReply };
+export { notifyContactMessage, notifyNewComment, notifyCommentReply };

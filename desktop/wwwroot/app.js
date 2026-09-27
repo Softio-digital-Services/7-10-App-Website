@@ -2003,8 +2003,6 @@ function showApp() {
     }
     const tools = document.getElementById('titlebar-tools');
     if (tools) tools.hidden = false;
-    const searchWrap = document.getElementById('global-search-wrap');
-    if (searchWrap) searchWrap.hidden = false;
     if (currentUser) {
         const name = currentUser.fullName || currentUser.username;
         const curUser = document.getElementById('current-user');
@@ -2031,8 +2029,6 @@ function hideApp() {
     }
     const tools = document.getElementById('titlebar-tools');
     if (tools) tools.hidden = true;
-    const searchWrap = document.getElementById('global-search-wrap');
-    if (searchWrap) searchWrap.hidden = true;
     currentUser = null;
     sessionStorage.removeItem('otargi_user');
     const userInput = document.getElementById('login-user');

@@ -38,9 +38,15 @@ yarn-error.log*
 prisma/dev.db
 prisma/dev.db-journal
 
+# product images pushed from the desktop app
+/public/uploads/
+
 # vercel
 .vercel
 
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# product photos pushed from the desktop app
+/storage/

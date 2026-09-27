@@ -20,7 +20,7 @@
     <link rel="stylesheet" href="css/fonts/fonts.css">
     
     
-    <link rel="stylesheet" href="css/style.css?v=20260927paym">
+    <link rel="stylesheet" href="css/style.css?v=20260927nosearch">
     <style id="inv-toolbar-fix">
         /* Inventory toolbar: search + scrollable actions with thin under slide bar */
         #inventory .page-search-row {
@@ -177,11 +177,6 @@
 <body>
     <header id="titlebar" class="titlebar">
         <div class="titlebar-drag" id="titlebar-drag"></div>
-        <div class="titlebar-search" id="global-search-wrap" hidden>
-            <span class="material-symbols-rounded" aria-hidden="true">search</span>
-            <input type="search" id="global-search" placeholder="Search products, orders, suppliers..." autocomplete="off">
-            <div class="global-search-results" id="global-search-results" hidden></div>
-        </div>
         <div class="titlebar-tools" id="titlebar-tools" hidden>
             <button type="button" class="tb-btn" id="btn-notif" title="Notifications">
                 <span class="material-symbols-rounded tb-icon" aria-hidden="true">notifications</span>
@@ -1538,6 +1533,71 @@
                                     <span data-i18n="activate_license">Activate License</span>
                                 </button>
                             </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="settings-grid-row">
+                        <div class="card settings-card" id="cloud-card">
+                            <div class="settings-card-header">
+                                <span class="material-symbols-rounded" aria-hidden="true">cloud_sync</span>
+                                <h3 data-cs="title">Cloud sync</h3>
+                                <span class="settings-status-pill" id="cs-pill" hidden></span>
+                            </div>
+                            <p class="form-hint settings-card-hint" data-cs="hint">Every linked laptop works on the same shop data — products, stock, customers and orders — and the website shows the same catalogue and sends its orders here.</p>
+
+                            <div id="cs-link">
+                                <div class="form-group">
+                                    <label for="cs-url" data-cs="url">Website address</label>
+                                    <input type="url" class="form-control" id="cs-url" placeholder="https://your-shop.netlify.app" autocomplete="off" dir="ltr">
+                                </div>
+                                <div class="form-group">
+                                    <label for="cs-key" data-cs="key">Shop sync key</label>
+                                    <input type="password" class="form-control" id="cs-key" autocomplete="off" dir="ltr">
+                                </div>
+                                <div class="form-group">
+                                    <label for="cs-name" data-cs="name">This laptop's name</label>
+                                    <input type="text" class="form-control" id="cs-name" maxlength="60" autocomplete="off">
+                                </div>
+                                <p id="cs-check-result" class="form-hint" aria-live="polite" hidden></p>
+                                <div class="settings-card-footer cloud-actions">
+                                    <button type="button" class="btn btn-secondary" id="cs-check">
+                                        <span class="material-symbols-rounded">wifi_find</span>
+                                        <span data-cs="check">Check connection</span>
+                                    </button>
+                                    <button type="button" class="btn btn-primary" id="cs-connect" hidden>
+                                        <span class="material-symbols-rounded">link</span>
+                                        <span id="cs-connect-label"></span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div id="cs-linked" hidden>
+                                <dl class="settings-kv">
+                                    <dt data-cs="website">Website</dt><dd id="cs-f-url" dir="ltr"></dd>
+                                    <dt data-cs="laptop">This laptop</dt><dd id="cs-f-name"></dd>
+                                    <dt data-cs="last">Last sync</dt><dd id="cs-f-last"></dd>
+                                    <dt data-cs="queue">Waiting to send</dt><dd id="cs-f-pending"></dd>
+                                    <dt data-cs="weborders">Website orders</dt><dd id="cs-f-orders"></dd>
+                                </dl>
+                                <div class="cloud-progress" id="cs-progress" hidden>
+                                    <div class="cloud-progress-track"><span id="cs-progress-bar"></span></div>
+                                    <span class="form-hint" id="cs-progress-text"></span>
+                                </div>
+                                <p id="cs-error" class="form-hint cloud-error" role="alert" hidden></p>
+                                <details class="settings-collapse cloud-log">
+                                    <summary data-cs="activity">Recent activity</summary>
+                                    <ul class="settings-collapse-body" id="cs-log"></ul>
+                                </details>
+                                <div class="settings-card-footer cloud-actions">
+                                    <button type="button" class="btn btn-secondary" id="cs-disconnect">
+                                        <span class="material-symbols-rounded">link_off</span>
+                                        <span data-cs="disconnect">Disconnect</span>
+                                    </button>
+                                    <button type="button" class="btn btn-primary" id="cs-sync">
+                                        <span class="material-symbols-rounded">sync</span>
+                                        <span data-cs="sync">Sync now</span>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -2901,8 +2961,9 @@ Accepted By: __________________________</p>
 
     <div id="toast" class="toast"></div>
     <script src="js/signalr.min.js"></script>
-    <script src="app.js?v=20260927paym" charset="utf-8"></script>
+    <script src="app.js?v=20260927nosearch" charset="utf-8"></script>
     <script src="orders.js?v=20260927paym" charset="utf-8"></script>
     <script src="profit.js?v=20260927ps2" charset="utf-8"></script>
+    <script src="cloud.js?v=20260927cs" charset="utf-8"></script>
 </body>
 </html>

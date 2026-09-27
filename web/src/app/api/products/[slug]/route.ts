@@ -1,24 +1,10 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+import { getProductBySlug } from "@/lib/catalog";
+import { getLocale } from "@/lib/i18n/server";
 
-type Params = { params: Promise<{ slug: string }> };
-
-export async function GET(_request: Request, { params }: Params) {
+export async function GET(_request: Request, { params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-
-  const product = await prisma.product.findFirst({
-    where: {
-      OR: [{ slug }, { id: slug }],
-      active: true,
-    },
-    include: {
-      variants: true,
-      comments: {
-        orderBy: { createdAt: "desc" },
-        take: 20,
-      },
-    },
-  });
+  const product = await getProductBySlug(slug, await getLocale());
 
   if (!product) {
     return NextResponse.json({ error: "Product not found" }, { status: 404 });

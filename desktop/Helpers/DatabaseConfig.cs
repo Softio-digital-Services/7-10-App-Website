@@ -11,9 +11,11 @@ namespace InventorySystem
     /// </summary>
     public static class DatabaseConfig
     {
-        private static readonly string UserDataRoot = Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-            "SevenTenInventory");
+        /// <summary>SEVENTEN_DATA_DIR lets a second copy of the app run with its own data (e.g. testing cloud sync on one PC).</summary>
+        private static readonly string UserDataRoot =
+            Environment.GetEnvironmentVariable("SEVENTEN_DATA_DIR") is string custom && custom.Trim().Length > 0
+                ? custom.Trim()
+                : Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "SevenTenInventory");
 
         public static string ConnectionString
         {

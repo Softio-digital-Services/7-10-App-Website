@@ -2,9 +2,10 @@ import { Prisma, PrismaClient } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { notifyLowStock, notifyOutOfStock } from "@/lib/email";
 import { notifyBackInStock } from "@/lib/notifications";
+import { store } from "@/lib/store-config";
 
-const threshold = () => Number(process.env.LOW_STOCK_THRESHOLD ?? 5);
-const siteUrl = () => process.env.AUTH_URL ?? "http://localhost:3000";
+const threshold = () => Number(process.env.LOW_STOCK_THRESHOLD ?? store.lowStockAt);
+const siteUrl = () => store.siteUrl;
 
 type DbClient = PrismaClient | Prisma.TransactionClient;
 

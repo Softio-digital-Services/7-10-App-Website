@@ -110,28 +110,37 @@ namespace InventorySystem.Services
             try
             {
                 var body = await JsonSerializer.DeserializeAsync<ShopOrderPayload>(request.Body, JsonOpts);
-                if (body == null) return Fail("Order details are missing.");
-                if (body.CustomerId <= 0) return Fail("Select a customer.");
+                var (orderId, error) = Create(body);
+                return error != null ? Fail(error) : Results.Ok(new { id = orderId });
+            }
+            catch (Exception ex) { return Results.Problem(ex.Message); }
+        }
+
+        /// <summary>Creates a shop order at the New stage. Returns an error message instead of throwing for validation problems.</summary>
+        public static (int id, string error) Create(ShopOrderPayload body)
+        {
+                if (body == null) return (0, "Order details are missing.");
+                if (body.CustomerId <= 0) return (0, "Select a customer.");
                 string type = body.FulfillmentType == "Pickup" ? "Pickup" : "Delivery";
-                if (type == "Delivery" && string.IsNullOrWhiteSpace(body.Address)) return Fail("Add a shipping address for delivery.");
-                if (body.Items == null || body.Items.Count == 0) return Fail("Add at least one product.");
+                if (type == "Delivery" && string.IsNullOrWhiteSpace(body.Address)) return (0, "Add a shipping address for delivery.");
+                if (body.Items == null || body.Items.Count == 0) return (0, "Add at least one product.");
 
                 var lines = new List<OrderItem>();
                 decimal total = 0;
                 foreach (var line in body.Items)
                 {
-                    if (line.PartId <= 0 || line.Quantity <= 0) return Fail("Each line needs a product and a quantity.");
+                    if (line.PartId <= 0 || line.Quantity <= 0) return (0, "Each line needs a product and a quantity.");
                     var part = DatabaseHelper.ExecuteDataTable(
                         "SELECT part_name, quantity_in_stock, is_stock_tracked, item_type, selling_price FROM parts WHERE id = @id",
                         new SqliteParameter("@id", line.PartId));
-                    if (part.Rows.Count == 0) return Fail("A selected product was not found.");
+                    if (part.Rows.Count == 0) return (0, "A selected product was not found.");
                     var row = part.Rows[0];
                     bool tracked = row["is_stock_tracked"] == DBNull.Value || Convert.ToInt32(row["is_stock_tracked"]) == 1;
                     string itemType = row["item_type"]?.ToString() ?? "";
                     bool service = itemType.Equals("Service", StringComparison.OrdinalIgnoreCase);
                     int stock = row["quantity_in_stock"] == DBNull.Value ? 0 : Convert.ToInt32(row["quantity_in_stock"]);
                     if (tracked && !service && stock < line.Quantity)
-                        return Fail("Not enough stock for " + (row["part_name"]?.ToString() ?? "a product") + ".");
+                        return (0, "Not enough stock for " + (row["part_name"]?.ToString() ?? "a product") + ".");
                     decimal price = line.Price >= 0 ? line.Price : (row["selling_price"] == DBNull.Value ? 0 : Convert.ToDecimal(row["selling_price"]));
                     lines.Add(new OrderItem
                     {
@@ -142,6 +151,7 @@ namespace InventorySystem.Services
                     });
                     total += price * line.Quantity;
                 }
+                if (body.ExtraCharge > 0) total += body.ExtraCharge;
 
                 DateTime? when = null;
                 if (!string.IsNullOrWhiteSpace(body.DeliveryDate) &&
@@ -185,9 +195,7 @@ namespace InventorySystem.Services
                     }
                 }
                 AddEvent(orderId, "created", "Order created", type, body.Actor);
-                return Results.Ok(new { id = orderId });
-            }
-            catch (Exception ex) { return Results.Problem(ex.Message); }
+                return (orderId, null);
         }
 
         private static async System.Threading.Tasks.Task<IResult> StartPreparing(int id, HttpRequest request)
@@ -644,8 +652,10 @@ namespace InventorySystem.Services
         private static int I(System.Data.DataRow row, string col) => row[col] == DBNull.Value ? 0 : Convert.ToInt32(row[col]);
         private static decimal M(System.Data.DataRow row, string col) => row[col] == DBNull.Value ? 0m : Convert.ToDecimal(row[col]);
 
-        private class ShopOrderPayload
+        public class ShopOrderPayload
         {
+            /// <summary>Added to the order total on top of the lines, e.g. a website delivery fee.</summary>
+            public decimal ExtraCharge { get; set; }
             public int CustomerId { get; set; }
             public string FulfillmentType { get; set; }
             public string Address { get; set; }
@@ -658,7 +668,7 @@ namespace InventorySystem.Services
             public List<ShopOrderLine> Items { get; set; }
         }
 
-        private class ShopOrderLine
+        public class ShopOrderLine
         {
             public int PartId { get; set; }
             public int Quantity { get; set; }

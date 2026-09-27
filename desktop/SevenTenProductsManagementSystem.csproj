@@ -37,6 +37,7 @@
     <PackageReference Include="Svg" Version="3.4.7" />
     <PackageReference Include="WinForms.DataVisualization" Version="1.10.0" />
     <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.2903.40" />
+    <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="8.0.0" />
   </ItemGroup>
 
   <!-- The WebView2 package also references its WPF assembly, which asks for a

@@ -4,37 +4,26 @@ import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 
 const registerSchema = z.object({
-  name: z.string().min(2),
-  email: z.string().email(),
-  password: z.string().min(6),
+  name: z.string().trim().min(2).max(80),
+  email: z.string().trim().toLowerCase().email().max(120),
+  password: z.string().min(8).max(200),
 });
 
 export async function POST(request: Request) {
-  const body = await request.json();
-  const parsed = registerSchema.safeParse(body);
-
+  const parsed = registerSchema.safeParse(await request.json().catch(() => null));
   if (!parsed.success) {
-    return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
+    return NextResponse.json({ error: "invalid", fields: Object.keys(parsed.error.flatten().fieldErrors) }, { status: 400 });
   }
 
   const { name, email, password } = parsed.data;
-  const normalizedEmail = email.toLowerCase().trim();
-
-  const existing = await prisma.user.findUnique({ where: { email: normalizedEmail } });
+  const existing = await prisma.user.findUnique({ where: { email }, select: { id: true } });
   if (existing) {
-    return NextResponse.json({ error: "Email already registered" }, { status: 409 });
+    return NextResponse.json({ error: "email_taken" }, { status: 409 });
   }
 
-  const passwordHash = await bcrypt.hash(password, 12);
-
   const user = await prisma.user.create({
-    data: {
-      name,
-      email: normalizedEmail,
-      passwordHash,
-      role: "CUSTOMER",
-    },
-    select: { id: true, name: true, email: true, role: true },
+    data: { name, email, passwordHash: await bcrypt.hash(password, 12), role: "CUSTOMER" },
+    select: { id: true, name: true, email: true },
   });
 
   return NextResponse.json(user, { status: 201 });

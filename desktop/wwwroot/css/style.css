@@ -2851,6 +2851,47 @@ body:not(.feature-scale) #p-sell-by-fieldset {
 #settings .ps-profiles-list { max-height: 260px; }
 body.rtl .settings-kv { text-align: start; }
 
+#cloud-card .settings-card-header .settings-status-pill { margin-inline-start: auto; }
+.settings-status-pill.syncing { background: rgba(var(--primary-rgb), 0.14); color: var(--primary-color); }
+.cloud-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 0.6rem; }
+.cloud-choice {
+    margin: 0.25rem 0 0;
+    padding: 0.7rem 0.85rem;
+    border-radius: 10px;
+    background: rgba(var(--primary-rgb), 0.07);
+    color: var(--text-main);
+    line-height: 1.5;
+}
+.cloud-choice.warn { background: rgba(var(--warning-rgb), 0.16); }
+.cloud-progress { display: flex; flex-direction: column; gap: 0.35rem; margin-top: 0.9rem; }
+.cloud-progress-track {
+    height: 6px;
+    border-radius: 999px;
+    background: rgba(var(--primary-rgb), 0.12);
+    overflow: hidden;
+}
+.cloud-progress-track span {
+    display: block;
+    height: 100%;
+    width: 30%;
+    border-radius: inherit;
+    background: var(--primary-color);
+    transition: width 0.4s ease;
+}
+.cloud-progress.indeterminate .cloud-progress-track span { animation: cloud-slide 1.3s ease-in-out infinite; }
+@keyframes cloud-slide {
+    from { transform: translateX(-100%); }
+    to { transform: translateX(340%); }
+}
+body.rtl .cloud-progress.indeterminate .cloud-progress-track span { animation-direction: reverse; }
+.cloud-error { color: var(--danger); margin-top: 0.8rem; }
+.cloud-log { margin-top: 0.9rem; }
+.cloud-log ul { list-style: none; margin: 0; display: grid; gap: 0.35rem; font-size: 0.85rem; }
+.cloud-log time { color: var(--text-muted); margin-inline-end: 0.5rem; font-variant-numeric: tabular-nums; }
+@media (prefers-reduced-motion: reduce) {
+    .cloud-progress.indeterminate .cloud-progress-track span { animation: none; width: 100%; opacity: 0.5; }
+}
+
 .ps-profiles-list {
     display: flex;
     flex-direction: column;
@@ -5947,6 +5988,7 @@ body.rtl #settings .page-header p {
 .pe-inline .form-control { flex: 1; min-width: 0; }
 .pe-checks { display: flex; flex-wrap: wrap; gap: 0.55rem 1rem; }
 .pe-checks .p-radio, .pe-checks .p-check { margin: 0; }
+.editor-section > .pe-checks { margin-bottom: 1.15rem; }
 #product-editor .price-tiers { width: 100%; }
 #product-editor .price-tiers input { height: 36px; }
 .pd-more-props { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.75rem; margin-top: 1.25rem; }

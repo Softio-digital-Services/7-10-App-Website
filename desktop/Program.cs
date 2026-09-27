@@ -43,6 +43,12 @@ namespace InventorySystem
                 return;
             }
 
+            if (args != null && args.Any(a => string.Equals(a, "--cloud", StringComparison.OrdinalIgnoreCase)))
+            {
+                Environment.Exit(InventorySystem.Services.Cloud.CloudSyncCli.Run(args));
+                return;
+            }
+
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
@@ -88,6 +94,7 @@ namespace InventorySystem
 
                 // Ensure schema is up to date (add missing columns)
                 DatabaseHelper.EnsureSchema();
+                InventorySystem.Services.Cloud.CloudSync.Startup(ResolveAppRoot());
                 // Demo seed is opt-in via POST /api/dev/seed-demo — do not auto-fill new installs
 
                 // Initialize currency tables and load cached rates
@@ -416,6 +423,7 @@ namespace InventorySystem
                     p.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()));
 
                 builder.Services.AddHostedService<AutoBackupBackgroundService>();
+                builder.Services.AddHostedService<InventorySystem.Services.Cloud.CloudSyncBackgroundService>();
 
                 // - SignalR for real-time sync -
                 builder.Services.AddSignalR();
@@ -792,6 +800,7 @@ namespace InventorySystem
                 });
 
                 InventorySystem.Services.FashionApi.Map(app);
+                InventorySystem.Services.Cloud.CloudSyncApi.Map(app);
 
                 // - Login (POST) -
                 app.MapPost("/api/login", async (Microsoft.AspNetCore.Http.HttpRequest request) =>
@@ -3106,7 +3115,7 @@ namespace InventorySystem
         }
 
 
-        private static string ResolveAppRoot()
+        internal static string ResolveAppRoot()
         {
             string[] candidates =
             {

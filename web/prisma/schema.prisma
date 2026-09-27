@@ -1,5 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "rhel-openssl-3.0.x", "debian-openssl-3.0.x"]
 }
 
 datasource db {
@@ -69,19 +70,25 @@ model Category {
 }
 
 model Product {
-  id          String              @id @default(cuid())
-  externalId  String?             @unique
-  name        String
-  slug        String              @unique
-  description String
-  price       Float
-  cost        Float               @default(0)
-  discount    Float               @default(0)
-  imageUrl    String
-  category    String
-  categoryId  String?
-  categoryRef Category?           @relation(fields: [categoryId], references: [id], onDelete: SetNull)
-  active      Boolean             @default(true)
+  id            String              @id @default(cuid())
+  externalId    String?             @unique
+  name          String
+  nameAr        String?
+  slug          String              @unique
+  description   String
+  descriptionAr String?
+  price         Float
+  cost          Float               @default(0)
+  discount      Float               @default(0)
+  imageUrl      String
+  /// JSON array of extra gallery image URLs
+  images        String              @default("[]")
+  colorName     String?
+  featured      Boolean             @default(false)
+  category      String
+  categoryId    String?
+  categoryRef   Category?           @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  active        Boolean             @default(true)
   variants    ProductVariant[]
   comments    Comment[]
   requests    ProductRequest[]
@@ -111,16 +118,39 @@ model Order {
   externalId      String?       @unique
   userId          String?
   user            User?         @relation(fields: [userId], references: [id], onDelete: SetNull)
-  customerEmail   String
+  customerEmail   String?
   customerName    String
+  customerPhone   String        @default("")
+  region          String        @default("")
+  city            String        @default("")
+  notes           String?
   status          OrderStatus   @default(PENDING)
   paymentStatus   PaymentStatus @default(PENDING)
+  paymentMethod   PaymentMethod @default(COD)
+  subtotal        Float         @default(0)
+  deliveryFee     Float         @default(0)
   total           Float
   shippingAddress String
+  locale          String        @default("en")
   source          OrderSource   @default(WEB)
+  /// Hub id of the order in the 7.10 desktop pipeline once a laptop has taken it in
+  desktopRef      String?
+  /// Laptop (SyncDevice id) currently bringing the order into the desktop app
+  claimedBy       String?
+  claimedAt       DateTime?
+  /// Why the desktop app couldn't take the order in (e.g. product not linked)
+  syncError       String?
+  syncedAt        DateTime?
   items           OrderItem[]
   createdAt       DateTime      @default(now())
   updatedAt       DateTime      @updatedAt
+}
+
+model Subscriber {
+  id        String   @id @default(cuid())
+  contact   String   @unique
+  locale    String   @default("en")
+  createdAt DateTime @default(now())
 }
 
 model OrderItem {
@@ -185,6 +215,73 @@ model ContactMessage {
   createdAt DateTime @default(now())
 }
 
+/// A laptop running the 7.10 desktop app, linked to this shop's cloud hub.
+model SyncDevice {
+  id         String    @id
+  name       String
+  tokenHash  String
+  /// Last hub change this laptop has applied (used for pruning the change log)
+  cursor     Int       @default(0)
+  appVersion String?
+  createdAt  DateTime  @default(now())
+  lastSeenAt DateTime?
+  revokedAt  DateTime?
+}
+
+/// Append-only log of every change pushed by a laptop. `seq` is the global order all laptops replay.
+model SyncChange {
+  seq       Int      @id @default(autoincrement())
+  deviceId  String
+  /// The laptop's own outbox number; makes retried pushes harmless
+  clientSeq Int
+  tbl       String
+  gid       String
+  /// U = upsert row, D = delete row, C = add to counter columns
+  op        String
+  data      String
+  /// Unix ms; written with bulk SQL, so kept as a plain number
+  at        Float
+
+  @@unique([deviceId, clientSeq])
+  @@index([at])
+}
+
+/// Latest state of each desktop row, used to hand a snapshot to a newly joined laptop and to build the storefront.
+model SyncRow {
+  tbl       String
+  gid       String
+  data      String
+  deleted   Boolean  @default(false)
+  seq       Int
+
+  @@id([tbl, gid])
+  @@index([tbl, deleted])
+}
+
+/// Running totals for counter columns (stock, balances). Laptops only ever send +/- amounts.
+model SyncCounter {
+  tbl   String
+  gid   String
+  col   String
+  value Float  @default(0)
+
+  @@id([tbl, gid, col])
+}
+
+model SyncMeta {
+  key   String @id
+  value String
+}
+
+/// Product photos and other files shared by the laptops and shown on the storefront.
+model MediaFile {
+  name        String   @id
+  contentType String
+  size        Int
+  data        Bytes
+  createdAt   DateTime @default(now())
+}
+
 enum Role {
   CUSTOMER
   MANAGER
@@ -205,6 +302,12 @@ enum PaymentStatus {
   PAID
   FAILED
   REFUNDED
+}
+
+enum PaymentMethod {
+  COD
+  CARD
+  WHISH
 }
 
 enum OrderSource {

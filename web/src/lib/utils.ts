@@ -21,7 +21,7 @@ export function otargiUnauthorized(message: string) {
 
 export function discountedPrice(price: number, discount: number) {
   if (discount <= 0) return price;
-  return price * (1 - discount / 100);
+  return Math.round(price * (100 - discount)) / 100;
 }
 
 export function slugify(value: string) {

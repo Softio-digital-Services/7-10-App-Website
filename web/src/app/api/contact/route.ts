@@ -1,31 +1,23 @@
-import { NextResponse } from "next/server";
+import { NextResponse, after } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
-import { notifyContactMessage } from "@/lib/notifications";
+import { notifyContactMessage } from "@/lib/email";
 
 const contactSchema = z.object({
-  name: z.string().min(2),
-  email: z.string().email(),
-  subject: z.string().min(3).max(200),
-  message: z.string().min(10).max(5000),
+  name: z.string().trim().min(2).max(80),
+  email: z.string().trim().toLowerCase().email().max(120),
+  subject: z.string().trim().max(200).default(""),
+  message: z.string().trim().min(10).max(5000),
 });
 
 export async function POST(request: Request) {
-  const body = await request.json();
-  const parsed = contactSchema.safeParse(body);
-
+  const parsed = contactSchema.safeParse(await request.json().catch(() => null));
   if (!parsed.success) {
-    return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
+    return NextResponse.json({ error: "invalid", fields: Object.keys(parsed.error.flatten().fieldErrors) }, { status: 400 });
   }
 
   const message = await prisma.contactMessage.create({ data: parsed.data });
+  after(() => notifyContactMessage(parsed.data).catch((error) => console.error("[contact]", error)));
 
-  await notifyContactMessage({
-    name: parsed.data.name,
-    email: parsed.data.email,
-    subject: parsed.data.subject,
-    body: parsed.data.message,
-  });
-
-  return NextResponse.json(message, { status: 201 });
+  return NextResponse.json({ id: message.id }, { status: 201 });
 }
