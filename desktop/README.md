@@ -25,10 +25,10 @@ Windows inventory + POS app for **7-10 Store**, based on Otargi. Runs standalone
 ```powershell
 cd desktop
 dotnet restore
-dotnet run -c Release --project OtargiInventorySystem.csproj
+dotnet run -c Release --project SevenTenProductsManagementSystem.csproj
 ```
 
-Or open `OtargiInventorySystem.slnx` in Visual Studio and press F5.
+Or open `SevenTenProductsManagementSystem.slnx` in Visual Studio and press F5.
 
 ## Default login
 

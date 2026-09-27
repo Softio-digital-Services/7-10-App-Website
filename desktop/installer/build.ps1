@@ -6,7 +6,7 @@ $root = Split-Path -Parent $PSScriptRoot
 $publishDir = Join-Path $root "dist\app"
 $distDir = Join-Path $root "dist"
 $iss = Join-Path $PSScriptRoot "Otargi.iss"
-$csproj = Join-Path $root "OtargiInventorySystem.csproj"
+$csproj = Join-Path $root "SevenTenProductsManagementSystem.csproj"
 $iconIco = Join-Path $root "Assets\icon.ico"
 $appExeName = "SevenTenInventorySystem.exe"
 

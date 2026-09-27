@@ -14,7 +14,7 @@ Two parts of the same business (sync between them comes later):
 ```powershell
 cd desktop
 dotnet restore
-dotnet run -c Release --project OtargiInventorySystem.csproj
+dotnet run -c Release --project SevenTenProductsManagementSystem.csproj
 ```
 
 See [desktop/README.md](desktop/README.md) for full details.

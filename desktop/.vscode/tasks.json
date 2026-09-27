@@ -7,7 +7,7 @@
             "type": "process",
             "args": [
                 "build",
-                "${workspaceFolder}/OtargiInventorySystem.csproj",
+                "${workspaceFolder}/SevenTenProductsManagementSystem.csproj",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary;ForceNoAlign"
             ],
@@ -23,7 +23,7 @@
             "type": "process",
             "args": [
                 "publish",
-                "${workspaceFolder}/OtargiInventorySystem.csproj",
+                "${workspaceFolder}/SevenTenProductsManagementSystem.csproj",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary;ForceNoAlign"
             ],
@@ -37,7 +37,7 @@
                 "watch",
                 "run",
                 "--project",
-                "${workspaceFolder}/OtargiInventorySystem.csproj"
+                "${workspaceFolder}/SevenTenProductsManagementSystem.csproj"
             ],
             "problemMatcher": "$msCompile"
         }
