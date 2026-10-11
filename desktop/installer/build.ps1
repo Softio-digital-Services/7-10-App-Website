@@ -81,6 +81,7 @@ New-Item -ItemType Directory -Force -Path $singleDir | Out-Null
 if ($LASTEXITCODE -ne 0) { throw "dotnet publish (single-file) failed" }
 $publishedExe = Join-Path $singleDir $appExeName
 if (-not (Test-Path $publishedExe)) { throw "Single-file exe not found: $publishedExe" }
+Copy-Item $publishedExe $portableExe -Force
 Start-Sleep -Milliseconds 500
 for ($retry = 0; $retry -lt 3; $retry++) {
     try {
