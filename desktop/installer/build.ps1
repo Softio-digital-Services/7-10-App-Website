@@ -10,6 +10,48 @@ $csproj = Join-Path $root "SevenTenProductsManagementSystem.csproj"
 $iconIco = Join-Path $root "Assets\icon.ico"
 $appExeName = "SevenTenInventorySystem.exe"
 
+# Resolve dotnet CLI with SDK
+$dotnetCmd = "dotnet"
+$localDotnet = Join-Path $env:LocalAppData "Microsoft\dotnet"
+$localDotnetExe = Join-Path $localDotnet "dotnet.exe"
+
+$hasSdk = $false
+try {
+    $sdks = & dotnet --list-sdks 2>$null
+    if ($sdks) { $hasSdk = $true }
+} catch { }
+
+if (-not $hasSdk -and (Test-Path (Join-Path $localDotnet "sdk"))) {
+    Write-Host "==> Using local .NET SDK at $localDotnet" -ForegroundColor Cyan
+    $env:DOTNET_ROOT = $localDotnet
+    $env:PATH = "$localDotnet;$env:PATH"
+    $dotnetCmd = $localDotnetExe
+} elseif (-not $hasSdk) {
+    Write-Host "==> No .NET SDK found. Installing .NET 8 SDK locally via dotnet-install..." -ForegroundColor Yellow
+    $installScript = Join-Path $PSScriptRoot "dotnet-install.ps1"
+    if (-not (Test-Path $installScript)) {
+        Invoke-WebRequest -Uri "https://dot.net/v1/dotnet-install.ps1" -OutFile $installScript -UseBasicParsing
+    }
+    & $installScript -Channel 8.0 -Architecture x64
+    if (Test-Path (Join-Path $localDotnet "sdk")) {
+        $env:DOTNET_ROOT = $localDotnet
+        $env:PATH = "$localDotnet;$env:PATH"
+        $dotnetCmd = $localDotnetExe
+    } else {
+        throw "Failed to locate or install .NET 8 SDK"
+    }
+} else {
+    # System dotnet already has SDK, ensure DOTNET_ROOT is set if needed
+    if (Test-Path $localDotnetExe) {
+        $localSdks = & $localDotnetExe --list-sdks 2>$null
+        if ($localSdks) {
+            $env:DOTNET_ROOT = $localDotnet
+            $env:PATH = "$localDotnet;$env:PATH"
+            $dotnetCmd = $localDotnetExe
+        }
+    }
+}
+
 Write-Host "==> Regenerating Assets\icon.ico from logo..." -ForegroundColor Cyan
 & (Join-Path $PSScriptRoot "make-icon.ps1")
 if (-not (Test-Path $iconIco)) {
@@ -21,7 +63,7 @@ Write-Host "==> Publishing self-contained Release (win-x64)..." -ForegroundColor
 if (Test-Path $publishDir) { Remove-Item $publishDir -Recurse -Force }
 New-Item -ItemType Directory -Force -Path $publishDir | Out-Null
 
-dotnet publish $csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=false -o $publishDir
+& $dotnetCmd publish $csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=false -o $publishDir
 if ($LASTEXITCODE -ne 0) { throw "dotnet publish failed" }
 
 Write-Host "==> Publishing portable single-file exe..." -ForegroundColor Cyan
@@ -30,7 +72,7 @@ $portableExe = Join-Path $distDir "SevenTenInventory.exe"
 if (Test-Path $singleDir) { Remove-Item $singleDir -Recurse -Force }
 New-Item -ItemType Directory -Force -Path $distDir | Out-Null
 New-Item -ItemType Directory -Force -Path $singleDir | Out-Null
-dotnet publish $csproj -c Release -r win-x64 --self-contained true `
+& $dotnetCmd publish $csproj -c Release -r win-x64 --self-contained true `
     -p:PublishSingleFile=true `
     -p:IncludeNativeLibrariesForSelfExtract=true `
     -p:IncludeAllContentForSelfExtract=true `
@@ -39,8 +81,15 @@ dotnet publish $csproj -c Release -r win-x64 --self-contained true `
 if ($LASTEXITCODE -ne 0) { throw "dotnet publish (single-file) failed" }
 $publishedExe = Join-Path $singleDir $appExeName
 if (-not (Test-Path $publishedExe)) { throw "Single-file exe not found: $publishedExe" }
-Copy-Item $publishedExe $portableExe -Force
-Remove-Item $singleDir -Recurse -Force
+Start-Sleep -Milliseconds 500
+for ($retry = 0; $retry -lt 3; $retry++) {
+    try {
+        if (Test-Path $singleDir) { Remove-Item $singleDir -Recurse -Force -ErrorAction Stop }
+        break
+    } catch {
+        Start-Sleep -Milliseconds 800
+    }
+}
 Write-Host "Portable app: $portableExe" -ForegroundColor Green
 
 Write-Host "==> Looking for Inno Setup 6.4+ (ISCC)..." -ForegroundColor Cyan

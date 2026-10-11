@@ -11,6 +11,11 @@ echo builds dist\SevenTenInventory.exe (portable app)
 echo and dist\SevenTenSetup.exe (Inno Setup).
 echo.
 
+if exist "%LOCALAPPDATA%\Microsoft\dotnet\dotnet.exe" (
+  set "DOTNET_ROOT=%LOCALAPPDATA%\Microsoft\dotnet"
+  set "PATH=%LOCALAPPDATA%\Microsoft\dotnet;%PATH%"
+)
+
 powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0installer\build.ps1"
 if errorlevel 1 (
   echo.

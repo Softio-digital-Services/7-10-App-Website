@@ -573,6 +573,20 @@ namespace InventorySystem
                     UPDATE purchase_orders
                     SET po_number = 'PO-' || strftime('%Y', COALESCE(order_date, 'now')) || '-' || printf('%04d', po_id)
                     WHERE po_number IS NULL OR po_number = '';");
+
+                // Normalize legacy product names where variant info was appended (e.g. "TEST1 - RED - M")
+                ExecuteNonQuery(@"
+                    UPDATE parts 
+                    SET style_code = TRIM(SUBSTR(part_name, 1, INSTR(part_name, ' - ') - 1))
+                    WHERE (style_code IS NULL OR style_code = '') 
+                      AND part_name LIKE '% - %' 
+                      AND ((size IS NOT NULL AND size != '') OR (color IS NOT NULL AND color != ''));");
+
+                ExecuteNonQuery(@"
+                    UPDATE parts 
+                    SET part_name = TRIM(SUBSTR(part_name, 1, INSTR(part_name, ' - ') - 1))
+                    WHERE part_name LIKE '% - %' 
+                      AND ((size IS NOT NULL AND size != '') OR (color IS NOT NULL AND color != ''));");
             }
             catch (Exception ex)
             {
