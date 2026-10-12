@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto";
-import { readdirSync, readFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { createClient } from "@libsql/client";
 
@@ -7,6 +7,7 @@ import { createClient } from "@libsql/client";
  * Applies prisma/migrations to a Turso (libSQL) or local SQLite database.
  * `prisma migrate deploy` cannot talk to Turso, so this is the free-hosting path.
  */
+if (!process.env.DATABASE_URL && existsSync(".env")) process.loadEnvFile(".env");
 const url = process.env.DATABASE_URL ?? "";
 if (!url) {
   console.error("DATABASE_URL is missing.");
@@ -23,6 +24,7 @@ const names = readdirSync(root, { withFileTypes: true })
   .map((e) => e.name)
   .sort();
 
+async function main() {
 await client.executeMultiple(`
   CREATE TABLE IF NOT EXISTS "_prisma_migrations" (
     "id" TEXT PRIMARY KEY NOT NULL,
@@ -61,3 +63,9 @@ for (const name of names) {
 }
 
 console.log(applied === 0 ? "Database is up to date." : `Applied ${applied} migration(s).`);
+}
+
+main().catch((err) => {
+  console.error(err);
+  process.exit(1);
+});

@@ -313,12 +313,9 @@ namespace InventorySystem.Services.Cloud
         /// <summary>How long the background loop waits between checks: quick while the shop is busy, slow when it's quiet.</summary>
         internal static TimeSpan NextDelay(bool localChanges)
         {
-            if (_failures > 0) return TimeSpan.FromSeconds(Math.Min(300, 15 * Math.Pow(2, Math.Min(_failures - 1, 4))));
-            if (localChanges) return TimeSpan.FromSeconds(4);
-            var idle = DateTime.Now - _lastActivity;
-            if (idle < TimeSpan.FromMinutes(5)) return TimeSpan.FromSeconds(20);
-            if (idle < TimeSpan.FromMinutes(30)) return TimeSpan.FromSeconds(60);
-            return TimeSpan.FromSeconds(180);
+            if (_failures > 0) return TimeSpan.FromSeconds(Math.Min(60, 5 * Math.Pow(2, Math.Min(_failures - 1, 3))));
+            if (localChanges) return TimeSpan.FromSeconds(1);
+            return TimeSpan.FromSeconds(5);
         }
 
         internal static DateTime LastAttempt => _lastAttempt;
