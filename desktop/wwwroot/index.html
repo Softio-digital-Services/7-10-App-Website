@@ -288,6 +288,10 @@
                     <span class="material-symbols-rounded nav-icon" aria-hidden="true">checkroom</span><span
                         class="label" data-i18n="nav_products">Products</span>
                 </a>
+                <a href="#" class="nav-item" data-target="techpack" data-roles="admin,staff,accountant">
+                    <span class="material-symbols-rounded nav-icon" aria-hidden="true">design_services</span><span
+                        class="label" data-i18n="nav_techpack">Tech Pack</span>
+                </a>
                 <a href="#" class="nav-item" data-target="inventory" data-roles="admin,staff,accountant">
                     <span class="material-symbols-rounded nav-icon" aria-hidden="true">inventory_2</span><span
                         class="label" data-i18n="nav_inventory">Inventory</span>
@@ -531,6 +535,9 @@
                         <input type="search" id="prod-search" class="form-control" data-i18n-ph="prod_search"
                             placeholder="Search products...">
                         <select id="prod-filter-cat" class="form-control"></select>
+                        <select id="prod-filter-collection" class="form-control">
+                            <option value="all" data-i18n="filter_collection">All Collections</option>
+                        </select>
                         <select id="prod-filter-brand" class="form-control"></select>
                         <select id="prod-filter-status" class="form-control">
                             <option value="all" data-i18n="filter_status">Status</option>
@@ -595,9 +602,13 @@
                         <button type="button" class="text-back" id="btn-product-back"><span
                                 class="material-symbols-rounded">arrow_back</span><span data-i18n="back_products">Back
                                 to Products</span></button>
-                        <button type="button" class="btn btn-primary" id="btn-product-edit" data-roles="admin"><span
-                                class="material-symbols-rounded">edit</span><span data-i18n="edit_product">Edit
-                                Product</span></button>
+                        <div class="page-actions" style="display:flex; gap:0.5rem; align-items:center;">
+                            <button type="button" class="btn btn-secondary" id="btn-product-techpack" title="Open Garment Tech Pack"><span
+                                    class="material-symbols-rounded">design_services</span><span data-i18n="nav_techpack">Tech Pack</span></button>
+                            <button type="button" class="btn btn-primary" id="btn-product-edit" data-roles="admin"><span
+                                    class="material-symbols-rounded">edit</span><span data-i18n="edit_product">Edit
+                                    Product</span></button>
+                        </div>
                     </div>
                     <div class="card">
                         <div class="pd-layout">
@@ -779,10 +790,52 @@
                                         <select id="pe-category" class="form-control" required></select>
                                     </div>
                                     <div class="form-group">
+                                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                                            <label style="margin:0;"><span data-i18n="col_gender_dept">Department / Target</span></label>
+                                            <button type="button" class="btn btn-link btn-xs" id="btn-pe-add-gender" style="font-size:0.75rem; padding:0; text-decoration:none; color:var(--primary-color); background:none; border:none; cursor:pointer;" title="Add new department/target option">+ <span data-i18n="add_option">Add option</span></button>
+                                        </div>
+                                        <select id="pe-gender" class="form-control">
+                                            <option value="Unisex">Unisex</option>
+                                            <option value="Men">Men</option>
+                                            <option value="Women">Women</option>
+                                            <option value="Kids">Kids</option>
+                                            <option value="__custom__">+ Add Custom Option...</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
                                         <label data-i18n="col_brand">Brand</label>
                                         <input id="pe-brand" class="form-control" list="pe-brand-list"
                                             data-i18n-ph="select_brand" placeholder="Select brand">
                                         <datalist id="pe-brand-list"></datalist>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                                            <label style="margin:0;"><span data-i18n="col_collection">Collection / Season</span></label>
+                                            <button type="button" class="btn btn-link btn-xs" id="btn-pe-add-collection" style="font-size:0.75rem; padding:0; text-decoration:none; color:var(--primary-color); background:none; border:none; cursor:pointer;" title="Add new collection option">+ <span data-i18n="add_option">Add option</span></button>
+                                        </div>
+                                        <select id="pe-collection" class="form-control">
+                                            <option value="Summer">Summer</option>
+                                            <option value="Winter">Winter</option>
+                                            <option value="Spring">Spring</option>
+                                            <option value="Autumn / Fall">Autumn / Fall</option>
+                                            <option value="Pre-Fall">Pre-Fall</option>
+                                            <option value="Resort & Cruise">Resort &amp; Cruise</option>
+                                            <option value="Core Essentials">Core Essentials</option>
+                                            <option value="__custom__">+ Add Custom Option...</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group flex-grow">
+                                        <label><span data-i18n="fabrics_used">Fabrics Used / Composition</span></label>
+                                        <input id="pe-fabric" class="form-control" data-i18n-ph="fabric_ph"
+                                            placeholder="e.g. 100% Cotton, 320 GSM French Terry, Linen Blend...">
+                                    </div>
+                                    <div class="form-group">
+                                        <label><span data-i18n="col_supplier">Supplier</span></label>
+                                        <select id="pe-main-supplier" class="form-control">
+                                            <option value="">— Select Supplier —</option>
+                                        </select>
                                     </div>
                                 </div>
                                 <!-- Sizes, Colors & Quantity Grid in Add/Edit Products Page -->
@@ -1174,6 +1227,322 @@
                                 <p id="pe-empty" class="preview-empty"><span data-i18n="no_images">No images added
                                         yet</span><small data-i18n="no_images_sub">Upload product images to get a
                                         preview.</small></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ========================================== -->
+            <!-- TECHNICAL PACKAGE (TECH PACK) WORKSPACE    -->
+            <!-- ========================================== -->
+            <section id="techpack" class="view-section">
+                <div class="tp-workspace">
+                    <!-- Top Action Header -->
+                    <div class="page-header tp-header">
+                        <div>
+                            <div class="tp-title-row">
+                                <h1 data-i18n="tp_header_title">Technical Package (Tech Pack)</h1>
+                                <span class="tp-badge" id="tp-header-status">Draft</span>
+                            </div>
+                            <p data-i18n="tp_header_sub">Garment specifications, technical sketches, bill of materials, size grading &amp; factory production dossier.</p>
+                        </div>
+                        <div class="page-actions tp-header-actions">
+                            <div class="tp-product-picker-wrap">
+                                <label for="tp-product-select" class="tp-picker-label" data-i18n="tp_select_product">Active Style:</label>
+                                <select id="tp-product-select" class="form-control tp-picker-select"></select>
+                            </div>
+                            <button type="button" class="btn btn-secondary" id="btn-tp-load-preset">
+                                <span class="material-symbols-rounded">auto_awesome</span>
+                                <span data-i18n="tp_presets">Load Spec Preset</span>
+                            </button>
+                            <button type="button" class="btn btn-secondary" id="btn-tp-print">
+                                <span class="material-symbols-rounded">print</span>
+                                <span data-i18n="tp_print_pdf">Print / Export PDF</span>
+                            </button>
+                            <button type="button" class="btn btn-primary" id="btn-tp-save">
+                                <span class="material-symbols-rounded">save</span>
+                                <span data-i18n="tp_save">Save Tech Pack</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Print Sheet Wrapper (formatted for screen and @media print) -->
+                    <div class="tp-sheet" id="tp-sheet-container">
+                        <!-- Tech Pack Header Card: Identity & Meta -->
+                        <div class="tp-card tp-meta-card">
+                            <div class="tp-card-header">
+                                <div class="tp-card-title">
+                                    <span class="material-symbols-rounded tp-card-icon">apparel</span>
+                                    <span data-i18n="tp_style_identity">Style Identity &amp; Specifications</span>
+                                </div>
+                                <div class="tp-meta-badges">
+                                    <span class="tp-chip tp-chip-version" id="tp-badge-version">v1.0</span>
+                                    <span class="tp-chip tp-chip-season" id="tp-badge-season">Summer</span>
+                                </div>
+                            </div>
+                            <div class="tp-meta-grid">
+                                <div class="tp-field">
+                                    <label data-i18n="tp_style_name">Style Name</label>
+                                    <input type="text" id="tp-meta-name" class="form-control" placeholder="Product / Garment Name">
+                                </div>
+                                <div class="tp-field">
+                                    <label data-i18n="col_sku">Style Code / SKU</label>
+                                    <input type="text" id="tp-meta-sku" class="form-control" placeholder="e.g. M-POLO-001">
+                                </div>
+                                <div class="tp-field">
+                                    <label data-i18n="col_collection">Collection / Season</label>
+                                    <div class="tp-inline-add">
+                                        <select id="tp-meta-season" class="form-control"></select>
+                                        <button type="button" class="btn btn-secondary btn-sm" id="btn-tp-add-season" title="Add new collection option">+</button>
+                                    </div>
+                                </div>
+                                <div class="tp-field">
+                                    <label data-i18n="tp_sample_size">Sample Base Size</label>
+                                    <select id="tp-meta-sample-size" class="form-control">
+                                        <option value="XS">XS</option>
+                                        <option value="S">S</option>
+                                        <option value="M" selected>M (Base)</option>
+                                        <option value="L">L</option>
+                                        <option value="XL">XL</option>
+                                        <option value="XXL">XXL</option>
+                                        <option value="32">32 (Pants Base)</option>
+                                        <option value="One Size">One Size</option>
+                                    </select>
+                                </div>
+                                <div class="tp-field">
+                                    <label data-i18n="tp_fit_type">Fit Silhouette</label>
+                                    <select id="tp-meta-fit" class="form-control">
+                                        <option value="Regular Fit" selected>Regular Fit</option>
+                                        <option value="Relaxed / Boxy">Relaxed / Boxy</option>
+                                        <option value="Oversized Fit">Oversized Fit</option>
+                                        <option value="Slim Fit">Slim Fit</option>
+                                        <option value="Tailored Fit">Tailored Fit</option>
+                                        <option value="Athletic Fit">Athletic Fit</option>
+                                    </select>
+                                </div>
+                                <div class="tp-field">
+                                    <label data-i18n="col_status">Tech Pack Status</label>
+                                    <select id="tp-meta-status" class="form-control">
+                                        <option value="Draft" selected>Draft</option>
+                                        <option value="Sample 1 Pending">Sample 1 Pending</option>
+                                        <option value="Sample Approved">Sample Approved</option>
+                                        <option value="Tech Pack Complete">Tech Pack Complete</option>
+                                        <option value="Ready for Production">Ready for Production</option>
+                                    </select>
+                                </div>
+                                <div class="tp-field">
+                                    <label data-i18n="tp_designer">Designer / Patternmaker</label>
+                                    <input type="text" id="tp-meta-designer" class="form-control" placeholder="Designer Name">
+                                </div>
+                                <div class="tp-field">
+                                    <label data-i18n="col_supplier">Factory / Garment Supplier</label>
+                                    <select id="tp-meta-supplier" class="form-control"></select>
+                                </div>
+                                <div class="tp-field tp-field-full">
+                                    <label data-i18n="fabrics_used">Main Fabric &amp; Yarn Specification</label>
+                                    <input type="text" id="tp-meta-fabric" class="form-control" placeholder="e.g. 100% Combed Ring-Spun Cotton Jersey, 240 GSM, 24s/1, Bio-polished soft handfeel">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Technical Flat Drawings & Callouts -->
+                        <div class="tp-card tp-sketches-card">
+                            <div class="tp-card-header">
+                                <div class="tp-card-title">
+                                    <span class="material-symbols-rounded tp-card-icon">draw</span>
+                                    <span data-i18n="tp_technical_sketches">Technical Flat Sketches &amp; Construction Callouts</span>
+                                </div>
+                                <span class="tp-card-sub" data-i18n="tp_sketches_sub">2D CAD flat views with construction callouts and finish details.</span>
+                            </div>
+                            <div class="tp-sketches-grid">
+                                <!-- Front Sketch Card -->
+                                <div class="tp-sketch-box">
+                                    <div class="tp-sketch-header">
+                                        <span class="tp-sketch-tag" data-i18n="tp_front_view">Front Technical Flat</span>
+                                        <div class="tp-sketch-btns">
+                                            <label class="btn btn-secondary btn-xs tp-upload-btn">
+                                                <span class="material-symbols-rounded">upload</span>
+                                                <span data-i18n="upload_image">Upload</span>
+                                                <input type="file" id="tp-front-file" accept="image/*" hidden>
+                                            </label>
+                                            <button type="button" class="btn btn-secondary btn-xs" id="btn-tp-front-url" title="Set Image URL">
+                                                <span class="material-symbols-rounded">link</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="tp-sketch-canvas" id="tp-front-preview">
+                                        <img id="tp-front-img" src="/Assets/nuricon_inventory.svg" alt="Front Flat View">
+                                        <div class="tp-sketch-empty" id="tp-front-empty" style="display:none;">
+                                            <span class="material-symbols-rounded">draw</span>
+                                            <p data-i18n="tp_no_sketch_front">Upload front flat drawing or photograph</p>
+                                        </div>
+                                    </div>
+                                    <input type="hidden" id="tp-front-val">
+                                </div>
+
+                                <!-- Back Sketch Card -->
+                                <div class="tp-sketch-box">
+                                    <div class="tp-sketch-header">
+                                        <span class="tp-sketch-tag" data-i18n="tp_back_view">Back Technical Flat</span>
+                                        <div class="tp-sketch-btns">
+                                            <label class="btn btn-secondary btn-xs tp-upload-btn">
+                                                <span class="material-symbols-rounded">upload</span>
+                                                <span data-i18n="upload_image">Upload</span>
+                                                <input type="file" id="tp-back-file" accept="image/*" hidden>
+                                            </label>
+                                            <button type="button" class="btn btn-secondary btn-xs" id="btn-tp-back-url" title="Set Image URL">
+                                                <span class="material-symbols-rounded">link</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="tp-sketch-canvas" id="tp-back-preview">
+                                        <img id="tp-back-img" src="/Assets/nuricon_inventory.svg" alt="Back Flat View">
+                                        <div class="tp-sketch-empty" id="tp-back-empty" style="display:none;">
+                                            <span class="material-symbols-rounded">draw</span>
+                                            <p data-i18n="tp_no_sketch_back">Upload back flat drawing or photograph</p>
+                                        </div>
+                                    </div>
+                                    <input type="hidden" id="tp-back-val">
+                                </div>
+                            </div>
+
+                            <!-- Construction Callouts & Artwork Notes -->
+                            <div class="tp-callouts-box">
+                                <label data-i18n="tp_callouts_label">Key Construction Callouts &amp; Finishes</label>
+                                <textarea id="tp-artwork-notes" class="form-control" rows="3"
+                                    placeholder="e.g. 1) Collar: 2.5cm width 1x1 rib knit with internal herringbone neck tape from shoulder to shoulder.&#10;2) Sleeves &amp; Bottom Hem: 2.0cm folded hem with 1/4&quot; twin-needle topstitch.&#10;3) Neckline: Front drop 8.5cm, back drop 2.0cm with clean chainstitch seam cover."></textarea>
+                            </div>
+                        </div>
+
+                        <!-- Bill of Materials (BOM) & Trims -->
+                        <div class="tp-card tp-bom-card">
+                            <div class="tp-card-header">
+                                <div>
+                                    <div class="tp-card-title">
+                                        <span class="material-symbols-rounded tp-card-icon">layers</span>
+                                        <span data-i18n="tp_bom_title">Bill of Materials (BOM) &amp; Trims</span>
+                                    </div>
+                                    <p class="tp-card-sub" data-i18n="tp_bom_sub">All fabrics, ribbings, threads, zippers, buttons, and branding trims required per piece.</p>
+                                </div>
+                                <div class="tp-bom-summary-bar">
+                                    <div class="tp-bom-cost-badge">
+                                        <span data-i18n="tp_est_garment_cost">Total Materials Cost</span>: <strong id="tp-bom-total-cost">$0.00</strong>
+                                    </div>
+                                    <button type="button" class="btn btn-secondary btn-sm" id="btn-tp-add-bom-row">
+                                        <span class="material-symbols-rounded">add</span>
+                                        <span data-i18n="tp_add_material">+ Add Component</span>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="table-wrapper">
+                                <table class="catalog-table tp-table" id="tp-bom-table">
+                                    <thead>
+                                        <tr>
+                                            <th style="width:16%;" data-i18n="tp_placement">Placement / Part</th>
+                                            <th style="width:24%;" data-i18n="tp_material_spec">Material Description &amp; Composition</th>
+                                            <th style="width:14%;" data-i18n="tp_color_ref">Color / Pantone</th>
+                                            <th style="width:16%;" data-i18n="col_supplier">Supplier</th>
+                                            <th style="width:10%; text-align:center;" data-i18n="tp_consumption">Usage / Unit</th>
+                                            <th style="width:10%; text-align:right;" data-i18n="mat_unit">Unit Cost</th>
+                                            <th style="width:10%; text-align:right;" data-i18n="col_total">Total Cost</th>
+                                            <th style="width:6%; text-align:center;"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tp-bom-body"></tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Points of Measure (POM) / Specification Sheet & Size Grading -->
+                        <div class="tp-card tp-spec-card">
+                            <div class="tp-card-header">
+                                <div>
+                                    <div class="tp-card-title">
+                                        <span class="material-symbols-rounded tp-card-icon">straighten</span>
+                                        <span data-i18n="tp_pom_title">Points of Measure (POM) &amp; Size Grading Chart</span>
+                                    </div>
+                                    <p class="tp-card-sub" data-i18n="tp_pom_sub">Standard garment measurements across all sizes (in cm). Graded from sample base size.</p>
+                                </div>
+                                <div class="tp-pom-actions">
+                                    <div class="tp-preset-pills">
+                                        <button type="button" class="tp-pill-btn" data-tp-preset="tshirt">T-Shirt Spec</button>
+                                        <button type="button" class="tp-pill-btn" data-tp-preset="hoodie">Hoodie Spec</button>
+                                        <button type="button" class="tp-pill-btn" data-tp-preset="pants">Pants Spec</button>
+                                        <button type="button" class="tp-pill-btn" data-tp-preset="dress">Dress Spec</button>
+                                    </div>
+                                    <button type="button" class="btn btn-secondary btn-sm" id="btn-tp-add-pom-row">
+                                        <span class="material-symbols-rounded">add</span>
+                                        <span data-i18n="tp_add_measurement">+ Add POM Row</span>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="table-wrapper">
+                                <table class="catalog-table tp-table tp-spec-table" id="tp-pom-table">
+                                    <thead>
+                                        <tr>
+                                            <th style="width:6%; text-align:center;">Code</th>
+                                            <th style="width:26%;" data-i18n="tp_pom_desc">Point of Measure (POM) Description</th>
+                                            <th style="width:8%; text-align:center;">Tol (±)</th>
+                                            <th style="width:9%; text-align:center;" class="tp-base-col">XS</th>
+                                            <th style="width:9%; text-align:center;" class="tp-base-col">S</th>
+                                            <th style="width:10%; text-align:center;" class="tp-sample-base-col">M (Sample)</th>
+                                            <th style="width:9%; text-align:center;" class="tp-base-col">L</th>
+                                            <th style="width:9%; text-align:center;" class="tp-base-col">XL</th>
+                                            <th style="width:9%; text-align:center;" class="tp-base-col">XXL</th>
+                                            <th style="width:5%; text-align:center;"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tp-pom-body"></tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Garment Construction, Workmanship & Packaging Section -->
+                        <div class="tp-card tp-construction-card">
+                            <div class="tp-card-header">
+                                <div class="tp-card-title">
+                                    <span class="material-symbols-rounded tp-card-icon">precision_manufacturing</span>
+                                    <span data-i18n="tp_construction_title">Stitching, Assembly &amp; Packaging Specifications</span>
+                                </div>
+                            </div>
+                            <div class="tp-instruction-grid">
+                                <div class="tp-instruction-block">
+                                    <label class="tp-inst-label" data-i18n="tp_stitching_specs">Stitching &amp; Seam Construction</label>
+                                    <textarea id="tp-construction-notes" class="form-control" rows="4"
+                                        placeholder="• Main Body Assembly: 4-thread overlock with 1.2cm seam allowance.&#10;• Sleeve Hem &amp; Bottom Sweep: 2.0cm turn-up with 1/4&quot; twin-needle coverstitch.&#10;• Stitch Density: 10–12 stitches per inch (SPI). Tension balanced, no puckering.&#10;• Neck Reinforcement: Shoulder-to-shoulder self-fabric neck binding."></textarea>
+                                </div>
+                                <div class="tp-instruction-block">
+                                    <label class="tp-inst-label" data-i18n="tp_packaging_specs">Folding, Labeling &amp; Packaging Rules</label>
+                                    <textarea id="tp-packaging-notes" class="form-control" rows="4"
+                                        placeholder="• Folding: Standard 3-fold flat retail pack with protective acid-free tissue paper inside.&#10;• Polybag: 1 piece per 100% biodegradable self-adhesive polybag with printed suffocation warning.&#10;• Barcode: Exterior SKU and barcode sticker centered on polybag back 5cm from bottom.&#10;• Master Carton: 24 pieces per export carton. Solid color, assorted size ratio (2:4:6:6:4:2)."></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Factory Sign-Off Approval Block -->
+                        <div class="tp-card tp-signoff-card">
+                            <div class="tp-signoff-grid">
+                                <div class="tp-signoff-box">
+                                    <span class="tp-signoff-role">Technical Designer</span>
+                                    <div class="tp-signoff-line"></div>
+                                    <div class="tp-signoff-meta">Signature / Date</div>
+                                </div>
+                                <div class="tp-signoff-box">
+                                    <span class="tp-signoff-role">Sample Maker / Patternmaker</span>
+                                    <div class="tp-signoff-line"></div>
+                                    <div class="tp-signoff-meta">Fit Approval / Date</div>
+                                </div>
+                                <div class="tp-signoff-box">
+                                    <span class="tp-signoff-role">Production Manager</span>
+                                    <div class="tp-signoff-line"></div>
+                                    <div class="tp-signoff-meta">Manufacturing Sign-Off</div>
+                                </div>
+                                <div class="tp-signoff-box">
+                                    <span class="tp-signoff-role">Factory Representative</span>
+                                    <div class="tp-signoff-line"></div>
+                                    <div class="tp-signoff-meta">Acknowledgment &amp; Receipt</div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -1860,70 +2229,170 @@
                                 data-i18n="save">Save</button>
                         </div>
                     </div>
-                    <h2 class="editor-title" data-i18n="ord_new_title">New order</h2>
-                    <p class="editor-sub" data-i18n="ord_new_sub">Customer, products, and how the order will be
-                        fulfilled.</p>
-                    <div class="order-work">
-                        <div class="card order-card-pad">
-                            <div class="form-group">
-                                <label data-i18n="ord_customer">Customer</label>
-                                <div class="oe-customer-row">
-                                    <select id="oe-customer" class="form-control"></select>
-                                    <button type="button" class="oe-add-cust" id="btn-oe-add-customer"
-                                        data-order-action="add-customer" data-i18n-title="add_customer"
-                                        title="Add customer">
-                                        <span class="material-symbols-rounded">add</span>
+
+                    <div class="oe-hero-header">
+                        <div>
+                            <h2 class="editor-title" data-i18n="ord_new_title">New order</h2>
+                            <p class="editor-sub" data-i18n="ord_new_sub">Customer, products, and how the order will be fulfilled.</p>
+                        </div>
+                    </div>
+
+                    <div class="order-work oe-layout-grid">
+                        <!-- Main Left Column: Order Items -->
+                        <div class="card order-card-pad oe-items-card">
+                            <div class="oe-card-header">
+                                <div class="oe-card-title-group">
+                                    <span class="material-symbols-rounded oe-card-icon">shopping_bag</span>
+                                    <div>
+                                        <h3 data-i18n="ord_items">Order Items</h3>
+                                        <p class="oe-card-subtitle" data-i18n="ord_items_subtitle">Select products, set quantities, and review prices</p>
+                                    </div>
+                                </div>
+                                <span class="oe-badge-pill" id="oe-items-badge">1 item</span>
+                            </div>
+
+                            <div id="oe-lines"></div>
+
+                            <button type="button" class="btn btn-secondary oe-add-line-btn" id="btn-oe-add">
+                                <span class="material-symbols-rounded">add_circle</span>
+                                <span data-i18n="ord_add_line">Add product</span>
+                            </button>
+
+                            <div class="oe-items-footer">
+                                <div class="oe-items-footer-left">
+                                    <span class="material-symbols-rounded">shopping_cart_checkout</span>
+                                    <span id="oe-items-footer-count">1 item (1 units)</span>
+                                </div>
+                                <div class="oe-items-footer-right">
+                                    <span data-i18n="total">Total:</span>
+                                    <strong id="oe-lines-total">$0.00</strong>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right Sidebar Column: Customer, Fulfillment & Integrated Summary -->
+                        <div class="oe-sidebar-column">
+                            <div class="card order-card-pad oe-details-card">
+                                <div class="oe-card-header">
+                                    <div class="oe-card-title-group">
+                                        <span class="material-symbols-rounded oe-card-icon">person</span>
+                                        <div>
+                                            <h3 data-i18n="ord_cust_fulfillment">Customer & Fulfillment</h3>
+                                            <p class="oe-card-subtitle" data-i18n="ord_cust_sub">Customer details and delivery settings</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label data-i18n="ord_customer">Customer</label>
+                                    <div class="oe-customer-row">
+                                        <select id="oe-customer" class="form-control"></select>
+                                        <button type="button" class="oe-add-cust" id="btn-oe-add-customer"
+                                            data-order-action="add-customer" data-i18n-title="add_customer"
+                                            title="Add customer">
+                                            <span class="material-symbols-rounded">person_add</span>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label data-i18n="ord_method">Fulfillment Method</label>
+                                    <div class="oe-method-selector">
+                                        <label class="oe-method-option">
+                                            <input type="radio" name="oe-method" value="Delivery" checked>
+                                            <div class="oe-method-card">
+                                                <span class="material-symbols-rounded oe-method-icon">local_shipping</span>
+                                                <div class="oe-method-info">
+                                                    <strong data-i18n="ord_delivery">Delivery</strong>
+                                                    <small data-i18n="ord_delivery_desc">Ship to address</small>
+                                                </div>
+                                                <span class="material-symbols-rounded oe-check-indicator">check_circle</span>
+                                            </div>
+                                        </label>
+                                        <label class="oe-method-option">
+                                            <input type="radio" name="oe-method" value="Pickup">
+                                            <div class="oe-method-card">
+                                                <span class="material-symbols-rounded oe-method-icon">storefront</span>
+                                                <div class="oe-method-info">
+                                                    <strong data-i18n="ord_pickup">Pickup</strong>
+                                                    <small data-i18n="ord_pickup_desc">Store pickup</small>
+                                                </div>
+                                                <span class="material-symbols-rounded oe-check-indicator">check_circle</span>
+                                            </div>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="form-group" id="oe-address-wrap">
+                                    <label data-i18n="ord_address">Shipping address</label>
+                                    <textarea id="oe-address" class="form-control oe-compact-textarea" rows="2" placeholder="Enter delivery street address..."></textarea>
+                                </div>
+
+                                <div class="form-group" id="oe-pickup-wrap" hidden>
+                                    <label data-i18n="ord_pickup_note">Pickup note</label>
+                                    <textarea id="oe-pickup" class="form-control oe-compact-textarea" rows="2" placeholder="e.g. Branch location, pickup time, or person collecting..."></textarea>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label data-i18n="ord_est_date">Estimated date</label>
+                                        <input type="date" id="oe-date" class="form-control">
+                                    </div>
+                                    <div class="form-group">
+                                        <label data-i18n="ord_pay_method">Payment method</label>
+                                        <select id="oe-pay" class="form-control">
+                                            <option value="Cash" data-i18n="ord_cash">Cash</option>
+                                            <option value="Card" data-i18n="ord_card">Card</option>
+                                            <option value="Transfer" data-i18n="ord_transfer">Transfer</option>
+                                            <option value="OnDelivery" data-i18n="ord_on_delivery">Payment on delivery</option>
+                                        </select>
+                                        <p class="editor-sub" id="oe-pay-hint" hidden></p>
+                                    </div>
+                                </div>
+
+                                <div class="oe-paid-notes-row">
+                                    <label class="p-check oe-paid-toggle" id="oe-paid-wrap">
+                                        <input type="checkbox" id="oe-paid">
+                                        <span data-i18n="ord_paid_now">Paid now</span>
+                                    </label>
+                                </div>
+
+                                <div class="form-group" style="margin-top:0.65rem;">
+                                    <label data-i18n="ord_notes">Order notes</label>
+                                    <textarea id="oe-notes" class="form-control oe-compact-textarea" rows="1" placeholder="Special instructions, tags, or reference notes..."></textarea>
+                                </div>
+
+                                <!-- Integrated Summary Section -->
+                                <div class="oe-integrated-summary">
+                                    <div class="oe-sum-divider"></div>
+                                    <div class="oe-summary-breakdown">
+                                        <div class="oe-sum-row">
+                                            <span data-i18n="ord_items_subtotal">Items Subtotal</span>
+                                            <strong id="oe-subtotal-val">$0.00</strong>
+                                        </div>
+                                        <div class="oe-sum-row">
+                                            <span data-i18n="ord_fulfillment_type">Fulfillment</span>
+                                            <span class="oe-tag-pill" id="oe-fulfillment-label">Delivery</span>
+                                        </div>
+                                        <div class="oe-sum-row">
+                                            <span data-i18n="ord_payment_status">Payment Status</span>
+                                            <span class="oe-tag-pill oe-status-unpaid" id="oe-payment-status-badge">Unpaid</span>
+                                        </div>
+                                        <div class="oe-sum-divider"></div>
+                                        <div class="oe-sum-total-row">
+                                            <div>
+                                                <span class="oe-total-label" data-i18n="total">Total Amount</span>
+                                                <small class="oe-tax-hint" data-i18n="ord_taxes_included">Taxes included</small>
+                                            </div>
+                                            <strong class="oe-total-val" id="oe-total">$0.00</strong>
+                                        </div>
+                                    </div>
+                                    <button type="button" class="btn btn-primary oe-confirm-order-btn" id="btn-order-save-primary">
+                                        <span class="material-symbols-rounded">check</span>
+                                        <span data-i18n="ord_confirm_create">Confirm & Create Order</span>
                                     </button>
                                 </div>
                             </div>
-                            <div class="form-group">
-                                <label data-i18n="ord_method">Method</label>
-                                <div class="pe-checks">
-                                    <label class="p-radio"><input type="radio" name="oe-method" value="Delivery"
-                                            checked><span data-i18n="ord_delivery">Delivery</span></label>
-                                    <label class="p-radio"><input type="radio" name="oe-method" value="Pickup"><span
-                                            data-i18n="ord_pickup">Pickup</span></label>
-                                </div>
-                            </div>
-                            <div class="form-group" id="oe-address-wrap">
-                                <label data-i18n="ord_address">Shipping address</label>
-                                <textarea id="oe-address" class="form-control" rows="3"></textarea>
-                            </div>
-                            <div class="form-group" id="oe-pickup-wrap" hidden>
-                                <label data-i18n="ord_pickup_note">Pickup note</label>
-                                <textarea id="oe-pickup" class="form-control" rows="2"></textarea>
-                            </div>
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label data-i18n="ord_est_date">Estimated date</label>
-                                    <input type="date" id="oe-date" class="form-control">
-                                </div>
-                                <div class="form-group">
-                                    <label data-i18n="ord_pay_method">Payment method</label>
-                                    <select id="oe-pay" class="form-control">
-                                        <option value="Cash" data-i18n="ord_cash">Cash</option>
-                                        <option value="Card" data-i18n="ord_card">Card</option>
-                                        <option value="Transfer" data-i18n="ord_transfer">Transfer</option>
-                                        <option value="OnDelivery" data-i18n="ord_on_delivery">Payment on delivery
-                                        </option>
-                                    </select>
-                                    <p class="editor-sub" id="oe-pay-hint" hidden></p>
-                                </div>
-                            </div>
-                            <label class="p-check" id="oe-paid-wrap"><input type="checkbox" id="oe-paid"><span
-                                    data-i18n="ord_paid_now">Paid now</span></label>
-                            <div class="form-group" style="margin-top:0.9rem;">
-                                <label data-i18n="ord_notes">Order notes</label>
-                                <textarea id="oe-notes" class="form-control" rows="2"></textarea>
-                            </div>
-                        </div>
-                        <div class="card order-card-pad">
-                            <h3 data-i18n="ord_items">Items</h3>
-                            <div id="oe-lines"></div>
-                            <button type="button" class="btn btn-secondary" id="btn-oe-add" data-i18n="ord_add_line">Add
-                                product</button>
-                            <div class="rev-row total"><span data-i18n="total">Total</span><strong
-                                    id="oe-total">$0.00</strong></div>
                         </div>
                     </div>
                 </div>

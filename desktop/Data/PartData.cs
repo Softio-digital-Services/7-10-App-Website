@@ -44,6 +44,9 @@ namespace InventorySystem.Data
         public string Color { get; set; } = "";
         public string StyleCode { get; set; } = "";
         public string SourceKind { get; set; } = "bought";
+        public string Gender { get; set; } = "Unisex";
+        public string Fabric { get; set; } = "";
+        public string Collection { get; set; } = "";
 
         public static List<PartData> GetAllParts(string categoryName = null, int limit = 0, int offset = 0)
         {
@@ -180,7 +183,10 @@ namespace InventorySystem.Data
                 Size              = Safe<string>(r, "size", ""),
                 Color             = Safe<string>(r, "color", ""),
                 StyleCode         = Safe<string>(r, "style_code", ""),
-                SourceKind        = Safe<string>(r, "source_kind", "bought")
+                SourceKind        = Safe<string>(r, "source_kind", "bought"),
+                Gender            = Safe<string>(r, "gender", "Unisex"),
+                Fabric            = Safe<string>(r, "fabric", ""),
+                Collection        = Safe<string>(r, "collection", "")
             };
         }
     }

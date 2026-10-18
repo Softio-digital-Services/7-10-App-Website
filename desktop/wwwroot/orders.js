@@ -467,6 +467,96 @@ function orderProductSub(p) {
     return [p.sku, p.size, p.color].filter(Boolean).map(ordEscape).join(' · ');
 }
 
+function orderClassifyProductDept(p) {
+    if (!p) return 'unisex';
+    if (p.gender && typeof p.gender === 'string') {
+        const g = p.gender.trim();
+        const gl = g.toLowerCase();
+        if (gl === 'men' || gl === 'man' || gl === 'male' || /رجالي|رجال|شباب|ولادي/.test(g)) return 'men';
+        if (gl === 'women' || gl === 'woman' || gl === 'female' || /نسائي|نساء|بنات|ستاتي|حريمي/.test(g)) return 'women';
+        if (gl === 'kids' || gl === 'kid' || gl === 'children' || /أطفال|طفل|بيبي/.test(g)) return 'kids';
+        if (gl === 'unisex' || /للجنسين|مشترك/.test(g)) return 'unisex';
+        if (g && gl !== 'other' && gl !== 'general') return g;
+    }
+    const text = [p.category, p.name, p.description].filter(Boolean).join(' ').toLowerCase();
+    const isMen = /\b(men|man|mens|male|gentlemen)\b|رجالي|رجال|شباب|ولادي/i.test(text);
+    const isWomen = /\b(women|woman|womens|female|ladies)\b|نسائي|نساء|بنات|ستاتي|حريمي/i.test(text);
+    const isKids = /\b(kids|kid|children|baby|toddler)\b|أطفال|طفل|بيبي/i.test(text);
+
+    if (isMen && !isWomen) return 'men';
+    if (isWomen && !isMen) return 'women';
+    if (isKids) return 'kids';
+    return 'unisex';
+}
+
+function orderDeptIcon(pOrDept) {
+    const d = (typeof pOrDept === 'string' ? pOrDept : orderClassifyProductDept(pOrDept)).toLowerCase();
+    if (d === 'men') return 'man';
+    if (d === 'women') return 'woman';
+    if (d === 'kids') return 'child_care';
+    if (d === 'unisex') return 'group';
+    return 'category';
+}
+
+function orderDeptTitle(dept) {
+    const dl = (dept || '').toLowerCase();
+    if (dl === 'all') return ordTr('ord_dept_all') || 'All';
+    if (dl === 'men') return ordTr('ord_dept_men') || 'Men';
+    if (dl === 'women') return ordTr('ord_dept_women') || 'Women';
+    if (dl === 'unisex') return ordTr('ord_dept_unisex') || 'Unisex';
+    if (dl === 'kids') return ordTr('ord_dept_kids') || 'Kids';
+    if (dl === 'other') return ordTr('ord_dept_other') || 'Other';
+    return dept;
+}
+
+function orderDeptCounts() {
+    const prods = orderProducts().filter(p => !p.isInactive && p.status !== 'Inactive');
+    const counts = { all: prods.length, men: 0, women: 0, unisex: 0, kids: 0 };
+    const customCounts = new Map();
+    prods.forEach(p => {
+        const d = orderClassifyProductDept(p);
+        const dl = d.toLowerCase();
+        if (counts[dl] != null) {
+            counts[dl]++;
+        } else {
+            customCounts.set(d, (customCounts.get(d) || 0) + 1);
+        }
+    });
+    return { counts, customCounts };
+}
+
+function orderAvailableCategoriesForDept(dept) {
+    const prods = orderProducts().filter(p => !p.isInactive && p.status !== 'Inactive');
+    const filtered = dept === 'all' ? prods : prods.filter(p => orderClassifyProductDept(p).toLowerCase() === dept.toLowerCase());
+
+    const catMap = new Map();
+    filtered.forEach(p => {
+        const cat = (p.category || '').trim() || 'General';
+        catMap.set(cat, (catMap.get(cat) || 0) + 1);
+    });
+
+    const result = [];
+    catMap.forEach((count, name) => {
+        let displayName = name;
+        if (/^(men|women|kids|unisex|رجالي|نسائي|أطفال)\s*[-/:]\s*/i.test(name)) {
+            displayName = name.replace(/^(men|women|kids|unisex|رجالي|نسائي|أطفال)\s*[-/:]\s*/i, '');
+        }
+        result.push({ name, displayName: displayName || name, count });
+    });
+
+    result.sort((a, b) => b.count - a.count || a.displayName.localeCompare(b.displayName));
+    return result;
+}
+
+var orderPickerFilters = {};
+
+function getOrderPickerFilter(lineIndex) {
+    if (!orderPickerFilters[lineIndex]) {
+        orderPickerFilters[lineIndex] = { dept: 'all', cat: 'all', query: '' };
+    }
+    return orderPickerFilters[lineIndex];
+}
+
 function paintOrderLines() {
     const host = document.getElementById('oe-lines');
     if (!host) return;
@@ -475,14 +565,28 @@ function paintOrderLines() {
         const s = orderStockInfo(p);
         const maxAttr = s && s.ok && s.qty != null ? `max="${s.qty}"` : '';
         const sub = p ? orderProductSub(p) : '';
+        const lineSubtotal = (Number(line.qty) || 0) * (Number(line.price) || 0);
+
         return `<div class="oe-line" data-line="${index}">
-        <div class="oe-field oe-product"><span>${ordEscape(ordTr('col_product'))}</span>
+        <div class="oe-line-head">
+            <div class="oe-line-badge-wrap">
+                <span class="oe-line-badge">#${index + 1}</span>
+                <span class="oe-line-head-title">${p ? ordEscape(p.name) : ordEscape(ordTr('ord_select_product'))}</span>
+            </div>
+            <button type="button" class="oe-line-remove-btn" data-order-action="remove-line" data-line="${index}" aria-label="Remove" title="Remove line">
+                <span class="material-symbols-rounded">delete_outline</span>
+            </button>
+        </div>
+        <div class="oe-line-picker-row">
             <div class="oe-picker" data-picker="${index}">
                 <button type="button" class="oe-picker-btn ${p ? 'has-value' : ''}" data-order-action="toggle-picker" data-line="${index}" aria-haspopup="listbox" aria-expanded="false">
                     ${orderThumb(p)}
                     <span class="oe-picker-text">
-                        <strong>${p ? ordEscape(p.name) : ordEscape(ordTr('ord_select_product'))}</strong>
-                        ${sub ? `<small>${sub}</small>` : ''}
+                        <div class="oe-picker-title-row">
+                            <strong>${p ? ordEscape(p.name) : ordEscape(ordTr('ord_select_product'))}</strong>
+                            ${p && p.category ? `<span class="oe-tag-cat">${ordEscape(p.category)}</span>` : ''}
+                        </div>
+                        ${sub ? `<small>${sub}</small>` : (!p ? `<small class="oe-picker-hint">${ordEscape(ordTr('ord_browse_categories_hint'))}</small>` : '')}
                     </span>
                     ${p ? orderStockBadge(p) : ''}
                     <span class="material-symbols-rounded oe-picker-caret">expand_more</span>
@@ -491,57 +595,207 @@ function paintOrderLines() {
                     <div class="oe-picker-search">
                         <span class="material-symbols-rounded">search</span>
                         <input type="text" data-field="psearch" autocomplete="off" placeholder="${ordEscape(ordTr('ord_search_product'))}">
+                        <button type="button" class="oe-picker-clear" data-order-action="clear-psearch" title="${ordEscape(ordTr('ord_clear_search'))}" hidden>
+                            <span class="material-symbols-rounded">close</span>
+                        </button>
                     </div>
+                    <div class="oe-picker-cats-wrap"></div>
                     <div class="oe-picker-list" role="listbox"></div>
                 </div>
             </div>
         </div>
-        <label class="oe-field oe-qty"><span>${ordEscape(ordTr('col_qty'))}</span><input class="form-control" data-field="qty" type="number" min="1" ${maxAttr} value="${line.qty}"></label>
-        <label class="oe-field oe-price"><span>${ordEscape(ordTr('col_price'))}</span><input class="form-control" data-field="price" type="number" min="0" step="0.01" value="${Number(line.price || 0).toFixed(2)}"></label>
-        <button type="button" class="icon-btn oe-remove" data-order-action="remove-line" data-line="${index}" aria-label="Remove"><span class="material-symbols-rounded">close</span></button>
+        <div class="oe-line-metrics">
+            <div class="oe-metric-item oe-metric-qty">
+                <span class="oe-metric-label">${ordEscape(ordTr('col_qty'))}</span>
+                <div class="oe-qty-stepper">
+                    <button type="button" class="oe-step-btn" data-order-action="step-qty" data-line="${index}" data-dir="-1" title="Decrease">
+                        <span class="material-symbols-rounded">remove</span>
+                    </button>
+                    <input class="form-control oe-step-input" data-field="qty" type="number" min="1" ${maxAttr} value="${line.qty}">
+                    <button type="button" class="oe-step-btn" data-order-action="step-qty" data-line="${index}" data-dir="1" title="Increase">
+                        <span class="material-symbols-rounded">add</span>
+                    </button>
+                </div>
+            </div>
+            <div class="oe-metric-item oe-metric-price">
+                <span class="oe-metric-label">${ordEscape(ordTr('col_price'))}</span>
+                <div class="oe-price-input-wrap">
+                    <span class="oe-price-currency">$</span>
+                    <input class="form-control oe-price-input" data-field="price" type="number" min="0" step="0.01" value="${Number(line.price || 0).toFixed(2)}">
+                </div>
+            </div>
+            <div class="oe-metric-item oe-metric-subtotal">
+                <span class="oe-metric-label">${ordEscape(ordTr('subtotal') || 'Subtotal')}</span>
+                <div class="oe-line-subtotal-val">${ordMoney(lineSubtotal)}</div>
+            </div>
+        </div>
     </div>`;
     }).join('');
     paintOrderTotal();
 }
 
-function orderPickerMatches(query) {
-    const q = (query || '').toLowerCase().trim();
+function orderPickerMatches(lineIndex, query) {
+    const state = getOrderPickerFilter(lineIndex);
+    const q = (query != null ? query : (state.query || '')).toLowerCase().trim();
     const terms = q ? q.split(/\s+/) : [];
+    const dept = (state.dept || 'all').toLowerCase();
+    const cat = state.cat || 'all';
+
     return orderProducts()
         .filter(p => !p.isInactive && p.status !== 'Inactive')
         .filter(p => {
+            if (dept !== 'all') {
+                const prodDept = orderClassifyProductDept(p).toLowerCase();
+                if (prodDept !== dept) return false;
+            }
+            if (cat !== 'all') {
+                const prodCat = (p.category || '').trim() || 'General';
+                if (prodCat.toLowerCase() !== cat.toLowerCase()) return false;
+            }
             if (!terms.length) return true;
-            const hay = [p.name, p.sku, p.barcode, p.size, p.color, p.styleCode, p.category, p.brand]
+            const hay = [p.name, p.sku, p.barcode, p.size, p.color, p.styleCode, p.category, p.brand, p.gender, p.description]
                 .filter(Boolean).join(' ').toLowerCase();
             return terms.every(t => hay.includes(t));
         })
         .sort((a, b) => {
             const sa = orderStockInfo(a).ok ? 0 : 1, sb = orderStockInfo(b).ok ? 0 : 1;
-            return sa - sb || String(a.name || '').localeCompare(String(b.name || ''));
+            return sa - sb || String(a.category || '').localeCompare(String(b.category || '')) || String(a.name || '').localeCompare(String(b.name || ''));
         });
 }
 
 function paintOrderPickerList(picker, query) {
+    if (!picker) return;
+    const lineIndex = Number(picker.dataset.picker);
+    const state = getOrderPickerFilter(lineIndex);
+    if (query != null) state.query = query;
+
+    const clearBtn = picker.querySelector('[data-order-action="clear-psearch"]');
+    if (clearBtn) clearBtn.hidden = !state.query;
+
+    const catsWrap = picker.querySelector('.oe-picker-cats-wrap');
+    if (catsWrap) {
+        const { counts, customCounts } = orderDeptCounts();
+        const hasTabs = counts.men > 0 || counts.women > 0 || counts.kids > 0 || counts.unisex > 0 || customCounts.size > 0;
+        const currentDept = state.dept || 'all';
+        const currentCat = state.cat || 'all';
+        const deptCategories = orderAvailableCategoriesForDept(currentDept);
+        const deptTotalCount = currentDept === 'all'
+            ? counts.all
+            : (counts[currentDept.toLowerCase()] != null ? counts[currentDept.toLowerCase()] : (customCounts.get(currentDept) || 0));
+
+        let deptTabsHtml = '';
+        if (hasTabs) {
+            let customTabsHtml = '';
+            customCounts.forEach((count, dName) => {
+                const isAct = currentDept.toLowerCase() === dName.toLowerCase();
+                customTabsHtml += `
+                <button type="button" class="oe-dept-tab ${isAct ? 'active' : ''}" data-order-action="filter-dept" data-line="${lineIndex}" data-dept="${ordEscape(dName)}">
+                    <span class="material-symbols-rounded">category</span>
+                    <span>${ordEscape(dName)}</span>
+                    <span class="oe-count">${count}</span>
+                </button>`;
+            });
+
+            deptTabsHtml = `
+            <div class="oe-dept-tabs" role="tablist">
+                <button type="button" class="oe-dept-tab ${currentDept === 'all' ? 'active' : ''}" data-order-action="filter-dept" data-line="${lineIndex}" data-dept="all">
+                    <span class="material-symbols-rounded">apps</span>
+                    <span>${ordEscape(ordTr('ord_dept_all'))}</span>
+                    <span class="oe-count">${counts.all}</span>
+                </button>
+                ${counts.men > 0 ? `
+                <button type="button" class="oe-dept-tab ${currentDept.toLowerCase() === 'men' ? 'active' : ''}" data-order-action="filter-dept" data-line="${lineIndex}" data-dept="men">
+                    <span class="material-symbols-rounded">man</span>
+                    <span>${ordEscape(ordTr('ord_dept_men'))}</span>
+                    <span class="oe-count">${counts.men}</span>
+                </button>` : ''}
+                ${counts.women > 0 ? `
+                <button type="button" class="oe-dept-tab ${currentDept.toLowerCase() === 'women' ? 'active' : ''}" data-order-action="filter-dept" data-line="${lineIndex}" data-dept="women">
+                    <span class="material-symbols-rounded">woman</span>
+                    <span>${ordEscape(ordTr('ord_dept_women'))}</span>
+                    <span class="oe-count">${counts.women}</span>
+                </button>` : ''}
+                ${counts.unisex > 0 ? `
+                <button type="button" class="oe-dept-tab ${currentDept.toLowerCase() === 'unisex' ? 'active' : ''}" data-order-action="filter-dept" data-line="${lineIndex}" data-dept="unisex">
+                    <span class="material-symbols-rounded">group</span>
+                    <span>${ordEscape(ordTr('ord_dept_unisex'))}</span>
+                    <span class="oe-count">${counts.unisex}</span>
+                </button>` : ''}
+                ${counts.kids > 0 ? `
+                <button type="button" class="oe-dept-tab ${currentDept.toLowerCase() === 'kids' ? 'active' : ''}" data-order-action="filter-dept" data-line="${lineIndex}" data-dept="kids">
+                    <span class="material-symbols-rounded">child_care</span>
+                    <span>${ordEscape(ordTr('ord_dept_kids'))}</span>
+                    <span class="oe-count">${counts.kids}</span>
+                </button>` : ''}
+                ${customTabsHtml}
+            </div>`;
+        }
+
+        let catPillsHtml = '';
+        if (deptCategories.length > 0) {
+            catPillsHtml = `
+            <div class="oe-cat-pills" role="toolbar">
+                <button type="button" class="oe-cat-pill ${currentCat === 'all' ? 'active' : ''}" data-order-action="filter-cat" data-line="${lineIndex}" data-cat="all">
+                    <span>${ordEscape(ordTr('ord_all_categories'))}</span>
+                    <span class="oe-pill-count">${deptTotalCount}</span>
+                </button>
+                ${deptCategories.map(c => `
+                <button type="button" class="oe-cat-pill ${currentCat === c.name ? 'active' : ''}" data-order-action="filter-cat" data-line="${lineIndex}" data-cat="${ordEscape(c.name)}">
+                    <span>${ordEscape(c.displayName)}</span>
+                    <span class="oe-pill-count">${c.count}</span>
+                </button>`).join('')}
+            </div>`;
+        }
+
+        catsWrap.innerHTML = deptTabsHtml + catPillsHtml;
+    }
+
     const list = picker.querySelector('.oe-picker-list');
     if (!list) return;
-    const lineIndex = Number(picker.dataset.picker);
     const selected = Number(orderDraftLines[lineIndex]?.partId) || 0;
-    const matches = orderPickerMatches(query);
+    const matches = orderPickerMatches(lineIndex, state.query);
+
     if (!matches.length) {
         list.innerHTML = `<div class="oe-picker-empty"><span class="material-symbols-rounded">search_off</span>${ordEscape(ordTr('ord_no_products_found'))}</div>`;
         return;
     }
-    list.innerHTML = matches.slice(0, 80).map(p => {
+
+    const showHeaders = state.cat === 'all' && matches.length > 3;
+    let lastCat = null;
+    let html = '';
+
+    matches.slice(0, 100).forEach(p => {
+        const catName = (p.category || '').trim() || 'General';
+        if (showHeaders && catName !== lastCat) {
+            lastCat = catName;
+            const catMatches = matches.filter(m => ((m.category || '').trim() || 'General') === catName).length;
+            const deptIcon = orderDeptIcon(p);
+            html += `<div class="oe-cat-divider">
+                <span class="material-symbols-rounded">${deptIcon}</span>
+                <span class="oe-cat-name">${ordEscape(catName)}</span>
+                <span class="oe-cat-count">${catMatches}</span>
+            </div>`;
+        }
+
         const out = !orderStockInfo(p).ok;
         const sub = orderProductSub(p);
-        return `<button type="button" role="option" class="oe-opt ${out ? 'is-out' : ''} ${Number(p.id) === selected ? 'is-selected' : ''}"
+        html += `<button type="button" role="option" class="oe-opt ${out ? 'is-out' : ''} ${Number(p.id) === selected ? 'is-selected' : ''}"
             data-order-action="pick-product" data-line="${lineIndex}" data-pid="${p.id}" ${out ? 'disabled aria-disabled="true"' : ''}>
             ${orderThumb(p, 'oe-opt-thumb')}
-            <span class="oe-opt-text"><strong>${ordEscape(p.name)}</strong>${sub ? `<small>${sub}</small>` : ''}</span>
+            <span class="oe-opt-text">
+                <span class="oe-opt-title-line">
+                    <strong>${ordEscape(p.name)}</strong>
+                    ${p.category ? `<span class="oe-opt-cat-pill">${ordEscape(p.category)}</span>` : ''}
+                    ${p.gender ? `<span class="oe-opt-cat-pill" style="background:rgba(99,102,241,0.08); color:#4338ca; border-color:rgba(99,102,241,0.2);">${ordEscape(orderDeptTitle(p.gender))}</span>` : ''}
+                </span>
+                ${sub ? `<small>${sub}</small>` : ''}
+            </span>
             <span class="oe-opt-price">${ordMoney(p.price)}</span>
             ${orderStockBadge(p)}
         </button>`;
-    }).join('');
+    });
+
+    list.innerHTML = html;
 }
 
 function closeOrderPickers(except) {
@@ -563,9 +817,11 @@ function toggleOrderPicker(picker) {
     if (pop) pop.hidden = !willOpen;
     picker.querySelector('.oe-picker-btn')?.setAttribute('aria-expanded', String(willOpen));
     if (willOpen) {
+        const lineIndex = Number(picker.dataset.picker);
+        const state = getOrderPickerFilter(lineIndex);
         const input = picker.querySelector('[data-field="psearch"]');
-        if (input) input.value = '';
-        paintOrderPickerList(picker, '');
+        if (input) input.value = state.query || '';
+        paintOrderPickerList(picker, state.query || '');
         setTimeout(() => input?.focus(), 0);
     }
 }
@@ -583,6 +839,7 @@ function pickOrderProduct(lineIndex, productId) {
         draft.qty = Math.max(1, Math.floor(s.qty) || 1);
         toast(ordTr('ord_exceeds_stock').replace('{0}', orderStockQtyText(s.qty)).replace('{1}', product.name), 'error');
     }
+    closeOrderPickers();
     paintOrderLines();
 }
 
@@ -603,8 +860,49 @@ function orderStockProblem() {
 
 function paintOrderTotal() {
     const total = orderDraftLines.reduce((sum, line) => sum + (Number(line.qty) || 0) * (Number(line.price) || 0), 0);
+    const totalUnits = orderDraftLines.reduce((sum, line) => sum + (Number(line.qty) || 0), 0);
+    const lineCount = orderDraftLines.length;
+
     const el = document.getElementById('oe-total');
     if (el) el.textContent = ordMoney(total);
+
+    const subEl = document.getElementById('oe-subtotal-val');
+    if (subEl) subEl.textContent = ordMoney(total);
+
+    const badgeEl = document.getElementById('oe-items-badge');
+    if (badgeEl) {
+        badgeEl.textContent = `${lineCount} ${lineCount === 1 ? 'item' : 'items'} (${totalUnits} units)`;
+    }
+
+    const sumCountEl = document.getElementById('oe-summary-lines-count');
+    if (sumCountEl) {
+        sumCountEl.textContent = `${lineCount} ${lineCount === 1 ? 'item' : 'items'} · ${totalUnits} units`;
+    }
+
+    const linesTotalEl = document.getElementById('oe-lines-total');
+    if (linesTotalEl) linesTotalEl.textContent = ordMoney(total);
+
+    const footerCountEl = document.getElementById('oe-items-footer-count');
+    if (footerCountEl) {
+        footerCountEl.textContent = `${lineCount} ${lineCount === 1 ? 'item' : 'items'} (${totalUnits} units)`;
+    }
+
+    // Update fulfillment tag in summary
+    const method = document.querySelector('input[name="oe-method"]:checked')?.value || 'Delivery';
+    const fulEl = document.getElementById('oe-fulfillment-label');
+    if (fulEl) {
+        fulEl.textContent = method === 'Delivery' ? (ordTr('ord_delivery') || 'Delivery') : (ordTr('ord_pickup') || 'Pickup');
+        fulEl.className = `oe-tag-pill oe-method-${method.toLowerCase()}`;
+    }
+
+    // Update payment status tag in summary
+    const payMethod = document.getElementById('oe-pay')?.value || 'Cash';
+    const isPaid = !payLaterMethod(payMethod) && !!document.getElementById('oe-paid')?.checked;
+    const payStatusEl = document.getElementById('oe-payment-status-badge');
+    if (payStatusEl) {
+        payStatusEl.textContent = isPaid ? (ordTr('ord_paid') || 'Paid') : (ordTr('ord_unpaid') || 'Unpaid');
+        payStatusEl.className = `oe-tag-pill ${isPaid ? 'oe-status-paid' : 'oe-status-unpaid'}`;
+    }
 }
 
 async function saveShopOrder() {
@@ -656,7 +954,9 @@ function setupOrdersUi() {
     root.addEventListener('input', onOrdersInput);
     root.addEventListener('keydown', onOrdersKeydown);
     document.addEventListener('click', e => {
-        if (!e.target.closest('.oe-picker')) closeOrderPickers();
+        const inPicker = (typeof e.composedPath === 'function' && e.composedPath().some(el => el.classList && el.classList.contains('oe-picker')))
+            || (e.target && e.target.closest && e.target.closest('.oe-picker'));
+        if (!inPicker) closeOrderPickers();
     });
 }
 
@@ -679,6 +979,9 @@ function onOrdersKeydown(e) {
 }
 
 async function onOrdersClick(e) {
+    if (e.target.closest('.oe-picker-pop') && !e.target.closest('[data-order-action="pick-product"]')) {
+        e.stopPropagation();
+    }
     const open = e.target.closest('[data-open-order]');
     if (open) {
         try { await openShopOrder(Number(open.dataset.openOrder)); }
@@ -708,9 +1011,75 @@ async function onOrdersClick(e) {
             window._orderCustomerPick = true;
             if (typeof openCustomerModal === 'function') openCustomerModal(null);
         } else if (kind === 'board') showOrdersBoard();
-        else if (kind === 'toggle-picker') toggleOrderPicker(action.closest('.oe-picker'));
+        else if (kind === 'toggle-picker') {
+            e.stopPropagation();
+            toggleOrderPicker(action.closest('.oe-picker'));
+        }
         else if (kind === 'pick-product') pickOrderProduct(Number(action.dataset.line), Number(action.dataset.pid));
+        else if (kind === 'filter-dept') {
+            e.stopPropagation();
+            e.preventDefault();
+            const picker = action.closest('.oe-picker');
+            if (!picker) return;
+            const lineIndex = Number(action.dataset.line != null ? action.dataset.line : picker.dataset.picker);
+            const state = getOrderPickerFilter(lineIndex);
+            state.dept = action.dataset.dept || 'all';
+            state.cat = 'all';
+            const input = picker.querySelector('[data-field="psearch"]');
+            paintOrderPickerList(picker, input ? input.value : '');
+        } else if (kind === 'filter-cat') {
+            e.stopPropagation();
+            e.preventDefault();
+            const picker = action.closest('.oe-picker');
+            if (!picker) return;
+            const lineIndex = Number(action.dataset.line != null ? action.dataset.line : picker.dataset.picker);
+            const state = getOrderPickerFilter(lineIndex);
+            const cat = action.dataset.cat;
+            state.cat = cat || 'all';
+            const input = picker.querySelector('[data-field="psearch"]');
+            paintOrderPickerList(picker, input ? input.value : '');
+        } else if (kind === 'clear-psearch') {
+            e.stopPropagation();
+            e.preventDefault();
+            const picker = action.closest('.oe-picker');
+            if (!picker) return;
+            const lineIndex = Number(picker.dataset.picker);
+            const state = getOrderPickerFilter(lineIndex);
+            state.query = '';
+            const input = picker.querySelector('[data-field="psearch"]');
+            if (input) input.value = '';
+            paintOrderPickerList(picker, '');
+            input?.focus();
+        }
         else if (kind === 'new' || action.id === 'btn-new-order') showOrderEditor();
+        else if (kind === 'step-qty') {
+            e.stopPropagation();
+            const lineIndex = Number(action.dataset.line);
+            const dir = Number(action.dataset.dir) || 0;
+            const draft = orderDraftLines[lineIndex];
+            if (!draft) return;
+            const cur = Number(draft.qty) || 1;
+            let next = cur + dir;
+            if (next < 1) next = 1;
+            const p = orderFindProduct(draft.partId);
+            const s = orderStockInfo(p);
+            if (s && s.ok && s.qty != null && next > s.qty) {
+                toast(ordTr('ord_exceeds_stock').replace('{0}', orderStockQtyText(s.qty)).replace('{1}', p.name), 'error');
+                next = Math.max(1, Math.floor(s.qty));
+            }
+            draft.qty = next;
+            const lineEl = document.querySelector(`.oe-line[data-line="${lineIndex}"]`);
+            if (lineEl) {
+                const input = lineEl.querySelector('[data-field="qty"]');
+                if (input) {
+                    input.value = next;
+                    input.classList.toggle('is-over', !!(s && s.qty != null && next > s.qty));
+                }
+                const subEl = lineEl.querySelector('.oe-line-subtotal-val');
+                if (subEl) subEl.textContent = ordMoney(next * (Number(draft.price) || 0));
+            }
+            paintOrderTotal();
+        }
         else if (kind === 'remove-line') {
             orderDraftLines.splice(Number(action.dataset.line), 1);
             if (!orderDraftLines.length) orderDraftLines.push({ partId: 0, qty: 1, price: 0 });
@@ -763,8 +1132,9 @@ async function onOrdersClick(e) {
 
 function onOrdersChange(e) {
     if (e.target.id === 'order-filter-method') { renderShopOrders(); return; }
-    if (e.target.name === 'oe-method') { syncOrderMethod(); return; }
-    if (e.target.id === 'oe-pay') { syncPaidNow(); return; }
+    if (e.target.name === 'oe-method') { syncOrderMethod(); paintOrderTotal(); return; }
+    if (e.target.id === 'oe-pay') { syncPaidNow(); paintOrderTotal(); return; }
+    if (e.target.id === 'oe-paid') { paintOrderTotal(); return; }
     if (e.target.id === 'oe-customer') {
         const customer = orderCustomers().find(c => Number(c.id) === Number(e.target.value));
         const address = document.getElementById('oe-address');
@@ -788,6 +1158,8 @@ function onOrdersChange(e) {
     draft.price = product ? Number(product.price) || 0 : 0;
     const price = line.querySelector('[data-field="price"]');
     if (price) price.value = draft.price.toFixed(2);
+    const subEl = line.querySelector('.oe-line-subtotal-val');
+    if (subEl) subEl.textContent = ordMoney((Number(draft.qty) || 1) * draft.price);
     paintOrderTotal();
 }
 
@@ -795,7 +1167,12 @@ function onOrdersInput(e) {
     if (e.target.id === 'order-search') { renderShopOrders(); return; }
     if (e.target.dataset.field === 'psearch') {
         const picker = e.target.closest('.oe-picker');
-        if (picker) paintOrderPickerList(picker, e.target.value);
+        if (picker) {
+            const lineIndex = Number(picker.dataset.picker);
+            const state = getOrderPickerFilter(lineIndex);
+            state.query = e.target.value;
+            paintOrderPickerList(picker, e.target.value);
+        }
         return;
     }
     const line = e.target.closest('[data-line]');
@@ -806,8 +1183,14 @@ function onOrdersInput(e) {
         draft.qty = Number(e.target.value);
         const s = orderStockInfo(orderFindProduct(draft.partId));
         e.target.classList.toggle('is-over', !!(s && s.qty != null && draft.qty > s.qty));
+        const subEl = line.querySelector('.oe-line-subtotal-val');
+        if (subEl) subEl.textContent = ordMoney((draft.qty || 0) * (Number(draft.price) || 0));
     }
-    if (e.target.dataset.field === 'price') draft.price = Number(e.target.value);
+    if (e.target.dataset.field === 'price') {
+        draft.price = Number(e.target.value);
+        const subEl = line.querySelector('.oe-line-subtotal-val');
+        if (subEl) subEl.textContent = ordMoney((Number(draft.qty) || 0) * (draft.price || 0));
+    }
     paintOrderTotal();
 }
 
@@ -816,6 +1199,7 @@ document.getElementById('btn-new-order')?.addEventListener('click', showOrderEdi
 document.getElementById('btn-order-editor-back')?.addEventListener('click', showOrdersBoard);
 document.getElementById('btn-order-editor-cancel')?.addEventListener('click', showOrdersBoard);
 document.getElementById('btn-order-save')?.addEventListener('click', saveShopOrder);
+document.getElementById('btn-order-save-primary')?.addEventListener('click', saveShopOrder);
 document.getElementById('btn-oe-add')?.addEventListener('click', () => {
     orderDraftLines.push({ partId: 0, qty: 1, price: 0 });
     paintOrderLines();

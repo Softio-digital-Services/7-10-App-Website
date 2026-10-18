@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -681,6 +681,9 @@ namespace InventorySystem
                                      p.is_stock_tracked, COALESCE(p.sell_by_weight, 0) AS sell_by_weight, p.price2, p.price3, p.price4, p.supplier_id,
                                      COALESCE(p.brand,'') AS brand, COALESCE(p.size,'') AS size, COALESCE(p.color,'') AS color, COALESCE(p.style_code,'') AS style_code,
                                      COALESCE(p.source_kind,'bought') AS source_kind,
+                                     COALESCE(p.gender, 'Unisex') AS gender,
+                                     COALESCE(p.fabric, '') AS fabric,
+                                     COALESCE(p.collection, '') AS collection,
                                      COALESCE(c.category_name, 'General') AS category,
                                      c.category_image, s.supplier_name
                               FROM parts p
@@ -769,7 +772,10 @@ namespace InventorySystem
                                 size = row["size"]?.ToString() ?? "",
                                 color = row["color"]?.ToString() ?? "",
                                 styleCode = row["style_code"]?.ToString() ?? "",
-                                source = string.Equals(row["source_kind"]?.ToString(), "made", StringComparison.OrdinalIgnoreCase) ? "made" : "bought"
+                                source = string.Equals(row["source_kind"]?.ToString(), "made", StringComparison.OrdinalIgnoreCase) ? "made" : "bought",
+                                gender = row["gender"]?.ToString() ?? "Unisex",
+                                fabric = row["fabric"]?.ToString() ?? "",
+                                collection = row["collection"]?.ToString() ?? ""
                             });
                         }
 
@@ -1836,6 +1842,177 @@ namespace InventorySystem
                         DatabaseHelper.ExecuteNonQuery(
                             "DELETE FROM categories WHERE category_name = @n",
                             new Microsoft.Data.Sqlite.SqliteParameter("@n", name.Trim()));
+                        return Microsoft.AspNetCore.Http.Results.Ok(new { success = true });
+                    }
+                    catch (Exception ex) { return Microsoft.AspNetCore.Http.Results.Problem(ex.Message); }
+                });
+
+                // - Fashion Collections (GET / POST) -
+                app.MapGet("/api/fashion-collections", () =>
+                {
+                    try
+                    {
+                        var dt = DatabaseHelper.ExecuteDataTable("SELECT name FROM fashion_collections WHERE is_active = 1 ORDER BY id");
+                        var list = new System.Collections.Generic.List<string>();
+                        foreach (System.Data.DataRow row in dt.Rows)
+                            list.Add(row["name"].ToString());
+                        return Microsoft.AspNetCore.Http.Results.Ok(list);
+                    }
+                    catch (Exception ex) { return Microsoft.AspNetCore.Http.Results.Problem(ex.Message); }
+                });
+
+                app.MapPost("/api/fashion-collections", async (Microsoft.AspNetCore.Http.HttpRequest request) =>
+                {
+                    try
+                    {
+                        using var doc = await System.Text.Json.JsonDocument.ParseAsync(request.Body);
+                        string name = doc.RootElement.TryGetProperty("name", out var n) ? n.GetString() : null;
+                        if (string.IsNullOrWhiteSpace(name))
+                            return Microsoft.AspNetCore.Http.Results.BadRequest(new { error = "Name required" });
+                        name = name.Trim();
+                        int exists = DatabaseHelper.ExecuteScalar<int>(
+                            "SELECT COUNT(*) FROM fashion_collections WHERE name = @n COLLATE NOCASE",
+                            new Microsoft.Data.Sqlite.SqliteParameter("@n", name));
+                        if (exists == 0)
+                        {
+                            DatabaseHelper.ExecuteNonQuery(
+                                "INSERT INTO fashion_collections (name, season) VALUES (@n, @n)",
+                                new Microsoft.Data.Sqlite.SqliteParameter("@n", name));
+                        }
+                        return Microsoft.AspNetCore.Http.Results.Ok(new { success = true, name });
+                    }
+                    catch (Exception ex) { return Microsoft.AspNetCore.Http.Results.Problem(ex.Message); }
+                });
+
+                // - Tech Packs (GET / POST) -
+                app.MapGet("/api/tech-packs/{partId:int}", (int partId) =>
+                {
+                    try
+                    {
+                        var dt = DatabaseHelper.ExecuteDataTable(
+                            @"SELECT tp.*, p.part_name, p.part_number, p.brand, p.category_id, p.fabric AS part_fabric,
+                                     p.collection AS part_collection, p.gender, p.part_image, s.supplier_name
+                              FROM parts p
+                              LEFT JOIN tech_packs tp ON tp.part_id = p.id
+                              LEFT JOIN suppliers s ON s.id = p.supplier_id
+                              WHERE p.id = @id AND p.date_deleted IS NULL",
+                            new Microsoft.Data.Sqlite.SqliteParameter("@id", partId));
+
+                        if (dt.Rows.Count == 0) return Microsoft.AspNetCore.Http.Results.NotFound(new { error = "Product not found" });
+                        var row = dt.Rows[0];
+                        bool hasTechPack = row["id"] != DBNull.Value;
+
+                        string frontSketch = row["sketch_front"]?.ToString() ?? "";
+                        if (string.IsNullOrWhiteSpace(frontSketch)) frontSketch = row["part_image"]?.ToString() ?? "";
+
+                        return Microsoft.AspNetCore.Http.Results.Ok(new
+                        {
+                            id = hasTechPack ? Convert.ToInt32(row["id"]) : 0,
+                            partId = partId,
+                            productName = row["part_name"]?.ToString() ?? "",
+                            sku = row["part_number"]?.ToString() ?? "",
+                            brand = row["brand"]?.ToString() ?? "",
+                            supplier = row["supplier_name"]?.ToString() ?? "",
+                            styleCode = (hasTechPack && !string.IsNullOrWhiteSpace(row["style_code"]?.ToString()))
+                                ? row["style_code"].ToString() : (row["part_number"]?.ToString() ?? ""),
+                            season = (hasTechPack && !string.IsNullOrWhiteSpace(row["season"]?.ToString()))
+                                ? row["season"].ToString() : (row["part_collection"]?.ToString() ?? "Summer"),
+                            sampleSize = hasTechPack ? (row["sample_size"]?.ToString() ?? "M") : "M",
+                            fitType = hasTechPack ? (row["fit_type"]?.ToString() ?? "Regular Fit") : "Regular Fit",
+                            status = hasTechPack ? (row["status"]?.ToString() ?? "Draft") : "Draft",
+                            version = hasTechPack ? (row["version"]?.ToString() ?? "1.0") : "1.0",
+                            designer = hasTechPack ? (row["designer"]?.ToString() ?? "") : "",
+                            fabricDetails = (hasTechPack && !string.IsNullOrWhiteSpace(row["fabric_details"]?.ToString()))
+                                ? row["fabric_details"].ToString() : (row["part_fabric"]?.ToString() ?? ""),
+                            bomJson = row["bom_json"]?.ToString() ?? "",
+                            measurementsJson = row["measurements_json"]?.ToString() ?? "",
+                            constructionNotes = row["construction_notes"]?.ToString() ?? "",
+                            artworkNotes = row["artwork_notes"]?.ToString() ?? "",
+                            packagingNotes = row["packaging_notes"]?.ToString() ?? "",
+                            sketchFront = frontSketch,
+                            sketchBack = row["sketch_back"]?.ToString() ?? "",
+                            dateCreated = row["date_created"]?.ToString() ?? "",
+                            dateUpdated = row["date_updated"]?.ToString() ?? ""
+                        });
+                    }
+                    catch (Exception ex) { return Microsoft.AspNetCore.Http.Results.Problem(ex.Message); }
+                });
+
+                app.MapPost("/api/tech-packs/{partId:int}", async (int partId, Microsoft.AspNetCore.Http.HttpRequest request) =>
+                {
+                    try
+                    {
+                        var body = await System.Text.Json.JsonSerializer.DeserializeAsync<TechPackPayload>(
+                            request.Body, new System.Text.Json.JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                        if (body == null) return Microsoft.AspNetCore.Http.Results.BadRequest(new { error = "Invalid payload" });
+
+                        int exists = DatabaseHelper.ExecuteScalar<int>(
+                            "SELECT COUNT(*) FROM tech_packs WHERE part_id = @pid",
+                            new Microsoft.Data.Sqlite.SqliteParameter("@pid", partId));
+
+                        if (exists > 0)
+                        {
+                            DatabaseHelper.ExecuteNonQuery(@"
+                                UPDATE tech_packs
+                                SET style_code = @sc, season = @season, sample_size = @ss, fit_type = @fit,
+                                    status = @st, version = @v, designer = @des, fabric_details = @fab,
+                                    bom_json = @bom, measurements_json = @meas, construction_notes = @cn,
+                                    artwork_notes = @an, packaging_notes = @pn, sketch_front = @sf, sketch_back = @sb,
+                                    date_updated = datetime('now', 'localtime')
+                                WHERE part_id = @pid",
+                                new Microsoft.Data.Sqlite.SqliteParameter("@sc", body.StyleCode ?? ""),
+                                new Microsoft.Data.Sqlite.SqliteParameter("@season", body.Season ?? ""),
+                                new Microsoft.Data.Sqlite.SqliteParameter("@ss", body.SampleSize ?? "M"),
+                                new Microsoft.Data.Sqlite.SqliteParameter("@fit", body.FitType ?? "Regular Fit"),
+                                new Microsoft.Data.Sqlite.SqliteParameter("@st", body.Status ?? "Draft"),
+                                new Microsoft.Data.Sqlite.SqliteParameter("@v", body.Version ?? "1.0"),
+                                new Microsoft.Data.Sqlite.SqliteParameter("@des", body.Designer ?? ""),
+                                new Microsoft.Data.Sqlite.SqliteParameter("@fab", body.FabricDetails ?? ""),
+                                new Microsoft.Data.Sqlite.SqliteParameter("@bom", body.BomJson ?? "[]"),
+                                new Microsoft.Data.Sqlite.SqliteParameter("@meas", body.MeasurementsJson ?? "[]"),
+                                new Microsoft.Data.Sqlite.SqliteParameter("@cn", body.ConstructionNotes ?? ""),
+                                new Microsoft.Data.Sqlite.SqliteParameter("@an", body.ArtworkNotes ?? ""),
+                                new Microsoft.Data.Sqlite.SqliteParameter("@pn", body.PackagingNotes ?? ""),
+                                new Microsoft.Data.Sqlite.SqliteParameter("@sf", body.SketchFront ?? ""),
+                                new Microsoft.Data.Sqlite.SqliteParameter("@sb", body.SketchBack ?? ""),
+                                new Microsoft.Data.Sqlite.SqliteParameter("@pid", partId));
+                        }
+                        else
+                        {
+                            DatabaseHelper.ExecuteNonQuery(@"
+                                INSERT INTO tech_packs (part_id, style_code, season, sample_size, fit_type, status, version, designer, fabric_details, bom_json, measurements_json, construction_notes, artwork_notes, packaging_notes, sketch_front, sketch_back)
+                                VALUES (@pid, @sc, @season, @ss, @fit, @st, @v, @des, @fab, @bom, @meas, @cn, @an, @pn, @sf, @sb)",
+                                new Microsoft.Data.Sqlite.SqliteParameter("@pid", partId),
+                                new Microsoft.Data.Sqlite.SqliteParameter("@sc", body.StyleCode ?? ""),
+                                new Microsoft.Data.Sqlite.SqliteParameter("@season", body.Season ?? ""),
+                                new Microsoft.Data.Sqlite.SqliteParameter("@ss", body.SampleSize ?? "M"),
+                                new Microsoft.Data.Sqlite.SqliteParameter("@fit", body.FitType ?? "Regular Fit"),
+                                new Microsoft.Data.Sqlite.SqliteParameter("@st", body.Status ?? "Draft"),
+                                new Microsoft.Data.Sqlite.SqliteParameter("@v", body.Version ?? "1.0"),
+                                new Microsoft.Data.Sqlite.SqliteParameter("@des", body.Designer ?? ""),
+                                new Microsoft.Data.Sqlite.SqliteParameter("@fab", body.FabricDetails ?? ""),
+                                new Microsoft.Data.Sqlite.SqliteParameter("@bom", body.BomJson ?? "[]"),
+                                new Microsoft.Data.Sqlite.SqliteParameter("@meas", body.MeasurementsJson ?? "[]"),
+                                new Microsoft.Data.Sqlite.SqliteParameter("@cn", body.ConstructionNotes ?? ""),
+                                new Microsoft.Data.Sqlite.SqliteParameter("@an", body.ArtworkNotes ?? ""),
+                                new Microsoft.Data.Sqlite.SqliteParameter("@pn", body.PackagingNotes ?? ""),
+                                new Microsoft.Data.Sqlite.SqliteParameter("@sf", body.SketchFront ?? ""),
+                                new Microsoft.Data.Sqlite.SqliteParameter("@sb", body.SketchBack ?? ""));
+                        }
+
+                        // Also update fabric and collection on parts if provided
+                        if (!string.IsNullOrWhiteSpace(body.FabricDetails) || !string.IsNullOrWhiteSpace(body.Season))
+                        {
+                            DatabaseHelper.ExecuteNonQuery(@"
+                                UPDATE parts
+                                SET fabric = CASE WHEN @fab != '' THEN @fab ELSE fabric END,
+                                    collection = CASE WHEN @season != '' THEN @season ELSE collection END
+                                WHERE id = @pid",
+                                new Microsoft.Data.Sqlite.SqliteParameter("@fab", body.FabricDetails ?? ""),
+                                new Microsoft.Data.Sqlite.SqliteParameter("@season", body.Season ?? ""),
+                                new Microsoft.Data.Sqlite.SqliteParameter("@pid", partId));
+                        }
+
                         return Microsoft.AspNetCore.Http.Results.Ok(new { success = true });
                     }
                     catch (Exception ex) { return Microsoft.AspNetCore.Http.Results.Problem(ex.Message); }
@@ -3204,9 +3381,31 @@ namespace InventorySystem
             public string Color { get; set; }
             public string StyleCode { get; set; }
             public string Source { get; set; }
+            public string Gender { get; set; } = "Unisex";
+            public string Fabric { get; set; }
+            public string Collection { get; set; }
             public int? WarehouseId { get; set; }
             public int? WarehouseQty { get; set; }
             public System.Collections.Generic.List<string> Gallery { get; set; }
+        }
+
+        private class TechPackPayload
+        {
+            public string StyleCode { get; set; }
+            public string Season { get; set; }
+            public string SampleSize { get; set; }
+            public string FitType { get; set; }
+            public string Status { get; set; }
+            public string Version { get; set; }
+            public string Designer { get; set; }
+            public string FabricDetails { get; set; }
+            public string BomJson { get; set; }
+            public string MeasurementsJson { get; set; }
+            public string ConstructionNotes { get; set; }
+            public string ArtworkNotes { get; set; }
+            public string PackagingNotes { get; set; }
+            public string SketchFront { get; set; }
+            public string SketchBack { get; set; }
         }
 
         private static void ApplyCatalogExtras(ProductPayload body, int id)
@@ -3262,7 +3461,10 @@ namespace InventorySystem
                 Size = body.Size ?? "",
                 Color = body.Color ?? "",
                 StyleCode = body.StyleCode ?? "",
-                SourceKind = string.Equals(body.Source, "made", StringComparison.OrdinalIgnoreCase) ? "made" : "bought"
+                SourceKind = string.Equals(body.Source, "made", StringComparison.OrdinalIgnoreCase) ? "made" : "bought",
+                Gender = string.IsNullOrWhiteSpace(body.Gender) ? "Unisex" : body.Gender.Trim(),
+                Fabric = body.Fabric ?? "",
+                Collection = body.Collection ?? ""
             };
         }
 

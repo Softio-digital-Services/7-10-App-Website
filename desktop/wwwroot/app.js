@@ -67,7 +67,7 @@ const T = {
         pe_matrix_hint: 'Rows in this grid automatically update the total product quantity.',
         quick_sizes: 'Quick Sizes:',
         confirm_delete_variant: 'Are you sure you want to delete this size/color combination?',
-        col_brand: 'Brand', col_po: 'PO Number', col_size: 'Size', col_color: 'Color',
+        col_brand: 'Brand', col_gender_dept: 'Target / Department', add_option: 'Add option', add_custom_option: 'Add Custom Option...', enter_new_option_name: 'Enter new department / target option (e.g. Boys, Girls, Babies):', col_po: 'PO Number', col_size: 'Size', col_color: 'Color',
         style_code: 'Style code', reset_filters: 'Reset', inv_history: 'Inventory History',
         col_warehouse: 'Warehouse', col_balance: 'Balance', col_user: 'By',
         po_sub: 'Track and manage all your purchase orders with suppliers.',
@@ -178,6 +178,15 @@ const T = {
         ord_select_customer: 'Select customer',
         ord_select_product: 'Select product',
         ord_search_product: 'Search by name, SKU, barcode, size, color...',
+        ord_dept_all: 'All',
+        ord_dept_men: 'Men',
+        ord_dept_women: 'Women',
+        ord_dept_unisex: 'Unisex',
+        ord_dept_kids: 'Kids',
+        ord_dept_other: 'Other',
+        ord_all_categories: 'All Categories',
+        ord_clear_search: 'Clear search',
+        ord_browse_categories_hint: 'Browse categories or search',
         ord_no_products_found: 'No matching products',
         ord_out_of_stock: 'Out of stock',
         ord_in_stock: 'In stock: {0}',
@@ -198,6 +207,19 @@ const T = {
         ord_ev_feedback: 'Feedback saved · {0}/5',
         ord_ev_cancel: 'Order cancelled',
         ord_items_count: '{0} items',
+        ord_items_subtitle: 'Select products, set quantities, and review prices',
+        ord_cust_fulfillment: 'Customer & Fulfillment',
+        ord_cust_sub: 'Customer details and delivery settings',
+        ord_delivery_desc: 'Ship to address',
+        ord_pickup_desc: 'Store pickup',
+        ord_summary: 'Order Summary',
+        ord_items_subtotal: 'Items Subtotal',
+        ord_fulfillment_type: 'Fulfillment Type',
+        ord_payment_status: 'Payment Status',
+        ord_unpaid: 'Unpaid',
+        ord_paid: 'Paid',
+        ord_confirm_create: 'Confirm & Create Order',
+        ord_taxes_included: 'Taxes included',
         ord_new_title: 'New order',
         ord_new_sub: 'Customer, products, and how the order will be fulfilled.',
         ord_cash: 'Cash',
@@ -537,7 +559,46 @@ const T = {
         no_products: 'No products found.',
         scan_to_connect: 'Scan to Connect',
         scan_to_connect_hint: 'Same Wi‑Fi — open the full 7-10 app on phone or tablet.',
-        copy_url: 'Copy URL'
+        copy_url: 'Copy URL',
+        nav_techpack: 'Tech Pack',
+        tp_header_title: 'Technical Package (Tech Pack)',
+        tp_header_sub: 'Garment specifications, technical sketches, bill of materials, size grading & factory production dossier.',
+        tp_select_product: 'Active Style:',
+        tp_presets: 'Load Spec Preset',
+        tp_print_pdf: 'Print / Export PDF',
+        tp_save: 'Save Tech Pack',
+        tp_style_identity: 'Style Identity & Specifications',
+        tp_style_name: 'Style Name',
+        tp_sample_size: 'Sample Base Size',
+        tp_fit_type: 'Fit Silhouette',
+        tp_designer: 'Designer / Patternmaker',
+        tp_technical_sketches: 'Technical Flat Sketches & Construction Callouts',
+        tp_sketches_sub: '2D CAD flat views with construction callouts and finish details.',
+        tp_front_view: 'Front Technical Flat',
+        tp_back_view: 'Back Technical Flat',
+        tp_callouts_label: 'Key Construction Callouts & Finishes',
+        tp_bom_title: 'Bill of Materials (BOM) & Trims',
+        tp_bom_sub: 'All fabrics, ribbings, threads, zippers, buttons, and branding trims required per piece.',
+        tp_est_garment_cost: 'Total Materials Cost',
+        tp_add_material: '+ Add Component',
+        tp_placement: 'Placement / Part',
+        tp_material_spec: 'Material Description & Composition',
+        tp_color_ref: 'Color / Pantone',
+        tp_consumption: 'Usage / Unit',
+        tp_pom_title: 'Points of Measure (POM) & Size Grading Chart',
+        tp_pom_sub: 'Standard garment measurements across all sizes (in cm). Graded from sample base size.',
+        tp_add_measurement: '+ Add POM Row',
+        tp_pom_desc: 'Point of Measure (POM) Description',
+        tp_construction_title: 'Stitching, Assembly & Packaging Specifications',
+        tp_stitching_specs: 'Stitching & Seam Construction',
+        tp_packaging_specs: 'Folding, Labeling & Packaging Rules',
+        tp_no_sketch_front: 'Upload front flat drawing or photograph',
+        tp_no_sketch_back: 'Upload back flat drawing or photograph',
+        col_collection: 'Collection / Season',
+        fabrics_used: 'Fabrics Used / Composition',
+        filter_collection: 'Collection',
+        fabric_ph: 'e.g. 100% Cotton, 320 GSM French Terry, Linen Blend...',
+        tp_saved_success: 'Tech Pack saved successfully'
     },
     ar: {
         login_title: 'مرحباً بعودتك', login_subtitle: 'سجّل الدخول للمتابعة إلى لوحة التحكم.',
@@ -605,7 +666,7 @@ const T = {
         pe_matrix_hint: 'الصفوف في هذا الجدول تحدث إجمالي كمية المنتج تلقائياً.',
         quick_sizes: 'مقاسات سريعة:',
         confirm_delete_variant: 'هل أنت متأكد من حذف هذه التركيبة (المقاس واللون)؟',
-        col_brand: 'العلامة', col_po: 'رقم الأمر', col_size: 'المقاس', col_color: 'اللون',
+        col_brand: 'العلامة', col_gender_dept: 'الفئة / القسم المستهدف', add_option: 'إضافة خيار', add_custom_option: 'إضافة خيار مخصص...', enter_new_option_name: 'أدخل اسم القسم أو الخيار الجديد (مثال: ولادي، بناتي، رضع):', col_po: 'رقم الأمر', col_size: 'المقاس', col_color: 'اللون',
         style_code: 'رمز الموديل', reset_filters: 'إعادة ضبط', inv_history: 'سجل المخزون',
         col_warehouse: 'المستودع', col_balance: 'الرصيد', col_user: 'بواسطة',
         po_sub: 'تتبّع كل أوامر الشراء مع الموردين.',
@@ -716,6 +777,15 @@ const T = {
         ord_select_customer: 'اختر العميل',
         ord_select_product: 'اختر المنتج',
         ord_search_product: 'ابحث بالاسم، الرمز، الباركود، المقاس، اللون...',
+        ord_dept_all: 'الكل',
+        ord_dept_men: 'رجالي',
+        ord_dept_women: 'نسائي',
+        ord_dept_unisex: 'مشترك (للجنسين)',
+        ord_dept_kids: 'أطفال',
+        ord_dept_other: 'أخرى',
+        ord_all_categories: 'كل الفئات',
+        ord_clear_search: 'مسح البحث',
+        ord_browse_categories_hint: 'تصفح حسب الفئات أو ابحث',
         ord_no_products_found: 'لا توجد منتجات مطابقة',
         ord_out_of_stock: 'غير متوفر',
         ord_in_stock: 'متوفر: {0}',
@@ -736,6 +806,19 @@ const T = {
         ord_ev_feedback: 'تم حفظ التقييم · {0}/5',
         ord_ev_cancel: 'تم إلغاء الطلب',
         ord_items_count: '{0} أصناف',
+        ord_items_subtitle: 'حدد المنتجات والكميات وراجع الأسعار',
+        ord_cust_fulfillment: 'بيانات العميل والتوصيل',
+        ord_cust_sub: 'تفاصيل العميل وإعدادات الاستلام أو التوصيل',
+        ord_delivery_desc: 'شحن للعنوان',
+        ord_pickup_desc: 'استلام من المتجر',
+        ord_summary: 'ملخص الطلب',
+        ord_items_subtotal: 'المجموع الفرعي للأصناف',
+        ord_fulfillment_type: 'طريقة التنفيذ',
+        ord_payment_status: 'حالة الدفع',
+        ord_unpaid: 'غير مدفوع',
+        ord_paid: 'مدفوع',
+        ord_confirm_create: 'تأكيد وإنشاء الطلب',
+        ord_taxes_included: 'شامل الضريبة',
         ord_new_title: 'طلب جديد',
         ord_new_sub: 'العميل والمنتجات وطريقة تنفيذ الطلب.',
         ord_cash: 'نقداً',
@@ -1080,7 +1163,46 @@ const T = {
         save_all_quantities: 'حفظ الكميات',
         add_new_combination: '+ إضافة مقاس أو لون جديد لهذا المنتج',
         view_all_sizes_colors: 'عرض وتعديل جميع المقاسات والألوان لهذا المنتج',
-        variant_saved: 'تم تحديث الكميات بنجاح'
+        variant_saved: 'تم تحديث الكميات بنجاح',
+        nav_techpack: 'الملف الفني (Tech Pack)',
+        tp_header_title: 'الملف الفني للتصنيع (Tech Pack)',
+        tp_header_sub: 'المواصفات الفنية للقطعة، الرسومات التخطيطية، جدول المواد، جدول التدرج وملف التصنيع.',
+        tp_select_product: 'الموديل الحالي:',
+        tp_presets: 'تحميل نموذج جاهز',
+        tp_print_pdf: 'طباعة / تصدير PDF',
+        tp_save: 'حفظ الملف الفني',
+        tp_style_identity: 'بيانات وهوية الموديل والمواصفات',
+        tp_style_name: 'اسم الموديل',
+        tp_sample_size: 'مقاس العينة الأساسي',
+        tp_fit_type: 'نوع القصة (Fit)',
+        tp_designer: 'المصمم / الباترونيست',
+        tp_technical_sketches: 'الرسومات المسطحة الفنية والملاحظات',
+        tp_sketches_sub: 'رسومات هندسية ثنائية الأبعاد مع تفاصيل الخياطة والتشطيب.',
+        tp_front_view: 'الرسم الفني من الأمام',
+        tp_back_view: 'الرسم الفني من الخلف',
+        tp_callouts_label: 'تفاصيل وملاحظات الخياطة والتشطيب',
+        tp_bom_title: 'جدول المواد والمستلزمات (BOM)',
+        tp_bom_sub: 'جميع الأقمشة والأزرار والسحابات والخيوط والبطاقات المطلوبة لكل قطعة.',
+        tp_est_garment_cost: 'إجمالي تكلفة المواد',
+        tp_add_material: '+ إضافة مكون',
+        tp_placement: 'مكان الاستخدام',
+        tp_material_spec: 'وصف الخامة والتركيب',
+        tp_color_ref: 'اللون / كود بانتون',
+        tp_consumption: 'الاستهلاك / الوحدة',
+        tp_pom_title: 'جدول نقاط القياس والتدرج (POM)',
+        tp_pom_sub: 'المقاسات المعتمدة لجميع الأحجام (بالسنتيمتر) متدرجة من مقاس العينة الأساسي.',
+        tp_add_measurement: '+ إضافة نقطة قياس',
+        tp_pom_desc: 'وصف نقطة القياس',
+        tp_construction_title: 'مواصفات الخياطة والتجميع والتغليف',
+        tp_stitching_specs: 'مواصفات الغرز والدرزات',
+        tp_packaging_specs: 'تعليمات الطي، البطاقات والتعبئة',
+        tp_no_sketch_front: 'ارفع رسم أو صورة الموديل من الأمام',
+        tp_no_sketch_back: 'ارفع رسم أو صورة الموديل من الخلف',
+        col_collection: 'المجموعة / الموسم',
+        fabrics_used: 'الأقمشة المستخدمة / التركيب',
+        filter_collection: 'المجموعة',
+        fabric_ph: 'مثال: قطن 100%، فرنش تيري 320 جرام، مزيج كتان...',
+        tp_saved_success: 'تم حفظ الملف الفني بنجاح'
     }
 };
 
@@ -7238,7 +7360,8 @@ async function navigateTo(target, updateHash = true) {
     if (target === 'orders' && typeof showOrdersBoard === 'function') showOrdersBoard();
     if (target === 'profit-shares' && typeof loadProfitShares === 'function') loadProfitShares();
     if (target === 'purchase-orders') showPurchasePane(pane || 'orders');
-    if (target === 'products' || target === 'purchase-orders' || target === 'analytics' || target === 'orders') renderFashion();
+    if (target === 'techpack') { if (typeof initTechPackUi === 'function') initTechPackUi(); }
+    if (target === 'products' || target === 'purchase-orders' || target === 'analytics' || target === 'orders' || target === 'techpack') renderFashion();
 }
 
 function setupAuth() {
@@ -9259,11 +9382,14 @@ function renderProducts() {
     const status = document.getElementById('prod-filter-status')?.value || 'all';
     const price = document.getElementById('prod-filter-price')?.value || 'all';
     const supplier = document.getElementById('prod-filter-supplier')?.value || 'all';
+    const collection = document.getElementById('prod-filter-collection')?.value || 'all';
     fillSelect('prod-filter-cat', [tr('col_category'), ...categories], cat, true);
     const brands = [...new Set(products.map(p => p.brand).filter(Boolean))].sort();
     fillSelect('prod-filter-brand', [tr('col_brand'), ...brands], brand, true);
     const supplierNames = [...new Set(products.map(p => p.supplierName).filter(Boolean))].sort();
     fillSelect('prod-filter-supplier', [tr('col_supplier'), ...supplierNames], supplier, true);
+    const collections = [...new Set(products.map(p => p.collection).filter(Boolean))].sort();
+    fillSelect('prod-filter-collection', [tr('col_collection') || 'Collection', ...collections], collection, true);
 
     // Group products by product family (styleCode or root name) so variants appear under their parent product
     const activeProducts = products.filter(p => !p.isInactive && p.status !== 'Inactive');
@@ -9302,7 +9428,7 @@ function renderProducts() {
             variantsCount: family.length,
             sizes,
             colors,
-            searchText: `${displayName} ${baseSku} ${allSkus} ${allBarcodes} ${parent.brand || ''} ${colors.join(' ')} ${sizes.join(' ')}`.toLowerCase()
+            searchText: `${displayName} ${baseSku} ${allSkus} ${allBarcodes} ${parent.brand || ''} ${parent.fabric || ''} ${parent.collection || ''} ${colors.join(' ')} ${sizes.join(' ')}`.toLowerCase()
         });
     });
 
@@ -9311,6 +9437,7 @@ function renderProducts() {
     if (cat !== 'all') rows = rows.filter(p => p.category === cat);
     if (brand !== 'all') rows = rows.filter(p => p.brand === brand);
     if (supplier !== 'all') rows = rows.filter(p => p.supplierName === supplier);
+    if (collection !== 'all') rows = rows.filter(p => (p.collection || '').toLowerCase() === collection.toLowerCase());
     if (status !== 'all') rows = rows.filter(p => productStatusKey(p) === status);
     if (price !== 'all') rows = rows.filter(p => priceBand(p.price) === price);
 
@@ -9403,6 +9530,9 @@ async function showProductDetail(id) {
     const specs = [
         [tr('col_sku'), p.sku || '—'],
         [tr('col_category'), p.category || '—'],
+        [tr('col_gender_dept'), p.gender || 'Unisex'],
+        [tr('col_collection') || 'Collection', p.collection || '—'],
+        [tr('fabrics_used') || 'Fabrics Used', p.fabric || '—'],
         [tr('col_brand'), p.brand || '—'],
         [tr('source_kind'), sourceName(p)],
         [tr('col_supplier'), p.source === 'made' ? '—' : (p.supplierName || '—')],
@@ -9943,7 +10073,7 @@ function renderInventoryOverview() {
 }
 
 function shopBind() {
-    return { lang, currentUser, products, customers, tr, money, escapeHtml, formatDate };
+    return { lang, currentUser, products, customers, categories, tr, money, escapeHtml, formatDate };
 }
 
 function renderFashion() {
@@ -9977,6 +10107,106 @@ function fillEditorChoices(existing) {
     if (color) color.innerHTML = `<option value="">${escapeHtml(tr('select_color'))}</option>` + colors.map(c => `<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join('');
     const wh = document.getElementById('pe-warehouse');
     if (wh) wh.innerHTML = (warehouses || []).map(w => `<option value="${w.id}">${escapeHtml(w.name)}</option>`).join('');
+
+    const genderSel = document.getElementById('pe-gender');
+    if (genderSel) {
+        const defaultGenders = ['Unisex', 'Men', 'Women', 'Kids'];
+        const existingGenders = [...new Set(products.map(p => p.gender).filter(Boolean))];
+        const allGenders = [...new Set([...defaultGenders, ...existingGenders])];
+        if (existing?.gender && !allGenders.some(g => g.toLowerCase() === existing.gender.toLowerCase())) {
+            allGenders.push(existing.gender);
+        }
+        genderSel.innerHTML = allGenders.map(g => {
+            const trKey = 'ord_dept_' + g.toLowerCase();
+            const label = tr(trKey) || g;
+            return `<option value="${escapeHtml(g)}">${escapeHtml(label)}</option>`;
+        }).join('') + `<option value="__custom__">+ ${escapeHtml(tr('add_custom_option') || 'Add Custom Option...')}</option>`;
+
+        const targetVal = existing?.gender || 'Unisex';
+        const matchingOpt = [...genderSel.options].find(o => o.value.toLowerCase() === targetVal.toLowerCase());
+        if (matchingOpt) genderSel.value = matchingOpt.value;
+        else genderSel.value = 'Unisex';
+    }
+
+    const colSel = document.getElementById('pe-collection');
+    if (colSel) {
+        const defaultCols = ['Summer', 'Winter', 'Spring', 'Autumn / Fall', 'Pre-Fall', 'Resort & Cruise', 'Core Essentials'];
+        const existingCols = [...new Set(products.map(p => p.collection).filter(Boolean))];
+        const allCols = [...new Set([...defaultCols, ...existingCols])];
+        if (existing?.collection && !allCols.some(c => c.toLowerCase() === existing.collection.toLowerCase())) {
+            allCols.push(existing.collection);
+        }
+        colSel.innerHTML = allCols.map(c => `<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join('') +
+            `<option value="__custom__">+ ${escapeHtml(tr('add_custom_option') || 'Add Custom Option...')}</option>`;
+        const targetCol = existing?.collection || 'Summer';
+        const matchingOpt = [...colSel.options].find(o => o.value.toLowerCase() === targetCol.toLowerCase());
+        if (matchingOpt) colSel.value = matchingOpt.value;
+        else colSel.value = targetCol;
+    }
+
+    const suppSel = document.getElementById('pe-main-supplier');
+    if (suppSel) {
+        suppSel.innerHTML = `<option value="">— ${escapeHtml(tr('col_supplier'))} —</option>` +
+            (suppliers || []).map(s => `<option value="${s.id}">${escapeHtml(s.name)}</option>`).join('');
+        if (existing?.supplierId) {
+            suppSel.value = String(existing.supplierId);
+        } else {
+            suppSel.value = '';
+        }
+    }
+}
+
+async function promptAddProductCollection() {
+    const custom = prompt(tr('enter_new_option_name') || 'Enter new collection / season name (e.g. Resort 2026, Eid Collection, Streetwear SS26):');
+    if (!custom || !custom.trim()) return;
+    const val = custom.trim();
+    try {
+        await api('/api/fashion-collections', { method: 'POST', body: JSON.stringify({ name: val }) });
+    } catch (e) {
+        // offline or duplicate
+    }
+    const sel = document.getElementById('pe-collection');
+    if (sel) {
+        let opt = [...sel.options].find(o => o.value.toLowerCase() === val.toLowerCase());
+        if (!opt) {
+            const customOpt = sel.querySelector('option[value="__custom__"]');
+            opt = document.createElement('option');
+            opt.value = val;
+            opt.textContent = val;
+            if (customOpt) sel.insertBefore(opt, customOpt);
+            else sel.appendChild(opt);
+        }
+        sel.value = opt.value;
+    }
+    const tpSel = document.getElementById('tp-meta-season');
+    if (tpSel) {
+        let opt = [...tpSel.options].find(o => o.value.toLowerCase() === val.toLowerCase());
+        if (!opt) {
+            opt = document.createElement('option');
+            opt.value = val;
+            opt.textContent = val;
+            tpSel.appendChild(opt);
+        }
+        tpSel.value = opt.value;
+    }
+}
+
+function promptAddProductGender() {
+    const custom = prompt(tr('enter_new_option_name') || 'Enter new department / target option (e.g. Boys, Girls, Babies):');
+    if (!custom || !custom.trim()) return;
+    const val = custom.trim();
+    const sel = document.getElementById('pe-gender');
+    if (!sel) return;
+    let opt = [...sel.options].find(o => o.value.toLowerCase() === val.toLowerCase());
+    if (!opt) {
+        const customOpt = sel.querySelector('option[value="__custom__"]');
+        opt = document.createElement('option');
+        opt.value = val;
+        opt.textContent = val;
+        if (customOpt) sel.insertBefore(opt, customOpt);
+        else sel.appendChild(opt);
+    }
+    sel.value = opt.value;
 }
 function syncEditorQty() {
     if (!catalogEditorId) return;
@@ -10816,11 +11046,19 @@ async function openProductEditor(id) {
     document.getElementById('pe-sku').value = editSku;
     if (existing?.category) document.getElementById('pe-category').value = existing.category;
     document.getElementById('pe-brand').value = existing?.brand || '';
+    if (document.getElementById('pe-gender')) document.getElementById('pe-gender').value = existing?.gender || 'Unisex';
     if (document.getElementById('pe-size')) document.getElementById('pe-size').value = existing?.size || '';
     if (document.getElementById('pe-color')) document.getElementById('pe-color').value = existing?.color || '';
     document.getElementById('pe-cost').value = existing ? (existing.cost ?? 0) : '';
     document.getElementById('pe-price').value = existing ? (existing.price ?? 0) : '';
     document.getElementById('pe-desc').value = existing?.description || '';
+    if (document.getElementById('pe-fabric')) document.getElementById('pe-fabric').value = existing?.fabric || '';
+    if (document.getElementById('pe-collection') && existing?.collection) {
+        document.getElementById('pe-collection').value = existing.collection;
+    }
+    if (document.getElementById('pe-main-supplier')) {
+        document.getElementById('pe-main-supplier').value = existing?.supplierId ? String(existing.supplierId) : '';
+    }
     document.getElementById('pe-qty').value = existing ? (existing.stock ?? 0) : '';
     const main = (warehouses || []).find(w => w.code === 'MAIN') || (warehouses || [])[0];
     if (main) document.getElementById('pe-warehouse').value = String(main.id);
@@ -10853,6 +11091,11 @@ async function saveProductEditor() {
     const name = document.getElementById('pe-name').value.trim();
     let sku = document.getElementById('pe-sku').value.trim();
     const category = document.getElementById('pe-category').value;
+    const genderRaw = document.getElementById('pe-gender')?.value?.trim() || 'Unisex';
+    const gender = genderRaw === '__custom__' ? 'Unisex' : genderRaw;
+    const fabric = document.getElementById('pe-fabric')?.value.trim() || '';
+    const colRaw = document.getElementById('pe-collection')?.value?.trim() || '';
+    const collection = colRaw === '__custom__' ? '' : colRaw;
     const brand = document.getElementById('pe-brand').value.trim();
     const size = document.getElementById('pe-size')?.value || '';
     const color = document.getElementById('pe-color')?.value || '';
@@ -10910,6 +11153,7 @@ async function saveProductEditor() {
     if (!sku) { fillEditorSku(); sku = document.getElementById('pe-sku').value.trim(); }
     const purchaseLink = Number(document.getElementById('pe-supplier-purchase-id')?.value);
     const supplierVal = document.getElementById('pe-supplier')?.value;
+    const mainSupplierVal = document.getElementById('pe-main-supplier')?.value;
 
     const activeVariants = peEditorVariants.filter(x => !x.isDeleted && (x.size || x.color || x.qty > 0));
     let baseStyleCode = document.getElementById('pe-style')?.value.trim() || '';
@@ -10918,7 +11162,7 @@ async function saveProductEditor() {
     }
 
     const payload = {
-        name, sku, category, brand, size, color,
+        name, sku, category, brand, size, color, gender, fabric, collection,
         description: document.getElementById('pe-desc').value.trim(),
         price: Number(priceRaw) || 0,
         cost: Number(costRaw) || 0,
@@ -10941,7 +11185,7 @@ async function saveProductEditor() {
         price2: Number(document.getElementById('pe-price2')?.value) || 0,
         price3: Number(document.getElementById('pe-price3')?.value) || 0,
         price4: Number(document.getElementById('pe-price4')?.value) || 0,
-        supplierId: supplierVal ? Number(supplierVal) : null,
+        supplierId: mainSupplierVal ? Number(mainSupplierVal) : (supplierVal ? Number(supplierVal) : null),
         supplierPurchaseItemId: purchaseLink > 0 ? purchaseLink : null,
         styleCode: baseStyleCode,
         source: productSource(),
@@ -11073,6 +11317,428 @@ async function bulkDeleteProducts() {
     } catch (e) { toast(e.message, 'error'); }
 }
 
+/* ========================================================= */
+/* TECHNICAL PACKAGE (TECH PACK) GARMENT SYSTEM              */
+/* ========================================================= */
+let currentTechPackPartId = null;
+
+const TECH_PACK_PRESETS = {
+    tshirt: {
+        fit: 'Regular Fit',
+        sampleSize: 'M',
+        fabric: '100% Combed Ring-Spun Cotton Jersey, 240 GSM, 24s/1, Bio-polished soft handfeel',
+        construction: '• Main Body Assembly: 4-thread overlock with 1.2cm seam allowance.\n• Sleeve Hem & Bottom Sweep: 2.0cm turn-up with 1/4" twin-needle coverstitch.\n• Stitch Density: 10–12 stitches per inch (SPI). Tension balanced, no puckering.\n• Neck Reinforcement: Shoulder-to-shoulder self-fabric neck tape binding.\n• Care label sewn into left side-seam 10cm from bottom hem.',
+        artwork: '1) Clean ribbed collar with twin-needle topstitch along collar seam.\n2) Blind or coverstitch hem finishing.\n3) Pre-shrunk fabric wash (max shrinkage tolerance < 3% after 3 home washes).',
+        packaging: '• Folding: Standard 3-fold flat retail pack with protective acid-free tissue paper inside.\n• Polybag: 1 piece per 100% biodegradable self-adhesive polybag with printed suffocation warning.\n• Barcode: Exterior SKU and barcode sticker centered on polybag back 5cm from bottom.\n• Master Carton: 24 pieces per export carton. Solid color, assorted size ratio (2:4:6:6:4:2).',
+        bom: [
+            { placement: 'Body & Sleeves', desc: '100% Combed Cotton Jersey 240 GSM', color: 'Black / Pantone 19-4008', supplier: 'Primary Mill', usage: 1.30, cost: 4.50 },
+            { placement: 'Neck Collar', desc: '1x1 Rib 95% Cotton 5% Spandex 320 GSM', color: 'DTM Black', supplier: 'Rib Mill', usage: 0.15, cost: 0.75 },
+            { placement: 'Neck Tape', desc: '100% Cotton Herringbone Tape 10mm', color: 'Off-White', supplier: 'Trim Vendor', usage: 0.45, cost: 0.20 },
+            { placement: 'Main Label', desc: 'Woven Damask Folded Neck Label', color: 'White on Black', supplier: 'Label Co.', usage: 1.00, cost: 0.15 },
+            { placement: 'Sewing Thread', desc: '100% Spun Poly Thread 40/2', color: 'Match Fabric', supplier: 'Thread Vendor', usage: 80.00, cost: 0.30 }
+        ],
+        pom: [
+            { code: 'A', desc: 'Total Body Length (HPS)', tol: '0.5', xs: '68', s: '70', m: '72', l: '74', xl: '76', xxl: '78' },
+            { code: 'B', desc: 'Chest Width (1" below armhole)', tol: '0.5', xs: '48', s: '51', m: '54', l: '57', xl: '60', xxl: '63' },
+            { code: 'C', desc: 'Across Shoulder Width', tol: '0.5', xs: '42', s: '44', m: '46', l: '48', xl: '50', xxl: '52' },
+            { code: 'D', desc: 'Sleeve Length from Shoulder', tol: '0.5', xs: '20', s: '21', m: '22', l: '23', xl: '24', xxl: '25' },
+            { code: 'E', desc: 'Armhole Curve (straight)', tol: '0.5', xs: '22', s: '23', m: '24', l: '25', xl: '26', xxl: '27' },
+            { code: 'F', desc: 'Neck Opening Width', tol: '0.3', xs: '17', s: '18', m: '19', l: '19.5', xl: '20', xxl: '20.5' },
+            { code: 'G', desc: 'Front Neck Drop', tol: '0.3', xs: '8.5', s: '8.5', m: '9.0', l: '9.0', xl: '9.5', xxl: '9.5' },
+            { code: 'H', desc: 'Bottom Hem Opening Width', tol: '0.5', xs: '47', s: '50', m: '53', l: '56', xl: '59', xxl: '62' },
+            { code: 'I', desc: 'Bottom & Sleeve Hem Height', tol: '0.2', xs: '2.0', s: '2.0', m: '2.0', l: '2.0', xl: '2.0', xxl: '2.0' },
+            { code: 'J', desc: 'Neck Rib Collar Height', tol: '0.2', xs: '2.5', s: '2.5', m: '2.5', l: '2.5', xl: '2.5', xxl: '2.5' }
+        ]
+    },
+    hoodie: {
+        fit: 'Relaxed / Boxy',
+        sampleSize: 'M',
+        fabric: '100% Heavyweight Diagonal Loop French Terry 460 GSM, Pre-shrunk & silicone softened',
+        construction: '• 5-thread safety stitch on all main structural stress seams.\n• Double-layered self-fabric 3-panel hood with clean concealed interior seams.\n• 2x2 ribbing at cuffs and bottom hem with 8cm rib width.\n• Bar-tacked stress points at kangaroo pocket top corners (8mm bar-tacks).',
+        artwork: '1) Metal drawcord tip finish in gunmetal matte.\n2) Embroidered brand emblem on center chest (7.5cm width).\n3) Reinforced pouch pocket opening with herringbone edge tape.',
+        packaging: '• Retail Flat Fold with cardboard insert collar support.\n• 1pc/thick frosted ziplock garment bag with micro-perforations.',
+        bom: [
+            { placement: 'Body & Sleeves', desc: '100% Cotton Heavyweight French Terry 460 GSM', color: 'Heather Charcoal', supplier: 'Primary Mill', usage: 1.85, cost: 9.20 },
+            { placement: 'Hood Lining', desc: '100% Combed Cotton Single Jersey 180 GSM', color: 'Charcoal', supplier: 'Primary Mill', usage: 0.40, cost: 1.60 },
+            { placement: 'Cuffs & Waistband', desc: '2x2 Heavy Cotton/Lycra Rib Knit 480 GSM', color: 'Heather Charcoal', supplier: 'Rib Mill', usage: 0.35, cost: 2.10 },
+            { placement: 'Hood Drawcord', desc: 'Braided Round Cotton Cord with Metal Tips', color: 'Natural Off-White', supplier: 'Hardware Co.', usage: 1.30, cost: 0.85 },
+            { placement: 'Eyelets', desc: 'Gunmetal Matte Brass Eyelets (10mm ID)', color: 'Gunmetal', supplier: 'Hardware Co.', usage: 2.00, cost: 0.40 }
+        ],
+        pom: [
+            { code: 'A', desc: 'Body Length from HPS', tol: '0.5', xs: '66', s: '69', m: '72', l: '75', xl: '78', xxl: '81' },
+            { code: 'B', desc: 'Chest Width (1" below armhole)', tol: '0.5', xs: '56', s: '59', m: '62', l: '65', xl: '68', xxl: '71' },
+            { code: 'C', desc: 'Across Shoulder Width', tol: '0.5', xs: '50', s: '53', m: '56', l: '59', xl: '62', xxl: '65' },
+            { code: 'D', desc: 'Sleeve Length including Cuff', tol: '0.5', xs: '62', s: '63.5', m: '65', l: '66.5', xl: '68', xxl: '69.5' },
+            { code: 'E', desc: 'Hood Height (HPS to Top of Hood)', tol: '0.5', xs: '36', s: '37', m: '38', l: '39', xl: '40', xxl: '41' },
+            { code: 'F', desc: 'Hood Width across center', tol: '0.5', xs: '26', s: '26.5', m: '27', l: '27.5', xl: '28', xxl: '28.5' },
+            { code: 'G', desc: 'Kangaroo Pocket Width at base', tol: '0.5', xs: '36', s: '38', m: '40', l: '42', xl: '44', xxl: '46' },
+            { code: 'H', desc: 'Bottom Waistband Rib Height', tol: '0.2', xs: '7.0', s: '7.0', m: '7.0', l: '7.0', xl: '7.0', xxl: '7.0' }
+        ]
+    },
+    pants: {
+        fit: 'Tailored Fit',
+        sampleSize: 'M',
+        fabric: '98% Cotton 2% Elastane Stretch Twill 280 GSM, Garment washed & enzyme treated',
+        construction: '• Chainstitch along waistband and inseam for elasticity and durability.\n• YKK #4.5 antique brass metal zipper at fly.\n• Slanted front chino pockets with self-fabric pocket bags.\n• Twin-needle back welt pockets with reinforced corners.',
+        artwork: '1) Contrast inner waistband piping.\n2) Horn-effect custom engraved 4-hole button at center front.',
+        packaging: '• Polybagged with garment hanger and carded fold along crease line.',
+        bom: [
+            { placement: 'Main Shell', desc: '98% Cotton 2% Spandex Stretch Chino Twill 280 GSM', color: 'Khaki Beige', supplier: 'Twill Mill', usage: 1.65, cost: 7.80 },
+            { placement: 'Pocketing', desc: '100% Cotton Poplin 120 GSM', color: 'Natural Ecru', supplier: 'Textile Mill', usage: 0.35, cost: 1.10 },
+            { placement: 'Waistband Button', desc: '20mm Genuine Horn 4-Hole Engraved Button', color: 'Tortoise Brown', supplier: 'Button Vendor', usage: 1.00, cost: 0.45 },
+            { placement: 'Fly Zipper', desc: 'YKK #4.5 Antique Brass Metal Zipper 16cm', color: 'Antique Brass', supplier: 'YKK Supplier', usage: 1.00, cost: 0.90 }
+        ],
+        pom: [
+            { code: 'A', desc: 'Outseam Length (including waistband)', tol: '0.5', xs: '98', s: '100', m: '102', l: '104', xl: '106', xxl: '108' },
+            { code: 'B', desc: 'Inseam Length', tol: '0.5', xs: '71', s: '72', m: '73', l: '74', xl: '75', xxl: '76' },
+            { code: 'C', desc: 'Waist Circumference (Relaxed)', tol: '0.5', xs: '68', s: '72', m: '76', l: '80', xl: '84', xxl: '88' },
+            { code: 'D', desc: 'Waist Circumference (Stretched)', tol: '0.5', xs: '94', s: '98', m: '102', l: '106', xl: '110', xxl: '114' },
+            { code: 'E', desc: 'Hip Width (at widest point)', tol: '0.5', xs: '50', s: '52.5', m: '55', l: '57.5', xl: '60', xxl: '62.5' },
+            { code: 'F', desc: 'Thigh Width (1" below crotch)', tol: '0.5', xs: '30', s: '31.5', m: '33', l: '34.5', xl: '36', xxl: '37.5' },
+            { code: 'G', desc: 'Knee Width', tol: '0.5', xs: '21', s: '22', m: '23', l: '24', xl: '25', xxl: '26' },
+            { code: 'H', desc: 'Leg Opening / Bottom Hem', tol: '0.3', xs: '14', s: '14.5', m: '15', l: '15.5', xl: '16', xxl: '16.5' }
+        ]
+    },
+    dress: {
+        fit: 'Regular Fit',
+        sampleSize: 'M',
+        fabric: '100% EcoVero Viscose Rayon Crepe 160 GSM, Soft drape and fluid silhouette',
+        construction: '• Concealed invisible YKK zipper at center back with hook-and-eye closure.\n• French seams on side seams and sleeve armholes for luxury clean interior.\n• Babylock / lettuce edge finishing along sleeve cuffs.\n• Bias cut body panels with 0.8cm clean rolled hem.',
+        artwork: '1) Custom digital floral print, reactive dyes with high colorfastness rating.\n2) Keyhole detail at back neck with fabric-covered loop button.',
+        packaging: '• Packaged on velvet-coated display hanger inside full-length breathable poly dust cover.',
+        bom: [
+            { placement: 'Main Body', desc: '100% Viscose Rayon Crepe 160 GSM All-Over Print', color: 'Midnight Floral', supplier: 'Print Mill', usage: 2.20, cost: 11.50 },
+            { placement: 'Lining', desc: '100% Rayon Voile 90 GSM', color: 'Dtm Navy', supplier: 'Textile Mill', usage: 1.10, cost: 3.20 },
+            { placement: 'Center Back Zip', desc: 'YKK #3 Invisible Concealed Nylon Zipper 50cm', color: 'Navy Blue', supplier: 'YKK Supplier', usage: 1.00, cost: 0.95 }
+        ],
+        pom: [
+            { code: 'A', desc: 'Total Body Length from HPS', tol: '0.5', xs: '110', s: '112', m: '114', l: '116', xl: '118', xxl: '120' },
+            { code: 'B', desc: 'Bust Circumference', tol: '0.5', xs: '84', s: '88', m: '92', l: '96', xl: '100', xxl: '104' },
+            { code: 'C', desc: 'Waist Circumference', tol: '0.5', xs: '66', s: '70', m: '74', l: '78', xl: '82', xxl: '86' },
+            { code: 'D', desc: 'Hip Circumference', tol: '0.5', xs: '92', s: '96', m: '100', l: '104', xl: '108', xxl: '112' },
+            { code: 'E', desc: 'Across Shoulder Width', tol: '0.5', xs: '36', s: '37', m: '38', l: '39', xl: '40', xxl: '41' },
+            { code: 'F', desc: 'Sleeve Length', tol: '0.5', xs: '57', s: '58', m: '59', l: '60', xl: '61', xxl: '62' },
+            { code: 'G', desc: 'Bottom Hem Sweep (Flare)', tol: '1.0', xs: '140', s: '144', m: '148', l: '152', xl: '156', xxl: '160' }
+        ]
+    }
+};
+
+function setSketchImage(view, src) {
+    const isFront = view === 'front';
+    const img = document.getElementById(isFront ? 'tp-front-img' : 'tp-back-img');
+    const empty = document.getElementById(isFront ? 'tp-front-empty' : 'tp-back-empty');
+    const valInput = document.getElementById(isFront ? 'tp-front-val' : 'tp-back-val');
+    if (valInput) valInput.value = src || '';
+    if (img) {
+        if (src) {
+            img.src = mediaUrl(src);
+            img.style.display = 'block';
+            if (empty) empty.style.display = 'none';
+        } else {
+            img.style.display = 'none';
+            if (empty) empty.style.display = 'flex';
+        }
+    }
+}
+
+function renderBomTable(items) {
+    const body = document.getElementById('tp-bom-body');
+    if (!body) return;
+    body.innerHTML = '';
+    (items || []).forEach(it => addBomRow(it));
+    recalcBomTotal();
+}
+
+function addBomRow(it = {}) {
+    const body = document.getElementById('tp-bom-body');
+    if (!body) return;
+    const tr = document.createElement('tr');
+    tr.className = 'tp-bom-row';
+    const usage = Number(it.usage) || 1;
+    const cost = Number(it.cost) || 0;
+    const total = usage * cost;
+    tr.innerHTML = `
+        <td><input type="text" class="form-control form-control-sm tp-bom-placement" value="${escapeHtml(it.placement || '')}" placeholder="e.g. Main Body"></td>
+        <td><input type="text" class="form-control form-control-sm tp-bom-desc" value="${escapeHtml(it.desc || it.description || '')}" placeholder="e.g. 100% Cotton 240 GSM"></td>
+        <td><input type="text" class="form-control form-control-sm tp-bom-color" value="${escapeHtml(it.color || '')}" placeholder="e.g. Black / 19-4008"></td>
+        <td><input type="text" class="form-control form-control-sm tp-bom-supplier" value="${escapeHtml(it.supplier || '')}" placeholder="Supplier"></td>
+        <td><input type="number" step="0.01" min="0" class="form-control form-control-sm tp-bom-usage" value="${usage}"></td>
+        <td><input type="number" step="0.01" min="0" class="form-control form-control-sm tp-bom-cost" value="${cost}"></td>
+        <td style="text-align:right; font-weight:600;"><span class="tp-bom-line-total">${money(total)}</span></td>
+        <td style="text-align:center;"><button type="button" class="btn btn-secondary btn-xs tp-bom-del" style="color:var(--danger-color, #dc2626);" title="Remove">×</button></td>
+    `;
+    const usageInp = tr.querySelector('.tp-bom-usage');
+    const costInp = tr.querySelector('.tp-bom-cost');
+    const delBtn = tr.querySelector('.tp-bom-del');
+    const lineTotal = tr.querySelector('.tp-bom-line-total');
+
+    function updateRow() {
+        const u = Number(usageInp.value) || 0;
+        const c = Number(costInp.value) || 0;
+        lineTotal.textContent = money(u * c);
+        recalcBomTotal();
+    }
+    usageInp?.addEventListener('input', updateRow);
+    costInp?.addEventListener('input', updateRow);
+    delBtn?.addEventListener('click', () => {
+        tr.remove();
+        recalcBomTotal();
+    });
+    body.appendChild(tr);
+    recalcBomTotal();
+}
+
+function recalcBomTotal() {
+    let sum = 0;
+    document.querySelectorAll('#tp-bom-body .tp-bom-row').forEach(tr => {
+        const u = Number(tr.querySelector('.tp-bom-usage')?.value) || 0;
+        const c = Number(tr.querySelector('.tp-bom-cost')?.value) || 0;
+        sum += (u * c);
+    });
+    const totalEl = document.getElementById('tp-bom-total-cost');
+    if (totalEl) totalEl.textContent = money(sum);
+}
+
+function getBomData() {
+    const list = [];
+    document.querySelectorAll('#tp-bom-body .tp-bom-row').forEach(tr => {
+        list.push({
+            placement: tr.querySelector('.tp-bom-placement')?.value.trim() || '',
+            desc: tr.querySelector('.tp-bom-desc')?.value.trim() || '',
+            color: tr.querySelector('.tp-bom-color')?.value.trim() || '',
+            supplier: tr.querySelector('.tp-bom-supplier')?.value.trim() || '',
+            usage: Number(tr.querySelector('.tp-bom-usage')?.value) || 0,
+            cost: Number(tr.querySelector('.tp-bom-cost')?.value) || 0
+        });
+    });
+    return list;
+}
+
+function renderPomTable(rows) {
+    const body = document.getElementById('tp-pom-body');
+    if (!body) return;
+    body.innerHTML = '';
+    (rows || []).forEach(r => addPomRow(r));
+}
+
+function addPomRow(r = {}) {
+    const body = document.getElementById('tp-pom-body');
+    if (!body) return;
+    const tr = document.createElement('tr');
+    tr.className = 'tp-pom-row';
+    tr.innerHTML = `
+        <td style="text-align:center;"><input type="text" class="form-control form-control-sm tp-pom-code" value="${escapeHtml(r.code || '')}" placeholder="A" style="text-align:center; font-weight:700;"></td>
+        <td><input type="text" class="form-control form-control-sm tp-pom-desc" value="${escapeHtml(r.desc || r.description || '')}" placeholder="Point of measure description"></td>
+        <td style="text-align:center;"><input type="text" class="form-control form-control-sm tp-pom-tol" value="${escapeHtml(r.tol || '0.5')}" placeholder="0.5" style="text-align:center;"></td>
+        <td style="text-align:center;"><input type="text" class="form-control form-control-sm tp-pom-xs" value="${escapeHtml(r.xs || '')}" style="text-align:center;"></td>
+        <td style="text-align:center;"><input type="text" class="form-control form-control-sm tp-pom-s" value="${escapeHtml(r.s || '')}" style="text-align:center;"></td>
+        <td style="text-align:center;"><input type="text" class="form-control form-control-sm tp-pom-m" value="${escapeHtml(r.m || '')}" style="text-align:center; font-weight:700;"></td>
+        <td style="text-align:center;"><input type="text" class="form-control form-control-sm tp-pom-l" value="${escapeHtml(r.l || '')}" style="text-align:center;"></td>
+        <td style="text-align:center;"><input type="text" class="form-control form-control-sm tp-pom-xl" value="${escapeHtml(r.xl || '')}" style="text-align:center;"></td>
+        <td style="text-align:center;"><input type="text" class="form-control form-control-sm tp-pom-xxl" value="${escapeHtml(r.xxl || '')}" style="text-align:center;"></td>
+        <td style="text-align:center;"><button type="button" class="btn btn-secondary btn-xs tp-pom-del" style="color:var(--danger-color, #dc2626);" title="Remove">×</button></td>
+    `;
+    tr.querySelector('.tp-pom-del')?.addEventListener('click', () => tr.remove());
+    body.appendChild(tr);
+}
+
+function getPomData() {
+    const list = [];
+    document.querySelectorAll('#tp-pom-body .tp-pom-row').forEach(tr => {
+        list.push({
+            code: tr.querySelector('.tp-pom-code')?.value.trim() || '',
+            desc: tr.querySelector('.tp-pom-desc')?.value.trim() || '',
+            tol: tr.querySelector('.tp-pom-tol')?.value.trim() || '0.5',
+            xs: tr.querySelector('.tp-pom-xs')?.value.trim() || '',
+            s: tr.querySelector('.tp-pom-s')?.value.trim() || '',
+            m: tr.querySelector('.tp-pom-m')?.value.trim() || '',
+            l: tr.querySelector('.tp-pom-l')?.value.trim() || '',
+            xl: tr.querySelector('.tp-pom-xl')?.value.trim() || '',
+            xxl: tr.querySelector('.tp-pom-xxl')?.value.trim() || ''
+        });
+    });
+    return list;
+}
+
+function loadPomPreset(name) {
+    const preset = TECH_PACK_PRESETS[name] || TECH_PACK_PRESETS.tshirt;
+    if (preset.pom) renderPomTable(preset.pom);
+    if (preset.bom && (!document.querySelectorAll('#tp-bom-body tr').length || confirm('Also load recommended Bill of Materials (BOM) for this spec preset?'))) {
+        renderBomTable(preset.bom);
+    }
+    if (preset.fit && document.getElementById('tp-meta-fit')) document.getElementById('tp-meta-fit').value = preset.fit;
+    if (preset.sampleSize && document.getElementById('tp-meta-sample-size')) document.getElementById('tp-meta-sample-size').value = preset.sampleSize;
+    if (preset.fabric && document.getElementById('tp-meta-fabric') && !document.getElementById('tp-meta-fabric').value.trim()) {
+        document.getElementById('tp-meta-fabric').value = preset.fabric;
+    }
+    if (preset.construction && document.getElementById('tp-construction-notes')) {
+        document.getElementById('tp-construction-notes').value = preset.construction;
+    }
+    if (preset.artwork && document.getElementById('tp-artwork-notes')) {
+        document.getElementById('tp-artwork-notes').value = preset.artwork;
+    }
+    if (preset.packaging && document.getElementById('tp-packaging-notes')) {
+        document.getElementById('tp-packaging-notes').value = preset.packaging;
+    }
+    toast('Loaded ' + name.toUpperCase() + ' spec preset', 'success');
+}
+
+function renderTechPackPicker() {
+    const sel = document.getElementById('tp-product-select');
+    if (sel) {
+        const activeProducts = products.filter(p => !p.isInactive);
+        sel.innerHTML = activeProducts.map(p =>
+            `<option value="${p.id}">${escapeHtml(p.name)} ${p.sku ? '(' + escapeHtml(p.sku) + ')' : ''} ${p.collection ? '— [' + escapeHtml(p.collection) + ']' : ''}</option>`
+        ).join('');
+        if (currentTechPackPartId) sel.value = String(currentTechPackPartId);
+    }
+
+    const seasonSel = document.getElementById('tp-meta-season');
+    if (seasonSel) {
+        const defaultCols = ['Summer', 'Winter', 'Spring', 'Autumn / Fall', 'Pre-Fall', 'Resort & Cruise', 'Core Essentials'];
+        const productCols = [...new Set(products.map(p => p.collection).filter(Boolean))];
+        const allCols = [...new Set([...defaultCols, ...productCols])];
+        seasonSel.innerHTML = allCols.map(c => `<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join('');
+    }
+
+    const suppSel = document.getElementById('tp-meta-supplier');
+    if (suppSel) {
+        suppSel.innerHTML = `<option value="">— ${escapeHtml(tr('col_supplier'))} —</option>` +
+            (suppliers || []).map(s => `<option value="${s.id}">${escapeHtml(s.name)}</option>`).join('');
+    }
+}
+
+async function loadTechPack(partId) {
+    if (!partId) return;
+    currentTechPackPartId = Number(partId);
+    renderTechPackPicker();
+    const sel = document.getElementById('tp-product-select');
+    if (sel) sel.value = String(currentTechPackPartId);
+
+    const p = products.find(x => x.id === currentTechPackPartId);
+    if (!p) return;
+
+    // Reset base fields from product properties
+    const rootName = stripVariantFromName(p.name, p.size, p.color);
+    document.getElementById('tp-meta-name').value = rootName;
+    document.getElementById('tp-meta-sku').value = p.sku || p.styleCode || '';
+    if (document.getElementById('tp-meta-fabric')) document.getElementById('tp-meta-fabric').value = p.fabric || '';
+    if (document.getElementById('tp-meta-season')) {
+        const season = p.collection || 'Summer';
+        const opt = [...document.getElementById('tp-meta-season').options].find(o => o.value.toLowerCase() === season.toLowerCase());
+        if (opt) document.getElementById('tp-meta-season').value = opt.value;
+        else document.getElementById('tp-meta-season').value = season;
+    }
+    if (document.getElementById('tp-meta-supplier')) {
+        document.getElementById('tp-meta-supplier').value = p.supplierId ? String(p.supplierId) : '';
+    }
+
+    try {
+        const tp = await api('/api/tech-packs/' + currentTechPackPartId);
+        if (tp && tp.partId) {
+            if (tp.styleCode) document.getElementById('tp-meta-sku').value = tp.styleCode;
+            if (tp.season && document.getElementById('tp-meta-season')) document.getElementById('tp-meta-season').value = tp.season;
+            if (tp.sampleSize && document.getElementById('tp-meta-sample-size')) document.getElementById('tp-meta-sample-size').value = tp.sampleSize;
+            if (tp.fitType && document.getElementById('tp-meta-fit')) document.getElementById('tp-meta-fit').value = tp.fitType;
+            if (tp.status && document.getElementById('tp-meta-status')) document.getElementById('tp-meta-status').value = tp.status;
+            if (tp.designer && document.getElementById('tp-meta-designer')) document.getElementById('tp-meta-designer').value = tp.designer;
+            if (tp.fabricDetails && document.getElementById('tp-meta-fabric')) document.getElementById('tp-meta-fabric').value = tp.fabricDetails;
+            if (document.getElementById('tp-header-status')) document.getElementById('tp-header-status').textContent = tp.status || 'Draft';
+            if (document.getElementById('tp-badge-version')) document.getElementById('tp-badge-version').textContent = tp.version || 'v1.0';
+            if (document.getElementById('tp-badge-season')) document.getElementById('tp-badge-season').textContent = tp.season || p.collection || 'Summer';
+            if (document.getElementById('tp-construction-notes')) document.getElementById('tp-construction-notes').value = tp.constructionNotes || '';
+            if (document.getElementById('tp-artwork-notes')) document.getElementById('tp-artwork-notes').value = tp.artworkNotes || '';
+            if (document.getElementById('tp-packaging-notes')) document.getElementById('tp-packaging-notes').value = tp.packagingNotes || '';
+
+            setSketchImage('front', tp.sketchFront || (p.image || ''));
+            setSketchImage('back', tp.sketchBack || '');
+
+            let bomItems = [];
+            try { bomItems = JSON.parse(tp.bomJson || '[]'); } catch {}
+            renderBomTable(bomItems.length ? bomItems : (TECH_PACK_PRESETS.tshirt.bom));
+
+            let pomRows = [];
+            try { pomRows = JSON.parse(tp.measurementsJson || '[]'); } catch {}
+            renderPomTable(pomRows.length ? pomRows : (TECH_PACK_PRESETS.tshirt.pom));
+            return;
+        }
+    } catch (e) {
+        // Fallthrough to preset initialization
+    }
+
+    if (document.getElementById('tp-header-status')) document.getElementById('tp-header-status').textContent = 'Draft';
+    if (document.getElementById('tp-badge-version')) document.getElementById('tp-badge-version').textContent = 'v1.0';
+    if (document.getElementById('tp-badge-season')) document.getElementById('tp-badge-season').textContent = p.collection || 'Summer';
+    setSketchImage('front', p.image || '');
+    setSketchImage('back', '');
+
+    const text = `${p.category || ''} ${p.name || ''}`.toLowerCase();
+    let presetName = 'tshirt';
+    if (text.includes('hoodie') || text.includes('sweat') || text.includes('jacket')) presetName = 'hoodie';
+    else if (text.includes('pant') || text.includes('jean') || text.includes('trouser') || text.includes('short')) presetName = 'pants';
+    else if (text.includes('dress') || text.includes('skirt') || text.includes('gown')) presetName = 'dress';
+
+    loadPomPreset(presetName);
+}
+
+async function saveTechPack() {
+    if (!currentTechPackPartId) {
+        toast('No active product selected for Tech Pack', 'warning');
+        return;
+    }
+    const btn = document.getElementById('btn-tp-save');
+    if (btn) btn.disabled = true;
+
+    try {
+        const payload = {
+            styleCode: document.getElementById('tp-meta-sku')?.value.trim() || '',
+            season: document.getElementById('tp-meta-season')?.value || '',
+            sampleSize: document.getElementById('tp-meta-sample-size')?.value || 'M',
+            fitType: document.getElementById('tp-meta-fit')?.value || 'Regular Fit',
+            status: document.getElementById('tp-meta-status')?.value || 'Draft',
+            version: document.getElementById('tp-badge-version')?.textContent || 'v1.0',
+            designer: document.getElementById('tp-meta-designer')?.value.trim() || '',
+            fabricDetails: document.getElementById('tp-meta-fabric')?.value.trim() || '',
+            bomJson: JSON.stringify(getBomData()),
+            measurementsJson: JSON.stringify(getPomData()),
+            constructionNotes: document.getElementById('tp-construction-notes')?.value.trim() || '',
+            artworkNotes: document.getElementById('tp-artwork-notes')?.value.trim() || '',
+            packagingNotes: document.getElementById('tp-packaging-notes')?.value.trim() || '',
+            sketchFront: document.getElementById('tp-front-val')?.value.trim() || '',
+            sketchBack: document.getElementById('tp-back-val')?.value.trim() || ''
+        };
+
+        await api('/api/tech-packs/' + currentTechPackPartId, {
+            method: 'POST',
+            body: JSON.stringify(payload)
+        });
+
+        const p = products.find(x => x.id === currentTechPackPartId);
+        if (p) {
+            if (payload.fabricDetails) p.fabric = payload.fabricDetails;
+            if (payload.season) p.collection = payload.season;
+        }
+
+        toast(tr('tp_saved_success') || 'Tech Pack saved successfully', 'success');
+        if (document.getElementById('tp-header-status')) document.getElementById('tp-header-status').textContent = payload.status;
+        if (document.getElementById('tp-badge-season')) document.getElementById('tp-badge-season').textContent = payload.season;
+    } catch (e) {
+        toast(e.message, 'error');
+    } finally {
+        if (btn) btn.disabled = false;
+    }
+}
+
+async function initTechPackUi() {
+    renderTechPackPicker();
+    if (!currentTechPackPartId && products.length > 0) {
+        const first = products.find(p => !p.isInactive) || products[0];
+        if (first) loadTechPack(first.id);
+    } else if (currentTechPackPartId) {
+        loadTechPack(currentTechPackPartId);
+    }
+}
+
 function setupFashionUi() {
     if (typeof setupOrdersUi === 'function') setupOrdersUi();
     document.querySelectorAll('#purchase-orders [data-purchase-pane]').forEach(btn => {
@@ -11111,7 +11777,7 @@ function setupFashionUi() {
         });
     }
     document.getElementById('prod-search')?.addEventListener('input', () => { productPage = 1; renderProducts(); });
-    ['prod-filter-cat','prod-filter-brand','prod-filter-status','prod-filter-price','prod-filter-supplier'].forEach(id => {
+    ['prod-filter-cat','prod-filter-brand','prod-filter-status','prod-filter-price','prod-filter-supplier','prod-filter-collection'].forEach(id => {
         document.getElementById(id)?.addEventListener('change', () => { productPage = 1; renderProducts(); });
     });
     document.getElementById('prod-page-size')?.addEventListener('change', () => { productPage = 1; renderProducts(); });
@@ -11127,7 +11793,7 @@ function setupFashionUi() {
     document.getElementById('btn-prod-reset')?.addEventListener('click', () => {
         const searchBox = document.getElementById('prod-search');
         if (searchBox) searchBox.value = '';
-        ['prod-filter-cat','prod-filter-brand','prod-filter-supplier'].forEach(id => {
+        ['prod-filter-cat','prod-filter-brand','prod-filter-supplier','prod-filter-collection'].forEach(id => {
             const el = document.getElementById(id);
             if (el) { delete el.dataset.built; el.value = 'all'; }
         });
@@ -11141,6 +11807,10 @@ function setupFashionUi() {
     document.getElementById('btn-add-product-page')?.addEventListener('click', () => openProductEditor(null));
     document.getElementById('btn-product-back')?.addEventListener('click', showProductsList);
     document.getElementById('btn-product-edit')?.addEventListener('click', () => { if (pdCurrentId) openProductEditor(pdCurrentId); });
+    document.getElementById('btn-product-techpack')?.addEventListener('click', () => {
+        navigateTo('techpack', true);
+        if (pdCurrentId) loadTechPack(pdCurrentId);
+    });
     document.getElementById('btn-editor-back')?.addEventListener('click', showProductsList);
     document.getElementById('btn-editor-cancel')?.addEventListener('click', showProductsList);
     document.getElementById('btn-editor-save')?.addEventListener('click', saveProductEditor);
@@ -11152,6 +11822,78 @@ function setupFashionUi() {
         document.getElementById('pe-barcode')?.focus();
     });
     document.getElementById('btn-pe-add-uom')?.addEventListener('click', addEditorUom);
+    document.getElementById('btn-pe-add-gender')?.addEventListener('click', promptAddProductGender);
+    document.getElementById('pe-gender')?.addEventListener('change', function() {
+        if (this.value === '__custom__') {
+            promptAddProductGender();
+            if (this.value === '__custom__') this.value = 'Unisex';
+        }
+    });
+    document.getElementById('btn-pe-add-collection')?.addEventListener('click', promptAddProductCollection);
+    document.getElementById('pe-collection')?.addEventListener('change', function() {
+        if (this.value === '__custom__') {
+            promptAddProductCollection();
+            if (this.value === '__custom__') this.value = 'Summer';
+        }
+    });
+
+    // Tech Pack Workspace event bindings
+    document.getElementById('tp-product-select')?.addEventListener('change', function() {
+        const id = Number(this.value);
+        if (id) loadTechPack(id);
+    });
+    document.getElementById('btn-tp-save')?.addEventListener('click', saveTechPack);
+    document.getElementById('btn-tp-print')?.addEventListener('click', () => window.print());
+    document.getElementById('btn-tp-add-season')?.addEventListener('click', promptAddProductCollection);
+    document.getElementById('btn-tp-add-bom-row')?.addEventListener('click', () => addBomRow());
+    document.getElementById('btn-tp-add-pom-row')?.addEventListener('click', () => addPomRow());
+    document.getElementById('btn-tp-load-preset')?.addEventListener('click', () => {
+        const presets = ['tshirt', 'hoodie', 'pants', 'dress'];
+        const current = prompt('Choose spec preset to load: tshirt, hoodie, pants, dress', 'tshirt');
+        if (current && presets.includes(current.toLowerCase())) {
+            loadPomPreset(current.toLowerCase());
+        }
+    });
+    document.querySelectorAll('[data-tp-preset]').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const p = btn.getAttribute('data-tp-preset');
+            if (p) loadPomPreset(p);
+        });
+    });
+    document.getElementById('tp-front-file')?.addEventListener('change', async (e) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        try {
+            const up = await uploadProductImage(file);
+            const path = up.url || up.path;
+            if (path) setSketchImage('front', path);
+        } catch (err) { toast(err.message, 'error'); }
+    });
+    document.getElementById('tp-back-file')?.addEventListener('change', async (e) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        try {
+            const up = await uploadProductImage(file);
+            const path = up.url || up.path;
+            if (path) setSketchImage('back', path);
+        } catch (err) { toast(err.message, 'error'); }
+    });
+    document.getElementById('btn-tp-front-url')?.addEventListener('click', () => {
+        const url = prompt('Enter Front Flat sketch/image URL:');
+        if (url && url.trim()) setSketchImage('front', url.trim());
+    });
+    document.getElementById('btn-tp-back-url')?.addEventListener('click', () => {
+        const url = prompt('Enter Back Flat sketch/image URL:');
+        if (url && url.trim()) setSketchImage('back', url.trim());
+    });
+    document.getElementById('tp-meta-status')?.addEventListener('change', function() {
+        const b = document.getElementById('tp-header-status');
+        if (b) b.textContent = this.value;
+    });
+    document.getElementById('tp-meta-season')?.addEventListener('change', function() {
+        const b = document.getElementById('tp-badge-season');
+        if (b) b.textContent = this.value;
+    });
     document.querySelectorAll('input[name="pe-type"], input[name="pe-sell-by"]').forEach(el => el.addEventListener('change', updateEditorTypeUi));
     document.querySelectorAll('input[name="pe-source"]').forEach(el => el.addEventListener('change', () => {
         updateProductSourceUi();

@@ -441,6 +441,9 @@ namespace InventorySystem
                 if (!ColumnExists("parts", "color")) ExecuteNonQuery("ALTER TABLE parts ADD COLUMN color TEXT;");
                 if (!ColumnExists("parts", "style_code")) ExecuteNonQuery("ALTER TABLE parts ADD COLUMN style_code TEXT;");
                 if (!ColumnExists("parts", "source_kind")) ExecuteNonQuery("ALTER TABLE parts ADD COLUMN source_kind TEXT DEFAULT 'bought';");
+                if (!ColumnExists("parts", "gender")) ExecuteNonQuery("ALTER TABLE parts ADD COLUMN gender TEXT DEFAULT 'Unisex';");
+                if (!ColumnExists("parts", "fabric")) ExecuteNonQuery("ALTER TABLE parts ADD COLUMN fabric TEXT;");
+                if (!ColumnExists("parts", "collection")) ExecuteNonQuery("ALTER TABLE parts ADD COLUMN collection TEXT;");
                 ExecuteNonQuery(@"
                     CREATE TABLE IF NOT EXISTS product_materials (
                         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -449,6 +452,49 @@ namespace InventorySystem
                         supplier_id INTEGER,
                         quantity REAL NOT NULL DEFAULT 1,
                         unit_cost REAL NOT NULL DEFAULT 0
+                    );");
+
+                ExecuteNonQuery(@"
+                    CREATE TABLE IF NOT EXISTS fashion_collections (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        name TEXT NOT NULL UNIQUE,
+                        season TEXT,
+                        year INTEGER,
+                        is_active INTEGER DEFAULT 1,
+                        date_created TEXT DEFAULT (datetime('now', 'localtime'))
+                    );");
+
+                ExecuteNonQuery(@"
+                    INSERT OR IGNORE INTO fashion_collections (name, season) VALUES
+                    ('Summer', 'Summer'),
+                    ('Winter', 'Winter'),
+                    ('Spring', 'Spring'),
+                    ('Autumn / Fall', 'Autumn'),
+                    ('Pre-Fall', 'Pre-Fall'),
+                    ('Resort & Cruise', 'Resort'),
+                    ('Core Essentials', 'All Season');");
+
+                ExecuteNonQuery(@"
+                    CREATE TABLE IF NOT EXISTS tech_packs (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        part_id INTEGER NOT NULL UNIQUE,
+                        style_code TEXT,
+                        season TEXT,
+                        sample_size TEXT DEFAULT 'M',
+                        fit_type TEXT DEFAULT 'Regular Fit',
+                        status TEXT DEFAULT 'Draft',
+                        version TEXT DEFAULT '1.0',
+                        designer TEXT,
+                        fabric_details TEXT,
+                        bom_json TEXT,
+                        measurements_json TEXT,
+                        construction_notes TEXT,
+                        artwork_notes TEXT,
+                        packaging_notes TEXT,
+                        sketch_front TEXT,
+                        sketch_back TEXT,
+                        date_created TEXT DEFAULT (datetime('now', 'localtime')),
+                        date_updated TEXT DEFAULT (datetime('now', 'localtime'))
                     );");
 
                 if (!ColumnExists("purchase_orders", "po_number")) ExecuteNonQuery("ALTER TABLE purchase_orders ADD COLUMN po_number TEXT;");
@@ -587,10 +633,109 @@ namespace InventorySystem
                     SET part_name = TRIM(SUBSTR(part_name, 1, INSTR(part_name, ' - ') - 1))
                     WHERE part_name LIKE '% - %' 
                       AND ((size IS NOT NULL AND size != '') OR (color IS NOT NULL AND color != ''));");
+
+                EnsureMenWomenFashionCatalog();
             }
             catch (Exception ex)
             {
                 ErrorLogger.LogError(ex, "EnsureSchema failed");
+            }
+        }
+
+        public static void EnsureMenWomenFashionCatalog()
+        {
+            try
+            {
+                int menCount = ExecuteScalar<int>("SELECT COUNT(*) FROM parts WHERE gender = 'Men' AND date_deleted IS NULL");
+                int womenCount = ExecuteScalar<int>("SELECT COUNT(*) FROM parts WHERE gender = 'Women' AND date_deleted IS NULL");
+                if (menCount >= 5 && womenCount >= 5) return;
+
+                int GetOrAddCategory(string name)
+                {
+                    object idObj = ExecuteScalar<object>("SELECT id FROM categories WHERE category_name = @n", new SqliteParameter("@n", name));
+                    if (idObj != null && idObj != DBNull.Value) return Convert.ToInt32(idObj);
+                    ExecuteNonQuery("INSERT INTO categories (category_name, description) VALUES (@n, @d)",
+                        new SqliteParameter("@n", name), new SqliteParameter("@d", name + " Collection"));
+                    return (int)ExecuteScalar<long>("SELECT last_insert_rowid()");
+                }
+
+                int mainWhId = 1;
+                object whObj = ExecuteScalar<object>("SELECT id FROM warehouses WHERE code = 'MAIN' LIMIT 1");
+                if (whObj != null && whObj != DBNull.Value) mainWhId = Convert.ToInt32(whObj);
+
+                var items = new (string Name, string Sku, string Barcode, string Cat, string Gender, string Brand, string Size, string Color, string Style, decimal Cost, decimal Price, int Stock, string Desc)[]
+                {
+                    ("Classic Pique Polo Shirt", "MEN-POLO-001", "7101000101", "Men - T-Shirts & Polos", "Men", "Studio 7-10", "L", "Navy Blue", "M-POLO", 16m, 34m, 28, "Breathable cotton pique polo shirt."),
+                    ("Heavyweight Boxy Men Tee", "MEN-TEE-002", "7101000102", "Men - T-Shirts & Polos", "Men", "Studio 7-10", "XL", "Olive Green", "M-BOXTEE", 12m, 28m, 35, "280GSM heavyweight drop-shoulder tee."),
+                    ("Slim Striped Crewneck Tee", "MEN-TEE-003", "7101000103", "Men - T-Shirts & Polos", "Men", "Studio 7-10", "M", "Black/White", "M-STRIPE", 13m, 30m, 22, "Cotton blend striped crewneck tee."),
+                    ("Oxford Button-Down Shirt", "MEN-SHIRT-004", "7101000104", "Men - Shirts & Casual", "Men", "Urban Tailor", "L", "Light Blue", "M-OXFORD", 22m, 48m, 24, "Tailored button-down oxford shirt."),
+                    ("Relaxed Linen Summer Shirt", "MEN-SHIRT-005", "7101000105", "Men - Shirts & Casual", "Men", "Urban Tailor", "M", "Beige", "M-LINEN", 19m, 42m, 20, "Airy pure linen casual shirt."),
+                    ("Slim-Fit Stretch Denim Jeans", "MEN-JEAN-006", "7101000106", "Men - Pants & Jeans", "Men", "Denim Co.", "32", "Dark Indigo", "M-DENIM", 25m, 55m, 30, "Classic 5-pocket stretch denim jeans."),
+                    ("Modern Chino Trousers", "MEN-CHINO-007", "7101000107", "Men - Pants & Jeans", "Men", "Urban Tailor", "34", "Khaki", "M-CHINO", 20m, 45m, 25, "Flat-front tailored chinos."),
+                    ("French Terry Heavyweight Zip Hoodie", "MEN-HOOD-008", "7101000108", "Men - Hoodies & Sweatshirts", "Men", "Studio 7-10", "L", "Charcoal Grey", "M-ZIPHOOD", 28m, 65m, 20, "Heavyweight French terry zip hoodie."),
+                    ("Classic Crewneck Sweatshirt", "MEN-SWEAT-009", "7101000109", "Men - Hoodies & Sweatshirts", "Men", "Studio 7-10", "XL", "Black", "M-CREW", 22m, 52m, 26, "Comfortable everyday crewneck fleece."),
+                    ("Quilted MA-1 Bomber Jacket", "MEN-JACK-010", "7101000110", "Men - Jackets & Coats", "Men", "North Peak", "L", "Olive Green", "M-BOMBER", 42m, 89m, 16, "Water-resistant satin bomber jacket."),
+                    ("Italian Wool Tailored Blazer", "MEN-BLAZ-011", "7101000111", "Men - Suits & Blazers", "Men", "Milano Sartoria", "42R", "Midnight Blue", "M-BLAZER", 68m, 145m, 12, "Modern blazer in virgin wool blend."),
+                    ("Handcrafted Leather Sneakers", "MEN-SHOE-012", "7101000112", "Men - Footwear & Shoes", "Men", "Craft & Sole", "43", "White", "M-SNEAK", 35m, 79m, 18, "Minimalist low-top sneakers in calfskin leather."),
+
+                    ("Floral Silk Wrap Midi Dress", "WMN-DRES-001", "7102000201", "Women - Dresses & Gowns", "Women", "Aura Chic", "M", "Emerald Green", "W-WRAP", 30m, 68m, 22, "Flowy silk-touch wrap dress with botanical print."),
+                    ("Pleated Evening Maxi Gown", "WMN-DRES-002", "7102000202", "Women - Dresses & Gowns", "Women", "Aura Chic", "S", "Burgundy", "W-GOWN", 48m, 115m, 14, "Graceful sunburst pleated chiffon maxi gown."),
+                    ("Linen Tiered Summer Dress", "WMN-DRES-003", "7102000203", "Women - Dresses & Gowns", "Women", "Elle Mode", "M", "White", "W-TIERED", 25m, 58m, 20, "Relaxed tiered A-line linen dress."),
+                    ("Satin Button-Up Silk Blouse", "WMN-BLOU-004", "7102000204", "Women - Blouses & Tops", "Women", "Elle Mode", "S", "Champagne", "W-SATIN", 18m, 42m, 26, "Lustrous satin drape shirt with cuffs."),
+                    ("Ribbed Long-Sleeve Knit Top", "WMN-TOP-005", "7102000205", "Women - Blouses & Tops", "Women", "Elle Mode", "M", "Mocha", "W-RIBBED", 14m, 32m, 30, "Soft stretchy modal rib knit top."),
+                    ("Royal Embroidered Black Abaya", "WMN-ABAY-006", "7102000206", "Women - Abayas & Kaftans", "Women", "Al-Noor Couture", "56", "Black/Gold", "W-ABAYA-ROY", 38m, 85m, 20, "Nida fabric abaya with gold embroidery."),
+                    ("Crêpe Open-Front Everyday Abaya", "WMN-ABAY-007", "7102000207", "Women - Abayas & Kaftans", "Women", "Al-Noor Couture", "54", "Sage Olive", "W-ABAYA-CREP", 28m, 65m, 18, "Lightweight crêpe kimono-cut abaya."),
+                    ("High-Waisted Palazzo Trousers", "WMN-PANT-008", "7102000208", "Women - Skirts & Pants", "Women", "Elle Mode", "M", "Cream", "W-PALAZZO", 20m, 46m, 24, "Flattering wide-leg trousers with front pleats."),
+                    ("Pleated Satin Midi Skirt", "WMN-SKRT-009", "7102000209", "Women - Skirts & Pants", "Women", "Aura Chic", "S", "Bronze", "W-SKIRT", 17m, 39m, 22, "Shimmering accordion pleat midi skirt."),
+                    ("Quilted Chain Crossbody Bag", "WMN-BAG-010", "7102000210", "Women - Handbags & Accessories", "Women", "Luxe Atelier", "One Size", "Black", "W-CROSSBODY", 32m, 75m, 16, "Padded chevron quilted vegan leather purse."),
+                    ("Structured Minimalist Tote Bag", "WMN-BAG-011", "7102000211", "Women - Handbags & Accessories", "Women", "Luxe Atelier", "One Size", "Caramel Tan", "W-TOTE", 39m, 88m, 15, "Spacious everyday structured tote bag."),
+                    ("Pointed Toe Stiletto Pumps", "WMN-HEEL-012", "7102000212", "Women - Footwear & Heels", "Women", "Bellissima", "38", "Nude Beige", "W-PUMP", 29m, 69m, 18, "Classic 85mm patent leather pointed pumps."),
+                    ("Wool Blend Double-Breasted Trench", "WMN-COAT-013", "7102000213", "Women - Jackets & Cardigans", "Women", "Elle Mode", "M", "Camel", "W-TRENCH", 55m, 125m, 14, "Belted double-breasted coat in wool blend.")
+                };
+
+                foreach (var it in items)
+                {
+                    int catId = GetOrAddCategory(it.Cat);
+                    int exId = ExecuteScalar<int>("SELECT id FROM parts WHERE (part_name = @n OR part_number = @sku) AND date_deleted IS NULL LIMIT 1",
+                        new SqliteParameter("@n", it.Name), new SqliteParameter("@sku", it.Sku));
+
+                    if (exId > 0)
+                    {
+                        ExecuteNonQuery(@"UPDATE parts SET gender = @g, category_id = @c, brand = @b, size = @sz, color = @col, style_code = @style,
+                                                          selling_price = @price, purchase_price = @cost WHERE id = @id",
+                            new SqliteParameter("@id", exId), new SqliteParameter("@g", it.Gender), new SqliteParameter("@c", catId),
+                            new SqliteParameter("@b", it.Brand), new SqliteParameter("@sz", it.Size), new SqliteParameter("@col", it.Color),
+                            new SqliteParameter("@style", it.Style), new SqliteParameter("@price", it.Price), new SqliteParameter("@cost", it.Cost));
+                    }
+                    else
+                    {
+                        ExecuteNonQuery(@"
+                            INSERT INTO parts (
+                                part_name, part_number, description, category_id,
+                                purchase_price, selling_price, quantity_in_stock, minimum_stock_level,
+                                barcode, status, date_added, item_type, is_sales_item, is_stock_tracked,
+                                brand, size, color, style_code, source_kind, gender
+                            ) VALUES (
+                                @name, @sku, @desc, @cat,
+                                @cost, @price, @stock, 5,
+                                @barcode, 'Active', datetime('now'), 'Product', 1, 1,
+                                @brand, @size, @color, @style, 'bought', @gender
+                            )",
+                            new SqliteParameter("@name", it.Name), new SqliteParameter("@sku", it.Sku), new SqliteParameter("@desc", it.Desc),
+                            new SqliteParameter("@cat", catId), new SqliteParameter("@cost", it.Cost), new SqliteParameter("@price", it.Price),
+                            new SqliteParameter("@stock", it.Stock), new SqliteParameter("@barcode", it.Barcode), new SqliteParameter("@brand", it.Brand),
+                            new SqliteParameter("@size", it.Size), new SqliteParameter("@color", it.Color), new SqliteParameter("@style", it.Style),
+                            new SqliteParameter("@gender", it.Gender));
+
+                        int newId = (int)ExecuteScalar<long>("SELECT last_insert_rowid()");
+                        ExecuteNonQuery("INSERT OR REPLACE INTO stock_levels (part_id, warehouse_id, quantity, reorder_level) VALUES (@pid, @wid, @qty, 5)",
+                            new SqliteParameter("@pid", newId), new SqliteParameter("@wid", mainWhId), new SqliteParameter("@qty", it.Stock));
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ErrorLogger.LogError(ex, "EnsureMenWomenFashionCatalog failed");
             }
         }
 
