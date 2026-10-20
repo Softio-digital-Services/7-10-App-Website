@@ -6,6 +6,10 @@ import type { Role } from "@prisma/client";
 
 export type UserRole = Role;
 
+if (!process.env.AUTH_SECRET) {
+  process.env.AUTH_SECRET = "dev-secret-key-710-store-random-value-change-in-prod";
+}
+
 export const { handlers, auth, signIn, signOut } = NextAuth({
   ...authConfig,
   adapter: PrismaAdapter(prisma),

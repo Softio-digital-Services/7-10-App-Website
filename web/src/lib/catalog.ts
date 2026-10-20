@@ -169,17 +169,22 @@ export async function getRelated(product: StoreProduct, locale: Locale, take = 8
 
 export async function getCategories(locale: Locale): Promise<StoreCategory[]> {
   const dict = dictionaries[locale];
-  const rows = await prisma.product.findMany({ where: { active: true }, include });
-  const map = new Map<string, StoreCategory>();
-  for (const row of rows) {
-    const slug = row.categoryRef?.slug ?? slugify(row.category || "general");
-    const name = categoryLabel(dict, slug, row.categoryRef?.name ?? row.category);
-    const entry = map.get(slug) ?? { slug, name, count: 0, image: null };
-    entry.count += 1;
-    if (!entry.image || row.featured) entry.image = row.imageUrl;
-    map.set(slug, entry);
+  try {
+    const rows = await prisma.product.findMany({ where: { active: true }, include });
+    const map = new Map<string, StoreCategory>();
+    for (const row of rows) {
+      const slug = row.categoryRef?.slug ?? slugify(row.category || "general");
+      const name = categoryLabel(dict, slug, row.categoryRef?.name ?? row.category);
+      const entry = map.get(slug) ?? { slug, name, count: 0, image: null };
+      entry.count += 1;
+      if (!entry.image || row.featured) entry.image = row.imageUrl;
+      map.set(slug, entry);
+    }
+    return [...map.values()].sort((a, b) => b.count - a.count);
+  } catch (err) {
+    console.error("Failed to load categories from database:", err);
+    return [];
   }
-  return [...map.values()].sort((a, b) => b.count - a.count);
 }
 
 export function allSizes(products: StoreProduct[]) {
