@@ -14,9 +14,13 @@ if (!url) {
   process.exit(1);
 }
 
-const client = /^(libsql|https?|wss?):\/\//.test(url)
-  ? createClient({ url, authToken: process.env.DATABASE_AUTH_TOKEN })
-  : createClient({ url });
+const resolvedUrl = url.startsWith("file:./")
+  ? `file:${join(process.cwd(), "prisma", url.slice(7))}`
+  : url;
+
+const client = /^(libsql|https?|wss?):\/\//.test(resolvedUrl)
+  ? createClient({ url: resolvedUrl, authToken: process.env.DATABASE_AUTH_TOKEN })
+  : createClient({ url: resolvedUrl });
 
 const root = join(process.cwd(), "prisma", "migrations");
 const names = readdirSync(root, { withFileTypes: true })
