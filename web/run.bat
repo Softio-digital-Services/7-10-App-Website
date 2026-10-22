@@ -30,7 +30,7 @@ if not exist ".env" (
 
 REM 2. Ensure node_modules dependencies are installed
 if not exist "node_modules\" (
-  echo [Setup] Installing npm packages (first run)...
+  echo [Setup] Installing npm packages - first run...
   call npm install
   if errorlevel 1 (
     echo.
