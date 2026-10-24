@@ -7,7 +7,7 @@ const PREVIEW_COOKIE = "710_preview";
 const STAFF_PAGES = ["/admin", "/manager"];
 const STAFF_APIS = ["/api/admin", "/api/manager", "/api/sync"];
 /** Reachable while the store is in "soon" mode. */
-const SOON_OPEN = ["/soon", "/login", "/api/auth", "/api/subscribe", "/api/otargi", "/api/hub", "/api/whish", "/media", ...STAFF_PAGES, ...STAFF_APIS];
+const SOON_OPEN = ["/soon", "/login", "/api/auth", "/api/subscribe", "/api/desktop", "/api/hub", "/api/whish", "/media", ...STAFF_PAGES, ...STAFF_APIS];
 
 const startsWithAny = (pathname: string, prefixes: string[]) =>
   prefixes.some((p) => pathname === p || pathname.startsWith(`${p}/`));

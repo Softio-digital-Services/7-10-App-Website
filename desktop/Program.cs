@@ -497,7 +497,18 @@ namespace InventorySystem
                 {
                     language = LocalizationManager.IsArabic ? "ar" : "en",
                     isArabic = LocalizationManager.IsArabic,
+                    appName = ThemeConfig.AppTitle,
                     companyName = ThemeConfig.CompanyName,
+                    brandName = ThemeConfig.BrandName,
+                    brandFullName = ThemeConfig.BrandFullName,
+                    companyInfo = ThemeConfig.CompanyInfoLine,
+                    contactFooter = ThemeConfig.ContactFooterLine,
+                    address = ThemeConfig.LocalizedAddress,
+                    phone = ThemeConfig.CompanyPhone,
+                    whatsApp = ThemeConfig.CompanyWhatsApp,
+                    email = ThemeConfig.CompanyEmail,
+                    website = ThemeConfig.CompanyWebsite,
+                    instagram = ThemeConfig.CompanyInstagram,
                     primaryColor = System.Drawing.ColorTranslator.ToHtml(ThemeConfig.PrimaryColor),
                     primaryRgb = $"{ThemeConfig.PrimaryColor.R}, {ThemeConfig.PrimaryColor.G}, {ThemeConfig.PrimaryColor.B}"
                 }));
@@ -1233,7 +1244,8 @@ namespace InventorySystem
                             totalAmount,
                             validityDays = 15,
                             companyName = ThemeConfig.CompanyName,
-                            companyInfo = LocalizationManager.GetString("QuotePreview_CompanyInfo", ""),
+                            companyInfo = ThemeConfig.CompanyInfoLine,
+                            contactFooter = ThemeConfig.ContactFooterLine,
                             items
                         });
                     }

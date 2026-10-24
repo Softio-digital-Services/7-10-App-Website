@@ -1,11 +1,13 @@
 import { NextResponse } from "next/server";
 
-export function verifyOtargiKey(request: Request) {
-  const key = request.headers.get("x-otargi-key");
-  const expected = process.env.OTARGI_API_KEY;
+/** Checks the shared shop key the desktop app sends on /api/desktop/* requests. */
+export function verifyDesktopKey(request: Request) {
+  const key = request.headers.get("x-desktop-key");
+  // Same key as the cloud hub; SEVENTEN_API_KEY is the older name, still accepted when SHOP_SYNC_KEY is empty.
+  const expected = process.env.SHOP_SYNC_KEY || process.env.SEVENTEN_API_KEY;
 
   if (!expected || expected === "change-me-to-a-long-random-key") {
-    return { ok: false as const, error: "Otargi API key not configured on server" };
+    return { ok: false as const, error: "Desktop API key not configured on server" };
   }
 
   if (!key || key !== expected) {
@@ -15,7 +17,7 @@ export function verifyOtargiKey(request: Request) {
   return { ok: true as const };
 }
 
-export function otargiUnauthorized(message: string) {
+export function desktopUnauthorized(message: string) {
   return NextResponse.json({ error: message }, { status: 401 });
 }
 

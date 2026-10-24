@@ -1,17 +1,26 @@
+import brand from "./brand.generated.json";
+
 /**
  * Storefront settings. Delivery fees, free-delivery threshold and exchange policy
  * live here so they can be changed in one place.
+ *
+ * Brand name and contact details come from SystemBranding in desktop/appsettings.json
+ * (copied into brand.generated.json by scripts/sync-brand.mjs) — edit them there.
  */
 
 export const store = {
-  name: "7.10",
-  fullName: "7.10 Brand",
+  name: brand.brandName,
+  fullName: brand.brandFullName,
   currency: "USD",
   launchAt: process.env.NEXT_PUBLIC_LAUNCH_AT ?? "2026-10-07T00:00:00+03:00",
-  siteUrl: process.env.NEXT_PUBLIC_SITE_URL ?? "https://7-10.store",
-  whatsapp: (process.env.NEXT_PUBLIC_WHATSAPP ?? "96170000000").replace(/\D/g, ""),
-  instagram: process.env.NEXT_PUBLIC_INSTAGRAM ?? "7.10brand",
-  email: process.env.NEXT_PUBLIC_CONTACT_EMAIL ?? "hello@7-10.store",
+  // NEXT_PUBLIC_SITE_URL can still point a preview deployment at its own address.
+  siteUrl: process.env.NEXT_PUBLIC_SITE_URL || brand.website,
+  whatsapp: brand.whatsapp,
+  instagram: brand.instagram,
+  email: brand.email,
+  phone: brand.phone,
+  address: brand.address,
+  addressAr: brand.addressAr,
   freeDeliveryOver: 100,
   exchangeDays: 7,
   deliveryDays: "1–3",

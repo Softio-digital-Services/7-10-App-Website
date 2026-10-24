@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Globalization;
 using System.Text.Json;
 using Microsoft.AspNetCore.Builder;
@@ -12,7 +13,15 @@ namespace InventorySystem.Services
     public static class ShopOrderApi
     {
         private static readonly JsonSerializerOptions JsonOpts = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-        private static readonly string[] CheckKeys = { "match", "size", "color", "qty", "packed", "label" };
+        // Checked once per order line.
+        private static readonly string[] ItemCheckKeys = { "match", "size", "color", "qty" };
+        // Checked once per order (order_item_id = 0): the packaging for the whole parcel.
+        // "pack" carries the packaging used in its detail column ("carton", "bag:S", "bag:M", ...).
+        private static readonly string[] OrderCheckKeys = { "card", "stickers", "pack", "label" };
+
+        // Only these keys count towards progress and "Packing complete"; older keys on past orders are ignored.
+        private static readonly string ActiveCheckFilter =
+            "((order_item_id > 0 AND check_key IN ('match','size','color','qty')) OR (order_item_id = 0 AND check_key IN ('card','stickers','pack','label')))";
 
         public static void Map(WebApplication app)
         {
@@ -29,6 +38,7 @@ namespace InventorySystem.Services
             app.MapPost("/api/orders/{id:int}/mark-paid", Pay);
             app.MapPost("/api/shop-orders/{id:int}/note", AddNote);
             app.MapPost("/api/shop-orders/{id:int}/cancel", Cancel);
+            app.MapPost("/api/shop-orders/labels/remove", RemoveLabels);
         }
 
         private static IResult ListOrders()
@@ -38,7 +48,11 @@ namespace InventorySystem.Services
                 var dt = DatabaseHelper.ExecuteDataTable(@"
                     SELECT o.order_id, o.order_date, o.total_amount, o.payment_status, o.payment_method,
                            o.fulfillment_type, o.fulfillment_stage, o.delivery_date, o.tracking_status,
-                           COALESCE(c.full_name,'') AS customer_name
+                           o.shipping_address, o.carrier, o.tracking_number, o.notes,
+                           COALESCE(o.ship_label_removed, 0) AS ship_label_removed,
+                           COALESCE(c.full_name,'') AS customer_name,
+                           COALESCE(c.phone,'') AS customer_phone,
+                           COALESCE(c.address,'') AS customer_address
                     FROM orders o
                     LEFT JOIN customers c ON c.customer_id = o.customer_id
                     WHERE COALESCE(o.fulfillment_type,'') != ''
@@ -54,11 +68,14 @@ namespace InventorySystem.Services
                            SUM(CASE WHEN is_checked = 1 THEN 1 ELSE 0 END) AS done,
                            COUNT(*) AS total
                     FROM order_pack_checks
+                    WHERE " + ActiveCheckFilter + @"
                     GROUP BY order_id");
                 var preview = new Dictionary<int, List<object>>();
+                var itemCounts = new Dictionary<int, int>();
                 foreach (System.Data.DataRow row in items.Rows)
                 {
                     int oid = I(row, "order_id");
+                    itemCounts[oid] = (itemCounts.TryGetValue(oid, out var n) ? n : 0) + I(row, "quantity");
                     if (!preview.ContainsKey(oid)) preview[oid] = new List<object>();
                     if (preview[oid].Count >= 3) continue;
                     preview[oid].Add(new { name = S(row, "name"), quantity = I(row, "quantity"), size = S(row, "size"), color = S(row, "color") });
@@ -84,12 +101,37 @@ namespace InventorySystem.Services
                         deliveryDate = S(row, "delivery_date"),
                         trackingStatus = S(row, "tracking_status"),
                         customer = S(row, "customer_name"),
+                        phone = S(row, "customer_phone"),
+                        address = string.IsNullOrWhiteSpace(S(row, "shipping_address")) ? S(row, "customer_address") : S(row, "shipping_address"),
+                        carrier = S(row, "carrier"),
+                        trackingNumber = S(row, "tracking_number"),
+                        notes = S(row, "notes"),
+                        itemCount = itemCounts.TryGetValue(id, out var count) ? count : 0,
+                        labelRemoved = I(row, "ship_label_removed") == 1,
                         items = preview.ContainsKey(id) ? preview[id] : new List<object>(),
                         checksDone = prog.done,
                         checksTotal = prog.total
                     });
                 }
                 return Results.Ok(list);
+            }
+            catch (Exception ex) { return Results.Problem(ex.Message); }
+        }
+
+        /// <summary>Takes orders off the Barcodes shipping-label list. The orders themselves are kept.</summary>
+        private static async System.Threading.Tasks.Task<IResult> RemoveLabels(HttpRequest request)
+        {
+            try
+            {
+                var body = await Read<LabelsPayload>(request);
+                var ids = body?.Ids?.Where(id => id > 0).Distinct().ToList() ?? new List<int>();
+                if (ids.Count == 0) return Fail("Select at least one label.");
+                foreach (var id in ids)
+                {
+                    DatabaseHelper.ExecuteNonQuery("UPDATE orders SET ship_label_removed = 1 WHERE order_id = @id",
+                        new SqliteParameter("@id", id));
+                }
+                return Results.Ok(new { removed = ids.Count });
             }
             catch (Exception ex) { return Results.Problem(ex.Message); }
         }
@@ -179,23 +221,45 @@ namespace InventorySystem.Services
                     new SqliteParameter("@pickup", type == "Pickup" ? (object)(body.PickupNote?.Trim() ?? "") : DBNull.Value),
                     new SqliteParameter("@id", orderId));
 
-                var itemRows = DatabaseHelper.ExecuteDataTable(
-                    "SELECT order_item_id FROM order_items WHERE order_id = @id",
-                    new SqliteParameter("@id", orderId));
-                foreach (System.Data.DataRow item in itemRows.Rows)
-                {
-                    int itemId = Convert.ToInt32(item["order_item_id"]);
-                    foreach (string key in CheckKeys)
-                    {
-                        DatabaseHelper.ExecuteNonQuery(
-                            "INSERT INTO order_pack_checks (order_id, order_item_id, check_key, is_checked) VALUES (@o, @i, @k, 0)",
-                            new SqliteParameter("@o", orderId),
-                            new SqliteParameter("@i", itemId),
-                            new SqliteParameter("@k", key));
-                    }
-                }
+                EnsureChecks(orderId);
                 AddEvent(orderId, "created", "Order created", type, body.Actor);
                 return (orderId, null);
+        }
+
+        /// <summary>
+        /// Adds any missing checklist rows: the item checks for each line and the packaging checks for the order.
+        /// Also drops item checks from the older checklist ("packed", "label" per line) that are still open,
+        /// since packing and the label now belong to the order. Safe to run repeatedly.
+        /// </summary>
+        private static void EnsureChecks(int orderId)
+        {
+            DatabaseHelper.ExecuteNonQuery(
+                "DELETE FROM order_pack_checks WHERE order_id = @o AND order_item_id > 0 AND is_checked = 0 AND check_key NOT IN ('match','size','color','qty')",
+                new SqliteParameter("@o", orderId));
+
+            var existing = new HashSet<string>();
+            var have = DatabaseHelper.ExecuteDataTable(
+                "SELECT order_item_id, check_key FROM order_pack_checks WHERE order_id = @o",
+                new SqliteParameter("@o", orderId));
+            foreach (System.Data.DataRow r in have.Rows)
+                existing.Add(I(r, "order_item_id") + ":" + S(r, "check_key"));
+
+            void Add(int itemId, string key)
+            {
+                if (!existing.Add(itemId + ":" + key)) return;
+                DatabaseHelper.ExecuteNonQuery(
+                    "INSERT INTO order_pack_checks (order_id, order_item_id, check_key, is_checked) VALUES (@o, @i, @k, 0)",
+                    new SqliteParameter("@o", orderId),
+                    new SqliteParameter("@i", itemId),
+                    new SqliteParameter("@k", key));
+            }
+
+            var itemRows = DatabaseHelper.ExecuteDataTable(
+                "SELECT order_item_id FROM order_items WHERE order_id = @o ORDER BY order_item_id",
+                new SqliteParameter("@o", orderId));
+            foreach (System.Data.DataRow item in itemRows.Rows)
+                foreach (string key in ItemCheckKeys) Add(I(item, "order_item_id"), key);
+            foreach (string key in OrderCheckKeys) Add(0, key);
         }
 
         private static async System.Threading.Tasks.Task<IResult> StartPreparing(int id, HttpRequest request)
@@ -206,6 +270,7 @@ namespace InventorySystem.Services
                 var row = Header(id);
                 if (row == null) return Results.NotFound();
                 if (S(row, "fulfillment_stage") != "New") return Fail("This order is already past the new step.");
+                EnsureChecks(id);
                 SetStage(id, "Preparing");
                 AddEvent(id, "stage", "Preparing", "Preparing", body?.Actor);
                 return Results.Ok(Load(id));
@@ -222,11 +287,17 @@ namespace InventorySystem.Services
                 if (row == null) return Results.NotFound();
                 if (S(row, "fulfillment_stage") != "Preparing") return Fail("Open the preparing step before checking items.");
                 if (body == null || body.CheckId <= 0) return Fail("Checklist item is missing.");
+                // A check with a detail (the packaging choice) is done once something is chosen.
+                string detail = body.Detail?.Trim();
+                bool on = detail != null ? detail.Length > 0 : body.Checked;
                 DatabaseHelper.ExecuteNonQuery(@"
                     UPDATE order_pack_checks
-                    SET is_checked = @on, checked_at = CASE WHEN @on = 1 THEN datetime('now','localtime') ELSE NULL END
+                    SET is_checked = @on, checked_at = CASE WHEN @on = 1 THEN datetime('now','localtime') ELSE NULL END,
+                        detail = CASE WHEN @hasDetail = 1 THEN @detail ELSE detail END
                     WHERE id = @cid AND order_id = @oid",
-                    new SqliteParameter("@on", body.Checked ? 1 : 0),
+                    new SqliteParameter("@hasDetail", detail != null ? 1 : 0),
+                    new SqliteParameter("@detail", (object)detail ?? DBNull.Value),
+                    new SqliteParameter("@on", on ? 1 : 0),
                     new SqliteParameter("@cid", body.CheckId),
                     new SqliteParameter("@oid", id));
                 return Results.Ok(Load(id));
@@ -243,7 +314,7 @@ namespace InventorySystem.Services
                 if (row == null) return Results.NotFound();
                 if (S(row, "fulfillment_stage") != "Preparing") return Fail("This order is not being prepared.");
                 int open = DatabaseHelper.ExecuteScalar<int>(
-                    "SELECT COUNT(*) FROM order_pack_checks WHERE order_id = @id AND is_checked = 0",
+                    "SELECT COUNT(*) FROM order_pack_checks WHERE order_id = @id AND is_checked = 0 AND " + ActiveCheckFilter,
                     new SqliteParameter("@id", id));
                 if (open > 0) return Fail("Finish every checklist item first.");
                 SetStage(id, "Ready");
@@ -541,6 +612,8 @@ namespace InventorySystem.Services
         {
             var row = Header(id);
             if (row == null) return null;
+            // Orders started before the packaging checklist existed pick it up here.
+            if (S(row, "fulfillment_stage") == "Preparing") EnsureChecks(id);
             int customerId = row["customer_id"] == DBNull.Value ? 0 : Convert.ToInt32(row["customer_id"]);
             string customer = "", phone = "", email = "", address = "";
             if (customerId > 0)
@@ -586,7 +659,7 @@ namespace InventorySystem.Services
                 });
             }
             var checkDt = DatabaseHelper.ExecuteDataTable(
-                "SELECT id, order_item_id, check_key, is_checked FROM order_pack_checks WHERE order_id = @id ORDER BY id",
+                "SELECT id, order_item_id, check_key, is_checked, detail FROM order_pack_checks WHERE order_id = @id AND " + ActiveCheckFilter + " ORDER BY id",
                 new SqliteParameter("@id", id));
             var checks = new List<object>();
             foreach (System.Data.DataRow check in checkDt.Rows)
@@ -596,7 +669,8 @@ namespace InventorySystem.Services
                     id = I(check, "id"),
                     itemId = I(check, "order_item_id"),
                     key = S(check, "check_key"),
-                    done = I(check, "is_checked") == 1
+                    done = I(check, "is_checked") == 1,
+                    detail = S(check, "detail")
                 });
             }
             var eventDt = DatabaseHelper.ExecuteDataTable(
@@ -676,10 +750,11 @@ namespace InventorySystem.Services
         }
 
         private class ActorPayload { public string Actor { get; set; } public string PaymentMethod { get; set; } }
-        private class CheckPayload { public int CheckId { get; set; } public bool Checked { get; set; } }
+        private class CheckPayload { public int CheckId { get; set; } public bool Checked { get; set; } public string Detail { get; set; } }
         private class DispatchPayload { public string Carrier { get; set; } public string TrackingNumber { get; set; } public string Note { get; set; } public string Actor { get; set; } }
         private class TrackPayload { public string Status { get; set; } public string Note { get; set; } public string Actor { get; set; } public string PaymentMethod { get; set; } }
         private class FeedbackPayload { public int Rating { get; set; } public string Comment { get; set; } public string Actor { get; set; } }
+        private class LabelsPayload { public List<int> Ids { get; set; } }
         private class NotePayload { public string Message { get; set; } public string Actor { get; set; } }
     }
 }

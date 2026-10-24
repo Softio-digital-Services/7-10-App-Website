@@ -1,5 +1,5 @@
 ; 7-10 Inventory — Inno Setup installer
-; Compile with: ISCC.exe Otargi.iss  (after publish)
+; Compile with: ISCC.exe 7-10.iss  (after publish)
 ; Requires Inno Setup 6.4+ for WebView2 download helper
 
 #define MyAppName "7-10 Inventory"

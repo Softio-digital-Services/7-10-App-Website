@@ -7,7 +7,7 @@ using System.Windows.Forms;
 namespace InventorySystem.Helpers
 {
     /// <summary>
-    /// Per-brand local HTTP ports so Generic, Otargi, and Panache can run at the same time.
+    /// Per-brand local HTTP ports so several branded builds can run on the same machine at once.
     /// Values come from SystemBranding in appsettings.json.
     /// </summary>
     public static class AppHostConfig
@@ -83,7 +83,7 @@ namespace InventorySystem.Helpers
             return true;
         }
 
-        private static string FindAppSettings()
+        internal static string FindAppSettings()
         {
             string[] candidates =
             {

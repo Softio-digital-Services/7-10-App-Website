@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { otargiUnauthorized, verifyOtargiKey } from "@/lib/utils";
+import { desktopUnauthorized, verifyDesktopKey } from "@/lib/utils";
 
 export async function GET(request: Request) {
-  const auth = verifyOtargiKey(request);
-  if (!auth.ok) return otargiUnauthorized(auth.error);
+  const auth = verifyDesktopKey(request);
+  if (!auth.ok) return desktopUnauthorized(auth.error);
 
   const [products, orders, categories] = await Promise.all([
     prisma.product.findMany({

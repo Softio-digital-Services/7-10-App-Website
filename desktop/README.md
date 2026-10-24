@@ -1,6 +1,6 @@
 # 7-10 Inventory (Desktop App)
 
-Windows inventory + POS app for **7-10 Store**, based on Otargi. Runs standalone with local SQLite — website sync comes later.
+Windows inventory + POS app for **7-10 Store**. Runs standalone with local SQLite — website sync comes later.
 
 ## Features
 
@@ -32,7 +32,7 @@ Or open `SevenTenProductsManagementSystem.slnx` in Visual Studio and press F5.
 
 ## Default login
 
-Same as Otargi seed (change after first login):
+Seeded admin account (change after first login):
 
 - **User:** `Softio.Admin`
 - **Password:** `Softio@2026!`
@@ -52,8 +52,8 @@ Backups: `%LocalAppData%\SevenTenInventory\Backups\`
 Configured in `appsettings.json`:
 
 - App name: **7-10 Inventory**
-- Primary color: **#FFB400** (amber, matches BTB/7-10 store)
-- HTTP port: **5020** (so it can run alongside Otargi on 5010)
+- Primary color: **#7A754F** (olive, from the 7.10 logo)
+- HTTP port: **5020** (so it can run alongside other local builds)
 
 ## Publish executable
 
@@ -73,7 +73,7 @@ Output: `dist\app\SevenTenInventorySystem.exe`
 
 ## Website sync (later)
 
-When ready, this app will connect to the 7-10 website at `web/` via `/api/otargi/*` endpoints. Not enabled in this phase.
+When ready, this app will connect to the 7-10 website at `web/` via `/api/desktop/*` endpoints. Not enabled in this phase.
 
 ## Project structure
 

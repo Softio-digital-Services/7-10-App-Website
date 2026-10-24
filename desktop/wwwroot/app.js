@@ -3,8 +3,8 @@ const API = '';
 const T = {
     en: {
         login_title: 'Welcome Back', login_subtitle: 'Sign in to continue to your dashboard.',
-        login_hero: 'Smart Inventory, Seamless Fashion.',
-        login_hero_sub: 'Track products, manage stock, monitor suppliers and gain insights — all in one dashboard.',
+        login_hero: '7.10 Brand',
+        login_hero_sub: 'Break the Borders',
         remember_me: 'Remember me', welcome_back: 'Welcome back, {0}',
         dash_hello: "Here's what's happening with your inventory today.",
         annual_sales: 'Annual Sales Overview', revenue_by_category: 'Revenue By Category',
@@ -133,12 +133,25 @@ const T = {
         ord_start: 'Start preparing',
         ord_packing: 'Packaging checklist',
         ord_packing_hint: 'Check every line before the order leaves the bench.',
-        ord_check_match: 'Product matches the order',
+        ord_check_match: 'Product type is correct',
         ord_check_size: 'Size is correct',
         ord_check_color: 'Color is correct',
         ord_check_qty: 'Quantity is correct',
         ord_check_packed: 'Folded and packed',
-        ord_check_label: 'Label is attached',
+        ord_check_label: 'Shipping label attached',
+        ord_check_card: 'Thank-you card placed',
+        ord_check_stickers: 'Sticker pack placed',
+        ord_check_pack: 'Packed in',
+        ord_pack_carton: 'Carton box',
+        ord_pack_bag: 'Plastic bag · {0}',
+        ord_bag_S: 'Small',
+        ord_bag_M: 'Medium',
+        ord_bag_L: 'Large',
+        ord_bag_XL: 'XL',
+        ord_pack_products: 'Products',
+        ord_pack_order: 'Packaging',
+        ord_pack_order_title: 'Whole order',
+        ord_pack_order_sub: '{0} piece(s) packed together',
         ord_pack_done: 'Packing complete',
         ord_checks_left: '{0} checks left',
         ord_send: 'Send for delivery',
@@ -280,6 +293,29 @@ const T = {
         print_system_printer: 'System printer…',
         print_sent: 'Sent to printer',
         print_failed: 'Print failed',
+        bar_cat_items: 'Items',
+        bar_cat_shipping: 'Shipping labels',
+        sl_title: 'Shipping labels',
+        sl_label_btn: 'Shipping label',
+        sl_size: 'Label size',
+        sl_show: 'Show on label',
+        sl_show_items: 'Package contents',
+        sl_show_cod: 'Amount to collect',
+        sl_show_notes: 'Order notes',
+        sl_count: '{0} label(s)',
+        sl_empty: 'No orders to label yet',
+        sl_select_first: 'Select at least one order to print',
+        sl_from: 'From',
+        sl_ship_to: 'Ship to',
+        sl_pickup_for: 'Pickup for',
+        sl_order: 'Order',
+        sl_pieces: 'Pieces',
+        sl_collect: 'Collect on delivery',
+        sl_prepaid: 'Prepaid',
+        sl_contents: 'Contents',
+        sl_remove_one: 'Remove this shipping label? The order itself is kept.',
+        sl_remove_many: 'Remove {0} shipping labels? The orders themselves are kept.',
+        sl_removed: 'Shipping label removed',
         print_settings_title: 'Printer & paper size',
         print_settings_hint: 'Set paper size in mm for any printer. Each printer remembers its own size.',
         print_label_size: 'Barcode labels',
@@ -602,8 +638,8 @@ const T = {
     },
     ar: {
         login_title: 'مرحباً بعودتك', login_subtitle: 'سجّل الدخول للمتابعة إلى لوحة التحكم.',
-        login_hero: 'مخزون ذكي، أزياء بلا تعقيد.',
-        login_hero_sub: 'تتبّع المنتجات، أدِر المخزون، وراقب الموردين من لوحة واحدة.',
+        login_hero: '7.10 Brand',
+        login_hero_sub: 'اكسر الحدود',
         remember_me: 'تذكرني', welcome_back: 'مرحباً بعودتك، {0}',
         dash_hello: 'هذا ما يحدث في مخزونك اليوم.',
         annual_sales: 'المبيعات السنوية', revenue_by_category: 'الإيراد حسب الفئة',
@@ -732,12 +768,25 @@ const T = {
         ord_start: 'ابدأ التجهيز',
         ord_packing: 'قائمة التغليف',
         ord_packing_hint: 'راجع كل صنف قبل أن يغادر الطلب طاولة التجهيز.',
-        ord_check_match: 'المنتج مطابق للطلب',
+        ord_check_match: 'نوع المنتج صحيح',
         ord_check_size: 'المقاس صحيح',
         ord_check_color: 'اللون صحيح',
         ord_check_qty: 'الكمية صحيحة',
         ord_check_packed: 'مطوي ومعبأ',
-        ord_check_label: 'الملصق مثبت',
+        ord_check_label: 'ملصق الشحن مثبت',
+        ord_check_card: 'تمت إضافة بطاقة الشكر',
+        ord_check_stickers: 'تمت إضافة مجموعة الملصقات',
+        ord_check_pack: 'التغليف المستخدم',
+        ord_pack_carton: 'علبة كرتون',
+        ord_pack_bag: 'كيس بلاستيك · {0}',
+        ord_bag_S: 'صغير',
+        ord_bag_M: 'وسط',
+        ord_bag_L: 'كبير',
+        ord_bag_XL: 'كبير جداً',
+        ord_pack_products: 'المنتجات',
+        ord_pack_order: 'التغليف',
+        ord_pack_order_title: 'الطلب بالكامل',
+        ord_pack_order_sub: '{0} قطعة مغلّفة معاً',
         ord_pack_done: 'اكتمل التغليف',
         ord_checks_left: 'متبقّي {0} فحوصات',
         ord_send: 'إرسال للتوصيل',
@@ -879,6 +928,29 @@ const T = {
         print_system_printer: 'طابعة النظام…',
         print_sent: 'تم الإرسال للطابعة',
         print_failed: 'فشلت الطباعة',
+        bar_cat_items: 'المنتجات',
+        bar_cat_shipping: 'ملصقات الشحن',
+        sl_title: 'ملصقات الشحن',
+        sl_label_btn: 'ملصق الشحن',
+        sl_size: 'حجم الملصق',
+        sl_show: 'إظهار على الملصق',
+        sl_show_items: 'محتويات الطرد',
+        sl_show_cod: 'المبلغ المطلوب تحصيله',
+        sl_show_notes: 'ملاحظات الطلب',
+        sl_count: '{0} ملصق',
+        sl_empty: 'لا توجد طلبات لطباعة ملصقاتها بعد',
+        sl_select_first: 'حدد طلباً واحداً على الأقل للطباعة',
+        sl_from: 'من',
+        sl_ship_to: 'إلى',
+        sl_pickup_for: 'استلام لـ',
+        sl_order: 'الطلب',
+        sl_pieces: 'القطع',
+        sl_collect: 'الدفع عند الاستلام',
+        sl_prepaid: 'مدفوع مسبقاً',
+        sl_contents: 'المحتويات',
+        sl_remove_one: 'حذف ملصق الشحن هذا؟ سيبقى الطلب محفوظاً.',
+        sl_remove_many: 'حذف {0} ملصقات شحن؟ ستبقى الطلبات محفوظة.',
+        sl_removed: 'تم حذف ملصق الشحن',
         print_settings_title: 'الطابعة وحجم الورق',
         print_settings_hint: 'اضبط حجم الورق بالمليمتر لأي طابعة. كل طابعة تحتفظ بحجمها.',
         print_label_size: 'ملصقات الباركود',
@@ -1206,7 +1278,7 @@ const T = {
     }
 };
 
-let lang = localStorage.getItem('otargi_lang')   || 'en';
+let lang = localStorage.getItem('seventen_lang') || 'en';
 let currentUser = null;
 let featureFlags = { scaleEnabled: false, quickSaleEnabled: false };
 let printSettings = {
@@ -1248,6 +1320,7 @@ let viewingPoId = null;
 let showAllSellers = false;
 let productPage = 1;
 let productPageSize = 10;
+let productView = (() => { try { return localStorage.getItem('products_view') === 'card' ? 'card' : 'table'; } catch { return 'table'; } })();
 let productSelection = new Set();
 let catalogEditorId = null;
 let catalogImages = [];
@@ -1361,7 +1434,7 @@ async function loadFeatureFlags() {
         applyFeatureFlags(f);
         if (currentUser) {
             currentUser.features = f;
-            sessionStorage.setItem('otargi_user', JSON.stringify(currentUser));
+            sessionStorage.setItem('seventen_user', JSON.stringify(currentUser));
         }
     } catch {
         applyFeatureFlags(currentUser?.features || { scaleEnabled: false, quickSaleEnabled: false });
@@ -2213,7 +2286,7 @@ function hideApp() {
     const tools = document.getElementById('titlebar-tools');
     if (tools) tools.hidden = true;
     currentUser = null;
-    sessionStorage.removeItem('otargi_user');
+    sessionStorage.removeItem('seventen_user');
     const userInput = document.getElementById('login-user');
     const passInput = document.getElementById('login-pass');
     if (userInput) userInput.value = '';
@@ -3432,6 +3505,11 @@ async function openQuotationPreview(orderId) {
         if (company) company.textContent = quoteBrandDisplay(data.companyName);
         const info = document.getElementById('quote-company-info');
         if (info) info.textContent = data.companyInfo || '';
+        const footer = document.getElementById('quote-contact-footer');
+        if (footer) {
+            footer.textContent = data.contactFooter || '';
+            footer.hidden = !data.contactFooter;
+        }
         const meta = document.getElementById('quote-meta-line');
         if (meta) {
             meta.textContent = tr('quote_preview_meta')
@@ -3667,6 +3745,8 @@ function renderBarcodes() {
         selAll.checked = allVisibleSelected;
         selAll.indeterminate = !allVisibleSelected && visibleKeys.some(k => barcodeSelected.has(k));
     }
+
+    if (typeof renderShipLabelCards === 'function') renderShipLabelCards();
 }
 
 function syncBarcodeSelectAll() {
@@ -3752,6 +3832,7 @@ function fillBarcodePrinterSelect(printers, defaultPrinter) {
     const labelPref = printSettings.labelPrinter || defaultPrinter;
     const receiptPref = printSettings.receiptPrinter || defaultPrinter;
     fillPrinterSelect('bpd-printer', printers, labelPref);
+    fillPrinterSelect('slp-printer', printers, labelPref);
     fillPrinterSelect('ppd-printer', printers, receiptPref);
     fillPrinterSelect('ps-label-printer', printers, labelPref);
     fillPrinterSelect('ps-receipt-printer', printers, receiptPref);
@@ -3998,7 +4079,7 @@ function updateSettingsLangLabel() {
 
 function toggleLanguage() {
     lang = lang === 'en' ? 'ar' : 'en';
-    localStorage.setItem('otargi_lang', lang);
+    localStorage.setItem('seventen_lang', lang);
     applyI18n();
     renderAll();
     updateSettingsLangLabel();
@@ -7393,7 +7474,7 @@ function setupAuth() {
                 })
             });
             currentUser = user;
-            sessionStorage.setItem('otargi_user', JSON.stringify(user));
+            sessionStorage.setItem('seventen_user', JSON.stringify(user));
             if (document.getElementById('login-remember')?.checked) localStorage.setItem('seventen_user', typedUser);
             else localStorage.removeItem('seventen_user');
             applyFeatureFlags(user.features || { scaleEnabled: false, quickSaleEnabled: false });
@@ -7996,7 +8077,10 @@ function setupActions() {
     document.getElementById('report-from')?.addEventListener('change', onReportDates);
     document.getElementById('report-to')?.addEventListener('change', onReportDates);
     document.getElementById('history-kind').onchange = async () => { await loadHistory(); renderHistory(); };
-    document.getElementById('btn-print-barcodes').onclick = () => openBarcodePrintPreview();
+    document.getElementById('btn-print-barcodes').onclick = () => {
+        if (typeof isShipLabelCategory === 'function' && isShipLabelCategory()) printSelectedShipLabels();
+        else openBarcodePrintPreview();
+    };
     document.getElementById('btn-barcode-do-print')?.addEventListener('click', () => printBarcodePreview());
     document.querySelectorAll('input[name="bpd-layout"]').forEach(r => {
         r.addEventListener('change', () => applyBarcodePrintLayoutPreview());
@@ -8012,6 +8096,10 @@ function setupActions() {
         });
     });
     document.getElementById('bar-select-all')?.addEventListener('change', e => {
+        if (typeof isShipLabelCategory === 'function' && isShipLabelCategory()) {
+            toggleAllShipLabels(e.target.checked);
+            return;
+        }
         const keys = filteredBarcodeItems().slice(0, 120).map(barcodeItemKey);
         if (e.target.checked) keys.forEach(k => barcodeSelected.add(k));
         else keys.forEach(k => barcodeSelected.delete(k));
@@ -8250,6 +8338,7 @@ function setupChrome() {
                     fillBarcodePrinterSelect(data.printers || [], data.defaultPrinter || '');
                 }
                 if (data?.type === 'printResult') {
+                    if (typeof onShipLabelPrintResult === 'function') onShipLabelPrintResult();
                     if (data.ok) {
                         toast(tr('print_sent'));
                         try { loadPrintSettings(); } catch { /* ignore */ }
@@ -9155,13 +9244,6 @@ const scaleManager = {
 
 document.addEventListener('DOMContentLoaded', async () => {
     try {
-        const stamp = document.getElementById('ui-build-stamp');
-        if (stamp) {
-            try {
-                const status = await fetch('/api/status').then(r => r.json());
-                if (status?.uiBuild) stamp.textContent = `UI build: ${status.uiBuild}`;
-            } catch { /* static fallback in HTML */ }
-        }
         applyI18n();
         setupChrome();
         try { await loadLicense(); } catch (e) { console.error('loadLicense boot error', e); }
@@ -9226,7 +9308,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         });
 
-        const saved = sessionStorage.getItem('otargi_user')  ;
+        const saved = sessionStorage.getItem('seventen_user');
         if (saved) {
             try {
                 currentUser = JSON.parse(saved);
@@ -9237,7 +9319,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             } catch {
 
 
-                sessionStorage.removeItem('otargi_user');
+                sessionStorage.removeItem('seventen_user');
             }
         }
     } catch (e) {
@@ -9263,7 +9345,7 @@ window.loadData = loadData;
 window.applyI18n = applyI18n;
 
 const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-const DONUT_COLORS = ['#3E6B4A','#6B9A74','#A8C5B0','#2F5538','#8AA58A','#D5E4D8'];
+const DONUT_COLORS = ['#7A754F','#A39E78','#C4C1A9','#5F5B3C','#A4A18B','#E3E2D6'];
 
 function monthDelta(current, prev) {
     const a = Number(current) || 0;
@@ -9361,9 +9443,9 @@ function colorHex(name) {
     const key = String(name || '').trim().toLowerCase();
     const map = {
         black: '#1c1c1c', white: '#f7f7f7', navy: '#1e3a5f', 'navy blue': '#1e3a5f',
-        olive: '#5e7f62', 'olive green': '#5e7f62', grey: '#9aa0a6', gray: '#9aa0a6',
+        olive: '#7a754f', 'olive green': '#7a754f', grey: '#9aa0a6', gray: '#9aa0a6',
         'haze grey': '#b7b7b7', 'haze gray': '#b7b7b7', red: '#c44536', blue: '#2f5d8c',
-        green: '#3e6b4a', beige: '#e6d3b3', brown: '#6b4f3a', pink: '#d48aa0', yellow: '#e2c044'
+        green: '#7a754f', beige: '#e6d3b3', brown: '#6b4f3a', pink: '#d48aa0', yellow: '#e2c044'
     };
     if (map[key]) return map[key];
     if (/^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(key)) return key;
@@ -9453,18 +9535,19 @@ function renderProducts() {
     const slice = rows.slice(start, start + pageSize);
     body.innerHTML = slice.length ? slice.map(p => `<tr>
         <td class="col-check"><input type="checkbox" data-pick="${p.id}" ${productSelection.has(p.id) ? 'checked' : ''}></td>
-        <td><button type="button" class="prod-name" data-view-product="${p.id}">${productThumb(p)}<span>${escapeHtml(p.name)}</span>${p.variantsCount > 1 ? ` <span class="badge" style="font-size:0.72rem; margin-left:6px; font-weight:600; background:#edf3ee; color:#2d4a36; border:1px solid #d0ded2;" title="${p.variantsCount} variants: ${p.sizes.join(', ')}">${p.variantsCount} ${vt('variants', 'خيارات')}</span>` : ''}</button></td>
+        <td><button type="button" class="prod-name" data-view-product="${p.id}">${productThumb(p)}<span>${escapeHtml(p.name)}</span>${p.variantsCount > 1 ? ` <span class="badge" style="font-size:0.72rem; margin-left:6px; font-weight:600; background:#f3f2ed; color:#49462e; border:1px solid #dddcd1;" title="${p.variantsCount} variants: ${p.sizes.join(', ')}">${p.variantsCount} ${vt('variants', 'خيارات')}</span>` : ''}</button></td>
         <td>${escapeHtml(p.sku || '—')}</td>
         <td>${escapeHtml(p.category || '—')}</td>
         <td>${escapeHtml(p.brand || '—')}</td>
         <td>${p.stock ?? 0}</td>
         <td>${money(p.price)}</td>
         <td>${stockBadge(p)}</td>
-        <td class="table-actions">
+        <td><div class="table-actions">
             <button type="button" class="icon-btn" data-edit-product="${p.id}" title="${escapeHtml(tr('edit'))}"><span class="material-symbols-rounded">edit</span></button>
             <button type="button" class="icon-btn" data-view-product="${p.id}" title="${escapeHtml(tr('view'))}"><span class="material-symbols-rounded">visibility</span></button>
-        </td>
+        </div></td>
     </tr>`).join('') : `<tr><td colspan="9" class="empty-state">${tr('empty_list')}</td></tr>`;
+    renderProductCards(slice);
     body.querySelectorAll('[data-view-product]').forEach(btn => btn.onclick = () => showProductDetail(Number(btn.dataset.viewProduct)));
     body.querySelectorAll('[data-edit-product]').forEach(btn => btn.onclick = () => openProductEditor(Number(btn.dataset.editProduct)));
     body.querySelectorAll('[data-pick]').forEach(box => box.onchange = () => {
@@ -9488,6 +9571,52 @@ function renderProducts() {
     updateProductBulk();
     syncProductCheckAll(slice);
 }
+function renderProductCards(slice) {
+    const tableWrap = document.getElementById('products-body')?.closest('.table-wrapper');
+    const cardsEl = document.getElementById('products-cards');
+    const showCards = productView === 'card';
+    if (tableWrap) tableWrap.hidden = showCards;
+    if (cardsEl) cardsEl.hidden = !showCards;
+    document.getElementById('btn-prod-table')?.classList.toggle('active', !showCards);
+    document.getElementById('btn-prod-cards')?.classList.toggle('active', showCards);
+    if (!cardsEl || !showCards) return;
+
+    cardsEl.innerHTML = slice.length ? slice.map(p => `
+        <div class="inv-card" data-prod-card="${p.id}">
+            <input type="checkbox" class="inv-card-check" data-pick="${p.id}" ${productSelection.has(p.id) ? 'checked' : ''}>
+            ${productThumb(p).replace('inv-thumb', 'inv-thumb inv-card-img')}
+            <h3 title="${escapeHtml(p.name)}">${escapeHtml(p.name)}</h3>
+            <div class="inv-card-meta">${escapeHtml(p.sku || '—')} · ${escapeHtml(p.category || '—')}</div>
+            ${p.brand ? `<div class="inv-card-meta">${escapeHtml(p.brand)}</div>` : ''}
+            ${p.variantsCount > 1 ? `<div class="inv-card-meta"><span class="badge">${p.variantsCount} ${vt('variants', 'خيارات')}</span></div>` : ''}
+            <div class="inv-card-meta">${tr('col_stock')}: ${p.stock ?? 0}</div>
+            <div class="price">${money(p.price)}</div>
+            ${stockBadge(p)}
+        </div>`).join('') : `<div class="empty-state">${tr('empty_list')}</div>`;
+
+    cardsEl.querySelectorAll('[data-prod-card]').forEach(card => {
+        card.onclick = e => {
+            if (e.target.closest('[data-pick]')) return;
+            showProductDetail(Number(card.dataset.prodCard));
+        };
+    });
+    cardsEl.querySelectorAll('[data-pick]').forEach(box => {
+        box.onclick = e => e.stopPropagation();
+        box.onchange = () => {
+            const id = Number(box.dataset.pick);
+            if (box.checked) productSelection.add(id); else productSelection.delete(id);
+            updateProductBulk();
+            syncProductCheckAll(slice);
+        };
+    });
+}
+
+function setProductView(view) {
+    productView = view === 'card' ? 'card' : 'table';
+    try { localStorage.setItem('products_view', productView); } catch { /* storage blocked */ }
+    renderProducts();
+}
+
 function syncProductCheckAll(slice) {
     const all = document.getElementById('prod-check-all');
     if (!all) return;
@@ -9688,7 +9817,7 @@ function renderDetailVariantsGrid(currentProduct, family) {
         const sizeName = item.size || vt('Standard', 'قياسي');
         const qty = Number(item.stock) || 0;
         return `
-            <tr data-var-id="${item.id}" style="${isCurrent ? 'background:rgba(46,83,57,0.06); font-weight:600;' : ''}">
+            <tr data-var-id="${item.id}" style="${isCurrent ? 'background:rgba(81,77,48,0.06); font-weight:600;' : ''}">
                 <td>
                     <span class="badge" style="background:var(--border-color); padding:3px 8px; border-radius:4px; font-weight:600;">${escapeHtml(sizeName)}</span>
                     ${isCurrent ? ` <small style="color:var(--primary-color);">(${vt('viewing', 'المعروض')})</small>` : ''}
@@ -9899,10 +10028,10 @@ function renderPurchaseOrders() {
         <td>${p.deliveryDate ? shortDate(p.deliveryDate) : '—'}</td>
         <td>${poBadge(p.status)}</td>
         <td>${money(p.total)}</td>
-        <td class="table-actions">
+        <td><div class="table-actions">
             <button type="button" class="icon-btn" data-view-po="${p.id}" title="${escapeHtml(tr('view'))}"><span class="material-symbols-rounded">visibility</span></button>
             <button type="button" class="icon-btn" data-download-po="${p.id}" title="${escapeHtml(tr('export'))}"><span class="material-symbols-rounded">download</span></button>
-        </td>
+        </div></td>
     </tr>`).join('') : `<tr><td colspan="7" class="empty-state">${tr('empty_list')}</td></tr>`;
     body.querySelectorAll('[data-view-po]').forEach(btn => btn.onclick = () => viewPo(Number(btn.dataset.viewPo)));
     body.querySelectorAll('[data-download-po]').forEach(btn => btn.onclick = () => downloadPo(Number(btn.dataset.downloadPo)));
@@ -11781,6 +11910,8 @@ function setupFashionUi() {
         document.getElementById(id)?.addEventListener('change', () => { productPage = 1; renderProducts(); });
     });
     document.getElementById('prod-page-size')?.addEventListener('change', () => { productPage = 1; renderProducts(); });
+    document.getElementById('btn-prod-table')?.addEventListener('click', () => setProductView('table'));
+    document.getElementById('btn-prod-cards')?.addEventListener('click', () => setProductView('card'));
     document.getElementById('prod-check-all')?.addEventListener('change', (e) => {
         document.querySelectorAll('#products-body [data-pick]').forEach(box => {
             box.checked = e.target.checked;

@@ -2370,7 +2370,7 @@ Accepted By: __________________________</value>
     <value>Softio</value>
   </data>
   <data name="AboutUs_AppName" xml:space="preserve">
-    <value>Otargi Inventory</value>
+    <value>7-10 Inventory</value>
   </data>
   <data name="AboutUs_Version" xml:space="preserve">
     <value>Version 1.0.2 Platinum</value>
@@ -2389,12 +2389,6 @@ Accepted By: __________________________</value>
   </data>
   <data name="QuotePreview_WalkIn" xml:space="preserve">
     <value>Walk-in Customer</value>
-  </data>
-  <data name="QuotePreview_CompanyInfo" xml:space="preserve">
-    <value>Jnah- Rihab Road | Beirut - Lebanon | Phone: +961 76 117731</value>
-  </data>
-  <data name="QuotePreview_ContactFooter" xml:space="preserve">
-    <value>Phone: +961 76 117731  |  Email: contact@otarji.com  |  Website: www.otarji.com</value>
   </data>
   <data name="QuotePreview_MetaLine" xml:space="preserve">
     <value>QUOTE #: {0}   |   DATE: {1}   |   CUST ID: {2}   |   VALIDITY: {3}</value>

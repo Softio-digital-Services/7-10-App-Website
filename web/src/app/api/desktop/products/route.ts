@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
-import { otargiUnauthorized, slugify, verifyOtargiKey } from "@/lib/utils";
+import { desktopUnauthorized, slugify, verifyDesktopKey } from "@/lib/utils";
 import { setVariantStock } from "@/lib/inventory";
 
 const variantSchema = z.object({
@@ -29,8 +29,8 @@ const upsertSchema = z.object({
 });
 
 export async function GET(request: Request) {
-  const auth = verifyOtargiKey(request);
-  if (!auth.ok) return otargiUnauthorized(auth.error);
+  const auth = verifyDesktopKey(request);
+  if (!auth.ok) return desktopUnauthorized(auth.error);
 
   const products = await prisma.product.findMany({
     include: { variants: true, categoryRef: true },
@@ -41,8 +41,8 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
-  const auth = verifyOtargiKey(request);
-  if (!auth.ok) return otargiUnauthorized(auth.error);
+  const auth = verifyDesktopKey(request);
+  if (!auth.ok) return desktopUnauthorized(auth.error);
 
   const body = await request.json();
   const parsed = upsertSchema.safeParse(body);
@@ -121,8 +121,8 @@ const stockSchema = z.object({
 });
 
 export async function PATCH(request: Request) {
-  const auth = verifyOtargiKey(request);
-  if (!auth.ok) return otargiUnauthorized(auth.error);
+  const auth = verifyDesktopKey(request);
+  if (!auth.ok) return desktopUnauthorized(auth.error);
 
   const body = await request.json();
   const parsed = stockSchema.safeParse(body);

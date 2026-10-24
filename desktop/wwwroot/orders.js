@@ -208,30 +208,102 @@ function orderDetailsHtml(order) {
         ${order.stage === 'New' ? `<div class="order-actions"><button type="button" class="btn btn-primary" data-order-action="start">${ordEscape(ordTr('ord_start'))}</button></div>` : ''}`;
 }
 
+// Packaging the whole parcel can go in; stored on the order's "pack" check as its detail.
+const ORDER_PACK_OPTIONS = ['carton', 'bag:S', 'bag:M', 'bag:L', 'bag:XL'];
+
+function orderPackOptionLabel(value) {
+    if (value === 'carton') return ordTr('ord_pack_carton');
+    const size = String(value || '').split(':')[1];
+    return size ? ordTr('ord_pack_bag').replace('{0}', ordTr('ord_bag_' + size)) : value;
+}
+
+function orderCheckBox(c, editable) {
+    return `<label class="pack-check">
+        <input type="checkbox" data-check="${c.id}" ${c.done ? 'checked' : ''} ${editable ? '' : 'disabled'}>
+        <span>${ordEscape(ordTr('ord_check_' + c.key))}</span>
+    </label>`;
+}
+
+// Prepare step sections the user opened or closed by hand, per order: { orderId, open: { blockKey: bool } }.
+// Sections they have not touched follow the default: only the first unfinished one is open.
+var orderPackOpen = { orderId: null, open: {} };
+
+function orderPackSection(key, isOpen, headHtml, checks, bodyHtml, extraClass = '') {
+    const done = checks.filter(c => c.done).length;
+    const complete = checks.length > 0 && done === checks.length;
+    const status = complete
+        ? `<span class="pack-status is-complete"><span class="material-symbols-rounded">check</span></span>`
+        : `<span class="pack-status">${done}/${checks.length}</span>`;
+    return `<details class="pack-block pack-section ${extraClass}${complete ? ' is-complete' : ''}" ${isOpen ? 'open' : ''}>
+        <summary class="pack-summary" data-pack-section="${key}">
+            ${headHtml}
+            ${status}
+            <span class="pack-chevron material-symbols-rounded">expand_more</span>
+        </summary>
+        <div class="pack-section-body">${bodyHtml}</div>
+    </details>`;
+}
+
+function orderPackagingHtml(order, editable, isOpen) {
+    const checks = (order.checks || []).filter(c => !c.itemId);
+    if (!checks.length) return '';
+    const rows = checks.map(c => {
+        if (c.key !== 'pack') return orderCheckBox(c, editable);
+        const chips = ORDER_PACK_OPTIONS.map(v => `<label class="pack-chip${c.detail === v ? ' is-on' : ''}">
+            <input type="radio" name="pack-choice-${c.id}" value="${v}" data-check-detail="${c.id}" ${c.detail === v ? 'checked' : ''} ${editable ? '' : 'disabled'}>
+            <span>${ordEscape(orderPackOptionLabel(v))}</span>
+        </label>`).join('');
+        return `<div class="pack-choice">
+            <div class="pack-choice-label"><input type="checkbox" class="pack-choice-state" ${c.done ? 'checked' : ''} tabindex="-1" aria-hidden="true" onclick="return false"><span>${ordEscape(ordTr('ord_check_pack'))}</span></div>
+            <div class="pack-chips">${chips}</div>
+        </div>`;
+    }).join('');
+    const pieces = (order.items || []).reduce((n, i) => n + (Number(i.quantity) || 0), 0);
+    const head = `<span class="pack-block-head">
+            <span class="pack-block-icon material-symbols-rounded">inventory_2</span>
+            <span><strong>${ordEscape(ordTr('ord_pack_order_title'))}</strong><small>${ordEscape(ordTr('ord_pack_order_sub').replace('{0}', pieces))}</small></span>
+        </span>`;
+    return `<h4 class="pack-section-title">${ordEscape(ordTr('ord_pack_order'))}</h4>
+        ${orderPackSection('order', isOpen, head, checks, rows, 'pack-block-order')}`;
+}
+
 function orderPrepareHtml(order) {
     const editable = order.stage === 'Preparing';
-    const blocks = (order.items || []).map(item => {
-        const checks = (order.checks || []).filter(c => c.itemId === item.id);
-        const boxes = checks.map(c => `<label class="pack-check">
-            <input type="checkbox" data-check="${c.id}" ${c.done ? 'checked' : ''} ${editable ? '' : 'disabled'}>
-            <span>${ordEscape(ordTr('ord_check_' + c.key))}</span>
-        </label>`).join('');
+    if (orderPackOpen.orderId !== order.id) orderPackOpen = { orderId: order.id, open: {} };
+
+    // Sections in screen order: one per product, then the whole-order packaging.
+    const sections = (order.items || []).map(item => ({
+        key: 'item-' + item.id,
+        checks: (order.checks || []).filter(c => c.itemId === item.id)
+    }));
+    const packChecks = (order.checks || []).filter(c => !c.itemId);
+    if (packChecks.length) sections.push({ key: 'order', checks: packChecks });
+    const firstOpen = sections.find(s => s.checks.some(c => !c.done));
+    const isOpen = key => key in orderPackOpen.open ? orderPackOpen.open[key] : firstOpen?.key === key;
+
+    const itemBlocks = (order.items || []).map((item, i) => {
+        const checks = sections[i].checks;
+        const boxes = checks.map(c => orderCheckBox(c, editable)).join('');
         const meta = [item.sku, item.size, item.color].filter(Boolean).join(' · ');
-        return `<article class="pack-block">
-            <div class="prod-name">${typeof productThumb === 'function' ? productThumb(item) : ''}<span><strong>${ordEscape(item.name)}</strong><small>${ordEscape(meta)} · ×${item.quantity}</small></span></div>
-            ${boxes}
-        </article>`;
+        const head = `<span class="prod-name">${typeof productThumb === 'function' ? productThumb(item) : ''}<span><strong>${ordEscape(item.name)}</strong><small>${ordEscape(meta)} · ×${item.quantity}</small></span></span>`;
+        return orderPackSection('item-' + item.id, isOpen('item-' + item.id), head, checks, boxes);
     }).join('');
+    const blocks = `<h4 class="pack-section-title">${ordEscape(ordTr('ord_pack_products'))}</h4>${itemBlocks}${orderPackagingHtml(order, editable, isOpen('order'))}`;
     const done = (order.checks || []).filter(c => c.done).length;
     const total = (order.checks || []).length;
     const left = Math.max(0, total - done);
     let action = '';
     if (order.stage === 'New') action = `<button type="button" class="btn btn-primary" data-order-action="start">${ordEscape(ordTr('ord_start'))}</button>`;
     else if (editable) action = `<button type="button" class="btn btn-primary" data-order-action="pack" ${left ? 'disabled' : ''}>${ordEscape(ordTr('ord_pack_done'))}</button>`;
+    const label = order.stage === 'New' ? '' : orderLabelButton();
     return `<h3>${ordEscape(ordTr('ord_packing'))}</h3>
         <p class="editor-sub">${ordEscape(ordTr('ord_packing_hint'))} ${total ? ordEscape(ordTr('ord_checks_left').replace('{0}', left)) : ''}</p>
         ${blocks}
-        <div class="order-actions">${action}</div>`;
+        <div class="order-actions">${label}${action}</div>`;
+}
+
+function orderLabelButton() {
+    return `<button type="button" class="btn btn-secondary" data-order-action="ship-label"><span class="material-symbols-rounded">local_shipping</span><span>${ordEscape(ordTr('sl_label_btn'))}</span></button>`;
 }
 
 function orderSendHtml(order) {
@@ -253,7 +325,7 @@ function orderSendHtml(order) {
         ? `<p><strong>${ordEscape(ordTr('ord_carrier'))}</strong><br>${ordEscape(order.carrier || '—')}</p>
            <p><strong>${ordEscape(ordTr('ord_tracking'))}</strong><br>${ordEscape(order.trackingNumber || '—')}</p>`
         : `<p><strong>${ordEscape(ordTr('ord_pickup_note'))}</strong><br>${ordEscape(order.pickupNote || '—')}</p>`;
-    return `<h3>${ordEscape(ordTr('ord_step_send'))}</h3>${sent}`;
+    return `<h3>${ordEscape(ordTr('ord_step_send'))}</h3>${sent}<div class="order-actions">${orderLabelButton()}</div>`;
 }
 
 function orderTrackHtml(order) {
@@ -988,6 +1060,12 @@ async function onOrdersClick(e) {
         catch (err) { toast(err.message, 'error'); }
         return;
     }
+    const packSummary = e.target.closest('[data-pack-section]');
+    if (packSummary) {
+        // The browser toggles the <details>; remember the new state so repaints keep it.
+        orderPackOpen.open[packSummary.dataset.packSection] = !packSummary.parentElement.open;
+        return;
+    }
     const step = e.target.closest('[data-order-step]');
     if (step && !step.disabled) {
         orderViewStep = step.dataset.orderStep;
@@ -1011,6 +1089,9 @@ async function onOrdersClick(e) {
             window._orderCustomerPick = true;
             if (typeof openCustomerModal === 'function') openCustomerModal(null);
         } else if (kind === 'board') showOrdersBoard();
+        else if (kind === 'ship-label') {
+            if (activeOrder && typeof openShipLabelPreview === 'function') openShipLabelPreview([activeOrder]);
+        }
         else if (kind === 'toggle-picker') {
             e.stopPropagation();
             toggleOrderPicker(action.closest('.oe-picker'));
@@ -1139,6 +1220,13 @@ function onOrdersChange(e) {
         const customer = orderCustomers().find(c => Number(c.id) === Number(e.target.value));
         const address = document.getElementById('oe-address');
         if (customer && address && !address.value.trim()) address.value = customer.address || '';
+        return;
+    }
+    if (e.target.dataset.checkDetail && activeOrder) {
+        postShopOrder('/api/shop-orders/' + activeOrder.id + '/checks', {
+            checkId: Number(e.target.dataset.checkDetail),
+            detail: e.target.value
+        }, false).catch(err => { toast(err.message, 'error'); paintOrderDetail(); });
         return;
     }
     if (e.target.dataset.check && activeOrder) {

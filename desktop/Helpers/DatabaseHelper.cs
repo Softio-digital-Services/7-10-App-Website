@@ -511,6 +511,7 @@ namespace InventorySystem
                 if (!ColumnExists("orders", "pickup_note")) ExecuteNonQuery("ALTER TABLE orders ADD COLUMN pickup_note TEXT;");
                 if (!ColumnExists("orders", "feedback_rating")) ExecuteNonQuery("ALTER TABLE orders ADD COLUMN feedback_rating INTEGER;");
                 if (!ColumnExists("orders", "feedback_comment")) ExecuteNonQuery("ALTER TABLE orders ADD COLUMN feedback_comment TEXT;");
+                if (!ColumnExists("orders", "ship_label_removed")) ExecuteNonQuery("ALTER TABLE orders ADD COLUMN ship_label_removed INTEGER DEFAULT 0;");
                 ExecuteNonQuery(@"
                     CREATE TABLE IF NOT EXISTS order_pack_checks (
                         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -520,6 +521,8 @@ namespace InventorySystem
                         is_checked INTEGER DEFAULT 0,
                         checked_at TEXT
                     );");
+                // Free-text detail for a check, e.g. which packaging was used ("carton", "bag:M").
+                if (!ColumnExists("order_pack_checks", "detail")) ExecuteNonQuery("ALTER TABLE order_pack_checks ADD COLUMN detail TEXT;");
                 ExecuteNonQuery(@"
                     CREATE TABLE IF NOT EXISTS order_events (
                         id INTEGER PRIMARY KEY AUTOINCREMENT,

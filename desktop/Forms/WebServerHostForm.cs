@@ -446,6 +446,9 @@ namespace InventorySystem
                         case "printReceipt":
                             HandlePrintReceipt(json);
                             break;
+                        case "printPage":
+                            HandlePrintPage(json);
+                            break;
                     }
                 }));
             }
@@ -686,6 +689,54 @@ namespace InventorySystem
                 PostPrintResult(false, ex.Message);
                 MessageBox.Show(this, "Could not print receipt:\n" + ex.Message,
                     ThemeConfig.AppTitle, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
+
+        /// <summary>
+        /// Prints the page as it is laid out for print media (the page has already swapped in
+        /// what to print), straight to the chosen printer at the requested page size.
+        /// Used for shipping labels.
+        /// </summary>
+        private async void HandlePrintPage(string json)
+        {
+            try
+            {
+                var core = _webView?.CoreWebView2;
+                if (core == null) return;
+
+                using var doc = JsonDocument.Parse(json);
+                var root = doc.RootElement;
+                var settings = core.Environment.CreatePrintSettings();
+                settings.ShouldPrintBackgrounds = true;
+                settings.ShouldPrintHeaderAndFooter = false;
+                settings.MarginTop = 0;
+                settings.MarginBottom = 0;
+                settings.MarginLeft = 0;
+                settings.MarginRight = 0;
+                settings.ScaleFactor = 1;
+
+                if (root.TryGetProperty("printerName", out var pn) && pn.ValueKind == JsonValueKind.String
+                    && !string.IsNullOrWhiteSpace(pn.GetString()))
+                    settings.PrinterName = pn.GetString();
+                if (root.TryGetProperty("copies", out var c) && c.ValueKind == JsonValueKind.Number)
+                    settings.Copies = Math.Max(1, Math.Min(99, c.GetInt32()));
+                if (root.TryGetProperty("pageWidthMm", out var pw) && pw.ValueKind == JsonValueKind.Number)
+                    settings.PageWidth = pw.GetDouble() / 25.4;
+                if (root.TryGetProperty("pageHeightMm", out var ph) && ph.ValueKind == JsonValueKind.Number)
+                    settings.PageHeight = ph.GetDouble() / 25.4;
+                if (root.TryGetProperty("landscape", out var ls) && ls.ValueKind == JsonValueKind.True)
+                    settings.Orientation = CoreWebView2PrintOrientation.Landscape;
+                if (root.TryGetProperty("color", out var col) && col.ValueKind == JsonValueKind.False)
+                    settings.ColorMode = CoreWebView2PrintColorMode.Grayscale;
+
+                var status = await core.PrintAsync(settings);
+                if (status == CoreWebView2PrintStatus.Succeeded) PostPrintResult(true, null);
+                else if (status == CoreWebView2PrintStatus.PrinterUnavailable) PostPrintResult(false, "The selected printer is not available.");
+                else PostPrintResult(false, "Could not print.");
+            }
+            catch (Exception ex)
+            {
+                PostPrintResult(false, ex.Message);
             }
         }
 

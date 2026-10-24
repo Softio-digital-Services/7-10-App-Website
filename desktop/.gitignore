@@ -37,7 +37,6 @@ dist/app/Data/*.db-wal
 scratch/
 
 # Local backups / crash dumps
-_backup_pre_otargi_web/
 crash.txt
 server_error.txt
 *.db

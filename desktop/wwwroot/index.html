@@ -15,7 +15,7 @@
         .login-wrapper,
         #app-container,
         .main-content {
-            background: #E7EDE4 !important;
+            background: #EEECE4 !important;
         }
 
         .sidebar {
@@ -23,12 +23,12 @@
         }
     </style>
     <link rel="icon" href="/Assets/icon.ico" type="image/x-icon">
-    <link rel="apple-touch-icon" href="/Assets/logo-mark.png">
+    <link rel="apple-touch-icon" href="/Assets/logo-icon.png">
     <link rel="manifest" href="manifest.json">
     <link rel="stylesheet" href="css/fonts/fonts.css">
 
 
-    <link rel="stylesheet" href="css/style.css?v=20261011picker">
+    <link rel="stylesheet" href="css/style.css?v=20261024packacc">
     <style id="inv-toolbar-fix">
         /* Inventory toolbar: search + scrollable actions with thin under slide bar */
         #inventory .page-search-row {
@@ -174,7 +174,7 @@
         .sidebar .brand-logo.brand-logo-sm {
             width: 180px !important;
             height: auto !important;
-            max-height: 72px !important;
+            max-height: 52px !important;
             padding: 0 !important;
             box-sizing: border-box !important;
             object-fit: contain !important;
@@ -236,10 +236,9 @@
     <div id="login-screen" class="login-wrapper">
         <div class="login-split">
             <aside class="login-hero">
-                <img class="brand-logo-login" src="/Assets/logo-mark.png" alt="7-10">
-                <h1 data-i18n="login_hero">Smart Inventory, Seamless Fashion.</h1>
-                <p data-i18n="login_hero_sub">Track products, manage stock, monitor suppliers and gain insights — all in
-                    one dashboard.</p>
+                <img class="brand-logo-login" src="/Assets/logo-mark-light.png" alt="7-10">
+                <h1 data-i18n="login_hero">7.10 Brand</h1>
+                <p data-i18n="login_hero_sub">Break the Borders</p>
             </aside>
             <div class="login-card">
                 <h2 data-i18n="login_title">Welcome Back</h2>
@@ -268,7 +267,6 @@
                     <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center;"
                         data-i18n="login_btn">Sign In</button>
                 </form>
-                <p class="build-stamp" id="ui-build-stamp">UI build: 20260927-sage</p>
             </div>
         </div>
     </div>
@@ -555,6 +553,13 @@
                         <select id="prod-filter-supplier" class="form-control"></select>
                         <button type="button" class="btn btn-secondary" id="btn-prod-reset"
                             data-i18n="reset_filter">Reset filter</button>
+                        <div class="inv-view-toggle prod-view-toggle">
+                            <button type="button" class="btn btn-secondary btn-sm inv-view-btn active"
+                                id="btn-prod-table" title="Table"><span
+                                    class="material-symbols-rounded">table_rows</span></button>
+                            <button type="button" class="btn btn-secondary btn-sm inv-view-btn" id="btn-prod-cards"
+                                title="Cards"><span class="material-symbols-rounded">grid_view</span></button>
+                        </div>
                     </div>
                     <div class="card catalog-card">
                         <div class="table-wrapper">
@@ -576,6 +581,7 @@
                                 <tbody id="products-body"></tbody>
                             </table>
                         </div>
+                        <div class="inv-layout prod-cards" id="products-cards" hidden></div>
                         <div class="catalog-footer">
                             <div class="catalog-footer-left">
                                 <div id="prod-bulk" class="bulk-bar" hidden>
@@ -1798,7 +1804,7 @@
                     </div>
                     <div class="page-actions" style="display:flex; gap:0.5rem; align-items:center;">
                         <button class="btn btn-primary" id="btn-inv-header-variants" data-roles="admin,staff"
-                            style="background:#2E5339;"><span class="material-symbols-rounded">style</span><span
+                            style="background:#514D30;"><span class="material-symbols-rounded">style</span><span
                                 data-i18n="variants_matrix">Sizes &amp; Colors</span></button>
                         <button class="btn btn-secondary" id="btn-stock-transfer" data-roles="admin,staff"><span
                                 class="material-symbols-rounded">swap_horiz</span><span data-i18n="stock_transfer">Stock
@@ -1880,7 +1886,7 @@
                                     class="material-symbols-rounded">add</span><span data-i18n="add_product">Add
                                     Product</span></button>
                             <button class="btn btn-primary" id="btn-inv-variants" data-roles="admin,staff"
-                                style="background:#2E5339;"><span class="material-symbols-rounded">style</span><span
+                                style="background:#514D30;"><span class="material-symbols-rounded">style</span><span
                                     data-i18n="variants_matrix">Sizes &amp; Colors</span></button>
                             <button class="btn btn-secondary" id="btn-from-supplier" data-roles="admin"><span
                                     class="material-symbols-rounded">local_shipping</span><span
@@ -2645,6 +2651,16 @@
             </section>
 
             <section id="barcodes" class="view-section">
+                <div class="bar-cats" role="tablist">
+                    <button type="button" class="bar-cat active" data-bar-cat="items" role="tab"><span
+                            class="material-symbols-rounded">barcode</span><span
+                            data-i18n="bar_cat_items">Items</span><b class="bar-cat-count"
+                            id="bar-count-items">0</b></button>
+                    <button type="button" class="bar-cat" data-bar-cat="shipping" role="tab"><span
+                            class="material-symbols-rounded">local_shipping</span><span
+                            data-i18n="bar_cat_shipping">Shipping labels</span><b class="bar-cat-count"
+                            id="bar-count-shipping">0</b></button>
+                </div>
                 <div class="page-search-row">
                     <div class="search-box"><span class="material-symbols-rounded">search</span>
                         <input type="text" id="bar-search" class="form-control" data-i18n-ph="search_ph"
@@ -2655,6 +2671,9 @@
                             <input type="checkbox" id="bar-select-all">
                             <span data-i18n="select_all">Select all</span>
                         </label>
+                        <button class="btn btn-danger" id="btn-remove-shiplabels" hidden><span
+                                class="material-symbols-rounded">delete</span><span
+                                data-i18n="delete">Delete</span></button>
                         <button class="btn btn-refresh" id="btn-refresh-barcodes"><span
                                 class="material-symbols-rounded">refresh</span><span
                                 data-i18n="refresh">Refresh</span></button>
@@ -2664,6 +2683,7 @@
                     </div>
                 </div>
                 <div id="barcodes-grid" class="barcodes-grid"></div>
+                <div id="shiplabels-grid" class="barcodes-grid shiplabels-grid" hidden></div>
             </section>
 
             <section id="users" class="view-section">
@@ -4001,6 +4021,74 @@
         </div>
     </div>
 
+    <div class="modal-overlay" id="shiplabel-modal">
+        <div class="modal barcode-print-dialog">
+            <div class="bpd-layout">
+                <aside class="bpd-sidebar">
+                    <div class="bpd-sidebar-scroll">
+                        <div class="modal-header">
+                            <h2 data-i18n="sl_title">Shipping labels</h2>
+                            <button class="close-btn" data-close="shiplabel-modal" type="button"><span
+                                    class="material-symbols-rounded">close</span></button>
+                        </div>
+                        <p class="bpd-sheet-meta" id="slp-count"></p>
+
+                        <div class="form-group">
+                            <label data-i18n="print_destination">Destination</label>
+                            <select class="form-control" id="slp-printer"></select>
+                        </div>
+                        <div class="form-group">
+                            <label data-i18n="print_copies">Copies</label>
+                            <input class="form-control" id="slp-copies" type="number" min="1" max="99" value="1">
+                        </div>
+
+                        <div class="bpd-paper-size-block">
+                            <p class="bpd-block-title" data-i18n="sl_size">Label size</p>
+                            <div class="form-group">
+                                <label data-i18n="print_preset">Preset</label>
+                                <select class="form-control" id="slp-size">
+                                    <option value="4x6">4 × 6 in (102 × 152 mm)</option>
+                                    <option value="100x150">100 × 150 mm</option>
+                                    <option value="a6">A6 (105 × 148 mm)</option>
+                                    <option value="a5">A5 (148 × 210 mm)</option>
+                                    <option value="a4">A4 (210 × 297 mm)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="bpd-paper-size-block">
+                            <p class="bpd-block-title" data-i18n="sl_show">Show on label</p>
+                            <label class="p-check"><input type="checkbox" id="slp-show-items" checked> <span
+                                    data-i18n="sl_show_items">Package contents</span></label>
+                            <label class="p-check"><input type="checkbox" id="slp-show-cod" checked> <span
+                                    data-i18n="sl_show_cod">Amount to collect</span></label>
+                            <label class="p-check"><input type="checkbox" id="slp-show-notes" checked> <span
+                                    data-i18n="sl_show_notes">Order notes</span></label>
+                        </div>
+
+                        <div class="form-group">
+                            <label data-i18n="print_color">Color</label>
+                            <select class="form-control" id="slp-color">
+                                <option value="bw" data-i18n="print_color_bw">Black and white</option>
+                                <option value="color" data-i18n="print_color_full">Color</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-actions bpd-actions">
+                        <button type="button" class="btn btn-secondary" data-close="shiplabel-modal"
+                            data-i18n="cancel">Cancel</button>
+                        <button type="button" class="btn btn-primary" id="btn-shiplabel-print"><span
+                                class="material-symbols-rounded">print</span><span
+                                data-i18n="print">Print</span></button>
+                    </div>
+                </aside>
+                <div class="bpd-preview">
+                    <div class="sl-preview" id="slp-preview"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="modal-overlay" id="pos-print-modal">
         <div class="modal barcode-print-dialog">
             <div class="bpd-layout">
@@ -4159,6 +4247,7 @@
                         </div>
                         <div class="quote-totals" id="quote-totals"></div>
                     </div>
+                    <div class="quote-contact-footer" id="quote-contact-footer"></div>
                 </div>
             </div>
             <div class="modal-actions quote-preview-actions">
@@ -4618,8 +4707,9 @@
 
     <div id="toast" class="toast"></div>
     <script src="js/signalr.min.js"></script>
-    <script src="app.js?v=20261011picker" charset="utf-8"></script>
-    <script src="orders.js?v=20261011picker" charset="utf-8"></script>
+    <script src="app.js?v=20261024packacc" charset="utf-8"></script>
+    <script src="orders.js?v=20261024packacc" charset="utf-8"></script>
+    <script src="shiplabels.js?v=20261024packacc" charset="utf-8"></script>
     <script src="profit.js?v=20260927ps2" charset="utf-8"></script>
     <script src="cloud.js?v=20260927cs" charset="utf-8"></script>
 </body>

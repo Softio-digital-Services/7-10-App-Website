@@ -46,7 +46,9 @@ On macOS / Linux use `export` instead of `set`.
 | `NEXT_PUBLIC_SITE_URL` | the same public URL as `AUTH_URL` |
 | `STORE_MODE` | `live` when you want orders; `soon` for the countdown page |
 
-Optional: `AUTH_GOOGLE_ID` / `AUTH_GOOGLE_SECRET`, SMTP settings, `ADMIN_EMAIL`, `NEXT_PUBLIC_WHATSAPP`.
+Optional: `AUTH_GOOGLE_ID` / `AUTH_GOOGLE_SECRET`, SMTP settings, `ADMIN_EMAIL`.
+
+Brand name and contact details (WhatsApp, Instagram, email, phone, address) are not environment variables: edit `SystemBranding` in `desktop/appsettings.json`. The build copies them into the site automatically.
 
 Whish Money (needed for “Pay by Whish”):
 

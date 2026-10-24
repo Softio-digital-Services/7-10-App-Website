@@ -312,7 +312,7 @@ enum PaymentMethod {
 
 enum OrderSource {
   WEB
-  OTARGI
+  DESKTOP
   APP
 }
 

@@ -146,7 +146,7 @@ namespace InventorySystem.Forms
                     hy += 45;
                     Label lblCompInfo = new Label
                     {
-                        Text = L("QuotePreview_CompanyInfo", ""),
+                        Text = ThemeConfig.CompanyInfoLine,
                         Font = new Font("Segoe UI", 9),
                         Location = new Point(40, hy),
                         Size = new Size(500, 35),
@@ -368,7 +368,7 @@ namespace InventorySystem.Forms
 
                     Label lblContactFooter = new Label
                     {
-                        Text = L("QuotePreview_ContactFooter", ""),
+                        Text = ThemeConfig.ContactFooterLine,
                         Font = new Font("Segoe UI", 8.5F),
                         Location = new Point(0, 1085),
                         Size = new Size(page.Width, 25),

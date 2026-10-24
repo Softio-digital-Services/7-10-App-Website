@@ -20,26 +20,48 @@ namespace InventorySystem
         // ==========================================
         // BRANDING
         // ==========================================
+        // All brand and contact details come from SystemBranding in appsettings.json
+        // (the website copies the same section at build time via web/scripts/sync-brand.mjs).
         public static string CompanyName { get; set; } = "7-10 Store";
         public static string AppTitle { get; set; } = "7-10 Inventory";
+        public static string BrandName { get; set; } = "7.10";
+        public static string BrandFullName { get; set; } = "7.10 Brand";
+        public static string CompanyAddress { get; set; } = "";
+        public static string CompanyAddressAr { get; set; } = "";
+        public static string CompanyPhone { get; set; } = "";
+        public static string CompanyWhatsApp { get; set; } = "";
+        public static string CompanyEmail { get; set; } = "";
+        public static string CompanyWebsite { get; set; } = "";
+        public static string CompanyInstagram { get; set; } = "";
 
         static ThemeConfig()
         {
             try
             {
-                string configPath = "appsettings.json";
-                if (File.Exists(configPath))
+                string configPath = AppHostConfig.FindAppSettings();
+                if (configPath != null)
                 {
                     string jsonString = File.ReadAllText(configPath);
                     using (JsonDocument doc = JsonDocument.Parse(jsonString))
                     {
                         if (doc.RootElement.TryGetProperty("SystemBranding", out JsonElement branding))
                         {
-                            if (branding.TryGetProperty("CompanyName", out JsonElement compName))
-                                CompanyName = compName.GetString() ?? CompanyName;
-                            
-                            if (branding.TryGetProperty("AppName", out JsonElement appName))
-                                AppTitle = appName.GetString() ?? AppTitle;
+                            string Read(string key, string fallback) =>
+                                branding.TryGetProperty(key, out JsonElement el) && el.ValueKind == JsonValueKind.String
+                                    ? el.GetString() ?? fallback
+                                    : fallback;
+
+                            CompanyName = Read("CompanyName", CompanyName);
+                            AppTitle = Read("AppName", AppTitle);
+                            BrandName = Read("BrandName", BrandName);
+                            BrandFullName = Read("BrandFullName", BrandFullName);
+                            CompanyAddress = Read("Address", CompanyAddress);
+                            CompanyAddressAr = Read("AddressAr", CompanyAddressAr);
+                            CompanyPhone = Read("Phone", CompanyPhone);
+                            CompanyWhatsApp = Read("WhatsApp", CompanyWhatsApp);
+                            CompanyEmail = Read("Email", CompanyEmail);
+                            CompanyWebsite = Read("Website", CompanyWebsite);
+                            CompanyInstagram = Read("Instagram", CompanyInstagram);
                         }
                     }
                 }
@@ -47,17 +69,52 @@ namespace InventorySystem
             catch { /* Fallback to default generic names */ }
         }
 
+        /// <summary>Address in the current UI language (falls back to the English one).</summary>
+        public static string LocalizedAddress =>
+            LocalizationManager.IsArabic && !string.IsNullOrWhiteSpace(CompanyAddressAr) ? CompanyAddressAr : CompanyAddress;
+
+        /// <summary>"Address | Phone: …" — the company line under the name on quotations and shipping labels.</summary>
+        public static string CompanyInfoLine
+        {
+            get
+            {
+                bool ar = LocalizationManager.IsArabic;
+                var parts = new System.Collections.Generic.List<string>();
+                if (!string.IsNullOrWhiteSpace(LocalizedAddress)) parts.Add(LocalizedAddress);
+                if (!string.IsNullOrWhiteSpace(CompanyPhone)) parts.Add((ar ? "هاتف: " : "Phone: ") + CompanyPhone);
+                return string.Join(" | ", parts);
+            }
+        }
+
+        /// <summary>"Phone: … | Email: … | Website: …" — the contact footer on quotations.</summary>
+        public static string ContactFooterLine
+        {
+            get
+            {
+                bool ar = LocalizationManager.IsArabic;
+                var parts = new System.Collections.Generic.List<string>();
+                if (!string.IsNullOrWhiteSpace(CompanyPhone)) parts.Add((ar ? "هاتف: " : "Phone: ") + CompanyPhone);
+                if (!string.IsNullOrWhiteSpace(CompanyEmail)) parts.Add((ar ? "بريد: " : "Email: ") + CompanyEmail);
+                if (!string.IsNullOrWhiteSpace(CompanyWebsite)) parts.Add((ar ? "موقع: " : "Website: ") + WebsiteDisplay);
+                return string.Join("  |  ", parts);
+            }
+        }
+
+        /// <summary>Website without the scheme, e.g. "7-10.store".</summary>
+        public static string WebsiteDisplay =>
+            System.Text.RegularExpressions.Regex.Replace(CompanyWebsite ?? "", @"^https?://", "").TrimEnd('/');
+
         // ==========================================
         // COLOR PALETTE (Light / Horizon Blue)
         // ==========================================
         
         // Primary Brand Color (7-10 olive — matches logo background)
-        public static Color PrimaryColor { get; } = Color.FromArgb(62, 107, 74); // #3E6B4A
-        public static Color PrimaryHoverColor { get; } = Color.FromArgb(47, 85, 56); // #2F5538
+        public static Color PrimaryColor { get; } = Color.FromArgb(122, 117, 79); // #7A754F (logo olive)
+        public static Color PrimaryHoverColor { get; } = Color.FromArgb(95, 91, 60); // #5F5B3C
 
         // Gradient Colors for Primary Buttons
-        public static Color GradientStart { get; } = Color.FromArgb(107, 154, 116); // #6B9A74
-        public static Color GradientEnd { get; } = Color.FromArgb(62, 107, 74);   // #3E6B4A
+        public static Color GradientStart { get; } = Color.FromArgb(163, 158, 120); // #A39E78
+        public static Color GradientEnd { get; } = Color.FromArgb(122, 117, 79);   // #7A754F
 
         // Secondary / Text Colors
         public static Color SecondaryColor { get; } = Color.FromArgb(100, 116, 139); // Slate Gray
@@ -69,7 +126,7 @@ namespace InventorySystem
         // Backgrounds
         public static Color BackgroundColor { get; } = Color.FromArgb(255, 255, 255); 
         public static Color SidebarColor { get; } = Color.FromArgb(255, 255, 255);     
-        public static Color HeaderColor { get; } = Color.FromArgb(62, 107, 74);      
+        public static Color HeaderColor { get; } = Color.FromArgb(122, 117, 79);      
         public static Color ActiveBackColor { get; } = Color.FromArgb(245, 245, 245); 
 
         

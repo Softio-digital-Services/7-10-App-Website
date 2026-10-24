@@ -272,7 +272,7 @@ namespace InventorySystem.Forms
             var bounds = _pnlLogo.ClientRectangle;
             const float radius = 26f;
             using (var path = ThemeConfig.GetRoundedPathF(new RectangleF(0, 0, bounds.Width, bounds.Height), radius))
-            using (var fill = new SolidBrush(Color.FromArgb(10, 22, 40)))
+            using (var fill = new SolidBrush(Color.FromArgb(5, 13, 36)))
             {
                 g.FillPath(fill, path);
                 g.SetClip(path);

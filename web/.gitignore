@@ -50,3 +50,6 @@ next-env.d.ts
 
 # product photos pushed from the desktop app
 /storage/
+
+# generated from desktop/appsettings.json by scripts/sync-brand.mjs
+/src/lib/brand.generated.json

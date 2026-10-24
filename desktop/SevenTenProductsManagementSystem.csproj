@@ -17,10 +17,7 @@
 
   <ItemGroup>
     <Compile Remove="scratch\**" />
-    <Compile Remove="_backup_pre_otargi_web\**" />
     <Compile Remove="dist\**" />
-    <Content Remove="_backup_pre_otargi_web\**" />
-    <None Remove="_backup_pre_otargi_web\**" />
   </ItemGroup>
 
   <ItemGroup>

@@ -6,7 +6,8 @@ import { prisma } from "@/lib/prisma";
 const PLACEHOLDER = "change-me-to-a-long-random-key";
 
 export function shopKey() {
-  const key = process.env.SHOP_SYNC_KEY || process.env.OTARGI_API_KEY || "";
+  // SEVENTEN_API_KEY is the older name, still accepted when SHOP_SYNC_KEY is empty.
+  const key = process.env.SHOP_SYNC_KEY || process.env.SEVENTEN_API_KEY || "";
   return key && key !== PLACEHOLDER ? key : "";
 }
 

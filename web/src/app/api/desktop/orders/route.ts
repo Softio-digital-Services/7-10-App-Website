@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
-import { otargiUnauthorized, verifyOtargiKey } from "@/lib/utils";
+import { desktopUnauthorized, verifyDesktopKey } from "@/lib/utils";
 import { decrementStock } from "@/lib/inventory";
 
 const orderItemSchema = z.object({
@@ -20,8 +20,8 @@ const orderSchema = z.object({
 });
 
 export async function GET(request: Request) {
-  const auth = verifyOtargiKey(request);
-  if (!auth.ok) return otargiUnauthorized(auth.error);
+  const auth = verifyDesktopKey(request);
+  if (!auth.ok) return desktopUnauthorized(auth.error);
 
   const orders = await prisma.order.findMany({
     include: {
@@ -39,8 +39,8 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
-  const auth = verifyOtargiKey(request);
-  if (!auth.ok) return otargiUnauthorized(auth.error);
+  const auth = verifyDesktopKey(request);
+  if (!auth.ok) return desktopUnauthorized(auth.error);
 
   const body = await request.json();
   const parsed = orderSchema.safeParse(body);
@@ -81,7 +81,7 @@ export async function POST(request: Request) {
         total: parsed.data.total,
         status: "CONFIRMED",
         paymentStatus: "PAID",
-        source: "OTARGI",
+        source: "DESKTOP",
         items: {
           create: parsed.data.items.map((item) => {
             const variant = variants.find((v) => v.externalId === item.externalVariantId)!;

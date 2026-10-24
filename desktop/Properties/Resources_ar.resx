@@ -2436,7 +2436,7 @@
     <value>Softio</value>
   </data>
   <data name="AboutUs_AppName" xml:space="preserve">
-    <value>نظام مخزون أوتارجي</value>
+    <value>نظام مخزون 7-10</value>
   </data>
   <data name="AboutUs_Version" xml:space="preserve">
     <value>الإصدار 1.0.2 Platinum</value>
@@ -2455,12 +2455,6 @@
   </data>
   <data name="QuotePreview_WalkIn" xml:space="preserve">
     <value>عميل زائر</value>
-  </data>
-  <data name="QuotePreview_CompanyInfo" xml:space="preserve">
-    <value>جناح - طريق الرحاب | بيروت - لبنان | هاتف: +961 76 117731</value>
-  </data>
-  <data name="QuotePreview_ContactFooter" xml:space="preserve">
-    <value>هاتف: +961 76 117731  |  بريد: contact@otarji.com  |  موقع: www.otarji.com</value>
   </data>
   <data name="QuotePreview_MetaLine" xml:space="preserve">
     <value>عرض سعر #: {0}   |   التاريخ: {1}   |   رقم العميل: {2}   |   الصلاحية: {3}</value>

@@ -3,7 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "predev": "node scripts/sync-brand.mjs",
     "dev": "next dev",
+    "prebuild": "node scripts/sync-brand.mjs",
     "build": "prisma generate && next build",
     "start": "next start",
     "lint": "eslint",
@@ -11,7 +13,7 @@
     "db:deploy": "tsx scripts/db-deploy.ts",
     "db:seed": "tsx prisma/seed.ts",
     "db:studio": "prisma studio",
-    "postinstall": "prisma generate"
+    "postinstall": "node scripts/sync-brand.mjs && prisma generate"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.10.0",
