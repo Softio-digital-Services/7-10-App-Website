@@ -64,6 +64,32 @@ cd desktop
 
 Output: `dist\app\SevenTenInventorySystem.exe`
 
+## Releasing an update
+
+Installed apps check for updates on launch and show an update icon in the title bar. An admin clicks **Update now** and the app takes it from there:
+
+1. It downloads the new setup file and verifies its checksum.
+2. It backs up the database.
+3. It runs setup, which upgrades in place, then closes and reopens itself.
+
+To ship a new version:
+
+1. Bump the version in `Properties\AssemblyInfo.cs` (all three lines, e.g. `2.1.0`).
+2. Write what changed in `installer\release-notes.txt`.
+3. Run `.\publish.bat`. It creates `dist\SevenTenSetup.exe` and `dist\latest.json`.
+4. On GitHub go to **Releases → Draft a new release**, use tag `v2.1.0`, attach **both** files, and publish it (not as a pre-release).
+
+The app reads `Updates.ManifestUrl` in `appsettings.json`, which points to the latest GitHub release's `latest.json`. To host updates somewhere else, change that URL and upload both files to the same folder.
+
+**Offline PCs:** copy `SevenTenSetup.exe` to the PC and either run it, or use **About → Check for updates → Install from file…**.
+
+**Data safety:**
+- Everything the shop owns stays in `%LocalAppData%\SevenTenInventory`, so setup never touches it. This covers the database, license, cloud-sync settings and backups.
+- Product images in the install folder are also kept, because setup only replaces files it ships.
+- On the first start of every new version, the database is snapshotted before migrations run, as `Backups\backup_pre-update_<old>_to_<new>_*.db`. The last 5 are kept, and each can be restored from the Backup window.
+- Schema changes must stay additive and idempotent: add them to `DatabaseHelper.EnsureSchema` with `if (!ColumnExists(...)) ALTER TABLE ... ADD COLUMN`. Never drop or rename a column that older data uses.
+- Never change `AppId` in `installer\7-10.iss`. Setup uses it to find and upgrade the existing install.
+
 ## Clothing store tips
 
 - Use **Categories** for Tops, Bottoms, Dresses, Outerwear, etc.

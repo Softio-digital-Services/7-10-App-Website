@@ -215,6 +215,10 @@
             <button type="button" class="tb-btn" id="btn-backup" title="Backup" data-i18n-title="tool_backup">
                 <span class="material-symbols-rounded tb-icon" aria-hidden="true">cloud_upload</span>
             </button>
+            <button type="button" class="tb-btn" id="btn-update" title="Update available" data-i18n-title="update_available_short" hidden>
+                <span class="material-symbols-rounded tb-icon" aria-hidden="true">system_update</span>
+                <span class="tb-badge" id="update-badge">1</span>
+            </button>
             <button type="button" class="tb-btn" id="btn-about" title="About" data-i18n-title="tool_about">
                 <span class="material-symbols-rounded tb-icon" aria-hidden="true">info</span>
             </button>
@@ -3649,7 +3653,10 @@
                 </div>
                 <h3 class="about-app-name" data-i18n="about_company">Softio</h3>
                 <p class="about-product" data-i18n="about_app_name">7-10 Inventory</p>
-                <p class="about-version" data-i18n="about_version">Version 1.0.2 Platinum</p>
+                <p class="about-version" id="about-version">—</p>
+                <button type="button" class="btn btn-secondary btn-sm about-update-btn" id="btn-about-check-update" hidden>
+                    <span class="material-symbols-rounded">system_update</span><span data-i18n="update_check">Check for updates</span>
+                </button>
                 <p class="about-desc" data-i18n="about_desc">A comprehensive Inventory and Sales Management System
                     designed to meet the needs of SMBs. Features modern UI, real-time sync, and multi-language support.
                 </p>
@@ -3660,6 +3667,37 @@
                     <span data-i18n="about_contact">Contact Support</span>
                 </button>
                 <p class="about-copy" data-i18n="about_copyright">© 2026 Softio Services. All Rights Reserved.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="update-modal">
+        <div class="modal update-modal">
+            <div class="modal-header">
+                <h2 data-i18n="update_title">Software Update</h2>
+                <button class="close-btn" data-close="update-modal"><span
+                        class="material-symbols-rounded">close</span></button>
+            </div>
+            <p id="update-status" class="update-status">—</p>
+            <p id="update-current" class="muted"></p>
+            <div id="update-notes-wrap" hidden>
+                <label class="update-notes-label" data-i18n="update_whats_new">What's new</label>
+                <div id="update-notes" class="update-notes"></div>
+            </div>
+            <div class="cloud-progress" id="update-progress" hidden>
+                <div class="cloud-progress-track"><span id="update-progress-bar"></span></div>
+                <span class="form-hint" id="update-progress-text"></span>
+            </div>
+            <p id="update-error" class="form-hint cloud-error" role="alert" hidden></p>
+            <p class="muted update-safe" data-i18n="update_safe">Your data stays on this computer and is backed up
+                automatically before installing. The app closes, updates and reopens by itself.</p>
+            <div class="modal-actions" style="flex-wrap:wrap; gap:8px;">
+                <button type="button" class="btn btn-secondary" id="btn-update-file" data-roles="admin"
+                    data-i18n="update_from_file">Install from file…</button>
+                <button type="button" class="btn btn-secondary" id="btn-update-check"
+                    data-i18n="update_check">Check for updates</button>
+                <button type="button" class="btn btn-primary" id="btn-update-install" data-roles="admin" hidden
+                    data-i18n="update_now">Update now</button>
             </div>
         </div>
     </div>

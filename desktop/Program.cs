@@ -89,11 +89,15 @@ namespace InventorySystem
 
             try
             {
+                // First start of a new version: snapshot the database before any migration runs
+                UpdateService.BeforeDatabaseInit();
+
                 // Initialize Database (Create if missing)
                 InventorySystem.Helpers.DatabaseInitializer.Initialize();
 
                 // Ensure schema is up to date (add missing columns)
                 DatabaseHelper.EnsureSchema();
+                UpdateService.AfterDatabaseInit();
                 InventorySystem.Services.Cloud.CloudSync.Startup(ResolveAppRoot());
                 // Demo seed is opt-in via POST /api/dev/seed-demo — do not auto-fill new installs
 
@@ -490,7 +494,7 @@ namespace InventorySystem
                 app.MapHub<InventoryHub>("/hubs/inventory");
 
                 // - Status -
-                app.MapGet("/api/status", () => Microsoft.AspNetCore.Http.Results.Ok(new { status = "API Running", version = "2.0", uiBuild = "20260830-outline", realtime = "SignalR Active" }));
+                app.MapGet("/api/status", () => Microsoft.AspNetCore.Http.Results.Ok(new { status = "API Running", version = UpdateService.CurrentVersion, uiBuild = "20260830-outline", realtime = "SignalR Active" }));
 
                 // - Config/Language -
                 app.MapGet("/api/config", () => Microsoft.AspNetCore.Http.Results.Ok(new
@@ -2833,6 +2837,43 @@ namespace InventorySystem
                         }));
                     }
                     catch (Exception ex) { return Microsoft.AspNetCore.Http.Results.Problem(ex.Message); }
+                });
+
+                // - App updates -
+                // Installing runs setup on this PC, so only the desktop window (loopback) may start it,
+                // never a phone or browser on the shop Wi-Fi.
+                static bool IsLocalRequest(Microsoft.AspNetCore.Http.HttpContext ctx) =>
+                    ctx.Connection.RemoteIpAddress is System.Net.IPAddress ip && System.Net.IPAddress.IsLoopback(ip);
+
+                app.MapGet("/api/update/status", () => Microsoft.AspNetCore.Http.Results.Ok(UpdateService.GetStatus()));
+
+                app.MapPost("/api/update/check", async (Microsoft.AspNetCore.Http.HttpRequest request) =>
+                {
+                    bool force = !string.Equals(request.Query["auto"], "1", StringComparison.Ordinal);
+                    if (!force && !UpdateService.CheckOnStartup)
+                        return Microsoft.AspNetCore.Http.Results.Ok(UpdateService.GetStatus());
+                    await UpdateService.CheckAsync(force);
+                    return Microsoft.AspNetCore.Http.Results.Ok(UpdateService.GetStatus());
+                });
+
+                app.MapPost("/api/update/install", (Microsoft.AspNetCore.Http.HttpContext ctx) =>
+                {
+                    if (!IsLocalRequest(ctx))
+                        return Microsoft.AspNetCore.Http.Results.Json(new { error = "Updates can only be installed from the desktop app." }, statusCode: 403);
+                    UpdateService.StartUpdate();
+                    return Microsoft.AspNetCore.Http.Results.Ok(UpdateService.GetStatus());
+                });
+
+                app.MapPost("/api/update/install-file", (Microsoft.AspNetCore.Http.HttpContext ctx) =>
+                {
+                    if (!IsLocalRequest(ctx))
+                        return Microsoft.AspNetCore.Http.Results.Json(new { error = "Updates can only be installed from the desktop app." }, statusCode: 403);
+                    try
+                    {
+                        bool started = UpdateService.StartUpdateFromFile();
+                        return Microsoft.AspNetCore.Http.Results.Ok(new { cancelled = !started, status = UpdateService.GetStatus() });
+                    }
+                    catch (Exception ex) { return Microsoft.AspNetCore.Http.Results.BadRequest(new { error = ex.Message }); }
                 });
 
                 // - Backup -

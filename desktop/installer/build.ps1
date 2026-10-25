@@ -10,6 +10,20 @@ $csproj = Join-Path $root "SevenTenProductsManagementSystem.csproj"
 $iconIco = Join-Path $root "Assets\icon.ico"
 $appExeName = "SevenTenInventorySystem.exe"
 
+# App version comes from Properties\AssemblyInfo.cs (AssemblyInformationalVersion)
+$assemblyInfo = Get-Content (Join-Path $root "Properties\AssemblyInfo.cs") -Raw
+if ($assemblyInfo -notmatch 'AssemblyInformationalVersion\("([0-9]+(\.[0-9]+){1,3})"\)') {
+    throw "AssemblyInformationalVersion not found in Properties\AssemblyInfo.cs"
+}
+$appVersion = $Matches[1]
+Write-Host "==> Building version $appVersion" -ForegroundColor Cyan
+
+# Where the app looks for updates (Updates.ManifestUrl in appsettings.json). For GitHub Releases the
+# installer URL is derived from it: .../releases/latest/download/latest.json -> .../releases/download/v<ver>/SevenTenSetup.exe
+$appSettings = Get-Content (Join-Path $root "appsettings.json") -Raw | ConvertFrom-Json
+$manifestUrl = $null
+if ($appSettings.Updates) { $manifestUrl = $appSettings.Updates.ManifestUrl }
+
 # Resolve dotnet CLI with SDK
 $dotnetCmd = "dotnet"
 $localDotnet = Join-Path $env:LocalAppData "Microsoft\dotnet"
@@ -111,7 +125,7 @@ New-Item -ItemType Directory -Force -Path $distDir | Out-Null
 if ($iscc) {
     Write-Host "==> Building SevenTenSetup.exe with $iscc" -ForegroundColor Cyan
     Write-Host "    (Setup will auto-install WebView2 on PCs that need it)" -ForegroundColor DarkGray
-    & $iscc $iss
+    & $iscc "/DMyAppVersion=$appVersion" $iss
     if ($LASTEXITCODE -ne 0) { throw "ISCC failed" }
     $setup = Get-ChildItem $distDir -Filter "SevenTenSetup.exe" | Select-Object -First 1
     if ($setup) {
@@ -120,6 +134,43 @@ if ($iscc) {
         Write-Host $setup.FullName -ForegroundColor Green
         Write-Host ""
         Write-Host "Target PC needs: Windows 10/11 64-bit. WebView2 is installed by setup if missing." -ForegroundColor Cyan
+
+        # Update manifest the installed apps read. Upload it next to SevenTenSetup.exe.
+        $tag = "v$appVersion"
+        $setupUrl = $null
+        if ($manifestUrl -match '^(https://github\.com/[^/]+/[^/]+)/releases/') {
+            $setupUrl = "$($Matches[1])/releases/download/$tag/SevenTenSetup.exe"
+        } elseif ($manifestUrl) {
+            $setupUrl = ($manifestUrl -replace '[^/]+$', '') + "SevenTenSetup.exe"
+        }
+        $notesFile = Join-Path $root "installer\release-notes.txt"
+        $notes = ""
+        if (Test-Path $notesFile) {
+            # Lines starting with # are instructions, not notes
+            $notes = ((Get-Content $notesFile) | Where-Object { $_ -notmatch '^\s*#' }) -join "`n"
+            $notes = $notes.Trim()
+        }
+        $manifest = [ordered]@{
+            version     = $appVersion
+            url         = $setupUrl
+            sha256      = (Get-FileHash $setup.FullName -Algorithm SHA256).Hash
+            size        = $setup.Length
+            notes       = $notes
+            publishedAt = (Get-Date).ToUniversalTime().ToString("o")
+        }
+        $latestJson = Join-Path $distDir "latest.json"
+        # UTF-8 without BOM so any HTTP client parses it
+        [System.IO.File]::WriteAllText($latestJson, ($manifest | ConvertTo-Json), (New-Object System.Text.UTF8Encoding $false))
+
+        Write-Host ""
+        Write-Host "UPDATE - to push v$appVersion to installed apps:" -ForegroundColor Green
+        if ($setupUrl -like "https://github.com/*") {
+            Write-Host "  1. GitHub -> Releases -> Draft a new release, tag: $tag" -ForegroundColor Green
+            Write-Host "  2. Attach BOTH files: SevenTenSetup.exe and latest.json (from $distDir)" -ForegroundColor Green
+            Write-Host "  3. Publish (not as pre-release). Apps offer the update on next launch." -ForegroundColor Green
+        } else {
+            Write-Host "  Upload SevenTenSetup.exe and latest.json to: $setupUrl" -ForegroundColor Green
+        }
     }
 }
 else {

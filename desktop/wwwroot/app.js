@@ -408,6 +408,14 @@ const T = {
         quote_tax_extras: 'Tax / Extras', grand_total: 'GRAND TOTAL', preview: 'Preview',
         tool_backup: 'Backup', tool_about: 'About', backup_now: 'Create Backup', factory_reset: 'Factory Delete', confirm_factory_1: 'Delete ALL data and reset the database? This cannot be undone.', confirm_factory_2: 'Final confirmation: wipe everything and start empty?', factory_ok: 'Database reset', factory_fail: 'Factory reset failed', backup_export_ok: 'Backup exported', backup_import_ok: 'Backup imported',
         open_backup_folder: 'Open Folder', backup_ok: 'Backup created', backup_fail: 'Backup failed',
+        update_title: 'Software Update', update_check: 'Check for updates', update_now: 'Update now', update_from_file: 'Install from file…',
+        update_available_short: 'Update available', update_available: 'Version {v} is available.', update_latest: 'You have the latest version.',
+        update_checking: 'Checking for updates…', update_current: 'Installed version: {v}', about_version_n: 'Version {v}',
+        update_whats_new: "What's new", update_downloading: 'Downloading update… {p}', update_backup: 'Backing up your data…',
+        update_setup: 'Starting setup… Click "Yes" if Windows asks for permission.', update_closing: 'Installing. The app will reopen in a moment…',
+        update_ready: 'Update downloaded and ready to install.', update_not_configured: 'Online updates are not set up. Use "Install from file".',
+        update_confirm: 'Install version {v} now? Your data is backed up first. The app will close and reopen when done.',
+        update_toast: 'A new version ({v}) is available. Click the update icon at the top to install.',
         auto_backup: 'Auto backup', auto_backup_off: 'Off', auto_backup_daily: 'Daily',
         auto_backup_weekly: 'Weekly', auto_backup_monthly: 'Monthly',
         auto_backup_hint_off: 'Automatic backups are disabled.',
@@ -1042,6 +1050,14 @@ const T = {
         quote_tax_extras: 'ضريبة / إضافات', grand_total: 'الإجمالي النهائي', preview: 'معاينة',
         tool_backup: 'نسخ احتياطي', tool_about: 'حول', backup_now: 'إنشاء نسخة', factory_reset: 'حذف المصنع', confirm_factory_1: 'حذف كل البيانات وإعادة ضبط قاعدة البيانات؟ لا يمكن التراجع.', confirm_factory_2: 'تأكيد أخير: مسح كل شيء والبدء من صفر؟', factory_ok: 'تمت إعادة ضبط قاعدة البيانات', factory_fail: 'فشل حذف المصنع', backup_export_ok: 'تم تصدير النسخة', backup_import_ok: 'تم استيراد النسخة',
         open_backup_folder: 'فتح المجلد', backup_ok: 'تم إنشاء النسخة', backup_fail: 'فشل النسخ',
+        update_title: 'تحديث البرنامج', update_check: 'البحث عن تحديثات', update_now: 'تحديث الآن', update_from_file: 'تثبيت من ملف…',
+        update_available_short: 'يتوفر تحديث', update_available: 'الإصدار {v} متوفر.', update_latest: 'لديك أحدث إصدار.',
+        update_checking: 'جارٍ البحث عن تحديثات…', update_current: 'الإصدار المثبت: {v}', about_version_n: 'الإصدار {v}',
+        update_whats_new: 'ما الجديد', update_downloading: 'جارٍ تنزيل التحديث… {p}', update_backup: 'جارٍ نسخ بياناتك احتياطياً…',
+        update_setup: 'جارٍ بدء التثبيت… اضغط "نعم" إذا طلب Windows الإذن.', update_closing: 'جارٍ التثبيت. سيُعاد فتح البرنامج بعد لحظات…',
+        update_ready: 'تم تنزيل التحديث وهو جاهز للتثبيت.', update_not_configured: 'التحديث عبر الإنترنت غير مُعدّ. استخدم "تثبيت من ملف".',
+        update_confirm: 'تثبيت الإصدار {v} الآن؟ سيتم نسخ بياناتك احتياطياً أولاً. سيُغلق البرنامج ويُعاد فتحه عند الانتهاء.',
+        update_toast: 'يتوفر إصدار جديد ({v}). اضغط على أيقونة التحديث في الأعلى للتثبيت.',
         auto_backup: 'نسخ احتياطي تلقائي', auto_backup_off: 'إيقاف', auto_backup_daily: 'يومي',
         auto_backup_weekly: 'أسبوعي', auto_backup_monthly: 'شهري',
         auto_backup_hint_off: 'النسخ الاحتياطي التلقائي متوقف.',
@@ -2270,6 +2286,7 @@ function showApp() {
     refreshNotifications();
     renderDashboardSkeleton();
     restoreRouteFromHash();
+    if (isDesktopApp) setTimeout(() => checkForUpdates(true), 4000);
 }
 
 function hideApp() {
@@ -8566,6 +8583,129 @@ async function openBackupModal() {
     openModal('backup-modal');
 }
 
+// --- App updates (desktop window only: installing runs setup on this PC) ---
+const isDesktopApp = !!window.chrome?.webview;
+const UPDATE_BUSY = ['checking', 'downloading', 'installing'];
+let updateStatus = null;
+let updatePollTimer = null;
+let updateToastShown = false;
+
+function formatMb(bytes) { return (bytes / 1048576).toFixed(1) + ' MB'; }
+
+function renderUpdateStatus(st) {
+    if (!st) return;
+    updateStatus = st;
+    const busy = UPDATE_BUSY.includes(st.state);
+    const v = st.latest?.version || '';
+    const setText = (id, text) => { const el = document.getElementById(id); if (el) el.textContent = text; };
+    const setHidden = (id, hidden) => { const el = document.getElementById(id); if (el) el.hidden = hidden; };
+
+    setHidden('btn-update', !(isDesktopApp && st.updateAvailable));
+    if (st.currentVersion) {
+        setText('about-version', tr('about_version_n').replace('{v}', st.currentVersion));
+        setText('update-current', tr('update_current').replace('{v}', st.currentVersion));
+    }
+
+    let headline = '';
+    if (st.state === 'checking') headline = tr('update_checking');
+    else if (st.updateAvailable) headline = tr('update_available').replace('{v}', v);
+    else if (st.state === 'up-to-date') headline = tr('update_latest');
+    else if (st.configured === false) headline = tr('update_not_configured');
+    setText('update-status', headline);
+
+    const notes = st.updateAvailable ? (st.latest?.notes || '') : '';
+    setText('update-notes', notes);
+    setHidden('update-notes-wrap', !notes);
+
+    const progress = document.getElementById('update-progress');
+    const bar = document.getElementById('update-progress-bar');
+    if (progress && bar) {
+        progress.hidden = !(st.state === 'downloading' || st.state === 'installing');
+        if (st.state === 'downloading') {
+            const pct = st.total > 0 ? Math.min(100, Math.round(st.downloaded * 100 / st.total)) : 0;
+            progress.classList.toggle('indeterminate', !(st.total > 0));
+            bar.style.width = (st.total > 0 ? pct : 30) + '%';
+            setText('update-progress-text', tr('update_downloading').replace('{p}',
+                st.total > 0 ? `${pct}% (${formatMb(st.downloaded)} / ${formatMb(st.total)})` : formatMb(st.downloaded)));
+        } else if (st.state === 'installing') {
+            progress.classList.add('indeterminate');
+            bar.style.width = '30%';
+            const phaseKey = { backup: 'update_backup', setup: 'update_setup', closing: 'update_closing' }[st.phase] || 'update_backup';
+            setText('update-progress-text', tr(phaseKey));
+        }
+    }
+
+    setText('update-error', st.state === 'error' ? (st.error || '') : '');
+    setHidden('update-error', st.state !== 'error' || !st.error);
+    setHidden('btn-update-install', !(isDesktopApp && st.updateAvailable && !busy));
+    ['btn-update-check', 'btn-update-file', 'btn-about-check-update'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.disabled = busy;
+    });
+}
+
+function scheduleUpdatePoll() {
+    clearTimeout(updatePollTimer);
+    if (updateStatus && UPDATE_BUSY.includes(updateStatus.state))
+        updatePollTimer = setTimeout(refreshUpdateStatus, 600);
+}
+
+async function refreshUpdateStatus() {
+    try { renderUpdateStatus(await api('/api/update/status')); }
+    catch { /* app is closing for the update, or server busy */ }
+    scheduleUpdatePoll();
+}
+
+async function checkForUpdates(auto = false) {
+    if (!auto) renderUpdateStatus({ ...(updateStatus || {}), state: 'checking' });
+    try {
+        const st = await api('/api/update/check' + (auto ? '?auto=1' : ''), { method: 'POST', body: '{}' });
+        renderUpdateStatus(st);
+        if (auto && st.updateAvailable && !updateToastShown && can('admin')) {
+            updateToastShown = true;
+            toast(tr('update_toast').replace('{v}', st.latest.version), 'success');
+        }
+    } catch (e) {
+        if (!auto) toast(e.message, 'error');
+        refreshUpdateStatus();
+    }
+}
+
+function openUpdateModal() {
+    openModal('update-modal');
+    refreshUpdateStatus().then(() => {
+        if (updateStatus && !updateStatus.lastCheck && updateStatus.configured) checkForUpdates();
+    });
+}
+
+function setupUpdates() {
+    const aboutCheck = document.getElementById('btn-about-check-update');
+    if (aboutCheck) {
+        aboutCheck.hidden = !isDesktopApp;
+        aboutCheck.addEventListener('click', () => { closeModal('about-modal'); openUpdateModal(); });
+    }
+    document.getElementById('btn-about')?.addEventListener('click', refreshUpdateStatus);
+    document.getElementById('btn-about-mobile')?.addEventListener('click', refreshUpdateStatus);
+    document.getElementById('btn-update')?.addEventListener('click', openUpdateModal);
+    document.getElementById('btn-update-check')?.addEventListener('click', () => checkForUpdates());
+    document.getElementById('btn-update-install')?.addEventListener('click', async () => {
+        const v = updateStatus?.latest?.version || '';
+        if (!await confirmDialog(tr('update_confirm').replace('{v}', v), { danger: false, confirmText: tr('update_now') })) return;
+        try {
+            renderUpdateStatus(await api('/api/update/install', { method: 'POST', body: '{}' }));
+            scheduleUpdatePoll();
+        } catch (e) { toast(e.message, 'error'); }
+    });
+    document.getElementById('btn-update-file')?.addEventListener('click', async () => {
+        try {
+            const res = await api('/api/update/install-file', { method: 'POST', body: '{}' });
+            if (res?.cancelled) return;
+            renderUpdateStatus(res.status);
+            scheduleUpdatePoll();
+        } catch (e) { toast(e.message, 'error'); }
+    });
+}
+
 function showLockOverlay() {
     const ov = document.getElementById('lock-overlay');
     if (!ov) return;
@@ -9251,6 +9391,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         setupAuth();
         try { setupActions(); } catch (e) { console.error('setupActions', e); }
         try { setupTools(); } catch (e) { console.error('setupTools', e); }
+        try { setupUpdates(); } catch (e) { console.error('setupUpdates', e); }
         try { setupSignalR(); } catch (e) { console.error('setupSignalR', e); }
         try { wirePrintSettingsUi(); } catch (e) { console.error('wirePrintSettingsUi', e); }
         try { await loadPrintSettings(); } catch { /* ignore */ }

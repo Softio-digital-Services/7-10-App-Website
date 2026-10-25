@@ -3,17 +3,31 @@
 ; Requires Inno Setup 6.4+ for WebView2 download helper
 
 #define MyAppName "7-10 Inventory"
-#define MyAppVersion "2.0.0"
+; build.ps1 passes /DMyAppVersion=<AssemblyInformationalVersion from Properties\AssemblyInfo.cs>
+#ifndef MyAppVersion
+  #define MyAppVersion "2.0.0"
+#endif
 #define MyAppPublisher "7-10 Store"
+; Must match AppHostConfig.TryAcquireSingleInstance ("Local\SoftioInventory_" + BrandId)
+#define AppRunningMutex "Local\SoftioInventory_SevenTen"
+; UpdateService waits for this before closing the app
+#define SetupRunningMutex "Local\SoftioInventory_SevenTen_Updating"
 #define MyAppExeName "SevenTenInventorySystem.exe"
 #define PublishDir "..\dist\app"
 #define WebView2Url "https://go.microsoft.com/fwlink/p/?LinkId=2124703"
 
 [Setup]
+; Never change AppId: it is how setup finds and upgrades the existing install in place.
 AppId={{B71E2E01-7TEN-4100-B001-SEVENTEN}}
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
+AppVerName={#MyAppName} {#MyAppVersion}
 AppPublisher={#MyAppPublisher}
+VersionInfoVersion={#MyAppVersion}
+VersionInfoProductName={#MyAppName}
+VersionInfoProductVersion={#MyAppVersion}
+CloseApplications=yes
+RestartApplications=no
 DefaultDirName={autopf}\7-10 Inventory
 DefaultGroupName={#MyAppName}
 DisableProgramGroupPage=yes
@@ -53,6 +67,8 @@ Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; IconFilen
 
 [Run]
 Filename: "{app}\{#MyAppExeName}"; Description: "Launch 7-10 Inventory"; Flags: nowait postinstall skipifsilent
+; In-app update (silent): reopen the app as the signed-in user, not as the elevated installer
+Filename: "{app}\{#MyAppExeName}"; Flags: nowait runasoriginaluser; Check: StartedFromApp
 
 [Code]
 function IsWebView2RuntimeInstalled: Boolean;
@@ -77,9 +93,46 @@ begin
   Result := False;
 end;
 
+{ True when the app started setup itself (UpdateService passes /FROMAPP=1). }
+function StartedFromApp: Boolean;
+begin
+  Result := ExpandConstant('{param:FROMAPP|0}') = '1';
+end;
+
 function InitializeSetup(): Boolean;
+var
+  Waited: Integer;
 begin
   Result := True;
+
+  if StartedFromApp then
+  begin
+    { Tell the app setup is running (UAC accepted) so it can close, then wait up to 30s for it. }
+    CreateMutex('{#SetupRunningMutex}');
+    Waited := 0;
+    while CheckForMutexes('{#AppRunningMutex}') and (Waited < 60) do
+    begin
+      Sleep(500);
+      Waited := Waited + 1;
+    end;
+  end;
+
+  { Files in use cannot be replaced safely, so never install over a running app. }
+  while CheckForMutexes('{#AppRunningMutex}') do
+  begin
+    if WizardSilent then
+    begin
+      Result := False;
+      exit;
+    end;
+    if MsgBox('{#MyAppName} is running. Close it, then click OK to continue.'#13#10#13#10
+      + 'Your data is kept - it is stored separately from the program files.',
+      mbInformation, MB_OKCANCEL) = IDCANCEL then
+    begin
+      Result := False;
+      exit;
+    end;
+  end;
 end;
 
 function PrepareToInstall(var NeedsRestart: Boolean): String;

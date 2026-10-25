@@ -4363,6 +4363,32 @@ body.rtl .quote-items-table td:nth-child(2) { text-align: center; }
 .calc-keys .calc-eq { background: var(--primary-color); color: #fff; }
 .calc-keys .calc-zero { grid-column: span 2; }
 
+#btn-update[hidden],
+.about-update-btn[hidden],
+.update-modal [hidden] { display: none !important; }
+.about-update-btn { margin: -0.4rem 0 0.9rem; gap: 6px; }
+.update-modal { max-width: 520px; }
+.update-status { font-weight: 600; margin: 0 0 0.25rem; }
+.update-notes-label {
+    display: block;
+    margin-top: 0.9rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-muted);
+}
+.update-notes {
+    margin-top: 0.35rem;
+    padding: 10px 12px;
+    max-height: 180px;
+    overflow-y: auto;
+    border-radius: 8px;
+    background: var(--surface-muted, #f8fafc);
+    font-size: 0.85rem;
+    line-height: 1.5;
+    white-space: pre-wrap;
+}
+.update-safe { margin-top: 0.9rem; font-size: 0.82rem; }
+
 .backup-files { font-size: 0.85rem; color: var(--text-muted); }
 .backup-files div { padding: 6px 0; border-bottom: 1px solid var(--border-color); }
 .backup-file-row {
