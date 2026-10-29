@@ -77,7 +77,7 @@ export function Header({ categories }: { categories: StoreCategory[] }) {
         className={`sticky top-0 z-40 transition-[background-color,color,border-color,backdrop-filter] duration-500 ${
           overlay
             ? "border-b border-cream/15 bg-transparent text-cream"
-            : "border-b border-charcoal/10 bg-cream/90 text-charcoal backdrop-blur-xl"
+            : "material-bar border-b border-charcoal/10 text-charcoal"
         }`}
         onMouseLeave={closeMega}
       >
@@ -86,7 +86,7 @@ export function Header({ categories }: { categories: StoreCategory[] }) {
             <button
               type="button"
               onClick={() => setMenuOpen(true)}
-              className="-ms-2 grid h-11 w-11 place-items-center lg:hidden"
+              className="press -ms-2 grid h-11 w-11 place-items-center lg:hidden"
               aria-label={t.common.menu}
             >
               <Menu className="h-5 w-5" strokeWidth={1.5} />
@@ -110,7 +110,7 @@ export function Header({ categories }: { categories: StoreCategory[] }) {
             <button
               type="button"
               onClick={() => setSearchOpen(true)}
-              className="grid h-11 w-11 place-items-center"
+              className="press grid h-11 w-11 place-items-center"
               aria-label={t.common.search}
             >
               <Search className="h-[19px] w-[19px]" strokeWidth={1.5} />
@@ -126,7 +126,7 @@ export function Header({ categories }: { categories: StoreCategory[] }) {
             </button>
             <Link
               href={session?.user ? (isStaff ? "/admin" : "/orders") : "/login"}
-              className="hidden h-11 w-11 place-items-center md:grid"
+              className="press hidden h-11 w-11 place-items-center md:grid"
               aria-label={session?.user ? t.common.account : t.common.signIn}
             >
               <User className="h-[19px] w-[19px]" strokeWidth={1.5} />
@@ -134,7 +134,7 @@ export function Header({ categories }: { categories: StoreCategory[] }) {
             <button
               type="button"
               onClick={openDrawer}
-              className="relative -me-2 flex h-11 items-center gap-2 ps-2 pe-2"
+              className="press relative -me-2 flex h-11 items-center gap-2 ps-2 pe-2"
               aria-label={`${t.common.bag} (${count})`}
             >
               <ShoppingBag className="h-[19px] w-[19px]" strokeWidth={1.5} />

@@ -87,7 +87,7 @@ export function SearchOverlay({ open, onClose }: { open: boolean; onClose: () =>
               aria-label={t.common.search}
               enterKeyHint="search"
             />
-            <button type="button" onClick={onClose} className="grid h-11 w-11 shrink-0 place-items-center" aria-label={t.common.close}>
+            <button type="button" onClick={onClose} className="press grid h-11 w-11 shrink-0 place-items-center" aria-label={t.common.close}>
               <X className="h-6 w-6" strokeWidth={1.25} />
             </button>
           </form>

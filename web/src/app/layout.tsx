@@ -1,24 +1,17 @@
 import type { Metadata, Viewport } from "next";
-import { IBM_Plex_Sans_Arabic, Oswald } from "next/font/google";
+// Fonts are self-hosted (served from the app) so dev/build never wait on fonts.googleapis.com.
+import "@fontsource-variable/oswald";
+import "@fontsource/ibm-plex-sans-arabic/300.css";
+import "@fontsource/ibm-plex-sans-arabic/400.css";
+import "@fontsource/ibm-plex-sans-arabic/500.css";
+import "@fontsource/ibm-plex-sans-arabic/600.css";
+import "@fontsource/ibm-plex-sans-arabic/700.css";
 import "./globals.css";
 import { CartProvider } from "@/components/cart-provider";
 import { I18nProvider } from "@/components/i18n-provider";
 import { Providers } from "@/components/providers";
 import { getI18n } from "@/lib/i18n/server";
 import { store } from "@/lib/store-config";
-
-const oswald = Oswald({
-  subsets: ["latin"],
-  variable: "--font-oswald",
-  display: "swap",
-});
-
-const plex = IBM_Plex_Sans_Arabic({
-  subsets: ["arabic", "latin"],
-  weight: ["300", "400", "500", "600", "700"],
-  variable: "--font-plex",
-  display: "swap",
-});
 
 export async function generateMetadata(): Promise<Metadata> {
   const { dict, locale } = await getI18n();
@@ -48,7 +41,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const { locale, dict, dir } = await getI18n();
 
   return (
-    <html lang={locale} dir={dir} className={`${oswald.variable} ${plex.variable}`} data-scroll-behavior="smooth">
+    <html lang={locale} dir={dir} data-scroll-behavior="smooth">
       <body className="grain">
         <Providers>
           <I18nProvider locale={locale} dict={dict}>

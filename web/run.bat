@@ -96,13 +96,22 @@ if not exist "prisma\dev.db" (
   )
 )
 
+REM 4b. If the server is already running (e.g. another window), just open it instead of failing
+powershell -NoProfile -Command "try { $r = Invoke-WebRequest -Uri '%URL%' -UseBasicParsing -TimeoutSec 3; exit 0 } catch { if ($_.Exception.Response) { exit 0 } else { exit 1 } }" >nul 2>nul
+if not errorlevel 1 (
+  echo The website server is already running on %URL%. Opening it in the browser...
+  start "" "%URL%"
+  timeout /t 3 >nul
+  exit /b 0
+)
+
 echo.
 echo Starting the website server on %URL%
 echo Keep this window open while browsing. Close it to stop the server.
 echo.
 
 REM 5. Wait for the server to be ready before opening the browser
-start "" /b powershell -NoProfile -WindowStyle Hidden -Command "$url = '%URL%'; $max = 35; while ($max -gt 0) { Start-Sleep -Seconds 1; try { $r = Invoke-WebRequest -Uri $url -UseBasicParsing -TimeoutSec 1; if ($r.StatusCode -ge 200 -and $r.StatusCode -lt 400) { break } } catch {}; $max-- }; $chrome = @($env:ProgramFiles + '\Google\Chrome\Application\chrome.exe', ${env:ProgramFiles(x86)} + '\Google\Chrome\Application\chrome.exe', $env:LOCALAPPDATA + '\Google\Chrome\Application\chrome.exe') | Where-Object { Test-Path $_ } | Select-Object -First 1; if ($chrome) { Start-Process $chrome $url } else { Start-Process $url }"
+start "" /b powershell -NoProfile -WindowStyle Hidden -Command "$url = '%URL%'; $max = 90; while ($max -gt 0) { Start-Sleep -Seconds 1; try { $r = Invoke-WebRequest -Uri $url -UseBasicParsing -TimeoutSec 1; if ($r.StatusCode -ge 200 -and $r.StatusCode -lt 400) { break } } catch {}; $max-- }; $chrome = @($env:ProgramFiles + '\Google\Chrome\Application\chrome.exe', ${env:ProgramFiles(x86)} + '\Google\Chrome\Application\chrome.exe', $env:LOCALAPPDATA + '\Google\Chrome\Application\chrome.exe') | Where-Object { Test-Path $_ } | Select-Object -First 1; if ($chrome) { Start-Process $chrome $url } else { Start-Process $url }"
 
 call npm run dev -- -p %PORT%
 if errorlevel 1 (

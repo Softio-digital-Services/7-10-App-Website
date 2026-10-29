@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { Check, LoaderCircle, X } from "lucide-react";
 import { useI18n } from "@/components/i18n-provider";
+import { useDragDismiss } from "@/components/use-drag-dismiss";
 import { useLockBody } from "@/components/use-lock-body";
 import type { SortKey } from "@/lib/catalog";
 import type { ShopFilters } from "@/components/shop/shop-view";
@@ -20,8 +21,9 @@ type FilterDrawerProps = {
 };
 
 export function FilterDrawer({ open, onClose, sizes, filters, total, pending, sortOptions, onChange, onClear }: FilterDrawerProps) {
-  const { t, f } = useI18n();
+  const { t, f, dir } = useI18n();
   useLockBody(open);
+  const { panelRef, backdropRef, panelProps } = useDragDismiss<HTMLDivElement, HTMLDivElement>({ side: "start", dir, onClose });
 
   useEffect(() => {
     if (!open) return;
@@ -44,8 +46,14 @@ export function FilterDrawer({ open, onClose, sizes, filters, total, pending, so
       aria-modal="true"
       aria-label={t.shop.filter}
     >
-      <div className={`absolute inset-0 bg-charcoal/45 transition-opacity duration-500 ${open ? "opacity-100" : "opacity-0"}`} onClick={onClose} />
       <div
+        ref={backdropRef}
+        className={`absolute inset-0 bg-charcoal/45 transition-opacity duration-500 ${open ? "opacity-100" : "opacity-0"}`}
+        onClick={onClose}
+      />
+      <div
+        ref={panelRef}
+        {...panelProps}
         className={`absolute inset-y-0 start-0 flex w-full max-w-[420px] flex-col bg-cream transition-transform duration-700 ease-[var(--ease-out-expo)] ${
           open ? "translate-x-0" : "-translate-x-full rtl:translate-x-full"
         }`}
@@ -55,7 +63,7 @@ export function FilterDrawer({ open, onClose, sizes, filters, total, pending, so
             {t.shop.filter}
             {refinements > 0 && <span className="ms-2 font-display text-base text-charcoal/40" dir="ltr">({refinements})</span>}
           </p>
-          <button type="button" onClick={onClose} className="-me-2 grid h-11 w-11 place-items-center" aria-label={t.common.close}>
+          <button type="button" onClick={onClose} className="press -me-2 grid h-11 w-11 place-items-center" aria-label={t.common.close}>
             <X className="h-5 w-5" strokeWidth={1.5} />
           </button>
         </div>
@@ -148,9 +156,10 @@ function Toggle({ checked, onChange, label }: { checked: boolean; onChange: (v: 
     <button type="button" role="switch" aria-checked={checked} onClick={() => onChange(!checked)} className="flex w-full items-center justify-between py-1 text-[15px]">
       {label}
       <span className={`relative h-6 w-11 rounded-full transition-colors ${checked ? "bg-olive" : "bg-charcoal/15"}`}>
+        {/* transform, not inset, so the knob slides on the compositor */}
         <span
-          className={`absolute top-0.5 h-5 w-5 rounded-full bg-cream shadow transition-all duration-300 ${
-            checked ? "start-[22px]" : "start-0.5"
+          className={`absolute start-0.5 top-0.5 h-5 w-5 rounded-full bg-cream shadow transition-transform duration-300 ease-[var(--ease-out-expo)] ${
+            checked ? "translate-x-5 rtl:-translate-x-5" : ""
           }`}
         />
       </span>

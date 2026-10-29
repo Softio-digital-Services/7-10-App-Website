@@ -7,14 +7,16 @@ import { ArrowRight, Minus, Plus, X } from "lucide-react";
 import { LogoMark } from "@/components/brand/logo";
 import { useCart } from "@/components/cart-provider";
 import { useI18n } from "@/components/i18n-provider";
+import { useDragDismiss } from "@/components/use-drag-dismiss";
 import { useLockBody } from "@/components/use-lock-body";
 import { formatPrice } from "@/lib/format";
 import { store } from "@/lib/store-config";
 
 export function BagDrawer() {
-  const { t, f } = useI18n();
+  const { t, f, dir } = useI18n();
   const { items, count, subtotal, drawerOpen, closeDrawer, updateQuantity, removeItem, refresh, lastAddedId } = useCart();
   useLockBody(drawerOpen);
+  const { panelRef, backdropRef, panelProps } = useDragDismiss<HTMLElement, HTMLDivElement>({ side: "end", dir, onClose: closeDrawer });
 
   useEffect(() => {
     if (!drawerOpen) return;
@@ -33,10 +35,13 @@ export function BagDrawer() {
   return (
     <div className={`fixed inset-0 z-[70] ${drawerOpen ? "pointer-events-auto" : "pointer-events-none"}`} aria-hidden={!drawerOpen} inert={!drawerOpen}>
       <div
+        ref={backdropRef}
         className={`absolute inset-0 bg-charcoal/50 transition-opacity duration-500 ${drawerOpen ? "opacity-100" : "opacity-0"}`}
         onClick={closeDrawer}
       />
       <aside
+        ref={panelRef}
+        {...panelProps}
         role="dialog"
         aria-modal="true"
         aria-label={t.bag.title}
@@ -49,7 +54,7 @@ export function BagDrawer() {
             <span className="display text-2xl">{t.bag.title}</span>
             <span className="font-display text-sm text-charcoal/50" dir="ltr">({count})</span>
           </h2>
-          <button type="button" onClick={closeDrawer} className="-me-2 grid h-11 w-11 place-items-center" aria-label={t.common.close}>
+          <button type="button" onClick={closeDrawer} className="press -me-2 grid h-11 w-11 place-items-center" aria-label={t.common.close}>
             <X className="h-5 w-5" strokeWidth={1.5} />
           </button>
         </div>
@@ -175,7 +180,7 @@ export function QtyStepper({
       <button
         type="button"
         onClick={() => onChange(value - 1)}
-        className={`grid ${h} ${w} place-items-center transition-colors hover:bg-charcoal/5`}
+        className={`press grid ${h} ${w} place-items-center transition-colors hover:bg-charcoal/5 active:bg-charcoal/10`}
         aria-label={labels.dec}
       >
         <Minus className="h-3.5 w-3.5" />
@@ -187,7 +192,7 @@ export function QtyStepper({
         type="button"
         onClick={() => onChange(value + 1)}
         disabled={value >= max}
-        className={`grid ${h} ${w} place-items-center transition-colors hover:bg-charcoal/5 disabled:opacity-30`}
+        className={`press grid ${h} ${w} place-items-center transition-colors hover:bg-charcoal/5 active:bg-charcoal/10 disabled:opacity-30`}
         aria-label={labels.inc}
       >
         <Plus className="h-3.5 w-3.5" />

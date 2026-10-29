@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight, X, ZoomIn } from "lucide-react";
 import { useI18n } from "@/components/i18n-provider";
 import { Img } from "@/components/img";
+import { project, rubberband, velocityX } from "@/components/use-drag-dismiss";
 import { useLockBody } from "@/components/use-lock-body";
 
 type GalleryProps = {
@@ -129,12 +130,21 @@ function Lightbox({ images, name, index, onClose, onIndex }: { images: string[];
   useLockBody(open);
   const n = images.length;
 
+  // The side the incoming image slides in from: next arrives from the reading-forward edge.
+  const [enterFrom, setEnterFrom] = useState(0);
+  const [wasOpen, setWasOpen] = useState(open);
+  if (open !== wasOpen) {
+    setWasOpen(open);
+    if (open) setEnterFrom(0);
+  }
+
   const step = useCallback(
     (delta: number) => {
       if (index === null) return;
+      setEnterFrom(delta * (dir === "rtl" ? -1 : 1));
       onIndex((index + delta + n) % n);
     },
-    [index, n, onIndex],
+    [index, n, onIndex, dir],
   );
 
   useEffect(() => {
@@ -148,7 +158,59 @@ function Lightbox({ images, name, index, onClose, onIndex }: { images: string[];
     return () => window.removeEventListener("keydown", onKey);
   }, [open, onClose, step, dir]);
 
-  const touchX = useRef<number | null>(null);
+  const stage = useRef<HTMLDivElement>(null);
+  const swipe = useRef<{ id: number; x0: number; y0: number; axis: "x" | "y" | null; dx: number; samples: { x: number; t: number }[] } | null>(null);
+
+  // The photo follows the finger 1:1; momentum, not distance alone, decides whether it changes.
+  const onPointerDown = (e: React.PointerEvent) => {
+    if (e.pointerType === "mouse" || !e.isPrimary) return;
+    swipe.current = { id: e.pointerId, x0: e.clientX, y0: e.clientY, axis: null, dx: 0, samples: [] };
+  };
+
+  const onPointerMove = (e: React.PointerEvent) => {
+    const s = swipe.current;
+    const el = stage.current;
+    if (!s || s.id !== e.pointerId || !el) return;
+    const dx = e.clientX - s.x0;
+    if (!s.axis) {
+      if (Math.hypot(dx, e.clientY - s.y0) < 10) return;
+      s.axis = Math.abs(dx) > Math.abs(e.clientY - s.y0) ? "x" : "y";
+      if (s.axis === "x") {
+        s.x0 = e.clientX;
+        e.currentTarget.setPointerCapture(e.pointerId);
+        el.style.transition = "none";
+      }
+      return;
+    }
+    if (s.axis !== "x") return;
+    const w = el.offsetWidth;
+    // A single photo has nowhere to go, so it resists instead of sliding freely.
+    s.dx = n > 1 ? dx : Math.sign(dx) * rubberband(Math.abs(dx), w);
+    s.samples.push({ x: e.clientX, t: e.timeStamp });
+    if (s.samples.length > 8) s.samples.shift();
+    el.style.transform = `translateX(${s.dx}px)`;
+    el.style.opacity = String(1 - Math.min(0.5, Math.abs(s.dx) / w));
+  };
+
+  const onPointerEnd = (e: React.PointerEvent) => {
+    const s = swipe.current;
+    const el = stage.current;
+    if (!s || s.id !== e.pointerId || !el) return;
+    swipe.current = null;
+    if (s.axis !== "x") return;
+    const projected = s.dx + (s.samples.length > 1 ? project(velocityX(s.samples)) : 0);
+    const commit = n > 1 && e.type !== "pointercancel" && Math.abs(projected) > el.offsetWidth / 2;
+    if (commit) {
+      el.style.transition = "none";
+      el.style.transform = "";
+      el.style.opacity = "";
+      step((projected < 0 ? 1 : -1) * (dir === "rtl" ? -1 : 1));
+    } else {
+      el.style.transition = "transform 0.45s var(--ease-out-expo), opacity 0.45s var(--ease-out-expo)";
+      el.style.transform = "";
+      el.style.opacity = "";
+    }
+  };
 
   if (!open || index === null) return null;
 
@@ -158,22 +220,28 @@ function Lightbox({ images, name, index, onClose, onIndex }: { images: string[];
       role="dialog"
       aria-modal="true"
       aria-label={name}
-      onTouchStart={(e) => (touchX.current = e.touches[0].clientX)}
-      onTouchEnd={(e) => {
-        if (touchX.current === null) return;
-        const dx = e.changedTouches[0].clientX - touchX.current;
-        if (Math.abs(dx) > 50) step((dx < 0 ? 1 : -1) * (dir === "rtl" ? -1 : 1));
-        touchX.current = null;
-      }}
+      style={{ touchAction: "pan-y pinch-zoom" }}
+      onPointerDown={onPointerDown}
+      onPointerMove={onPointerMove}
+      onPointerUp={onPointerEnd}
+      onPointerCancel={onPointerEnd}
     >
-      <div className="absolute inset-0 md:inset-x-24 md:inset-y-16">
-        <Img key={images[index]} src={images[index]} alt={name} fill sizes="100vw" className="object-contain [animation:fade-in_.4s_ease_both]" />
+      <div ref={stage} className="absolute inset-0 md:inset-x-24 md:inset-y-16">
+        <Img
+          key={images[index]}
+          src={images[index]}
+          alt={name}
+          fill
+          sizes="100vw"
+          className="object-contain [animation:lightbox-enter_.45s_var(--ease-out-expo)_both]"
+          style={{ "--enter-x": `${enterFrom * 18}%` } as React.CSSProperties}
+        />
       </div>
       <div className="absolute inset-x-0 top-0 flex items-center justify-between p-4 md:p-6">
         <span className="font-display text-[12px] tracking-widest text-cream/70" dir="ltr">
           {String(index + 1).padStart(2, "0")} / {String(n).padStart(2, "0")}
         </span>
-        <button type="button" onClick={onClose} className="grid h-12 w-12 place-items-center border border-cream/25 hover:bg-cream hover:text-charcoal" aria-label={t.common.close}>
+        <button type="button" onClick={onClose} className="press grid h-12 w-12 place-items-center border border-cream/25 hover:bg-cream hover:text-charcoal" aria-label={t.common.close}>
           <X className="h-5 w-5" strokeWidth={1.5} />
         </button>
       </div>
@@ -182,7 +250,7 @@ function Lightbox({ images, name, index, onClose, onIndex }: { images: string[];
           <button
             type="button"
             onClick={() => step(-1)}
-            className="absolute start-3 top-1/2 grid h-12 w-12 -translate-y-1/2 place-items-center border border-cream/25 hover:bg-cream hover:text-charcoal md:start-6"
+            className="press absolute start-3 top-1/2 grid h-12 w-12 -translate-y-1/2 place-items-center border border-cream/25 hover:bg-cream hover:text-charcoal md:start-6"
             aria-label={t.common.previous}
           >
             <ChevronLeft className="flip-rtl h-5 w-5" />
@@ -190,7 +258,7 @@ function Lightbox({ images, name, index, onClose, onIndex }: { images: string[];
           <button
             type="button"
             onClick={() => step(1)}
-            className="absolute end-3 top-1/2 grid h-12 w-12 -translate-y-1/2 place-items-center border border-cream/25 hover:bg-cream hover:text-charcoal md:end-6"
+            className="press absolute end-3 top-1/2 grid h-12 w-12 -translate-y-1/2 place-items-center border border-cream/25 hover:bg-cream hover:text-charcoal md:end-6"
             aria-label={t.common.next}
           >
             <ChevronRight className="flip-rtl h-5 w-5" />

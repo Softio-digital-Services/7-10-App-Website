@@ -8,6 +8,7 @@ import { useI18n } from "@/components/i18n-provider";
 import { InstagramIcon, WhatsAppIcon } from "@/components/icons";
 import { store, whatsappLink } from "@/lib/store-config";
 import type { StoreCategory } from "@/lib/catalog";
+import { useDragDismiss } from "@/components/use-drag-dismiss";
 import { useLockBody } from "@/components/use-lock-body";
 
 type MobileMenuProps = {
@@ -19,8 +20,9 @@ type MobileMenuProps = {
 };
 
 export function MobileMenu({ open, onClose, categories, isStaff, signedIn }: MobileMenuProps) {
-  const { t, locale, setLocale } = useI18n();
+  const { t, locale, setLocale, dir } = useI18n();
   useLockBody(open);
+  const { panelRef, backdropRef, panelProps } = useDragDismiss<HTMLDivElement, HTMLDivElement>({ side: "start", dir, onClose });
 
   useEffect(() => {
     if (!open) return;
@@ -55,10 +57,13 @@ export function MobileMenu({ open, onClose, categories, isStaff, signedIn }: Mob
       aria-label={t.common.menu}
     >
       <div
+        ref={backdropRef}
         className={`absolute inset-0 bg-charcoal/50 transition-opacity duration-500 ${open ? "opacity-100" : "opacity-0"}`}
         onClick={onClose}
       />
       <div
+        ref={panelRef}
+        {...panelProps}
         className={`theme-olive absolute inset-y-0 start-0 flex w-full max-w-md flex-col transition-transform duration-700 ease-[var(--ease-out-expo)] ${
           open ? "translate-x-0" : "-translate-x-full rtl:translate-x-full"
         }`}
@@ -70,7 +75,7 @@ export function MobileMenu({ open, onClose, categories, isStaff, signedIn }: Mob
               7.10 Brand
             </span>
           </Link>
-          <button type="button" onClick={onClose} className="-me-2 grid h-11 w-11 place-items-center" aria-label={t.common.close}>
+          <button type="button" onClick={onClose} className="press -me-2 grid h-11 w-11 place-items-center" aria-label={t.common.close}>
             <X className="h-5 w-5" strokeWidth={1.5} />
           </button>
         </div>

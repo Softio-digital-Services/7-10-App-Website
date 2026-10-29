@@ -22,8 +22,8 @@
 }
 
 @theme inline {
-  --font-sans: var(--font-plex), "IBM Plex Sans Arabic", system-ui, sans-serif;
-  --font-display: var(--font-oswald), var(--font-plex), "IBM Plex Sans Arabic", sans-serif;
+  --font-sans: "IBM Plex Sans Arabic", system-ui, sans-serif;
+  --font-display: "Oswald Variable", "IBM Plex Sans Arabic", sans-serif;
 }
 
 @layer base {
@@ -33,6 +33,17 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     scroll-padding-top: 7rem;
+    /* Our own :active states replace the grey tap flash. */
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* No double-tap-zoom wait on controls, so taps register immediately. */
+  a,
+  button,
+  [role="button"],
+  [role="switch"],
+  label {
+    touch-action: manipulation;
   }
 
   body {
@@ -137,7 +148,14 @@
       color 0.45s var(--ease-out-expo),
       background-color 0.45s var(--ease-out-expo),
       border-color 0.45s var(--ease-out-expo),
-      opacity 0.2s;
+      opacity 0.2s,
+      scale 0.2s var(--ease-out-expo);
+  }
+
+  /* Feedback lands on press, not release. */
+  .btn:active:not(:disabled) {
+    scale: 0.98;
+    transition-duration: 0.45s, 0.45s, 0.45s, 0.2s, 0.08s;
   }
 
   .btn::before {
@@ -266,11 +284,6 @@
     box-shadow: inset 0 -2px 0 var(--color-signal);
   }
 
-  .field[aria-invalid="true"] {
-    border-color: var(--color-signal);
-    box-shadow: inset 0 -2px 0 var(--color-signal);
-  }
-
   .field-label {
     display: flex;
     align-items: baseline;
@@ -378,6 +391,46 @@ html[lang="ar"] .display {
 
 html[dir="rtl"] .flip-rtl {
   transform: scaleX(-1);
+}
+
+/* Icon-button press. Unlayered so it can carry scale alongside utilities' colour transitions;
+   uses `scale`, not `transform`, so it composes with Tailwind's translate utilities. */
+.press {
+  transition:
+    scale 0.2s var(--ease-out-expo),
+    color 0.15s,
+    background-color 0.15s,
+    border-color 0.15s,
+    opacity 0.15s;
+}
+
+.press:active:not(:disabled) {
+  scale: 0.92;
+  transition-duration: 0.08s;
+}
+
+/* Translucent chrome: content stays faintly visible as it scrolls beneath. */
+.material-bar {
+  background: color-mix(in oklab, var(--color-cream) 78%, transparent);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .material-bar {
+    background: var(--color-cream);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}
+
+@media (prefers-contrast: more) {
+  .material-bar {
+    background: var(--color-cream);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border-color: var(--color-charcoal);
+  }
 }
 
 .grain::after {
@@ -502,6 +555,17 @@ html[dir="rtl"] .marquee-track {
   }
 }
 
+@keyframes lightbox-enter {
+  from {
+    opacity: 0;
+    transform: translateX(var(--enter-x, 0));
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
 @keyframes slide-up {
   from {
     transform: translateY(100%);
@@ -564,5 +628,10 @@ html[dir="rtl"] .progress-indeterminate {
   [data-reveal] {
     opacity: 1;
     transform: none;
+  }
+
+  .press:active,
+  .btn:active {
+    scale: none;
   }
 }
