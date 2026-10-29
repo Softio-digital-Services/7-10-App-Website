@@ -40,7 +40,7 @@ export default async function OrderPage({ params, searchParams }: { params: Para
       <div className="container-x py-20 md:py-28">
         <div className="relative mx-auto max-w-xl border border-charcoal/15 px-6 py-14 text-center">
           <Brackets size="sm" inset="-1px" className="text-charcoal/60" />
-          <p className="eyebrow text-charcoal/55">{t.order.number}</p>
+          <p className="eyebrow text-charcoal/65">{t.order.number}</p>
           <p className="mt-2 font-display text-3xl tracking-wider" dir="ltr">{orderNumber}</p>
           <p className="mx-auto mt-6 max-w-sm text-charcoal/70">{t.order.notFound}</p>
           <Link href={`/track?o=${encodeURIComponent(orderNumber)}`} className="btn btn-primary mt-8">
@@ -115,7 +115,7 @@ export default async function OrderPage({ params, searchParams }: { params: Para
 
       <div className="container-x grid gap-14 py-16 md:py-24 lg:grid-cols-12 lg:gap-16">
         <div className="lg:col-span-7">
-          <p className="eyebrow text-charcoal/55">{t.order.status}</p>
+          <p className="eyebrow text-charcoal/65">{t.order.status}</p>
           <div className="mt-6">
             <OrderTimeline status={order.status} labels={t.track.statuses} />
           </div>
@@ -156,8 +156,8 @@ export default async function OrderPage({ params, searchParams }: { params: Para
         <aside className="lg:col-span-5">
           <div className="bg-cream-2 p-6 md:p-8">
             <div className="flex items-center justify-between">
-              <p className="eyebrow text-charcoal/60">{t.order.items}</p>
-              <p className="text-[12.5px] text-charcoal/50">{fmt(t.track.placedOn, { date: formatDate(order.createdAt, locale) })}</p>
+              <p className="eyebrow text-charcoal/65">{t.order.items}</p>
+              <p className="text-[12.5px] text-charcoal/65">{fmt(t.track.placedOn, { date: formatDate(order.createdAt, locale) })}</p>
             </div>
             <ul className="mt-5 divide-y divide-charcoal/10">
               {order.items.map((item) => {
@@ -171,7 +171,7 @@ export default async function OrderPage({ params, searchParams }: { params: Para
                     <div className="flex min-w-0 flex-1 justify-between gap-3">
                       <div className="min-w-0">
                         <p className="truncate text-[14.5px] font-medium">{name}</p>
-                        <p className="mt-0.5 text-[13px] text-charcoal/55">
+                        <p className="mt-0.5 text-[13px] text-charcoal/65">
                           {t.bag.size}: <span dir="ltr">{item.variant.size}</span> · ×{item.quantity}
                         </p>
                       </div>
@@ -198,18 +198,18 @@ export default async function OrderPage({ params, searchParams }: { params: Para
 
             <div className="mt-8 grid gap-6 border-t border-charcoal/10 pt-6 text-[14px] sm:grid-cols-2">
               <div>
-                <p className="eyebrow text-[10px] text-charcoal/55">{t.order.deliverTo}</p>
+                <p className="eyebrow text-[10px] text-charcoal/65">{t.order.deliverTo}</p>
                 <p className="mt-2 font-medium">{order.customerName}</p>
                 <p className="text-charcoal/70" dir="ltr">{order.customerPhone}</p>
                 <p className="mt-1 text-charcoal/70">{address}</p>
               </div>
               <div>
-                <p className="eyebrow text-[10px] text-charcoal/55">{t.order.payment}</p>
+                <p className="eyebrow text-[10px] text-charcoal/65">{t.order.payment}</p>
                 <p className="mt-2">{online ? t.order.whish : t.order.cod}</p>
                 {order.paymentStatus === "PAID" && online ? (
                   <p className="mt-1 text-[13px] text-olive">{t.order.payOk}</p>
                 ) : unpaid ? (
-                  <p className="mt-1 text-[13px] text-charcoal/55">{t.order.waitingPay}</p>
+                  <p className="mt-1 text-[13px] text-charcoal/65">{t.order.waitingPay}</p>
                 ) : null}
               </div>
             </div>

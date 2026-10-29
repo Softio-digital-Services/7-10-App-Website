@@ -32,6 +32,12 @@ export const en = {
     adding: "Adding…",
     added: "Added",
     soldOut: "Sold out",
+    language: "Language",
+    pauseTicker: "Pause scrolling text",
+    playTicker: "Resume scrolling text",
+    breadcrumb: "Breadcrumb",
+    mainNav: "Main menu",
+    homeLink: "7.10 — Home",
     new: "New",
     free: "Free",
     home: "Home",
@@ -46,12 +52,14 @@ export const en = {
   announcement: [
     "Cash on delivery all over Lebanon",
     "Free delivery on orders over {free}",
-    "Drop 01 — 07.10.2026",
+    "Drop 01 — {launch}",
     "Easy exchange within {days} days",
   ],
   categories: {} as Record<string, string>,
   home: {
     heroLabel: "Drop 01 — First release",
+    dropTag: "Drop 01",
+    ticker: ["Utility", "Essentials", "Drop 01"],
     heroTitleA: "Ready for",
     heroTitleB: "every mission",
     heroBody:
@@ -76,7 +84,7 @@ export const en = {
     storyCta: "Read the story",
     stats: [
       { value: "01", label: "First drop" },
-      { value: "08", label: "Governorates we deliver to" },
+      { value: "09", label: "Governorates we deliver to" },
       { value: "07", label: "Days to exchange" },
     ],
     featuredLabel: "Field-tested",
@@ -194,6 +202,7 @@ export const en = {
   },
   bag: {
     title: "Your bag",
+    stockChanged: "Stock changed while you were away. We updated your bag:",
     empty: "Your bag is empty.",
     emptyBody: "Everything you add will show up here.",
     subtotal: "Subtotal",
@@ -246,7 +255,9 @@ export const en = {
     place: "Place order",
     placing: "Placing order…",
     remember: "Save my details for next time",
-    terms: "By placing your order you agree to our delivery and exchange policy.",
+    terms: "By placing your order you agree to our {terms} and {privacy}.",
+    termsLink: "terms of sale",
+    privacyLink: "privacy policy",
     editBag: "Edit bag",
     emptyTitle: "Your bag is empty",
     emptyBody: "Add a few pieces before checking out.",
@@ -260,7 +271,6 @@ export const en = {
     step: "Step",
     showSummary: "Show order summary",
     hideSummary: "Hide order summary",
-    privacy: "Your details are only used to deliver your order.",
     fixErrors: "Please check the highlighted fields.",
     fee: "Delivery {fee}",
     freeFee: "Free delivery",
@@ -334,7 +344,8 @@ export const en = {
       { title: "Clarity", body: "A tight palette and clean cuts that work together, every time." },
     ],
     dateLabel: "Launch day",
-    dateBody: "Our first drop goes live on 7 October 2026.",
+    dateBody: "Our first drop goes live on {date}.",
+    dateBodyLive: "Our first drop went live on {date}.",
     cta: "Shop the drop",
   },
   help: {
@@ -453,16 +464,131 @@ export const en = {
     support: "Support",
     brand: "Brand",
     newsletter: "Drop alerts",
-    rights: "© 2026 — 7.10 Brand",
+    rights: "© {year} — 7.10 Brand",
     payments: "Cash on delivery · Whish Money",
     follow: "Follow",
   },
   soon: {
     label: "7.10 — First release",
     title: "Soon",
-    body: "We're working on something special. 7.10 launches on 7 October 2026.",
+    body: "We're working on something special. 7.10 launches on {date}.",
     notify: "Be first in line — we'll email you the moment the drop goes live.",
     follow: "Follow the countdown",
+  },
+  error: {
+    title: "Something broke",
+    body: "We couldn't load this page. Try again in a moment, or message us on WhatsApp and we'll help with your order.",
+    retry: "Try again",
+    whatsapp: "WhatsApp us",
+  },
+  legal: {
+    updated: "Last updated: {date}",
+    contactLine: "Questions? Email {email} or message us on WhatsApp.",
+    privacy: {
+      title: "Privacy policy",
+      intro:
+        "This policy explains what personal information 7.10 Brand collects when you use this website, why we collect it, and the choices you have.",
+      sections: [
+        {
+          title: "What we collect",
+          body: [
+            "When you order: your name, phone number, email (optional), governorate, city, delivery address and any notes you add.",
+            "When you create an account: your name, email and a password, which we store only in hashed form. If you sign in with Google, we receive your name, email and profile picture from Google.",
+            "When you contact us, join drop alerts or ask to be told when an item is back in stock: the details you type into that form.",
+            "Basic technical data our hosting provider records to keep the site running and secure, such as your IP address and browser type.",
+          ],
+        },
+        {
+          title: "How we use it",
+          body: [
+            "To prepare, deliver and support your order, and to call or message you about it.",
+            "To send the emails you asked for: order updates, drop alerts and back-in-stock notices.",
+            "To answer your messages, and to prevent fraud and abuse of the site.",
+            "We do not sell your information, and we do not use advertising or analytics trackers.",
+          ],
+        },
+        {
+          title: "Who we share it with",
+          body: [
+            "Our delivery partner receives your name, phone number and address to deliver your order.",
+            "Whish Money handles online payments. We never see or store your card or wallet details.",
+            "Our hosting, database and email providers store data on our behalf and may not use it for anything else.",
+            "We may disclose information when Lebanese law requires it.",
+          ],
+        },
+        {
+          title: "Cookies and storage",
+          body: [
+            "We use only the cookies the shop needs: your sign-in session, your language, and a list of orders placed from your device so you can reopen them.",
+            "Your bag is saved in your browser so it survives a refresh. None of these are used for advertising.",
+          ],
+        },
+        {
+          title: "How long we keep it",
+          body: [
+            "Order records are kept as long as accounting and consumer law require. Account details are kept until you ask us to delete your account.",
+            "You can unsubscribe from drop alerts at any time by replying to any of our emails or messaging us.",
+          ],
+        },
+        {
+          title: "Your rights",
+          body: [
+            "You can ask to see, correct or delete the personal information we hold about you. Contact us and we will reply within 30 days.",
+          ],
+        },
+      ],
+    },
+    terms: {
+      title: "Terms of sale",
+      intro: "These terms apply to every order placed on this website. By placing an order you accept them.",
+      sections: [
+        {
+          title: "Orders",
+          body: [
+            "Your order is confirmed when you see the confirmation page with your order number. We may call or message you to confirm the details.",
+            "If an item turns out to be unavailable, or a price was shown in error, we will contact you before delivery and you can change or cancel the order.",
+          ],
+        },
+        {
+          title: "Prices and payment",
+          body: [
+            "Prices are in US dollars and include any discount shown. The delivery fee for your governorate is added at checkout; delivery is free on orders over {free}.",
+            "You can pay cash on delivery or with Whish Money. A Whish order that is not paid within one hour is cancelled automatically and its items go back on sale.",
+          ],
+        },
+        {
+          title: "Delivery",
+          body: [
+            "We deliver anywhere in Lebanon, usually within {delivery} working days. Our courier will call you before arriving.",
+            "Please make sure someone can receive the order. If delivery fails because nobody answers, we may ask for the delivery fee again to resend it.",
+          ],
+        },
+        {
+          title: "Exchanges",
+          body: [
+            "You can exchange an item within {days} days of delivery if it is unworn, unwashed and still has its original tags. Sale items can be exchanged for a different size only.",
+            "Message us on WhatsApp with your order number to arrange an exchange. If an item arrives faulty or wrong, we cover the exchange delivery.",
+          ],
+        },
+        {
+          title: "Cancellations",
+          body: ["You can cancel free of charge by messaging us before your order is packed."],
+        },
+        {
+          title: "Your account",
+          body: [
+            "Keep your password private. You are responsible for orders placed from your account. We may close accounts used for fraud or abuse.",
+          ],
+        },
+        {
+          title: "Liability and law",
+          body: [
+            "Nothing in these terms limits your rights under Lebanese consumer protection law. These terms are governed by the laws of Lebanon.",
+            "We may update these terms; the version shown when you place an order is the one that applies to it.",
+          ],
+        },
+      ],
+    },
   },
   notFound: {
     title: "Off the map",

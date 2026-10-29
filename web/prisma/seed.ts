@@ -1,5 +1,14 @@
+import { existsSync } from "node:fs";
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
+
+if (!process.env.DATABASE_URL && existsSync(".env")) process.loadEnvFile(".env");
+
+// Demo catalogue + a known admin password: local development only. Use `npm run admin:create` for the live store.
+if (/^(libsql|https?|wss?):\/\//.test(process.env.DATABASE_URL ?? "")) {
+  console.error("Refusing to seed a hosted database. Run `npm run admin:create -- <email>` to create the live admin.");
+  process.exit(1);
+}
 
 const prisma = new PrismaClient();
 

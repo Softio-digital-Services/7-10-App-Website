@@ -1,6 +1,11 @@
 import { createClient } from "@libsql/client";
 
 const dbPath = "file:C:/Users/Baraa/AppData/Local/SevenTenInventory/Data/inventory.db";
+// Writes TEST products into this PC's desktop database; once that laptop syncs, they reach the live storefront.
+if (process.env.ALLOW_TEST_SEED !== "1") {
+  console.error("Test data seed: set ALLOW_TEST_SEED=1 to run it, and never on a laptop linked to the live shop.");
+  process.exit(1);
+}
 const client = createClient({ url: dbPath });
 
 const now = () => {
@@ -381,7 +386,7 @@ async function seed() {
           sql: `INSERT INTO stock_levels (part_id, warehouse_id, quantity, reorder_level) VALUES (?, 3, ?, ?)`,
           args: [partId, v.stock, item.min_stock],
         });
-      } catch (err) {
+      } catch {
         // Warehouse 3 might not exist or already set
       }
     }

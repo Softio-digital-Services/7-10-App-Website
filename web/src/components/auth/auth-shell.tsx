@@ -38,13 +38,13 @@ export function AuthShell({ t, title, body, children }: AuthShellProps) {
 
       <div className="flex flex-col justify-center lg:col-span-6 lg:py-8 xl:px-8">
         <div className="mx-auto w-full max-w-md">
-          <p className="eyebrow flex items-center gap-3 text-charcoal/60">
+          <p className="eyebrow flex items-center gap-3 text-charcoal/65">
             <span className="dot-signal" /> {t.auth.accountLabel}
           </p>
           <h1 className="display mt-4 text-5xl md:text-6xl">{title}</h1>
           <p className="mt-4 text-[15.5px] leading-relaxed text-charcoal/70">{body}</p>
           <div className="mt-10">{children}</div>
-          <div className="mt-10 flex items-start gap-3 border-t border-charcoal/10 pt-6 text-[13.5px] text-charcoal/60">
+          <div className="mt-10 flex items-start gap-3 border-t border-charcoal/10 pt-6 text-[13.5px] text-charcoal/65">
             <span className="mt-1.5 h-0 w-0 shrink-0 border-x-[4px] border-t-[7px] border-x-transparent border-t-signal" aria-hidden="true" />
             <p>
               {t.auth.guestHint}{" "}

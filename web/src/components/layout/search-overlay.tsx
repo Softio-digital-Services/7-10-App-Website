@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { ArrowRight, Search, X } from "lucide-react";
 import { useI18n } from "@/components/i18n-provider";
+import { useDialogFocus } from "@/components/use-dialog-focus";
 import { useLockBody } from "@/components/use-lock-body";
 import { formatPrice } from "@/lib/format";
 import type { StoreProduct } from "@/lib/catalog";
@@ -17,6 +18,7 @@ export function SearchOverlay({ open, onClose }: { open: boolean; onClose: () =>
   const [q, setQ] = useState("");
   const [found, setFound] = useState<{ key: string; products: StoreProduct[]; total: number } | null>(null);
   useLockBody(open);
+  const focusRef = useDialogFocus(open);
 
   const term = q.trim();
   const searching = term.length >= 2;
@@ -62,7 +64,7 @@ export function SearchOverlay({ open, onClose }: { open: boolean; onClose: () =>
   };
 
   return (
-    <div className={`fixed inset-0 z-[60] ${open ? "pointer-events-auto" : "pointer-events-none"}`} aria-hidden={!open} inert={!open}>
+    <div ref={focusRef} className={`fixed inset-0 z-[60] ${open ? "pointer-events-auto" : "pointer-events-none"}`} aria-hidden={!open} inert={!open}>
       <div
         className={`absolute inset-0 bg-charcoal/55 backdrop-blur-[2px] transition-opacity duration-500 ${open ? "opacity-100" : "opacity-0"}`}
         onClick={onClose}
@@ -93,10 +95,10 @@ export function SearchOverlay({ open, onClose }: { open: boolean; onClose: () =>
           </form>
 
           <div className="min-h-40 py-8">
-            {term.length < 2 && <p className="text-charcoal/55">{t.common.searchEmpty}</p>}
+            {term.length < 2 && <p className="text-charcoal/65">{t.common.searchEmpty}</p>}
 
             {term.length >= 2 && !loading && results.length === 0 && (
-              <p className="text-charcoal/55">{f(t.common.searchNoResults, { q: term })}</p>
+              <p className="text-charcoal/65">{f(t.common.searchNoResults, { q: term })}</p>
             )}
 
             {results.length > 0 && (
@@ -111,7 +113,7 @@ export function SearchOverlay({ open, onClose }: { open: boolean; onClose: () =>
                           )}
                         </div>
                         <p className="mt-3 text-sm font-medium">{p.name}</p>
-                        <p className="text-sm text-charcoal/60" dir="ltr">{formatPrice(p.price)}</p>
+                        <p className="text-sm text-charcoal/65" dir="ltr">{formatPrice(p.price)}</p>
                       </Link>
                     </li>
                   ))}

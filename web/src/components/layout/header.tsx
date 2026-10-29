@@ -91,7 +91,7 @@ export function Header({ categories }: { categories: StoreCategory[] }) {
             >
               <Menu className="h-5 w-5" strokeWidth={1.5} />
             </button>
-            <nav className="hidden h-full items-center gap-9 lg:flex" aria-label="Primary">
+            <nav className="hidden h-full items-center gap-9 lg:flex" aria-label={t.common.mainNav}>
               <NavItem href="/shop" label={t.common.shop} active={isShop} onMouseEnter={openMega} onFocus={openMega} />
               <NavItem href="/shop?sort=new" label={t.common.newIn} active={false} onMouseEnter={closeMega} />
               <NavItem href="/about" label={t.common.about} active={pathname === "/about"} onMouseEnter={closeMega} />
@@ -99,7 +99,7 @@ export function Header({ categories }: { categories: StoreCategory[] }) {
             </nav>
           </div>
 
-          <Link href="/" className="flex items-center gap-3" aria-label="7.10 — Home">
+          <Link href="/" className="flex items-center gap-3" aria-label={t.common.homeLink}>
             <LogoMark className="h-7 w-auto md:h-8" tone={overlay ? "silver" : "charcoal"} />
             <span className="hidden font-display text-sm font-semibold uppercase keep-tracking tracking-[0.3em] xs:inline" dir="ltr">
               7.10 Brand
@@ -160,7 +160,7 @@ export function Header({ categories }: { categories: StoreCategory[] }) {
         >
           <div className="container-x grid grid-cols-12 gap-10 py-10">
             <div className="col-span-4">
-              <p className="eyebrow text-charcoal/50">{t.home.categoriesLabel}</p>
+              <p className="eyebrow text-charcoal/65">{t.home.categoriesLabel}</p>
               <ul className="mt-5 space-y-1">
                 <li>
                   <Link href="/shop" className="group flex items-baseline justify-between py-1.5">
@@ -172,12 +172,12 @@ export function Header({ categories }: { categories: StoreCategory[] }) {
                   <li key={c.slug}>
                     <Link href={`/shop?c=${c.slug}`} className="group flex items-baseline justify-between py-1.5">
                       <span className="flex items-baseline gap-3">
-                        <span className="font-display text-[11px] text-charcoal/40" dir="ltr">
+                        <span className="font-display text-[11px] text-charcoal/65" dir="ltr">
                           0{i + 1}
                         </span>
                         <span className="display text-3xl transition-colors group-hover:text-olive">{c.name}</span>
                       </span>
-                      <span className="font-display text-xs text-charcoal/40" dir="ltr">
+                      <span className="font-display text-xs text-charcoal/65" dir="ltr">
                         ({c.count})
                       </span>
                     </Link>

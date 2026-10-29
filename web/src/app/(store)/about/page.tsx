@@ -8,16 +8,17 @@ import { Countdown } from "@/components/countdown";
 import { Img } from "@/components/img";
 import { Reveal } from "@/components/reveal";
 import { editorial } from "@/lib/editorial";
+import { alternatesFor, fmt } from "@/lib/i18n";
 import { getI18n } from "@/lib/i18n/server";
-import { isBeforeLaunch, store } from "@/lib/store-config";
+import { isBeforeLaunch, launchDateLong, launchStamp, store } from "@/lib/store-config";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const { dict } = await getI18n();
-  return { title: dict.common.about, description: dict.about.intro };
+  const { dict, locale } = await getI18n();
+  return { alternates: alternatesFor("/about", locale), title: dict.common.about, description: dict.about.intro };
 }
 
 export default async function AboutPage() {
-  const { dict: t } = await getI18n();
+  const { dict: t, locale } = await getI18n();
   const beforeLaunch = isBeforeLaunch();
 
   return (
@@ -68,7 +69,7 @@ export default async function AboutPage() {
             <div className="mt-10 divide-y divide-charcoal/10 border-y border-charcoal/10">
               {t.about.values.map((v, i) => (
                 <Reveal key={v.title} delay={i * 0.06} className="flex gap-6 py-8">
-                  <span className="font-display text-[12px] text-charcoal/40" dir="ltr">[0{i + 1}]</span>
+                  <span className="font-display text-[12px] text-charcoal/65" dir="ltr">[0{i + 1}]</span>
                   <div>
                     <h3 className="display text-3xl md:text-4xl">{v.title}</h3>
                     <p className="mt-3 max-w-md text-[15.5px] leading-relaxed text-charcoal/70">{v.body}</p>
@@ -95,12 +96,14 @@ export default async function AboutPage() {
       {/* LAUNCH */}
       <section className="relative overflow-hidden bg-charcoal text-cream">
         <span aria-hidden="true" className="text-outline pointer-events-none absolute inset-x-0 top-1/2 -translate-y-1/2 select-none text-center font-display text-[24vw] font-semibold leading-none opacity-60" dir="ltr">
-          07.10.26
+          {launchStamp().slice(0, 6) + launchStamp().slice(-2)}
         </span>
         <div className="container-x relative grid gap-12 py-20 md:py-32 lg:grid-cols-2 lg:items-end">
           <Reveal>
             <SectionLabel index="03" tone="light">{t.about.dateLabel}</SectionLabel>
-            <p className="display mt-6 text-5xl md:text-7xl">{t.about.dateBody}</p>
+            <p className="display mt-6 text-5xl md:text-7xl">
+              {fmt(beforeLaunch ? t.about.dateBody : t.about.dateBodyLive, { date: launchDateLong(locale) })}
+            </p>
           </Reveal>
           <Reveal delay={0.1} className="flex flex-col items-start gap-8 lg:justify-self-end">
             {beforeLaunch && <Countdown target={store.launchAt} />}

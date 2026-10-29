@@ -37,7 +37,7 @@ export function PayWhishButton({ orderNumber }: { orderNumber: string }) {
         {busy ? <LoaderCircle className="h-4 w-4 animate-spin" /> : null}
         {busy ? t.checkout.openingWhish : t.checkout.payWhish}
       </button>
-      {error ? <p className="mt-3 text-[13px] text-signal">{error}</p> : null}
+      {error ? <p className="mt-3 text-[13px] text-signal-ink">{error}</p> : null}
     </div>
   );
 }

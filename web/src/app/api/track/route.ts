@@ -3,30 +3,16 @@ import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { phonesMatch } from "@/lib/format";
 import { normalizeOrderNumber, orderInclude } from "@/lib/orders";
+import { MINUTE, limitByIp } from "@/lib/rate-limit";
 
 const schema = z.object({
   orderNumber: z.string().trim().min(4).max(20),
   phone: z.string().trim().min(6).max(24),
 });
 
-const attempts = new Map<string, { count: number; resetAt: number }>();
-const WINDOW_MS = 10 * 60 * 1000;
-const MAX_ATTEMPTS = 20;
-
-function limited(ip: string) {
-  const now = Date.now();
-  const entry = attempts.get(ip);
-  if (!entry || entry.resetAt < now) {
-    attempts.set(ip, { count: 1, resetAt: now + WINDOW_MS });
-    return false;
-  }
-  entry.count += 1;
-  return entry.count > MAX_ATTEMPTS;
-}
-
 export async function POST(request: Request) {
-  const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "local";
-  if (limited(ip)) return NextResponse.json({ error: "rate" }, { status: 429 });
+  const limited = await limitByIp(request, "track", 20, 10 * MINUTE);
+  if (limited) return limited;
 
   const parsed = schema.safeParse(await request.json().catch(() => null));
   if (!parsed.success) return NextResponse.json({ error: "invalid" }, { status: 400 });

@@ -1,12 +1,15 @@
 import { NextResponse } from "next/server";
+import { rememberedOrders } from "@/lib/orders";
 import { settleWhishPayment } from "@/lib/whish-settle";
 
 export async function GET(request: Request) {
-  const number = await settleWhishPayment(request.url, "success").catch((err) => {
+  const number = await settleWhishPayment(request.url).catch((err) => {
     console.error("[whish:success]", err);
     return null;
   });
-  const dest = number ? `/order/${encodeURIComponent(number)}?pay=ok` : "/track?pay=ok";
+  // Only the shopper who placed the order is sent to it; anyone else learns nothing from the externalId.
+  const own = number && (await rememberedOrders()).includes(number);
+  const dest = own ? `/order/${encodeURIComponent(number)}?pay=ok` : "/track?pay=ok";
   return NextResponse.redirect(new URL(dest, request.url));
 }
 

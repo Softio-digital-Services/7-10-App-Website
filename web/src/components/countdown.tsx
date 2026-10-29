@@ -45,8 +45,8 @@ export function Countdown({ target, tone = "light", onDone }: { target: string; 
   ];
 
   const border = tone === "light" ? "border-cream/20 divide-cream/20" : "border-charcoal/15 divide-charcoal/15";
-  const muted = tone === "light" ? "text-cream/70" : "text-charcoal/60";
-  const faint = tone === "light" ? "text-cream/40" : "text-charcoal/40";
+  const muted = tone === "light" ? "text-cream/70" : "text-charcoal/65";
+  const faint = tone === "light" ? "text-cream/40" : "text-charcoal/65";
 
   return (
     <div className={`grid w-full max-w-md grid-cols-4 divide-x rtl:divide-x-reverse border ${border}`} role="timer" aria-live="off">

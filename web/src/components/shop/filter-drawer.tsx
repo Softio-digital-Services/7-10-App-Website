@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { Check, LoaderCircle, X } from "lucide-react";
 import { useI18n } from "@/components/i18n-provider";
+import { useDialogFocus } from "@/components/use-dialog-focus";
 import { useDragDismiss } from "@/components/use-drag-dismiss";
 import { useLockBody } from "@/components/use-lock-body";
 import type { SortKey } from "@/lib/catalog";
@@ -23,6 +24,7 @@ type FilterDrawerProps = {
 export function FilterDrawer({ open, onClose, sizes, filters, total, pending, sortOptions, onChange, onClear }: FilterDrawerProps) {
   const { t, f, dir } = useI18n();
   useLockBody(open);
+  const focusRef = useDialogFocus(open);
   const { panelRef, backdropRef, panelProps } = useDragDismiss<HTMLDivElement, HTMLDivElement>({ side: "start", dir, onClose });
 
   useEffect(() => {
@@ -39,6 +41,7 @@ export function FilterDrawer({ open, onClose, sizes, filters, total, pending, so
 
   return (
     <div
+      ref={focusRef}
       className={`fixed inset-0 z-[70] ${open ? "pointer-events-auto" : "pointer-events-none"}`}
       aria-hidden={!open}
       inert={!open}
@@ -61,7 +64,7 @@ export function FilterDrawer({ open, onClose, sizes, filters, total, pending, so
         <div className="flex h-16 items-center justify-between border-b border-charcoal/10 px-6 md:h-[76px]">
           <p className="display text-2xl">
             {t.shop.filter}
-            {refinements > 0 && <span className="ms-2 font-display text-base text-charcoal/40" dir="ltr">({refinements})</span>}
+            {refinements > 0 && <span className="ms-2 font-display text-base text-charcoal/65" dir="ltr">({refinements})</span>}
           </p>
           <button type="button" onClick={onClose} className="press -me-2 grid h-11 w-11 place-items-center" aria-label={t.common.close}>
             <X className="h-5 w-5" strokeWidth={1.5} />
@@ -145,7 +148,7 @@ export function FilterDrawer({ open, onClose, sizes, filters, total, pending, so
 function FilterSection({ title, children, last }: { title: string; children: React.ReactNode; last?: boolean }) {
   return (
     <section className={`py-6 ${last ? "" : "border-b border-charcoal/10"}`}>
-      <h3 className="eyebrow mb-4 text-charcoal/55">{title}</h3>
+      <h3 className="eyebrow mb-4 text-charcoal/65">{title}</h3>
       {children}
     </section>
   );

@@ -104,7 +104,7 @@ export function ShopView({ products, categories, sizes, scopeTotal, filters }: S
     <>
       {/* HEADER */}
       <section className="container-x pt-8 md:pt-12">
-        <nav className="flex items-center gap-2 text-[12.5px] text-charcoal/50" aria-label="Breadcrumb">
+        <nav className="flex items-center gap-2 text-[12.5px] text-charcoal/65" aria-label={t.common.breadcrumb}>
           <Link href="/" className="hover:text-charcoal">{t.common.home}</Link>
           <span aria-hidden="true">/</span>
           <Link href="/shop" className="hover:text-charcoal">{t.common.shop}</Link>
@@ -123,7 +123,7 @@ export function ShopView({ products, categories, sizes, scopeTotal, filters }: S
             </SectionLabel>
             <h1 className="display mt-4 text-[3.2rem] leading-[0.92] sm:text-7xl md:text-8xl">
               {title}
-              <sup className="ms-2 align-top font-display text-base font-normal text-charcoal/40 md:ms-3 md:text-2xl" dir="ltr">
+              <sup className="ms-2 align-top font-display text-base font-normal text-charcoal/65 md:ms-3 md:text-2xl" dir="ltr">
                 ({products.length})
               </sup>
             </h1>
@@ -183,7 +183,7 @@ export function ShopView({ products, categories, sizes, scopeTotal, filters }: S
               {view.inStock && <ActivePill label={t.shop.inStockOnly} onRemove={() => apply({ inStock: false })} removeLabel={f(t.shop.remove, { name: t.shop.inStockOnly })} />}
               {view.sale && <ActivePill label={t.shop.onSale} onRemove={() => apply({ sale: false })} removeLabel={f(t.shop.remove, { name: t.shop.onSale })} />}
               {refinements > 1 && (
-                <button type="button" onClick={clearAll} className="shrink-0 px-2 text-[12.5px] text-charcoal/60 underline underline-offset-4 hover:text-charcoal">
+                <button type="button" onClick={clearAll} className="shrink-0 px-2 text-[12.5px] text-charcoal/65 underline underline-offset-4 hover:text-charcoal">
                   {t.shop.clear}
                 </button>
               )}
@@ -195,7 +195,7 @@ export function ShopView({ products, categories, sizes, scopeTotal, filters }: S
                 <select
                   value={view.sort}
                   onChange={(e) => apply({ sort: e.target.value as SortKey })}
-                  className="h-10 cursor-pointer appearance-none bg-transparent pe-7 ps-2 text-[13.5px] font-medium focus:outline-none"
+                  className="h-10 cursor-pointer appearance-none bg-transparent pe-7 ps-2 text-[13.5px] font-medium"
                 >
                   {sortOptions.map((o) => (
                     <option key={o.value} value={o.value}>
@@ -256,7 +256,7 @@ export function ShopView({ products, categories, sizes, scopeTotal, filters }: S
                 {t.shop.emptyCta}
               </button>
             )}
-            <p className="eyebrow mt-10 text-charcoal/50">{t.shop.tryCategories}</p>
+            <p className="eyebrow mt-10 text-charcoal/65">{t.shop.tryCategories}</p>
             <div className="mt-4 flex flex-wrap justify-center gap-2">
               {categories.map((c) => (
                 <Link key={c.slug} href={`/shop?c=${c.slug}`} className="border border-charcoal/20 px-4 py-2 text-[13.5px] transition-colors hover:border-charcoal hover:bg-charcoal hover:text-cream">
@@ -322,7 +322,7 @@ function CategoryChip({ active, onClick, label, count }: { active: boolean; onCl
       }`}
     >
       {label}
-      <span className={`font-display text-[11px] ${active ? "text-cream/60" : "text-charcoal/40"}`} dir="ltr">
+      <span className={`font-display text-[11px] ${active ? "text-cream/60" : "text-charcoal/65"}`} dir="ltr">
         {String(count).padStart(2, "0")}
       </span>
     </button>
@@ -333,7 +333,7 @@ function ActivePill({ label, onRemove, removeLabel }: { label: string; onRemove:
   return (
     <span className="flex h-8 shrink-0 items-center gap-1 bg-cream-2 ps-3 text-[12.5px]">
       {label}
-      <button type="button" onClick={onRemove} aria-label={removeLabel} className="grid h-8 w-8 place-items-center text-charcoal/60 hover:text-charcoal">
+      <button type="button" onClick={onRemove} aria-label={removeLabel} className="grid h-8 w-8 place-items-center text-charcoal/65 hover:text-charcoal">
         <X className="h-3.5 w-3.5" />
       </button>
     </span>

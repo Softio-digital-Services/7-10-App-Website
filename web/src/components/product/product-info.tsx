@@ -113,10 +113,10 @@ export function ProductInfo({ product }: { product: StoreProduct }) {
   return (
     <div>
       <div className="flex items-center justify-between gap-4">
-        <Link href={`/shop?c=${product.categorySlug}`} className="eyebrow text-charcoal/55 hover:text-charcoal">
+        <Link href={`/shop?c=${product.categorySlug}`} className="eyebrow text-charcoal/65 hover:text-charcoal">
           {product.category}
         </Link>
-        <button type="button" onClick={share} className="flex items-center gap-2 text-[12.5px] text-charcoal/60 hover:text-charcoal">
+        <button type="button" onClick={share} className="flex items-center gap-2 text-[12.5px] text-charcoal/65 hover:text-charcoal">
           {shared ? <Check className="h-4 w-4" /> : <Share2 className="h-4 w-4" strokeWidth={1.5} />}
           {shared ? t.product.copied : t.product.share}
         </button>
@@ -125,10 +125,10 @@ export function ProductInfo({ product }: { product: StoreProduct }) {
       <h1 className="display mt-3 text-[2.6rem] leading-[0.95] md:text-5xl xl:text-[3.6rem]">{product.name}</h1>
 
       <div className="mt-5 flex items-baseline gap-3" dir="ltr">
-        <span className={`text-2xl font-medium ${product.compareAt ? "text-signal" : ""}`}>{formatPrice(product.price)}</span>
+        <span className={`text-2xl font-medium ${product.compareAt ? "text-signal-ink" : ""}`}>{formatPrice(product.price)}</span>
         {product.compareAt && (
           <>
-            <span className="text-lg text-charcoal/40 line-through">{formatPrice(product.compareAt)}</span>
+            <span className="text-lg text-charcoal/65 line-through">{formatPrice(product.compareAt)}</span>
             <span className="bg-signal px-2 py-0.5 font-display text-[12px] text-white">−{product.discount}%</span>
           </>
         )}
@@ -168,11 +168,12 @@ export function ProductInfo({ product }: { product: StoreProduct }) {
                   type="button"
                   role="radio"
                   aria-checked={active}
+                  aria-label={out ? `${s.size} — ${t.common.soldOut}` : undefined}
                   onClick={() => pickSize(s.size)}
                   className={`relative h-12 font-display text-[14px] tracking-wider transition-colors ${
                     active
                       ? out
-                        ? "border border-charcoal bg-cream-2 text-charcoal/50"
+                        ? "border border-charcoal bg-cream-2 text-charcoal/65"
                         : "bg-charcoal text-cream"
                       : out
                         ? "border border-charcoal/10 text-charcoal/30"
@@ -188,13 +189,13 @@ export function ProductInfo({ product }: { product: StoreProduct }) {
               );
             })}
           </div>
-          <p className={`mt-3 min-h-5 text-[13px] ${needSize ? "text-signal" : "text-charcoal/60"}`} aria-live="polite">
+          <p className={`mt-3 min-h-5 text-[13px] ${needSize ? "text-signal-ink" : "text-charcoal/65"}`} aria-live="polite">
             {needSize ? (
               t.product.chooseSizeFirst
             ) : selectedSoldOut ? (
               t.product.notifyTitle
             ) : lowStock ? (
-              <span className="flex items-center gap-2 text-signal">
+              <span className="flex items-center gap-2 text-signal-ink">
                 <span className="dot-signal pulse-signal" />
                 {f(t.product.onlyLeft, { n: selected!.stock })}
               </span>
@@ -218,9 +219,9 @@ export function ProductInfo({ product }: { product: StoreProduct }) {
               <button type="button" onClick={() => setQty((q) => Math.max(1, q - 1))} disabled={qty <= 1} className="grid h-full w-11 place-items-center hover:bg-charcoal/5 disabled:opacity-30" aria-label={t.bag.decrease}>
                 <Minus className="h-3.5 w-3.5" />
               </button>
-              <span className="w-8 text-center font-display text-[15px] tabular-nums" aria-label={t.product.quantity}>
+              <output className="w-8 text-center font-display text-[15px] tabular-nums" aria-label={t.product.quantity} aria-live="polite">
                 {qty}
-              </span>
+              </output>
               <button type="button" onClick={() => setQty((q) => Math.min(maxQty, q + 1))} disabled={qty >= maxQty} className="grid h-full w-11 place-items-center hover:bg-charcoal/5 disabled:opacity-30" aria-label={t.bag.increase}>
                 <Plus className="h-3.5 w-3.5" />
               </button>
@@ -240,7 +241,7 @@ export function ProductInfo({ product }: { product: StoreProduct }) {
             </button>
           </div>
         )}
-        {status === "capped" && <p className="mt-2 text-[13px] text-signal">{t.bag.maxStock}</p>}
+        {status === "capped" && <p className="mt-2 text-[13px] text-signal-ink">{t.bag.maxStock}</p>}
 
         <a
           href={whatsappLink(waMessage())}
@@ -311,7 +312,7 @@ export function ProductInfo({ product }: { product: StoreProduct }) {
             <p className="truncate text-[13.5px] font-medium">{product.name}</p>
             <p className="text-[13px] text-charcoal/65" dir="ltr">
               {formatPrice(product.price)}
-              {selected && <span className="ms-2 text-charcoal/45">· {selected.size}</span>}
+              {selected && <span className="ms-2 text-charcoal/65">· {selected.size}</span>}
             </p>
           </div>
           <button
@@ -393,7 +394,7 @@ function NotifyForm({ productId }: { productId: string }) {
           {state === "loading" ? <LoaderCircle className="h-4 w-4 animate-spin" /> : t.product.notifyCta}
         </button>
       </div>
-      {state === "error" && <p className="mt-2 text-[13px] text-signal">{t.checkout.errEmail}</p>}
+      {state === "error" && <p className="mt-2 text-[13px] text-signal-ink">{t.checkout.errEmail}</p>}
     </form>
   );
 }

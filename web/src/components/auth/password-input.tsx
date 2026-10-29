@@ -15,7 +15,7 @@ export function PasswordInput({ className = "", ...props }: PasswordInputProps) 
       <button
         type="button"
         onClick={() => setVisible((v) => !v)}
-        className="absolute inset-y-0 right-0 grid w-12 place-items-center text-charcoal/50 hover:text-charcoal"
+        className="absolute inset-y-0 right-0 grid w-12 place-items-center text-charcoal/65 hover:text-charcoal"
         aria-label={visible ? t.auth.hide : t.auth.show}
         aria-pressed={visible}
       >

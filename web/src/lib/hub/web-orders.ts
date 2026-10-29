@@ -1,5 +1,6 @@
 import { z } from "zod";
 import type { Prisma } from "@prisma/client";
+import { refreshCatalog } from "@/lib/catalog";
 import { prisma } from "@/lib/prisma";
 import { isWhishMethod } from "@/lib/whish";
 import { confirmWhishOrder } from "@/lib/whish-settle";
@@ -7,6 +8,8 @@ import { confirmWhishOrder } from "@/lib/whish-settle";
 const PART_PREFIX = "part-";
 /** A laptop that claimed an order but went quiet loses the claim after this long. */
 const CLAIM_TTL_MS = 10 * 60 * 1000;
+/** A Whish order nobody paid within this long is cancelled, so abandoned checkouts don't hold stock forever. */
+const UNPAID_TTL_MS = 60 * 60 * 1000;
 
 type Tx = Prisma.TransactionClient;
 
@@ -26,6 +29,42 @@ export async function reservedByExternalId() {
   return map;
 }
 
+/** Cancels website Whish orders still unpaid after UNPAID_TTL_MS and puts their units back on sale. */
+export async function releaseUnpaidWhishOrders() {
+  const stale = await prisma.order.findMany({
+    where: {
+      ...unsyncedWhere,
+      status: "PENDING",
+      paymentMethod: { in: ["WHISH", "CARD"] },
+      paymentStatus: { in: ["PENDING", "FAILED"] },
+      createdAt: { lt: new Date(Date.now() - UNPAID_TTL_MS) },
+    },
+    include: { items: true },
+    orderBy: { createdAt: "asc" },
+    take: 20,
+  });
+
+  let released = 0;
+  for (const o of stale) {
+    // Last look at Whish: a payment that went through late still wins.
+    if (o.paymentStatus === "PENDING" && (await confirmWhishOrder(o).catch(() => o.paymentStatus)) === "PAID") continue;
+    const done = await prisma.$transaction(async (tx) => {
+      const res = await tx.order.updateMany({
+        where: { id: o.id, status: "PENDING", paymentStatus: { not: "PAID" }, desktopRef: null },
+        data: { status: "CANCELLED" },
+      });
+      if (res.count !== 1) return false;
+      for (const item of o.items) {
+        await tx.productVariant.update({ where: { id: item.variantId }, data: { stock: { increment: item.quantity } } });
+      }
+      return true;
+    });
+    if (done) released++;
+  }
+  if (released) refreshCatalog();
+  return released;
+}
+
 export async function unsyncedOrderCount() {
   return prisma.order.count({ where: unsyncedWhere });
 }
@@ -35,6 +74,7 @@ export async function unsyncedOrderCount() {
  * so two laptops syncing at the same moment never both take the same order.
  */
 export async function claimWebOrders(deviceId: string) {
+  await releaseUnpaidWhishOrders().catch((err) => console.error("[release-unpaid]", err));
   const staleBefore = new Date(Date.now() - CLAIM_TTL_MS);
   const claimable: Prisma.OrderWhereInput = {
     ...unsyncedWhere,

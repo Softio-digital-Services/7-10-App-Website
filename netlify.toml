@@ -1,8 +1,10 @@
-# The Next.js app lives in /web. Set this file at the repo root so a default Netlify import works.
+# The Next.js app lives in /web. Keep this file at the repo root and leave "Base directory" empty in the
+# Netlify UI: this file sets it. (If the UI sets a base directory, Netlify ignores this file.)
 [build]
   base = "web"
-  command = "npx prisma generate && npm run build"
+  # `npm run build` already runs `prisma generate`.
+  command = "npm run build"
   publish = ".next"
 
 [build.environment]
-  NODE_VERSION = "20"
+  NODE_VERSION = "22"

@@ -7,8 +7,11 @@ import { ProductInfo } from "@/components/product/product-info";
 import { ProductRail } from "@/components/product-rail";
 import { RecentlyViewed } from "@/components/product/recently-viewed";
 import { getProductBySlug, getRelated } from "@/lib/catalog";
+import { alternatesFor } from "@/lib/i18n";
 import { getI18n } from "@/lib/i18n/server";
-import { store } from "@/lib/store-config";
+import { regions, store } from "@/lib/store-config";
+
+const absolute = (url: string) => (url.startsWith("http") ? url : `${store.siteUrl}${url}`);
 
 type Params = Promise<{ slug: string }>;
 
@@ -21,11 +24,16 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
   return {
     title: product.name,
     description,
-    alternates: { canonical: `/products/${product.slug}` },
+    alternates: alternatesFor(`/products/${product.slug}`, locale),
     openGraph: {
+      // Repeats the root fields: a page-level openGraph replaces the layout's instead of merging with it.
+      type: "website",
+      siteName: "7.10 Brand",
+      locale: locale === "ar" ? "ar_LB" : "en_US",
+      url: `/products/${product.slug}`,
       title: product.name,
       description,
-      images: product.images.slice(0, 1).map((url) => ({ url, width: 1200, height: 1600, alt: product.name })),
+      images: product.images.slice(0, 1).map((url) => ({ url: absolute(url), alt: product.name })),
     },
   };
 }
@@ -38,29 +46,60 @@ export default async function ProductPage({ params }: { params: Params }) {
 
   const related = await getRelated(product, locale, 10);
 
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "Product",
-    name: product.name,
-    image: product.images,
-    description: product.description,
-    sku: product.id,
-    brand: { "@type": "Brand", name: "7.10" },
-    offers: {
-      "@type": "Offer",
-      priceCurrency: store.currency,
-      price: product.price.toFixed(2),
-      availability: product.soldOut ? "https://schema.org/OutOfStock" : "https://schema.org/InStock",
-      url: `${store.siteUrl}/products/${product.slug}`,
+  const url = `${store.siteUrl}/products/${product.slug}`;
+  const jsonLd = [
+    {
+      "@context": "https://schema.org",
+      "@type": "Product",
+      name: product.name,
+      image: product.images.map(absolute),
+      description: product.description,
+      sku: product.slug,
+      brand: { "@type": "Brand", name: "7.10" },
+      ...(product.colorName ? { color: product.colorName } : {}),
+      offers: {
+        "@type": "Offer",
+        url,
+        priceCurrency: store.currency,
+        price: product.price.toFixed(2),
+        itemCondition: "https://schema.org/NewCondition",
+        availability: product.soldOut ? "https://schema.org/OutOfStock" : "https://schema.org/InStock",
+        shippingDetails: {
+          "@type": "OfferShippingDetails",
+          shippingDestination: { "@type": "DefinedRegion", addressCountry: "LB" },
+          shippingRate: {
+            "@type": "MonetaryAmount",
+            currency: store.currency,
+            value: product.price >= store.freeDeliveryOver ? 0 : Math.min(...regions.map((r) => r.fee)),
+          },
+        },
+        hasMerchantReturnPolicy: {
+          "@type": "MerchantReturnPolicy",
+          applicableCountry: "LB",
+          returnPolicyCategory: "https://schema.org/MerchantReturnFiniteReturnWindow",
+          merchantReturnDays: store.exchangeDays,
+          returnMethod: "https://schema.org/ReturnByMail",
+        },
+      },
     },
-  };
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: t.common.home, item: `${store.siteUrl}/` },
+        { "@type": "ListItem", position: 2, name: t.common.shop, item: `${store.siteUrl}/shop` },
+        { "@type": "ListItem", position: 3, name: product.category, item: `${store.siteUrl}/shop?c=${product.categorySlug}` },
+        { "@type": "ListItem", position: 4, name: product.name, item: url },
+      ],
+    },
+  ];
 
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }} />
 
       <div className="container-x pt-5 md:pt-8">
-        <nav className="mb-5 hidden items-center gap-2 text-[12.5px] text-charcoal/50 md:flex" aria-label="Breadcrumb">
+        <nav className="mb-5 hidden items-center gap-2 text-[12.5px] text-charcoal/65 md:flex" aria-label={t.common.breadcrumb}>
           <Link href="/" className="hover:text-charcoal">{t.common.home}</Link>
           <span aria-hidden="true">/</span>
           <Link href="/shop" className="hover:text-charcoal">{t.common.shop}</Link>

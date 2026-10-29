@@ -51,7 +51,6 @@
     <Content Include="appsettings.json" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="Plugins\**" CopyToOutputDirectory="PreserveNewest" Exclude="Plugins\**\*.cs" />
     <Content Include="Templates\**" CopyToOutputDirectory="PreserveNewest" Condition="Exists('Templates')" />
-    <Content Include="Database\pos_cert.pfx" CopyToOutputDirectory="PreserveNewest" Condition="Exists('Database\pos_cert.pfx')" />
   </ItemGroup>
 
   <ItemGroup>

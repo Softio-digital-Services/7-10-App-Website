@@ -32,14 +32,14 @@ On macOS / Linux use `export` instead of `set`.
 
 1. Push this repository to GitHub (or connect the local folder).
 2. In Netlify: **Add new site → Import** and choose the repo.
-3. Set **Base directory** to `web`. The `netlify.toml` in that folder already has the build command.
+3. Leave **Base directory** empty. The `netlify.toml` at the repository root sets it to `web` and has the build command and Node version. (If you type `web` in the UI, Netlify looks for `web/netlify.toml` instead and ignores the root file.)
 4. Site settings → **Environment variables** — add all of the following, then trigger a deploy:
 
 | Variable | Value |
 |---|---|
 | `DATABASE_URL` | the `libsql://…` URL |
 | `DATABASE_AUTH_TOKEN` | the Turso token |
-| `SHOP_SYNC_KEY` | a long random string (32+ characters). Paste the same value into the desktop app. |
+| `SHOP_SYNC_KEY` | a long random string (32+ characters; shorter keys are refused). Paste the same value into the desktop app. |
 | `AUTH_SECRET` | another long random string (`openssl rand -base64 32`) |
 | `AUTH_URL` | `https://YOUR-SITE.netlify.app` (or your domain) |
 | `AUTH_TRUST_HOST` | `true` |
@@ -57,11 +57,19 @@ Whish Money (needed for “Pay by Whish”):
 | `WHISH_CHANNEL` | channel id from your Whish merchant account |
 | `WHISH_SECRET` | secret from the same account |
 | `WHISH_WEBSITE_URL` | the public site URL Whish registered (usually the same as `NEXT_PUBLIC_SITE_URL`) |
-| `WHISH_ENV` | `sandbox` while testing, `production` when live |
+| `WHISH_ENV` | `sandbox` while testing, `production` when live. Empty means sandbox. Scope the `WHISH_*` variables to the **Production** deploy context only, so preview deploys never take real payments. |
 
 Whish must be able to reach this site over HTTPS. Localhost cannot receive their payment callbacks.
 
-5. After the first deploy, open `https://YOUR-SITE.netlify.app`. Create the store admin account, then open **Admin → Laptops**.
+5. Create the store admin account from the `web` folder, with the same `DATABASE_URL` and `DATABASE_AUTH_TOKEN` as step 2:
+
+   ```bash
+   npm run admin:create -- you@example.com
+   ```
+
+   It asks for a password (12+ characters). If that email already has a customer account, add `--reset` to set a new password and make it the admin. Do not run `npm run db:seed` against the live database: it is for local demo data only and refuses hosted databases.
+
+6. Open `https://YOUR-SITE.netlify.app/login`, sign in with that account, then open **Admin → Laptops**.
 
 ## 4. Link the desktop app
 

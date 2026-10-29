@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
+import { HOUR, limitByIp } from "@/lib/rate-limit";
 
 const registerSchema = z.object({
   name: z.string().trim().min(2).max(80),
@@ -10,6 +11,9 @@ const registerSchema = z.object({
 });
 
 export async function POST(request: Request) {
+  const limited = await limitByIp(request, "register", 5, HOUR);
+  if (limited) return limited;
+
   const parsed = registerSchema.safeParse(await request.json().catch(() => null));
   if (!parsed.success) {
     return NextResponse.json({ error: "invalid", fields: Object.keys(parsed.error.flatten().fieldErrors) }, { status: 400 });

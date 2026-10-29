@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { ShopView } from "@/components/shop/shop-view";
 import { allSizes, getCategories, getProducts, type SortKey } from "@/lib/catalog";
-import { categoryLabel, fmt } from "@/lib/i18n";
+import { alternatesFor, categoryLabel, fmt } from "@/lib/i18n";
 import { getI18n } from "@/lib/i18n/server";
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;
@@ -25,13 +25,16 @@ function parseFilters(sp: Awaited<SearchParams>) {
 }
 
 export async function generateMetadata({ searchParams }: { searchParams: SearchParams }): Promise<Metadata> {
-  const { dict: t } = await getI18n();
+  const { dict: t, locale } = await getI18n();
   const filters = parseFilters(await searchParams);
   let title = t.shop.title;
   if (filters.q) title = fmt(t.shop.searchResults, { q: filters.q });
   else if (filters.category) title = categoryLabel(t, filters.category, filters.category);
   else if (filters.sale) title = t.shop.onSale;
-  return { title };
+  // Category and sale pages are worth indexing; search, sort and size filters are endless near-duplicates.
+  const narrowed = !!(filters.q || filters.sizes.length || filters.inStock || filters.sort !== "featured");
+  const path = filters.category ? `/shop?c=${encodeURIComponent(filters.category)}` : filters.sale ? "/shop?sale=1" : "/shop";
+  return { title, alternates: alternatesFor(path, locale), ...(narrowed ? { robots: { index: false, follow: true } } : {}) };
 }
 
 export default async function ShopPage({ searchParams }: { searchParams: SearchParams }) {

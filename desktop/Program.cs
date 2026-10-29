@@ -401,8 +401,8 @@ namespace InventorySystem
             {
                 string appRoot = ResolveAppRoot();
 
-                string certPath = System.IO.Path.Combine(appRoot, "Database", "pos_cert.pfx");
-                const string certPassword = "SoftioPos2026!";
+                // Generated per install on first run; the key is never shipped in the repo or installer.
+                var certificate = LocalCertificate.Load();
 
                 var builder = WebApplication.CreateBuilder(new WebApplicationOptions
                 {
@@ -414,11 +414,11 @@ namespace InventorySystem
                 builder.WebHost.ConfigureKestrel(options =>
                 {
                     options.ListenAnyIP(AppHostConfig.HttpPort); // HTTP — unique per brand
-                    if (System.IO.File.Exists(certPath))
+                    if (certificate != null)
                     {
                         options.ListenAnyIP(AppHostConfig.HttpsPort, listenOptions =>
                         {
-                            listenOptions.UseHttps(certPath, certPassword);
+                            listenOptions.UseHttps(certificate);
                         });
                     }
                 });

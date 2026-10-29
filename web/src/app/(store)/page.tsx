@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { Img as Image } from "@/components/img";
 import Link from "next/link";
 import { ArrowDown, ArrowRight, ArrowUpRight, Banknote, RefreshCcw, Truck } from "lucide-react";
@@ -14,9 +15,30 @@ import { Reveal } from "@/components/reveal";
 import { getCategories, getProducts } from "@/lib/catalog";
 import { editorial } from "@/lib/editorial";
 import { formatPrice } from "@/lib/format";
-import { fmt } from "@/lib/i18n";
+import { alternatesFor, fmt } from "@/lib/i18n";
 import { getI18n } from "@/lib/i18n/server";
-import { isBeforeLaunch, store } from "@/lib/store-config";
+import { isBeforeLaunch, launchStamp, store } from "@/lib/store-config";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const { locale } = await getI18n();
+  return { alternates: alternatesFor("/", locale) };
+}
+
+const organizationLd = {
+  "@context": "https://schema.org",
+  "@type": "ClothingStore",
+  name: "7.10 Brand",
+  url: store.siteUrl,
+  logo: `${store.siteUrl}/icon.png`,
+  image: `${store.siteUrl}/opengraph-image.png`,
+  ...(store.email ? { email: store.email } : {}),
+  ...(store.phone ? { telephone: store.phone } : {}),
+  address: { "@type": "PostalAddress", addressCountry: "LB", ...(store.address ? { streetAddress: store.address } : {}) },
+  sameAs: store.instagram ? [`https://instagram.com/${store.instagram}`] : [],
+  contactPoint: store.whatsapp
+    ? [{ "@type": "ContactPoint", contactType: "customer service", url: `https://wa.me/${store.whatsapp}`, availableLanguage: ["en", "ar"] }]
+    : [],
+};
 
 export default async function HomePage() {
   const { dict: t, locale } = await getI18n();
@@ -26,9 +48,13 @@ export default async function HomePage() {
   const featured = products.filter((p) => !p.soldOut).slice(0, 4);
   const heroProduct = products.find((p) => p.featured && !p.soldOut) ?? products[0];
   const beforeLaunch = isBeforeLaunch();
+  // Category slugs come from the desktop app, so the lookbook only links to outerwear when that category exists.
+  const outerwear = categories.find((c) => /outer|jacket/i.test(c.slug));
 
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationLd).replace(/</g, "\\u003c") }} />
+
       {/* HERO */}
       <section className="theme-olive relative -mt-16 overflow-hidden md:-mt-[76px]">
         <span
@@ -58,7 +84,7 @@ export default async function HomePage() {
                 />
               </span>
             </h1>
-            <p className="rise mt-7 max-w-lg text-[16px] leading-relaxed text-cream/80 md:text-[17px]" style={{ animationDelay: "0.36s" }}>
+            <p className="rise mt-7 max-w-lg text-[16px] leading-relaxed text-cream md:text-[17px]" style={{ animationDelay: "0.36s" }}>
               {t.home.heroBody}
             </p>
             <div className="rise mt-9 flex flex-wrap gap-3" style={{ animationDelay: "0.48s" }}>
@@ -77,7 +103,7 @@ export default async function HomePage() {
                   <p className="eyebrow mb-3 flex items-center gap-3 text-cream/60">
                     {t.home.countdownLabel}
                     <span className="font-display keep-tracking tracking-[0.35em] text-cream" dir="ltr">
-                      07 — 10 — 2026
+                      {launchStamp(" — ")}
                     </span>
                   </p>
                   <Countdown target={store.launchAt} />
@@ -117,7 +143,7 @@ export default async function HomePage() {
                 </div>
                 <div className="absolute -bottom-6 start-4 end-4 flex items-center justify-between gap-4 bg-cream p-4 text-charcoal shadow-xl md:start-auto md:-end-6 md:w-72">
                   <div className="min-w-0">
-                    <p className="eyebrow text-[10px] text-charcoal/50">{heroProduct.category}</p>
+                    <p className="eyebrow text-[10px] text-charcoal/65">{heroProduct.category}</p>
                     <p className="truncate font-medium">{heroProduct.name}</p>
                     <p className="text-sm text-charcoal/70" dir="ltr">{formatPrice(heroProduct.price)}</p>
                   </div>
@@ -136,7 +162,7 @@ export default async function HomePage() {
         </div>
 
         <div className="container-x relative hidden items-center justify-between border-t border-cream/15 py-4 text-cream/60 md:flex">
-          <span className="eyebrow">[ Drop 01 ]</span>
+          <span className="eyebrow">[ {t.home.dropTag} ]</span>
           <a href="#new-in" className="eyebrow flex items-center gap-2 hover:text-cream">
             {t.home.scroll} <ArrowDown className="h-3.5 w-3.5" />
           </a>
@@ -146,7 +172,7 @@ export default async function HomePage() {
       {/* TICKER */}
       <section className="border-y border-charcoal bg-charcoal py-5 text-cream md:py-7" aria-hidden="true">
         <Marquee
-          items={["Utility", "Essentials", "Drop 01", "07.10.2026", "7.10 Brand"]}
+          items={[...t.home.ticker, launchStamp(), "7.10 Brand"]}
           duration={30}
           itemClassName="display text-4xl md:text-6xl"
           separator={<span className="mx-6 inline-block h-0 w-0 border-x-[10px] border-t-[16px] border-x-transparent border-t-signal md:mx-10" />}
@@ -252,14 +278,14 @@ export default async function HomePage() {
               <Image src={editorial.story} alt="" fill sizes="(min-width:1024px) 45vw, 100vw" className="object-cover" />
             </div>
             <span className="absolute -bottom-5 end-6 bg-signal px-4 py-2 font-display text-[11px] uppercase keep-tracking tracking-[0.3em] text-white" dir="ltr">
-              07.10.2026
+              {launchStamp()}
             </span>
           </Reveal>
           <div>
             <Reveal>
               <SectionLabel index="03" tone="light">{t.home.storyLabel}</SectionLabel>
               <h2 className="display mt-5 text-5xl md:text-7xl">{t.home.storyTitle}</h2>
-              <p className="mt-7 max-w-xl text-[17px] leading-relaxed text-cream/80">{t.home.storyBody}</p>
+              <p className="mt-7 max-w-xl text-[17px] leading-relaxed text-cream">{t.home.storyBody}</p>
             </Reveal>
             <Reveal delay={0.1} className="mt-12 grid grid-cols-3 border-y border-cream/15">
               {t.home.stats.map((s, i) => (
@@ -308,8 +334,8 @@ export default async function HomePage() {
           <Reveal className="max-w-3xl">
             <SectionLabel index="05" tone="light">{t.home.lookLabel}</SectionLabel>
             <h2 className="display mt-5 text-5xl md:text-8xl">{t.home.lookTitle}</h2>
-            <Link href="/shop?c=outerwear" className="btn btn-cream mt-10">
-              {t.home.lookCta} <ArrowRight className="flip-rtl h-4 w-4" />
+            <Link href={outerwear ? `/shop?c=${outerwear.slug}` : "/shop"} className="btn btn-cream mt-10">
+              {outerwear ? t.home.lookCta : t.common.shopAll} <ArrowRight className="flip-rtl h-4 w-4" />
             </Link>
           </Reveal>
         </div>

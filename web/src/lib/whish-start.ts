@@ -4,7 +4,7 @@ import { createWhishPayment, newWhishExternalId, whishConfigured, whishWebsite }
 export async function startWhishCheckout(order: { id: string; orderNumber: string; total: number; externalId: string | null }) {
   if (!whishConfigured()) return null;
   const origin = whishWebsite();
-  let externalId = order.externalId && /^\d+$/.test(order.externalId) ? Number(order.externalId) : newWhishExternalId();
+  const externalId = order.externalId && /^\d+$/.test(order.externalId) ? Number(order.externalId) : newWhishExternalId();
   if (!order.externalId) {
     await prisma.order.update({ where: { id: order.id }, data: { externalId: String(externalId) } });
   }

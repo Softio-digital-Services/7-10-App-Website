@@ -1,26 +1,30 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
-import { isLocale, LOCALE_COOKIE } from "@/lib/i18n";
+import { isLocale, localePath, LOCALE_COOKIE, LOCALE_HEADER } from "@/lib/i18n";
 import { isSoonMode } from "@/lib/store-config";
 
 const PREVIEW_COOKIE = "710_preview";
 const STAFF_PAGES = ["/admin", "/manager"];
-const STAFF_APIS = ["/api/admin", "/api/manager", "/api/sync"];
+const STAFF_APIS = ["/api/admin", "/api/manager"];
 /** Reachable while the store is in "soon" mode. */
-const SOON_OPEN = ["/soon", "/login", "/api/auth", "/api/subscribe", "/api/desktop", "/api/hub", "/api/whish", "/media", ...STAFF_PAGES, ...STAFF_APIS];
+const SOON_OPEN = ["/soon", "/login", "/api/auth", "/api/subscribe", "/api/hub", "/api/whish", "/media", ...STAFF_PAGES, ...STAFF_APIS];
 
 const startsWithAny = (pathname: string, prefixes: string[]) =>
   prefixes.some((p) => pathname === p || pathname.startsWith(`${p}/`));
 
 export const proxy = auth((req) => {
   const { nextUrl } = req;
-  const { pathname, searchParams } = nextUrl;
+  const { searchParams } = nextUrl;
+  // /ar/... is the Arabic copy of every page (its own URL, so search engines index it), served by the same route.
+  const arabicUrl = nextUrl.pathname === "/ar" || nextUrl.pathname.startsWith("/ar/");
+  const pathname = arabicUrl ? nextUrl.pathname.slice(3) || "/" : nextUrl.pathname;
   const role = req.auth?.user?.role;
   const isStaff = role === "ADMIN" || role === "MANAGER";
 
   const lang = searchParams.get("lang");
   if (lang && isLocale(lang) && !pathname.startsWith("/api")) {
     const url = nextUrl.clone();
+    url.pathname = localePath(pathname, lang);
     url.searchParams.delete("lang");
     const res = NextResponse.redirect(url);
     res.cookies.set(LOCALE_COOKIE, lang, { path: "/", maxAge: 60 * 60 * 24 * 365, sameSite: "lax" });
@@ -54,6 +58,18 @@ export const proxy = auth((req) => {
   }
 
   if (!soon && pathname === "/soon" && !isStaff && !searchParams.has("preview")) return NextResponse.redirect(new URL("/", nextUrl));
+
+  if (arabicUrl) {
+    // Auth.js rebuilds nextUrl from AUTH_URL; a rewrite must stay on the host that was actually requested,
+    // or Next proxies it to that other origin instead of rendering it here.
+    const url = new URL(pathname + nextUrl.search, `${nextUrl.protocol}//${req.headers.get("host") ?? nextUrl.host}`);
+    const headers = new Headers(req.headers);
+    headers.set(LOCALE_HEADER, "ar");
+    const res = NextResponse.rewrite(url, { request: { headers } });
+    // Links inside the site are unprefixed; the cookie keeps the visitor in Arabic as they browse on.
+    res.cookies.set(LOCALE_COOKIE, "ar", { path: "/", maxAge: 60 * 60 * 24 * 365, sameSite: "lax" });
+    return res;
+  }
 
   return NextResponse.next();
 });

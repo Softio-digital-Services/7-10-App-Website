@@ -40,7 +40,7 @@ export default async function AdminLaptopsPage() {
       </p>
 
       {devices.length === 0 ? (
-        <p className="border border-dashed border-charcoal/25 px-6 py-16 text-center text-charcoal/55">No laptops linked yet.</p>
+        <p className="border border-dashed border-charcoal/25 px-6 py-16 text-center text-charcoal/65">No laptops linked yet.</p>
       ) : (
         <ul className="space-y-3">
           {devices.map((d) => {
@@ -53,11 +53,11 @@ export default async function AdminLaptopsPage() {
                     <p className="flex items-center gap-2.5 font-medium">
                       <span className={`inline-block h-2 w-2 rounded-full ${online ? "bg-olive" : "bg-charcoal/25"}`} aria-hidden />
                       {d.name}
-                      <span className="font-normal text-charcoal/45" dir="ltr">
+                      <span className="font-normal text-charcoal/65" dir="ltr">
                         #{d.id}
                       </span>
                     </p>
-                    <p className="mt-1 text-[13px] text-charcoal/55">
+                    <p className="mt-1 text-[13px] text-charcoal/65">
                       {d.revokedAt
                         ? `Revoked ${dateFmt.format(d.revokedAt)}`
                         : `Last sync ${ago(d.lastSeenAt, now)}${behind > 0 && !online ? ` · ${behind} changes waiting` : ""}`}

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { X } from "lucide-react";
 import { useI18n } from "@/components/i18n-provider";
 import { WhatsAppIcon } from "@/components/icons";
+import { useDialogFocus } from "@/components/use-dialog-focus";
 import { useLockBody } from "@/components/use-lock-body";
 import { whatsappLink } from "@/lib/store-config";
 
@@ -60,7 +61,7 @@ export function SizeGuideContent({ initial = "tops", highlight }: { initial?: Si
           <thead>
             <tr className="border-b border-charcoal">
               {head.map((h, i) => (
-                <th key={h} className={`eyebrow py-3 text-[10.5px] font-normal text-charcoal/60 ${i === 0 ? "text-start" : "text-center"}`}>
+                <th key={h} className={`eyebrow py-3 text-[10.5px] font-normal text-charcoal/65 ${i === 0 ? "text-start" : "text-center"}`}>
                   {h}
                   {i > 0 && <span className="ms-1 normal-case tracking-normal">(cm)</span>}
                 </th>
@@ -85,7 +86,7 @@ export function SizeGuideContent({ initial = "tops", highlight }: { initial?: Si
       </div>
 
       <div className="mt-8 bg-cream-2 p-5">
-        <p className="eyebrow text-[10.5px] text-charcoal/60">{g.howTo}</p>
+        <p className="eyebrow text-[10.5px] text-charcoal/65">{g.howTo}</p>
         <ul className="mt-3 space-y-1.5 text-[14px] text-charcoal/75">
           {(tab === "tops" ? [g.howChest] : [g.howWaist, g.howHip, g.howInseam]).map((line) => (
             <li key={line}>{line}</li>
@@ -104,6 +105,7 @@ export function SizeGuideContent({ initial = "tops", highlight }: { initial?: Si
 export function SizeGuideDialog({ open, onClose, initial, highlight }: { open: boolean; onClose: () => void; initial: SizeChart; highlight?: string }) {
   const { t } = useI18n();
   useLockBody(open);
+  const focusRef = useDialogFocus(open);
 
   useEffect(() => {
     if (!open) return;
@@ -114,6 +116,7 @@ export function SizeGuideDialog({ open, onClose, initial, highlight }: { open: b
 
   return (
     <div
+      ref={focusRef}
       className={`fixed inset-0 z-[80] ${open ? "pointer-events-auto" : "pointer-events-none"}`}
       aria-hidden={!open}
       inert={!open}

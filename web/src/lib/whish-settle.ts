@@ -19,9 +19,14 @@ export async function confirmWhishOrder(order: SettleOrder) {
   if (!order.externalId || !/^\d+$/.test(order.externalId)) return order.paymentStatus;
 
   const status = await whishPaymentStatus(Number(order.externalId));
-  if (status.collectStatus === "success" && amountsMatch(status.amount, order.total)) {
-    await prisma.order.update({ where: { id: order.id }, data: { paymentStatus: "PAID" } });
-    if (order.customerEmail) {
+  if (status.collectStatus === "success") {
+    if (!amountsMatch(status.amount, order.total, status.currency)) {
+      console.error(`[whish] ${order.orderNumber}: paid ${status.amount} ${status.currency ?? ""}, expected ${order.total}. Check it by hand.`);
+      return order.paymentStatus;
+    }
+    // Callback, order page and a laptop can confirm at the same moment; only the first one sends the email.
+    const res = await prisma.order.updateMany({ where: { id: order.id, paymentStatus: { not: "PAID" } }, data: { paymentStatus: "PAID" } });
+    if (res.count === 1 && order.customerEmail) {
       await notifyPaymentReceived({
         orderNumber: order.orderNumber,
         customerName: order.customerName ?? "",
@@ -38,8 +43,11 @@ export async function confirmWhishOrder(order: SettleOrder) {
   return order.paymentStatus;
 }
 
-/** Confirms with Whish (never trust the URL alone), then marks the order paid or failed. */
-export async function settleWhishPayment(requestUrl: string, outcome: "success" | "failure") {
+/**
+ * Confirms with Whish (never trust the URL alone), then marks the order paid or failed.
+ * Only Whish's own status decides: a hit on the failure URL by itself changes nothing.
+ */
+export async function settleWhishPayment(requestUrl: string) {
   if (!whishConfigured()) return null;
   const externalId = parseWhishCallback(requestUrl);
   if (externalId == null) return null;
@@ -58,10 +66,6 @@ export async function settleWhishPayment(requestUrl: string, outcome: "success" 
   });
   if (!order) return null;
 
-  const next = await confirmWhishOrder(order);
-  if (next === "PAID") return order.orderNumber;
-  if (outcome === "failure" && next === "PENDING") {
-    await prisma.order.update({ where: { id: order.id }, data: { paymentStatus: "FAILED" } });
-  }
+  await confirmWhishOrder(order);
   return order.orderNumber;
 }

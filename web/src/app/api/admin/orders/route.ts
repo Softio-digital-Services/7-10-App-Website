@@ -2,6 +2,7 @@ import { NextResponse, after } from "next/server";
 import { z } from "zod";
 import type { OrderStatus, Prisma } from "@prisma/client";
 import { requireStaff } from "@/lib/auth";
+import { refreshCatalog } from "@/lib/catalog";
 import { notifyOrderStatus, notifyPaymentReceived } from "@/lib/email";
 import { prisma } from "@/lib/prisma";
 
@@ -16,6 +17,7 @@ const updateSchema = z
   .refine((v) => v.status || v.paymentStatus, "Nothing to update");
 
 class StockError extends Error {}
+class ChangedError extends Error {}
 
 export async function GET(request: Request) {
   if (!(await requireStaff())) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
@@ -69,6 +71,9 @@ export async function PATCH(request: Request) {
   try {
     const order = await prisma.$transaction(async (tx) => {
       if (status && status !== current.status) {
+        // Moves the order only if nobody else changed it since we read it, so a double click never restocks twice.
+        const moved = await tx.order.updateMany({ where: { id: orderId, status: current.status }, data: { status } });
+        if (moved.count !== 1) throw new ChangedError();
         if (status === "CANCELLED") {
           for (const item of current.items) {
             await tx.productVariant.update({ where: { id: item.variantId }, data: { stock: { increment: item.quantity } } });
@@ -85,9 +90,11 @@ export async function PATCH(request: Request) {
       }
       return tx.order.update({
         where: { id: orderId },
-        data: { ...(status ? { status } : {}), ...(paymentStatus ? { paymentStatus } : {}) },
+        data: paymentStatus ? { paymentStatus } : {},
       });
     });
+
+    if (status && status !== current.status && (status === "CANCELLED" || current.status === "CANCELLED")) refreshCatalog();
 
     after(async () => {
       if (status && status !== current.status) await notifyOrderStatus(order).catch(console.error);
@@ -97,6 +104,7 @@ export async function PATCH(request: Request) {
     return NextResponse.json(order);
   } catch (error) {
     if (error instanceof StockError) return NextResponse.json({ error: "stock" }, { status: 409 });
+    if (error instanceof ChangedError) return NextResponse.json({ error: "changed" }, { status: 409 });
     throw error;
   }
 }

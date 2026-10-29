@@ -1,12 +1,13 @@
 import Link from "next/link";
-import { Banknote, CreditCard } from "lucide-react";
+import { Banknote, Wallet } from "lucide-react";
 import { LogoMark } from "@/components/brand/logo";
 import { InstagramIcon, WhatsAppIcon } from "@/components/icons";
 import { LangSwitch } from "@/components/lang-switch";
 import { NewsletterForm } from "@/components/newsletter-form";
+import { fmt } from "@/lib/i18n";
 import { getI18n } from "@/lib/i18n/server";
 import type { StoreCategory } from "@/lib/catalog";
-import { store, whatsappLink } from "@/lib/store-config";
+import { launchStamp, store, whatsappLink } from "@/lib/store-config";
 
 export async function Footer({ categories }: { categories: StoreCategory[] }) {
   const { dict: t } = await getI18n();
@@ -28,6 +29,8 @@ export async function Footer({ categories }: { categories: StoreCategory[] }) {
         { href: "/help#exchange", label: t.help.returnsTitle },
         { href: "/help#size-guide", label: t.product.sizeGuide },
         { href: "/help#faq", label: t.help.faqTitle },
+        { href: "/terms", label: t.legal.terms.title },
+        { href: "/privacy", label: t.legal.privacy.title },
       ],
     },
     {
@@ -51,7 +54,7 @@ export async function Footer({ categories }: { categories: StoreCategory[] }) {
                 7.10 Brand
               </span>
             </div>
-            <p className="mt-6 max-w-sm text-cream/75">{t.footer.tagline}</p>
+            <p className="mt-6 max-w-sm text-cream">{t.footer.tagline}</p>
 
             <div className="mt-10 max-w-md">
               <p className="eyebrow text-cream/60">{t.footer.newsletter}</p>
@@ -68,7 +71,7 @@ export async function Footer({ categories }: { categories: StoreCategory[] }) {
                 <ul className="mt-5 space-y-3">
                   {col.links.map((link) => (
                     <li key={link.href + link.label}>
-                      <Link href={link.href} className="link-line text-[15px] text-cream/85 hover:text-cream">
+                      <Link href={link.href} className="link-line text-[15px] text-cream">
                         {link.label}
                       </Link>
                     </li>
@@ -110,15 +113,15 @@ export async function Footer({ categories }: { categories: StoreCategory[] }) {
 
         <div className="relative -mt-[6vw] flex flex-col gap-5 border-t border-cream/15 py-6 text-[12px] text-cream/65 md:flex-row md:items-center md:justify-between">
           <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
-            <span className="eyebrow">{t.footer.rights}</span>
+            <span className="eyebrow">{fmt(t.footer.rights, { year: new Date().getFullYear() })}</span>
             <span className="flex items-center gap-2 font-display keep-tracking tracking-[0.3em]" dir="ltr">
-              <span className="dot-signal" /> 07.10.2026
+              <span className="dot-signal" /> {launchStamp()}
             </span>
           </div>
           <div className="flex flex-wrap items-center gap-4">
             <span className="flex items-center gap-2">
               <Banknote className="h-4 w-4" strokeWidth={1.5} />
-              <CreditCard className="h-4 w-4" strokeWidth={1.5} />
+              <Wallet className="h-4 w-4" strokeWidth={1.5} />
               {t.footer.payments}
             </span>
             <LangSwitch />

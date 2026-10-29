@@ -19,14 +19,14 @@ export async function generateMetadata(): Promise<Metadata> {
     metadataBase: new URL(store.siteUrl),
     title: { default: dict.meta.title, template: `%s — 7.10 Brand` },
     description: dict.meta.description,
-    icons: { icon: "/brand/logo.png", apple: "/brand/logo.png" },
+    // Icons and the share image come from src/app/icon.png, apple-icon.png and opengraph-image.png.
     openGraph: {
       type: "website",
       siteName: "7.10 Brand",
       title: dict.meta.title,
       description: dict.meta.description,
       locale: locale === "ar" ? "ar_LB" : "en_US",
-      images: [{ url: "/brand/logo.png", width: 820, height: 1024, alt: "7.10 Brand" }],
+      alternateLocale: locale === "ar" ? "en_US" : "ar_LB",
     },
   };
 }
@@ -35,6 +35,8 @@ export const viewport: Viewport = {
   themeColor: "#6e6e3f",
   width: "device-width",
   initialScale: 1,
+  // Lets env(safe-area-inset-*) report the notch / home-bar insets the sticky buy bar pads for.
+  viewportFit: "cover",
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
@@ -43,6 +45,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html lang={locale} dir={dir} data-scroll-behavior="smooth">
       <body className="grain">
+        {/* Without JavaScript the scroll-reveal never fires; show those sections straight away. */}
+        <noscript>
+          <style>{"[data-reveal]{opacity:1!important;transform:none!important}"}</style>
+        </noscript>
         <Providers>
           <I18nProvider locale={locale} dict={dict}>
             <CartProvider>{children}</CartProvider>

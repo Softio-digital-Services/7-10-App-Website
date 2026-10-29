@@ -19,17 +19,17 @@ export function Field({ id, label, optional, error, hint, aside, children }: Fie
       <div className="flex items-baseline justify-between gap-3">
         <label htmlFor={id} className="field-label">
           <span>{label}</span>
-          {optional && <span className="text-[11px] normal-case tracking-normal text-charcoal/45">{t.common.optional}</span>}
+          {optional && <span className="text-[11px] normal-case tracking-normal text-charcoal/65">{t.common.optional}</span>}
         </label>
         {aside}
       </div>
       {children}
       {error ? (
-        <p id={`${id}-error`} className="mt-1.5 text-[13px] text-signal">
+        <p id={`${id}-error`} className="mt-1.5 text-[13px] text-signal-ink">
           {error}
         </p>
       ) : hint ? (
-        <p id={`${id}-hint`} className="mt-1.5 text-[12.5px] text-charcoal/50">
+        <p id={`${id}-hint`} className="mt-1.5 text-[12.5px] text-charcoal/65">
           {hint}
         </p>
       ) : null}

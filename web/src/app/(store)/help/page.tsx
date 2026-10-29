@@ -1,18 +1,18 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Banknote, HelpCircle, Plus, RefreshCcw, Ruler, Truck } from "lucide-react";
+import { Banknote, HelpCircle, Plus, RefreshCcw, Ruler, Truck, Wallet } from "lucide-react";
 import { SectionLabel } from "@/components/brand/section-label";
 import { WhatsAppIcon } from "@/components/icons";
 import { Reveal } from "@/components/reveal";
 import { SizeGuideContent } from "@/components/size-guide";
 import { formatPrice } from "@/lib/format";
-import { fmt } from "@/lib/i18n";
+import { alternatesFor, fmt } from "@/lib/i18n";
 import { getI18n } from "@/lib/i18n/server";
 import { regions, store, whatsappLink } from "@/lib/store-config";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const { dict } = await getI18n();
-  return { title: dict.help.title, description: dict.help.intro };
+  const { dict, locale } = await getI18n();
+  return { alternates: alternatesFor("/help", locale), title: dict.help.title, description: dict.help.intro };
 }
 
 export default async function HelpPage() {
@@ -62,8 +62,8 @@ export default async function HelpPage() {
             <table className="w-full text-[14.5px]">
               <thead className="bg-cream-2">
                 <tr>
-                  <th className="eyebrow px-5 py-3 text-start text-[10.5px] font-normal text-charcoal/60">{t.checkout.region}</th>
-                  <th className="eyebrow px-5 py-3 text-end text-[10.5px] font-normal text-charcoal/60">{t.checkout.deliveryFee}</th>
+                  <th className="eyebrow px-5 py-3 text-start text-[10.5px] font-normal text-charcoal/65">{t.checkout.region}</th>
+                  <th className="eyebrow px-5 py-3 text-end text-[10.5px] font-normal text-charcoal/65">{t.checkout.deliveryFee}</th>
                 </tr>
               </thead>
               <tbody>
@@ -88,7 +88,7 @@ export default async function HelpPage() {
               const [title, ...rest] = line.split(" — ");
               return (
                 <div key={line} className="bg-cream-2 p-6">
-                  {i === 0 ? <Banknote className="h-6 w-6" strokeWidth={1.25} /> : <span className="font-display text-[11px] tracking-widest text-charcoal/50" dir="ltr">VISA · MC</span>}
+                  {i === 0 ? <Banknote className="h-6 w-6" strokeWidth={1.25} /> : <Wallet className="h-6 w-6" strokeWidth={1.25} />}
                   <p className="display mt-5 text-2xl">{title}</p>
                   <p className="mt-2 text-[14.5px] leading-relaxed text-charcoal/70">{rest.join(" — ")}</p>
                 </div>
@@ -149,7 +149,7 @@ function HelpSection({ id, index, title, children }: { id: string; index: string
   return (
     <section id={id} className="grid scroll-mt-28 gap-8 border-t border-charcoal pt-10 lg:grid-cols-12 lg:gap-16">
       <div className="lg:col-span-4">
-        <span className="font-display text-[12px] text-charcoal/45" dir="ltr">[{index}]</span>
+        <span className="font-display text-[12px] text-charcoal/65" dir="ltr">[{index}]</span>
         <h2 className="display mt-3 text-4xl md:text-5xl">{title}</h2>
       </div>
       <div className="lg:col-span-8">{children}</div>

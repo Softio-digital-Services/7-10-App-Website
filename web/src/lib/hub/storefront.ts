@@ -1,4 +1,7 @@
 import { createHash } from "node:crypto";
+import { after } from "next/server";
+import { refreshCatalog } from "@/lib/catalog";
+import { notifyProductBackInStock } from "@/lib/inventory";
 import { prisma } from "@/lib/prisma";
 import { slugify } from "@/lib/utils";
 import { isMediaName, missingMedia } from "@/lib/hub/media";
@@ -161,6 +164,16 @@ async function uniqueSlug(base: string) {
   }
 }
 
+/** Back-in-stock emails go out after the response, so a slow mail server never holds up a laptop's sync. */
+function notifyRestocked(restocked: Map<string, { slug: string; name: string }>) {
+  if (!restocked.size) return;
+  after(async () => {
+    for (const [id, p] of restocked) {
+      await notifyProductBackInStock(id, p.slug, p.name).catch((err) => console.error("[back-in-stock]", err));
+    }
+  });
+}
+
 const sameList = (a: string[], b: string[]) => a.length === b.length && a.every((x, i) => x === b[i]);
 
 /**
@@ -174,10 +187,15 @@ export async function rebuildStorefront(budgetMs = Number.POSITIVE_INFINITY) {
   const existing = await prisma.product.findMany({ include: { variants: true } });
   const byExternal = new Map(existing.filter((p) => p.externalId).map((p) => [p.externalId as string, p]));
   const categoryIds = new Map<string, string>();
+  const restocked = new Map<string, { slug: string; name: string }>();
   let written = 0;
 
   for (const d of desired) {
-    if (Date.now() > deadline) return { products: desired.length, written, hidden: 0, done: false };
+    if (Date.now() > deadline) {
+      if (written) refreshCatalog();
+      notifyRestocked(restocked);
+      return { products: desired.length, written, hidden: 0, done: false };
+    }
     let categoryId = categoryIds.get(d.category);
     if (!categoryId) {
       const slug = slugify(d.category) || "general";
@@ -228,6 +246,7 @@ export async function rebuildStorefront(budgetMs = Number.POSITIVE_INFINITY) {
       const current =
         product.variants.find((x) => x.externalId === v.externalId) ??
         (await prisma.productVariant.findUnique({ where: { externalId: v.externalId } }));
+      if (current && current.stock <= 0 && v.stock > 0) restocked.set(product.id, { slug: product.slug, name: product.name });
       if (current) {
         if (current.stock === v.stock && current.size === v.size && current.color === v.color && current.productId === product.id) continue;
         const clash = await prisma.productVariant.findFirst({
@@ -265,6 +284,8 @@ export async function rebuildStorefront(budgetMs = Number.POSITIVE_INFINITY) {
     hidden = res.count;
   }
 
+  if (written || hidden) refreshCatalog();
+  notifyRestocked(restocked);
   return { products: desired.length, written, hidden, done: true };
 }
 

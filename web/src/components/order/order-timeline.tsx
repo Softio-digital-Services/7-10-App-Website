@@ -12,7 +12,7 @@ export function OrderTimeline({ status, labels, tone = "dark" }: OrderTimelinePr
   const current = cancelled ? 0 : Math.max(0, statusFlow.indexOf(status as (typeof statusFlow)[number]));
   const line = tone === "light" ? "bg-cream/20" : "bg-charcoal/15";
   const doneLine = tone === "light" ? "bg-cream" : "bg-charcoal";
-  const muted = tone === "light" ? "text-cream/45" : "text-charcoal/40";
+  const muted = tone === "light" ? "text-cream/45" : "text-charcoal/65";
 
   return (
     <ol className="grid grid-cols-5 gap-0">
@@ -34,7 +34,7 @@ export function OrderTimeline({ status, labels, tone = "dark" }: OrderTimelinePr
                       : "border-charcoal bg-charcoal text-cream"
                     : tone === "light"
                       ? "border-cream/30 bg-olive text-cream/50"
-                      : "border-charcoal/20 bg-cream text-charcoal/40"
+                      : "border-charcoal/20 bg-cream text-charcoal/65"
               } ${active ? "ring-4 ring-signal/25" : ""}`}
             >
               {cancelled && i === 0 ? <X className="h-4 w-4" /> : done ? <Check className="h-4 w-4" /> : <span className="font-display">{i + 1}</span>}

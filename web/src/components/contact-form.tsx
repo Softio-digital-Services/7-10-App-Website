@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import { AlertTriangle, Check, LoaderCircle, Send } from "lucide-react";
 import { describedBy, Field } from "@/components/form-field";
+import { Honeypot, honeypotValue } from "@/components/honeypot";
 import { useI18n } from "@/components/i18n-provider";
 
 type Form = { name: string; email: string; message: string };
@@ -53,7 +54,7 @@ export function ContactForm({ account }: { account: { name: string; email: strin
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, subject: t.contact.topics[topic] }),
+        body: JSON.stringify({ ...form, subject: t.contact.topics[topic], website: honeypotValue(formRef.current) }),
       });
       if (!res.ok) throw new Error(String(res.status));
       setStatus("sent");
@@ -87,7 +88,8 @@ export function ContactForm({ account }: { account: { name: string; email: strin
   const sending = status === "sending";
 
   return (
-    <form ref={formRef} onSubmit={submit} noValidate className="space-y-7">
+    <form ref={formRef} onSubmit={submit} noValidate className="relative space-y-7">
+      <Honeypot />
       <fieldset>
         <legend className="field-label">{t.contact.topicLabel}</legend>
         <div className="flex flex-wrap gap-2">
@@ -103,7 +105,7 @@ export function ContactForm({ account }: { account: { name: string; email: strin
             </label>
           ))}
         </div>
-        {topic === 0 && <p className="mt-2.5 text-[13px] text-charcoal/55">{t.contact.orderHint}</p>}
+        {topic === 0 && <p className="mt-2.5 text-[13px] text-charcoal/65">{t.contact.orderHint}</p>}
       </fieldset>
 
       <div className="grid gap-6 sm:grid-cols-2">
@@ -141,7 +143,7 @@ export function ContactForm({ account }: { account: { name: string; email: strin
         label={t.contact.message}
         error={errors.message}
         aside={
-          <span className="font-display text-[11px] tabular-nums text-charcoal/40" dir="ltr">
+          <span className="font-display text-[11px] tabular-nums text-charcoal/65" dir="ltr">
             {form.message.length}/5000
           </span>
         }
@@ -160,7 +162,7 @@ export function ContactForm({ account }: { account: { name: string; email: strin
 
       {status === "error" && (
         <div role="alert" className="flex items-start gap-3 border border-signal/40 bg-signal/5 px-5 py-4 text-[14px]">
-          <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-signal" />
+          <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-signal-ink" />
           {t.contact.error}
         </div>
       )}

@@ -2,10 +2,13 @@ import { NextResponse, after } from "next/server";
 import { z } from "zod";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { refreshCatalog } from "@/lib/catalog";
 import { checkStockAlerts } from "@/lib/inventory";
 import { notifyOrderPlaced } from "@/lib/email";
 import { isValidPhone, normalizePhone } from "@/lib/format";
 import { ORDER_COOKIE, generateOrderNumber, rememberedOrders, withRemembered } from "@/lib/orders";
+import { releaseUnpaidWhishOrders } from "@/lib/hub/web-orders";
+import { MINUTE, limitByIp } from "@/lib/rate-limit";
 import { deliveryFeeFor, regions } from "@/lib/store-config";
 import { discountedPrice } from "@/lib/utils";
 import { startWhishCheckout } from "@/lib/whish-start";
@@ -36,6 +39,10 @@ class StockError extends Error {
 const round2 = (n: number) => Math.round(n * 100) / 100;
 
 export async function POST(request: Request) {
+  // Each order takes stock off sale until it is paid or cancelled, so a script must not be able to place hundreds.
+  const limited = await limitByIp(request, "checkout", 10, 10 * MINUTE);
+  if (limited) return limited;
+
   const body = await request.json().catch(() => null);
   const parsed = schema.safeParse(body);
   if (!parsed.success) {
@@ -58,7 +65,9 @@ export async function POST(request: Request) {
   const available: Record<string, number> = {};
   for (const id of wanted.keys()) {
     const v = variants.find((x) => x.id === id);
-    available[id] = v && v.product.active ? Math.max(0, v.stock) : 0;
+    // A 100% discount would sell for $0: treat it as not for sale rather than give it away.
+    const sellable = v && v.product.active && discountedPrice(v.product.price, v.product.discount) > 0;
+    available[id] = sellable ? Math.max(0, v.stock) : 0;
   }
   if ([...wanted].some(([id, qty]) => available[id] < qty)) {
     return NextResponse.json({ error: "stock", stock: available }, { status: 409 });
@@ -135,7 +144,9 @@ export async function POST(request: Request) {
   }
 
   const placed = order;
+  refreshCatalog();
   after(async () => {
+    await releaseUnpaidWhishOrders().catch((err) => console.error("[release-unpaid]", err));
     try {
       const updated = await prisma.productVariant.findMany({
         where: { id: { in: lines.map((l) => l.variant.id) } },

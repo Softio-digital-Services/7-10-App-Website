@@ -40,7 +40,7 @@ export function RecentlyViewed({ current }: { current: StoreProduct }) {
               {r.image && <Img src={r.image} alt={r.name} fill sizes="(min-width:768px) 16vw, 128px" className="img-zoom object-cover" />}
             </div>
             <p className="mt-2 truncate text-[13px] font-medium group-hover:underline group-hover:underline-offset-4">{r.name}</p>
-            <p className="text-[12.5px] text-charcoal/55" dir="ltr">{formatPrice(r.price)}</p>
+            <p className="text-[12.5px] text-charcoal/65" dir="ltr">{formatPrice(r.price)}</p>
           </Link>
         ))}
       </div>

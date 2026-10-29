@@ -5,6 +5,7 @@ import { ChevronLeft, ChevronRight, X, ZoomIn } from "lucide-react";
 import { useI18n } from "@/components/i18n-provider";
 import { Img } from "@/components/img";
 import { project, rubberband, velocityX } from "@/components/use-drag-dismiss";
+import { useDialogFocus } from "@/components/use-dialog-focus";
 import { useLockBody } from "@/components/use-lock-body";
 
 type GalleryProps = {
@@ -128,6 +129,7 @@ function Lightbox({ images, name, index, onClose, onIndex }: { images: string[];
   const { t, f, dir } = useI18n();
   const open = index !== null;
   useLockBody(open);
+  const focusRef = useDialogFocus(open);
   const n = images.length;
 
   // The side the incoming image slides in from: next arrives from the reading-forward edge.
@@ -216,6 +218,7 @@ function Lightbox({ images, name, index, onClose, onIndex }: { images: string[];
 
   return (
     <div
+      ref={focusRef}
       className="fixed inset-0 z-[90] bg-charcoal text-cream [animation:fade-in_.3s_ease_both]"
       role="dialog"
       aria-modal="true"

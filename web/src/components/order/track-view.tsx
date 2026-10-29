@@ -95,7 +95,7 @@ export function TrackView({ initialOrder }: { initialOrder: string }) {
             </div>
             {(state === "error" || state === "rate") && (
               <p role="alert" className="flex items-start gap-3 border border-signal/40 bg-signal/5 px-4 py-3 text-[14px]">
-                <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-signal" />
+                <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-signal-ink" />
                 {state === "rate" ? t.common.somethingWrong : t.track.notFound}
               </p>
             )}
@@ -117,10 +117,10 @@ export function TrackView({ initialOrder }: { initialOrder: string }) {
               <div className="bg-cream-2 p-6 md:p-10">
                 <div className="flex flex-wrap items-start justify-between gap-4">
                   <div>
-                    <p className="eyebrow text-[10px] text-charcoal/55">{t.order.number}</p>
+                    <p className="eyebrow text-[10px] text-charcoal/65">{t.order.number}</p>
                     <p className="mt-1 font-display text-3xl tracking-[0.12em] md:text-4xl" dir="ltr">{order.orderNumber}</p>
                   </div>
-                  <p className="text-[13px] text-charcoal/60">{f(t.track.placedOn, { date: formatDate(order.createdAt, locale) })}</p>
+                  <p className="text-[13px] text-charcoal/65">{f(t.track.placedOn, { date: formatDate(order.createdAt, locale) })}</p>
                 </div>
                 <div className="mt-10">
                   <OrderTimeline status={order.status} labels={t.track.statuses} />
@@ -139,7 +139,7 @@ export function TrackView({ initialOrder }: { initialOrder: string }) {
                       <div className="flex min-w-0 flex-1 justify-between gap-3">
                         <div className="min-w-0">
                           <p className="truncate text-[14.5px] font-medium">{name}</p>
-                          <p className="mt-0.5 text-[13px] text-charcoal/55">
+                          <p className="mt-0.5 text-[13px] text-charcoal/65">
                             {t.bag.size}: <span dir="ltr">{item.size}</span> · ×{item.quantity}
                           </p>
                         </div>
@@ -155,7 +155,7 @@ export function TrackView({ initialOrder }: { initialOrder: string }) {
                   <p>{[order.city, region?.[locale]].filter(Boolean).join(", ")}</p>
                 </div>
                 <div className="text-end">
-                  <p className="eyebrow text-[10px] text-charcoal/55">{t.order.total}</p>
+                  <p className="eyebrow text-[10px] text-charcoal/65">{t.order.total}</p>
                   <p className="font-display text-3xl" dir="ltr">{formatPrice(order.total)}</p>
                 </div>
               </div>
@@ -172,7 +172,7 @@ export function TrackView({ initialOrder }: { initialOrder: string }) {
             <div className="relative grid min-h-[420px] place-items-center border border-dashed border-charcoal/20 p-10 text-center">
               <Brackets size="md" inset="-1px" className="text-charcoal/50" />
               <div>
-                <p className="font-display text-[11px] uppercase tracking-[0.35em] text-charcoal/45" dir="ltr">
+                <p className="font-display text-[11px] uppercase tracking-[0.35em] text-charcoal/65" dir="ltr">
                   710-XXXXXX
                 </p>
                 <div className="mx-auto mt-8 max-w-sm opacity-60">

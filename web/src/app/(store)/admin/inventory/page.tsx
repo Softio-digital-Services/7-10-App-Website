@@ -47,7 +47,7 @@ export default async function AdminInventoryPage({ searchParams }: { searchParam
             </Link>
           ))}
         </div>
-        <p className="flex items-center gap-2 text-[13px] text-charcoal/60">
+        <p className="flex items-center gap-2 text-[13px] text-charcoal/65">
           <MonitorSmartphone className="h-4 w-4 text-olive" strokeWidth={1.5} />
           Products and stock are managed in the 7.10 desktop app.
         </p>
@@ -55,7 +55,7 @@ export default async function AdminInventoryPage({ searchParams }: { searchParam
 
       <div className="mt-6 overflow-x-auto border border-charcoal/15">
         <table className="w-full min-w-[760px] text-[14px]">
-          <thead className="bg-cream-2 text-[12px] text-charcoal/60">
+          <thead className="bg-cream-2 text-[12px] text-charcoal/65">
             <tr>
               <th className="px-5 py-3 text-start font-normal">Product</th>
               <th className="px-5 py-3 text-start font-normal">Sizes · units left</th>
@@ -77,7 +77,7 @@ export default async function AdminInventoryPage({ searchParams }: { searchParam
                         <a href={`/products/${p.slug}`} target="_blank" rel="noreferrer" className="font-medium hover:underline">
                           {p.name}
                         </a>
-                        <span className="block text-[12.5px] text-charcoal/50">{p.category}{p.colorName ? ` · ${p.colorName}` : ""}</span>
+                        <span className="block text-[12.5px] text-charcoal/65">{p.category}{p.colorName ? ` · ${p.colorName}` : ""}</span>
                       </span>
                     </div>
                   </td>
@@ -87,7 +87,7 @@ export default async function AdminInventoryPage({ searchParams }: { searchParam
                         <span
                           key={v.id}
                           className={`inline-flex items-center gap-1.5 border px-2 py-1 text-[12.5px] ${
-                            v.stock <= 0 ? "border-signal/40 bg-signal/5 text-signal" : v.stock <= store.lowStockAt ? "border-charcoal bg-cream-2" : "border-charcoal/15"
+                            v.stock <= 0 ? "border-signal/40 bg-signal/5 text-signal-ink" : v.stock <= store.lowStockAt ? "border-charcoal bg-cream-2" : "border-charcoal/15"
                           }`}
                           dir="ltr"
                         >
@@ -99,15 +99,15 @@ export default async function AdminInventoryPage({ searchParams }: { searchParam
                   </td>
                   <td className="px-5 py-4 text-end" dir="ltr">
                     {formatPrice(p.discount ? Math.round(p.price * (100 - p.discount)) / 100 : p.price)}
-                    {p.discount > 0 && <span className="block text-[12px] text-signal">−{p.discount}%</span>}
+                    {p.discount > 0 && <span className="block text-[12px] text-signal-ink">−{p.discount}%</span>}
                   </td>
-                  <td className={`px-5 py-4 text-end font-display text-lg ${p.total === 0 ? "text-signal" : ""}`} dir="ltr">{p.total}</td>
+                  <td className={`px-5 py-4 text-end font-display text-lg ${p.total === 0 ? "text-signal-ink" : ""}`} dir="ltr">{p.total}</td>
                 </tr>
               );
             })}
             {rows.length === 0 && (
               <tr>
-                <td colSpan={4} className="px-5 py-14 text-center text-charcoal/55">
+                <td colSpan={4} className="px-5 py-14 text-center text-charcoal/65">
                   {view === "all" ? "No products yet — add them in the desktop app and sync." : "Nothing here — stock looks healthy."}
                 </td>
               </tr>

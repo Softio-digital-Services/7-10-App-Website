@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { ArrowRight, Check } from "lucide-react";
+import { Honeypot, honeypotValue } from "@/components/honeypot";
 import { useI18n } from "@/components/i18n-provider";
 
 export function NewsletterForm({ tone = "light", compact = false }: { tone?: "light" | "dark"; compact?: boolean }) {
@@ -22,7 +23,7 @@ export function NewsletterForm({ tone = "light", compact = false }: { tone?: "li
     const res = await fetch("/api/subscribe", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ contact, locale }),
+      body: JSON.stringify({ contact, locale, website: honeypotValue(e.currentTarget as HTMLFormElement) }),
     }).catch(() => null);
     setState(res?.ok ? "done" : "error");
   }
@@ -41,7 +42,8 @@ export function NewsletterForm({ tone = "light", compact = false }: { tone?: "li
   }
 
   return (
-    <form onSubmit={submit} noValidate>
+    <form onSubmit={submit} noValidate className="relative">
+      <Honeypot />
       <div
         className={`flex items-stretch border-b ${light ? "border-cream/40 focus-within:border-cream" : "border-charcoal/30 focus-within:border-charcoal"} transition-colors`}
       >
@@ -54,7 +56,7 @@ export function NewsletterForm({ tone = "light", compact = false }: { tone?: "li
           placeholder={t.home.joinPlaceholder}
           aria-label={t.home.joinPlaceholder}
           aria-invalid={state === "error"}
-          className={`min-w-0 flex-1 bg-transparent py-4 text-[15px] focus:outline-none ${
+          className={`min-w-0 flex-1 bg-transparent py-4 text-[16px] focus:outline-none ${
             light ? "placeholder:text-cream/50" : "placeholder:text-charcoal/40"
           }`}
         />
@@ -67,7 +69,7 @@ export function NewsletterForm({ tone = "light", compact = false }: { tone?: "li
           <ArrowRight className="flip-rtl h-4 w-4 transition-transform duration-500 group-hover:translate-x-1 rtl:group-hover:-translate-x-1" />
         </button>
       </div>
-      {state === "error" && <p className="mt-2 text-[13px] text-signal">{t.home.joinInvalid}</p>}
+      {state === "error" && <p className={`mt-2 text-[13px] ${light ? "text-cream" : "text-signal-ink"}`}>{t.home.joinInvalid}</p>}
     </form>
   );
 }

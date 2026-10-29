@@ -1,3 +1,4 @@
+import { randomInt } from "node:crypto";
 import { store } from "@/lib/store-config";
 
 const URLS = {
@@ -23,8 +24,8 @@ export function whishWebsite() {
 function environment(): keyof typeof URLS {
   const explicit = (process.env.WHISH_ENV ?? "").toLowerCase();
   if (explicit === "production" || explicit === "live") return "production";
-  if (explicit === "sandbox" || explicit === "test") return "sandbox";
-  return process.env.NODE_ENV === "production" ? "production" : "sandbox";
+  // Live payments are opt-in: Netlify previews also run with NODE_ENV=production and must never charge anyone.
+  return "sandbox";
 }
 
 function headers() {
@@ -55,8 +56,9 @@ async function call<T>(path: string, body?: Record<string, unknown>): Promise<Wh
   return json;
 }
 
+/** Random, so nobody can guess another order's id and poke its callback. Stays below 2^53 for JSON numbers. */
 export function newWhishExternalId() {
-  return Date.now() * 1000 + Math.floor(Math.random() * 1000);
+  return 2 ** 48 + randomInt(2 ** 48 - 1);
 }
 
 /** Asks Whish for a payment page. The customer finishes the payment there (app or card in Whish). */
@@ -91,10 +93,10 @@ export async function whishPaymentStatus(externalId: number) {
     "/payment/collect/status",
     { currency: store.currency, externalId },
   );
-  if (!res.status) return { collectStatus: "pending" as const, amount: undefined as number | undefined };
+  if (!res.status) return { collectStatus: "pending" as const, amount: undefined as number | undefined, currency: undefined as string | undefined };
   const raw = (res.data?.collectStatus ?? "pending").toLowerCase();
   const collectStatus = raw === "success" || raw === "failed" ? raw : ("pending" as const);
-  return { collectStatus, amount: res.data?.amount };
+  return { collectStatus, amount: res.data?.amount, currency: res.data?.currency };
 }
 
 export function parseWhishCallback(url: string) {
@@ -108,7 +110,9 @@ export function parseWhishCallback(url: string) {
   }
 }
 
-export function amountsMatch(received: number | undefined, expected: number) {
-  if (received == null || !Number.isFinite(received)) return true;
+/** A payment counts only when Whish reports the amount (and, if given, the currency) we asked for. */
+export function amountsMatch(received: number | undefined, expected: number, currency?: string) {
+  if (received == null || !Number.isFinite(received)) return false;
+  if (currency && currency.toUpperCase() !== store.currency) return false;
   return Math.abs(received - expected) <= 0.05;
 }

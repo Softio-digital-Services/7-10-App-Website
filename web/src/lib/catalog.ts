@@ -1,4 +1,5 @@
-import type { Prisma } from "@prisma/client";
+import { cache } from "react";
+import { revalidateTag, unstable_cache } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { discountedPrice, slugify } from "@/lib/utils";
 import { sizeRank, sortSizes, store } from "@/lib/store-config";
@@ -50,7 +51,40 @@ export type ProductFilters = {
   sort?: SortKey;
 };
 
-type ProductRow = Prisma.ProductGetPayload<{ include: { variants: true; categoryRef: true } }>;
+/** Active products as plain JSON (the cache stores JSON, so dates travel as ISO strings). */
+type ProductRow = Awaited<ReturnType<typeof loadActiveRows>>[number];
+
+/** Every storefront page reads the catalogue; one query, cached and shared by all of them. */
+export const CATALOG_TAG = "catalog";
+
+async function loadActiveRows() {
+  const rows = await prisma.product.findMany({
+    where: { active: true },
+    include: { variants: true, categoryRef: { select: { slug: true, name: true } } },
+    // Purchase cost never leaves the server, not even into the page cache.
+    omit: { cost: true },
+    orderBy: { createdAt: "desc" },
+  });
+  return rows.map((row) => ({
+    ...row,
+    createdAt: row.createdAt.toISOString(),
+    updatedAt: row.updatedAt.toISOString(),
+  }));
+}
+
+// Stock changes call refreshCatalog(); the 60 s limit only covers changes made outside this app.
+const cachedActiveRows = unstable_cache(loadActiveRows, ["catalog-active-v1"], { tags: [CATALOG_TAG], revalidate: 60 });
+const activeRows = cache(() => cachedActiveRows());
+
+/** Call after anything that changes products or stock, so the next page view reads fresh data. */
+export function refreshCatalog() {
+  try {
+    revalidateTag(CATALOG_TAG, { expire: 0 });
+  } catch (err) {
+    // Outside a request (scripts) there is no cache to clear.
+    console.warn("[catalog] revalidate skipped", err);
+  }
+}
 
 function parseImages(primary: string, extra: string) {
   let list: string[] = [];
@@ -86,8 +120,8 @@ export function toStoreProduct(row: ProductRow, locale: Locale): StoreProduct {
     categorySlug,
     colorName: row.colorName ?? (variants[0]?.color && variants[0].color !== "Default" ? variants[0].color : null),
     featured: row.featured,
-    isNew: row.createdAt.getTime() >= newCutoff,
-    createdAt: row.createdAt.toISOString(),
+    isNew: new Date(row.createdAt).getTime() >= newCutoff,
+    createdAt: row.createdAt,
     variants,
     sizes: sortSizes([...new Set(variants.map((v) => v.size))]),
     totalStock,
@@ -95,16 +129,11 @@ export function toStoreProduct(row: ProductRow, locale: Locale): StoreProduct {
   };
 }
 
-const include = { variants: true, categoryRef: true } as const;
-
 export async function getProducts(filters: ProductFilters, locale: Locale) {
-  const where: Prisma.ProductWhereInput = { active: true };
-  if (filters.category) {
-    where.OR = [{ categoryRef: { slug: filters.category } }, { category: filters.category }];
-  }
-  if (filters.sale) where.discount = { gt: 0 };
+  let rows = await activeRows();
+  if (filters.category) rows = rows.filter((r) => r.categoryRef?.slug === filters.category || r.category === filters.category);
+  if (filters.sale) rows = rows.filter((r) => r.discount > 0);
 
-  const rows = await prisma.product.findMany({ where, include, orderBy: { createdAt: "desc" } });
   let products = rows.map((row) => toStoreProduct(row, locale));
 
   if (filters.q) {
@@ -150,17 +179,19 @@ export async function getProducts(filters: ProductFilters, locale: Locale) {
   return products;
 }
 
-export async function getProductBySlug(slug: string, locale: Locale) {
-  const row = await prisma.product.findFirst({ where: { slug, active: true }, include });
+/** React cache(): generateMetadata and the page share one lookup per request. */
+export const getProductBySlug = cache(async (slug: string, locale: Locale) => {
+  const row = (await activeRows()).find((r) => r.slug === slug);
   return row ? toStoreProduct(row, locale) : null;
+});
+
+/** Slugs and last-change dates for the sitemap. */
+export async function getProductSlugs() {
+  return (await activeRows()).map((r) => ({ slug: r.slug, updatedAt: r.updatedAt }));
 }
 
 export async function getRelated(product: StoreProduct, locale: Locale, take = 8) {
-  const rows = await prisma.product.findMany({
-    where: { active: true, id: { not: product.id } },
-    include,
-    orderBy: { createdAt: "desc" },
-  });
+  const rows = (await activeRows()).filter((r) => r.id !== product.id);
   const all = rows.map((row) => toStoreProduct(row, locale));
   const same = all.filter((p) => p.categorySlug === product.categorySlug);
   const rest = all.filter((p) => p.categorySlug !== product.categorySlug);
@@ -170,7 +201,7 @@ export async function getRelated(product: StoreProduct, locale: Locale, take = 8
 export async function getCategories(locale: Locale): Promise<StoreCategory[]> {
   const dict = dictionaries[locale];
   try {
-    const rows = await prisma.product.findMany({ where: { active: true }, include });
+    const rows = await activeRows();
     const map = new Map<string, StoreCategory>();
     for (const row of rows) {
       const slug = row.categoryRef?.slug ?? slugify(row.category || "general");

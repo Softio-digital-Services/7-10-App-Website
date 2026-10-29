@@ -10,6 +10,8 @@
   --color-cream-3: #dcd7c4;
   --color-charcoal: #1d1d16;
   --color-signal: #f51e0f;
+  /* Signal red darkened for text on cream: #f51e0f is only 3.6:1, this is 5:1 (WCAG AA). */
+  --color-signal-ink: #c8160a;
   --color-ash: #6b6a58;
   --color-mute: #b9b5a2;
   --color-silver: #c7c6c0;
@@ -474,7 +476,8 @@ html[dir="rtl"] .marquee-track {
   animation-name: marquee-rtl;
 }
 
-.marquee:hover .marquee-track {
+.marquee:hover .marquee-track,
+.marquee-paused .marquee-track {
   animation-play-state: paused;
 }
 
@@ -636,5 +639,14 @@ html[dir="rtl"] .progress-indeterminate {
   .press:active,
   .btn:active {
     scale: none;
+  }
+}
+
+/* iOS Safari zooms the whole page into any field under 16px. Unlayered, so it wins over text-[…] utilities. */
+@media (pointer: coarse) {
+  input:not([type="checkbox"]):not([type="radio"]),
+  select,
+  textarea {
+    font-size: 16px;
   }
 }

@@ -48,3 +48,6 @@ dist/app/Data/*.db
 
 
 dist/
+
+# TLS keys are generated per install (Helpers/LocalCertificate.cs), never committed
+*.pfx

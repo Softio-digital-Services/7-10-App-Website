@@ -89,7 +89,7 @@ export function ProductCard({ product, priority = false, sizes = "(min-width:128
         </div>
 
         {typeof index === "number" && (
-          <span className="pointer-events-none absolute end-3 top-3 z-[2] font-display text-[11px] text-charcoal/40 mix-blend-multiply" dir="ltr">
+          <span className="pointer-events-none absolute end-3 top-3 z-[2] font-display text-[11px] text-charcoal/65 mix-blend-multiply" dir="ltr">
             {String(index + 1).padStart(3, "0")}
           </span>
         )}
@@ -112,10 +112,10 @@ export function ProductCard({ product, priority = false, sizes = "(min-width:128
               className={`absolute inset-x-2 bottom-2 z-[2] bg-cream/95 p-3 backdrop-blur-md transition-all duration-500 ease-[var(--ease-out-expo)] md:inset-x-3 md:bottom-3 ${
                 quickOpen
                   ? "translate-y-0 opacity-100"
-                  : "pointer-events-none translate-y-3 opacity-0 md:group-hover:pointer-events-auto md:group-hover:translate-y-0 md:group-hover:opacity-100"
+                  : "pointer-events-none translate-y-3 opacity-0 md:group-hover:pointer-events-auto md:group-hover:translate-y-0 md:group-hover:opacity-100 md:group-focus-within:pointer-events-auto md:group-focus-within:translate-y-0 md:group-focus-within:opacity-100"
               } ${quickOpen ? "pe-14 md:pe-3" : ""}`}
             >
-              <p className="mb-2 eyebrow text-[10px] text-charcoal/60">{t.common.quickAdd}</p>
+              <p className="mb-2 eyebrow text-[10px] text-charcoal/65">{t.common.quickAdd}</p>
               <div className="flex flex-wrap gap-1.5" dir="ltr">
                 {product.variants.map((v) => (
                   <button
@@ -146,9 +146,9 @@ export function ProductCard({ product, priority = false, sizes = "(min-width:128
               {product.name}
             </Link>
           </h3>
-          <p className="mt-0.5 truncate text-[13px] text-charcoal/55">
+          <p className="mt-0.5 truncate text-[13px] text-charcoal/65">
             {lowStock ? (
-              <span className="flex items-center gap-1.5 text-signal">
+              <span className="flex items-center gap-1.5 text-signal-ink">
                 <span className="dot-signal pulse-signal" />
                 {f(t.product.onlyLeft, { n: product.totalStock })}
               </span>
@@ -158,8 +158,8 @@ export function ProductCard({ product, priority = false, sizes = "(min-width:128
           </p>
         </div>
         <div className="shrink-0 text-end" dir="ltr">
-          <p className={`text-[14.5px] font-medium md:text-[15px] ${product.compareAt ? "text-signal" : ""}`}>{formatPrice(product.price)}</p>
-          {product.compareAt && <p className="text-[12px] text-charcoal/45 line-through">{formatPrice(product.compareAt)}</p>}
+          <p className={`text-[14.5px] font-medium md:text-[15px] ${product.compareAt ? "text-signal-ink" : ""}`}>{formatPrice(product.price)}</p>
+          {product.compareAt && <p className="text-[12px] text-charcoal/65 line-through">{formatPrice(product.compareAt)}</p>}
         </div>
       </div>
     </article>

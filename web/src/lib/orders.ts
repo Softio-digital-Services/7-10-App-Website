@@ -1,4 +1,4 @@
-import { randomInt } from "node:crypto";
+import { createHmac, randomInt, timingSafeEqual } from "node:crypto";
 import { cookies } from "next/headers";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
@@ -21,13 +21,33 @@ export function normalizeOrderNumber(raw: string) {
   return `710-${code}`;
 }
 
+/** Each cookie entry is "<orderNumber>.<signature>", so a visitor cannot add someone else's order number by hand. */
+function signOrder(orderNumber: string) {
+  return createHmac("sha256", process.env.AUTH_SECRET ?? "").update(`order:${orderNumber}`).digest("base64url").slice(0, 32);
+}
+
+function verifiedOrder(entry: string) {
+  const dot = entry.lastIndexOf(".");
+  if (dot <= 0) return null;
+  const orderNumber = entry.slice(0, dot);
+  const given = Buffer.from(entry.slice(dot + 1));
+  const expected = Buffer.from(signOrder(orderNumber));
+  return given.length === expected.length && timingSafeEqual(given, expected) ? orderNumber : null;
+}
+
 export async function rememberedOrders() {
   const jar = await cookies();
-  return (jar.get(ORDER_COOKIE)?.value ?? "").split(",").filter(Boolean);
+  return (jar.get(ORDER_COOKIE)?.value ?? "")
+    .split(",")
+    .map(verifiedOrder)
+    .filter((n): n is string => !!n);
 }
 
 export function withRemembered(existing: string[], orderNumber: string) {
-  return [orderNumber, ...existing.filter((n) => n !== orderNumber)].slice(0, MAX_REMEMBERED).join(",");
+  return [orderNumber, ...existing.filter((n) => n !== orderNumber)]
+    .slice(0, MAX_REMEMBERED)
+    .map((n) => `${n}.${signOrder(n)}`)
+    .join(",");
 }
 
 export const orderInclude = {

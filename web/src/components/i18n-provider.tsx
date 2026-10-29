@@ -32,6 +32,12 @@ export function I18nProvider({
       document.cookie = `${LOCALE_COOKIE}=${next}; path=/; max-age=31536000; samesite=lax`;
       document.documentElement.lang = next;
       document.documentElement.dir = dirFor(next);
+      // An /ar/... address always renders Arabic, so leaving Arabic means leaving the prefix.
+      const path = window.location.pathname;
+      if (next !== "ar" && (path === "/ar" || path.startsWith("/ar/"))) {
+        startTransition(() => router.replace((path.slice(3) || "/") + window.location.search));
+        return;
+      }
       startTransition(() => router.refresh());
     },
     [router],

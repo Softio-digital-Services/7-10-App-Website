@@ -3,9 +3,16 @@ import { PrismaLibSQL } from "@prisma/adapter-libsql";
 
 const globalForPrisma = globalThis as unknown as { prisma: PrismaClient };
 
-// Ensure DATABASE_URL is set so PrismaClient never fails to initialize
+// A live server without a database would show an empty shop instead of failing, so it refuses to start.
+// `next build` runs with NODE_ENV=production too and is allowed through (pages that need data render at request time).
 if (!process.env.DATABASE_URL) {
+  if (process.env.NODE_ENV === "production" && process.env.NEXT_PHASE !== "phase-production-build") {
+    throw new Error("DATABASE_URL is not set. Point it at the Turso libsql:// URL (see HOSTING.md).");
+  }
   process.env.DATABASE_URL = "file:./dev.db";
+}
+if (/^libsql:\/\//.test(process.env.DATABASE_URL) && !process.env.DATABASE_AUTH_TOKEN) {
+  throw new Error("DATABASE_AUTH_TOKEN is not set for the Turso database.");
 }
 
 /** `libsql://` / `https://` URLs point at a hosted Turso database; `file:` URLs use the local SQLite file. */

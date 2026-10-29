@@ -38,7 +38,7 @@ export default async function OrdersPage() {
         <div>
           <SectionLabel index="—">{t.auth.accountLabel}</SectionLabel>
           <h1 className="display mt-5 text-5xl md:text-7xl">{fmt(t.auth.hello, { name: firstName ?? "" })}</h1>
-          <p className="mt-3 text-[15px] text-charcoal/60">
+          <p className="mt-3 text-[15px] text-charcoal/65">
             <bdi dir="ltr">{session.user.email}</bdi>
           </p>
         </div>
@@ -56,7 +56,7 @@ export default async function OrdersPage() {
         <div className="lg:col-span-8">
           <div className="flex items-baseline justify-between">
             <h2 className="display text-3xl md:text-4xl">{t.auth.ordersTitle}</h2>
-            {orders.length > 0 && <p className="text-[13.5px] text-charcoal/55">{fmt(t.auth.orderCount, { count: orders.length })}</p>}
+            {orders.length > 0 && <p className="text-[13.5px] text-charcoal/65">{fmt(t.auth.orderCount, { count: orders.length })}</p>}
           </div>
 
           {orders.length === 0 ? (
@@ -85,13 +85,13 @@ export default async function OrdersPage() {
                           <p className="font-display text-xl tracking-[0.1em] md:text-2xl">
                             <bdi dir="ltr">{order.orderNumber}</bdi>
                           </p>
-                          <p className="mt-1 text-[13px] text-charcoal/55">
+                          <p className="mt-1 text-[13px] text-charcoal/65">
                             {fmt(t.track.placedOn, { date: formatDate(order.createdAt, locale) })} · {fmt(t.auth.itemCount, { count: units })}
                           </p>
                         </div>
                         <span
                           className={`inline-flex items-center gap-2 px-3 py-1.5 text-[12.5px] ${
-                            cancelled ? "bg-signal/10 text-signal" : order.status === "DELIVERED" ? "bg-olive text-cream" : "bg-cream-2"
+                            cancelled ? "bg-signal/10 text-signal-ink" : order.status === "DELIVERED" ? "bg-olive text-cream" : "bg-cream-2"
                           }`}
                         >
                           {!cancelled && order.status !== "DELIVERED" && <span className="dot-signal pulse-signal" />}
@@ -127,7 +127,7 @@ export default async function OrdersPage() {
                           <p className="font-display text-2xl">
                             <bdi dir="ltr">{formatPrice(order.total)}</bdi>
                           </p>
-                          <p className="mt-1 inline-flex items-center gap-1.5 text-[13px] text-charcoal/60 group-hover:text-charcoal">
+                          <p className="mt-1 inline-flex items-center gap-1.5 text-[13px] text-charcoal/65 group-hover:text-charcoal">
                             {t.auth.view} <ArrowRight className="flip-rtl h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5 rtl:group-hover:-translate-x-0.5" />
                           </p>
                         </div>

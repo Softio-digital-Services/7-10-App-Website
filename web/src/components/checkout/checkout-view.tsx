@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import { AlertTriangle, Banknote, ChevronDown, LoaderCircle, Lock, ShoppingBag, Wallet } from "lucide-react";
 import { Brackets } from "@/components/brand/brackets";
 import { useCart } from "@/components/cart-provider";
+import { StockNotice } from "@/components/checkout/stock-notice";
 import { Field } from "@/components/form-field";
 import { useI18n } from "@/components/i18n-provider";
 import { Img } from "@/components/img";
@@ -227,13 +228,13 @@ export function CheckoutView({ account }: { account: { name: string; email: stri
             <div className="flex min-w-0 flex-1 justify-between gap-3">
               <div className="min-w-0">
                 <p className="truncate text-[14.5px] font-medium">{item.productName}</p>
-                <p className="mt-0.5 text-[13px] text-charcoal/55">
+                <p className="mt-0.5 text-[13px] text-charcoal/65">
                   {t.bag.size}: <span dir="ltr">{item.size}</span>
                 </p>
               </div>
               <div className="shrink-0 text-end text-[14.5px]" dir="ltr">
                 <p className="font-medium">{formatPrice(item.price * item.quantity)}</p>
-                {item.compareAt && <p className="text-[12.5px] text-charcoal/40 line-through">{formatPrice(item.compareAt * item.quantity)}</p>}
+                {item.compareAt && <p className="text-[12.5px] text-charcoal/65 line-through">{formatPrice(item.compareAt * item.quantity)}</p>}
               </div>
             </div>
           </li>
@@ -249,19 +250,19 @@ export function CheckoutView({ account }: { account: { name: string; email: stri
         </div>
         <div className="flex justify-between">
           <dt className="text-charcoal/70">{t.checkout.deliveryFee}</dt>
-          <dd dir="ltr" className={fee === 0 ? "font-medium text-olive" : fee === null ? "text-charcoal/45" : ""}>
+          <dd dir="ltr" className={fee === 0 ? "font-medium text-olive" : fee === null ? "text-charcoal/65" : ""}>
             {fee === null ? t.checkout.selectRegionFirst : fee === 0 ? t.common.free : formatPrice(fee)}
           </dd>
         </div>
         {remaining > 0 && (
-          <p className="text-[12.5px] text-charcoal/55">{f(t.bag.freeProgress, { amount: formatPrice(remaining) })}</p>
+          <p className="text-[12.5px] text-charcoal/65">{f(t.bag.freeProgress, { amount: formatPrice(remaining) })}</p>
         )}
       </dl>
 
       <div className="mt-5 flex items-end justify-between border-t border-charcoal pt-5">
         <span className="eyebrow">{t.checkout.total}</span>
         <span className="font-display text-3xl font-medium" dir="ltr">
-          <span className="me-1.5 align-middle text-[12px] font-normal text-charcoal/50">{store.currency}</span>
+          <span className="me-1.5 align-middle text-[12px] font-normal text-charcoal/65">{store.currency}</span>
           {formatPrice(total)}
         </span>
       </div>
@@ -287,7 +288,7 @@ export function CheckoutView({ account }: { account: { name: string; email: stri
     <div className="container-x pb-24 pt-8 md:pt-12">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <p className="eyebrow flex items-center gap-2 text-charcoal/55">
+          <p className="eyebrow flex items-center gap-2 text-charcoal/65">
             <Lock className="h-3.5 w-3.5" strokeWidth={1.75} /> {t.checkout.secure}
           </p>
           <h1 className="display mt-4 text-5xl md:text-7xl">{t.checkout.title}</h1>
@@ -297,7 +298,7 @@ export function CheckoutView({ account }: { account: { name: string; email: stri
         </Link>
       </div>
       {!account && (
-        <p className="mt-4 text-[14px] text-charcoal/60">
+        <p className="mt-4 text-[14px] text-charcoal/65">
           {t.checkout.guestNote} {t.checkout.haveAccount}{" "}
           <Link href="/login?callbackUrl=/checkout" className="text-charcoal underline underline-offset-4">
             {t.common.signIn}
@@ -329,9 +330,10 @@ export function CheckoutView({ account }: { account: { name: string; email: stri
 
       <form noValidate onSubmit={submit} className="mt-8 grid gap-12 md:mt-12 lg:grid-cols-12 lg:gap-16">
         <div className="space-y-12 lg:col-span-7">
+          {!banner && <StockNotice />}
           {banner && (
             <div ref={bannerRef} role="alert" className="flex items-start gap-3 border border-signal/40 bg-signal/5 px-5 py-4 text-[14px] text-charcoal">
-              <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-signal" />
+              <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-signal-ink" />
               {banner}
             </div>
           )}
@@ -468,7 +470,7 @@ export function CheckoutView({ account }: { account: { name: string; email: stri
                 extra={
                   <span className="flex gap-1.5" dir="ltr" aria-hidden="true">
                     {["WHISH", "VISA", "MC"].map((b) => (
-                      <span key={b} className="border border-charcoal/20 px-1.5 py-0.5 font-display text-[9.5px] tracking-wider text-charcoal/60">
+                      <span key={b} className="border border-charcoal/20 px-1.5 py-0.5 font-display text-[9.5px] tracking-wider text-charcoal/65">
                         {b}
                       </span>
                     ))}
@@ -484,8 +486,8 @@ export function CheckoutView({ account }: { account: { name: string; email: stri
               {t.checkout.remember}
             </label>
             <div className="lg:hidden">{placeButton("")}</div>
-            <p className="text-[12.5px] leading-relaxed text-charcoal/50 lg:hidden">
-              {t.checkout.terms} {t.checkout.privacy}
+            <p className="text-[12.5px] leading-relaxed text-charcoal/65 lg:hidden">
+              <TermsNote />
             </p>
           </div>
         </div>
@@ -493,14 +495,14 @@ export function CheckoutView({ account }: { account: { name: string; email: stri
         <aside className="lg:col-span-5">
           <div className="lg:sticky lg:top-[100px]">
             <div className="hidden bg-cream-2 p-7 lg:block xl:p-9">
-              <p className="eyebrow mb-6 text-charcoal/60">{t.checkout.summary}</p>
+              <p className="eyebrow mb-6 text-charcoal/65">{t.checkout.summary}</p>
               {summary}
               <div className="mt-7">{placeButton("")}</div>
-              <p className="mt-4 text-[12.5px] leading-relaxed text-charcoal/50">
-                {t.checkout.terms} {t.checkout.privacy}
+              <p className="mt-4 text-[12.5px] leading-relaxed text-charcoal/65">
+                <TermsNote />
               </p>
             </div>
-            <ul className="mt-5 hidden grid-cols-3 gap-2 text-center text-[11.5px] text-charcoal/60 lg:grid">
+            <ul className="mt-5 hidden grid-cols-3 gap-2 text-center text-[11.5px] text-charcoal/65 lg:grid">
               <li className="border border-charcoal/10 px-2 py-3">{t.home.uspCodTitle}</li>
               <li className="border border-charcoal/10 px-2 py-3">{f(t.home.uspDeliveryBody, { days: store.deliveryDays })}</li>
               <li className="border border-charcoal/10 px-2 py-3">{f(t.home.uspExchangeBody, { days: store.exchangeDays })}</li>
@@ -549,4 +551,14 @@ function PaymentOption({ checked, onSelect, icon, title, body, extra }: { checke
       </span>
     </label>
   );
+}
+
+/** "…agree to our {terms} and {privacy}." with both placeholders turned into links, in either language's word order. */
+function TermsNote() {
+  const { t } = useI18n();
+  const links: Record<string, React.ReactNode> = {
+    terms: <Link key="terms" href="/terms" className="underline underline-offset-2 hover:text-charcoal">{t.checkout.termsLink}</Link>,
+    privacy: <Link key="privacy" href="/privacy" className="underline underline-offset-2 hover:text-charcoal">{t.checkout.privacyLink}</Link>,
+  };
+  return <>{t.checkout.terms.split(/\{(terms|privacy)\}/).map((part, i) => (i % 2 ? links[part] : part))}</>;
 }

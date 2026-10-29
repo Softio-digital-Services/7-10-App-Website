@@ -22,7 +22,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         <div className="container-x">
           <div className="flex flex-wrap items-end justify-between gap-4 pt-8">
             <div>
-              <p className="eyebrow flex items-center gap-3 text-charcoal/55">
+              <p className="eyebrow flex items-center gap-3 text-charcoal/65">
                 <span className="dot-signal" /> 7.10 — {session.user.role === "ADMIN" ? "Admin" : "Manager"}
               </p>
               <p className="display mt-2 text-4xl md:text-5xl">Back office</p>

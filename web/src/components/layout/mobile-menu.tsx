@@ -8,6 +8,7 @@ import { useI18n } from "@/components/i18n-provider";
 import { InstagramIcon, WhatsAppIcon } from "@/components/icons";
 import { store, whatsappLink } from "@/lib/store-config";
 import type { StoreCategory } from "@/lib/catalog";
+import { useDialogFocus } from "@/components/use-dialog-focus";
 import { useDragDismiss } from "@/components/use-drag-dismiss";
 import { useLockBody } from "@/components/use-lock-body";
 
@@ -22,6 +23,7 @@ type MobileMenuProps = {
 export function MobileMenu({ open, onClose, categories, isStaff, signedIn }: MobileMenuProps) {
   const { t, locale, setLocale, dir } = useI18n();
   useLockBody(open);
+  const focusRef = useDialogFocus(open);
   const { panelRef, backdropRef, panelProps } = useDragDismiss<HTMLDivElement, HTMLDivElement>({ side: "start", dir, onClose });
 
   useEffect(() => {
@@ -49,6 +51,7 @@ export function MobileMenu({ open, onClose, categories, isStaff, signedIn }: Mob
 
   return (
     <div
+      ref={focusRef}
       className={`fixed inset-0 z-[60] lg:hidden ${open ? "pointer-events-auto" : "pointer-events-none"}`}
       aria-hidden={!open}
       inert={!open}
@@ -80,7 +83,7 @@ export function MobileMenu({ open, onClose, categories, isStaff, signedIn }: Mob
           </button>
         </div>
 
-        <nav className="flex-1 overflow-y-auto px-5 py-8" aria-label="Mobile">
+        <nav className="flex-1 overflow-y-auto px-5 py-8" aria-label={t.common.mainNav}>
           <ul className="space-y-1">
             {primary.map((item, i) => (
               <li
@@ -104,7 +107,7 @@ export function MobileMenu({ open, onClose, categories, isStaff, signedIn }: Mob
           <ul className="mt-10 grid grid-cols-2 gap-x-6 gap-y-3 border-t border-cream/15 pt-8">
             {secondary.map((item) => (
               <li key={item.href}>
-                <Link href={item.href} onClick={onClose} className="text-[15px] text-cream/80 hover:text-cream">
+                <Link href={item.href} onClick={onClose} className="text-[15px] text-cream">
                   {item.label}
                 </Link>
               </li>

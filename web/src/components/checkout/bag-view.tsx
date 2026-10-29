@@ -5,6 +5,7 @@ import { useEffect } from "react";
 import { ArrowRight, Lock, ShoppingBag, Trash2 } from "lucide-react";
 import { Brackets } from "@/components/brand/brackets";
 import { SectionLabel } from "@/components/brand/section-label";
+import { StockNotice } from "@/components/checkout/stock-notice";
 import { useCart } from "@/components/cart-provider";
 import { useI18n } from "@/components/i18n-provider";
 import { WhatsAppIcon } from "@/components/icons";
@@ -36,7 +37,7 @@ export function BagView({ suggestions }: { suggestions: StoreProduct[] }) {
           <h1 className="display text-5xl md:text-7xl">
             {t.bag.title}
             {ready && count > 0 && (
-              <sup className="ms-2 align-top font-display text-base font-normal text-charcoal/40 md:text-2xl" dir="ltr">
+              <sup className="ms-2 align-top font-display text-base font-normal text-charcoal/65 md:text-2xl" dir="ltr">
                 ({count})
               </sup>
             )}
@@ -45,6 +46,8 @@ export function BagView({ suggestions }: { suggestions: StoreProduct[] }) {
             {t.bag.continue}
           </Link>
         </div>
+
+        <StockNotice className="mt-8" />
 
         {!ready ? (
           <div className="mt-12 grid gap-10 lg:grid-cols-12">
@@ -87,13 +90,13 @@ export function BagView({ suggestions }: { suggestions: StoreProduct[] }) {
                           <Link href={`/products/${item.slug}`} className="text-[16px] font-medium leading-snug hover:underline hover:underline-offset-4">
                             {item.productName}
                           </Link>
-                          <p className="mt-1 text-[13.5px] text-charcoal/60">
+                          <p className="mt-1 text-[13.5px] text-charcoal/65">
                             {t.bag.size}: <span dir="ltr">{item.size}</span>
                             {item.color && item.color !== "Default" && <> · {item.color}</>}
                           </p>
                           <p className="mt-1 text-[13.5px]" dir="ltr">
-                            <span className={item.compareAt ? "text-signal" : "text-charcoal/70"}>{formatPrice(item.price)}</span>
-                            {item.compareAt && <span className="ms-2 text-charcoal/40 line-through">{formatPrice(item.compareAt)}</span>}
+                            <span className={item.compareAt ? "text-signal-ink" : "text-charcoal/70"}>{formatPrice(item.price)}</span>
+                            {item.compareAt && <span className="ms-2 text-charcoal/65 line-through">{formatPrice(item.compareAt)}</span>}
                           </p>
                         </div>
                         <p className="shrink-0 text-[16px] font-medium" dir="ltr">
@@ -101,7 +104,7 @@ export function BagView({ suggestions }: { suggestions: StoreProduct[] }) {
                         </p>
                       </div>
                       {low && (
-                        <p className="mt-2 flex items-center gap-2 text-[12.5px] text-signal">
+                        <p className="mt-2 flex items-center gap-2 text-[12.5px] text-signal-ink">
                           <span className="dot-signal pulse-signal" />
                           {f(t.product.onlyLeft, { n: item.maxStock })}
                         </p>
@@ -117,7 +120,7 @@ export function BagView({ suggestions }: { suggestions: StoreProduct[] }) {
                         <button
                           type="button"
                           onClick={() => removeItem(item.variantId)}
-                          className="flex items-center gap-2 text-[13px] text-charcoal/55 hover:text-signal"
+                          className="flex items-center gap-2 text-[13px] text-charcoal/65 hover:text-signal-ink"
                         >
                           <Trash2 className="h-4 w-4" strokeWidth={1.5} />
                           <span className="hidden sm:inline">{t.bag.remove}</span>
@@ -145,14 +148,14 @@ export function BagView({ suggestions }: { suggestions: StoreProduct[] }) {
                       <dd dir="ltr">{formatPrice(subtotal)}</dd>
                     </div>
                     {savings > 0 && (
-                      <div className="flex justify-between text-signal">
+                      <div className="flex justify-between text-signal-ink">
                         <dt>{t.shop.onSale}</dt>
                         <dd dir="ltr">−{formatPrice(savings)}</dd>
                       </div>
                     )}
                     <div className="flex justify-between">
                       <dt className="text-charcoal/70">{t.checkout.deliveryFee}</dt>
-                      <dd className={remaining > 0 ? "text-charcoal/50" : "font-medium text-olive"}>
+                      <dd className={remaining > 0 ? "text-charcoal/65" : "font-medium text-olive"}>
                         {remaining > 0 ? t.bag.deliveryAtCheckout : t.common.free}
                       </dd>
                     </div>
@@ -167,7 +170,7 @@ export function BagView({ suggestions }: { suggestions: StoreProduct[] }) {
                     <Lock className="h-4 w-4" strokeWidth={1.75} />
                     {t.bag.checkout}
                   </Link>
-                  <p className="mt-4 text-center text-[12.5px] text-charcoal/55">{t.footer.payments}</p>
+                  <p className="mt-4 text-center text-[12.5px] text-charcoal/65">{t.footer.payments}</p>
                 </div>
                 <a
                   href={whatsappLink()}

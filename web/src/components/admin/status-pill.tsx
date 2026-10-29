@@ -7,7 +7,7 @@ export function statusLabel(status: string) {
 export function StatusPill({ status }: { status: string }) {
   const tone =
     status === "CANCELLED"
-      ? "bg-signal/10 text-signal"
+      ? "bg-signal/10 text-signal-ink"
       : status === "DELIVERED"
         ? "bg-olive text-cream"
         : status === "PENDING"

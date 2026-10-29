@@ -4,12 +4,13 @@ import { SectionLabel } from "@/components/brand/section-label";
 import { ContactForm } from "@/components/contact-form";
 import { InstagramIcon, WhatsAppIcon } from "@/components/icons";
 import { auth } from "@/lib/auth";
+import { alternatesFor } from "@/lib/i18n";
 import { getI18n } from "@/lib/i18n/server";
 import { store, whatsappLink } from "@/lib/store-config";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const { dict } = await getI18n();
-  return { title: dict.contact.title, description: dict.contact.intro };
+  const { dict, locale } = await getI18n();
+  return { alternates: alternatesFor("/contact", locale), title: dict.contact.title, description: dict.contact.intro };
 }
 
 export default async function ContactPage() {
@@ -52,7 +53,7 @@ export default async function ContactPage() {
             </div>
           </a>
 
-          <p className="eyebrow pt-6 text-[10.5px] text-charcoal/50">{t.contact.channels}</p>
+          <p className="eyebrow pt-6 text-[10.5px] text-charcoal/65">{t.contact.channels}</p>
           <Channel
             href={`https://instagram.com/${store.instagram}`}
             icon={<InstagramIcon className="h-5 w-5" />}
@@ -67,7 +68,7 @@ export default async function ContactPage() {
             value={store.email}
             body={t.contact.emailBody}
           />
-          <p className="flex items-center gap-2.5 pt-4 text-[13.5px] text-charcoal/60">
+          <p className="flex items-center gap-2.5 pt-4 text-[13.5px] text-charcoal/65">
             <Clock className="h-4 w-4" strokeWidth={1.5} /> {t.contact.hours}
           </p>
         </aside>
@@ -86,11 +87,11 @@ function Channel({ href, icon, label, value, body }: { href: string; icon: React
     >
       <span className="grid h-11 w-11 shrink-0 place-items-center bg-cream-2">{icon}</span>
       <span className="min-w-0 flex-1">
-        <span className="block text-[13px] text-charcoal/55">{label}</span>
+        <span className="block text-[13px] text-charcoal/65">{label}</span>
         <span className="mt-0.5 block truncate text-[16px] font-medium">
           <bdi dir="ltr">{value}</bdi>
         </span>
-        <span className="mt-1.5 block text-[13.5px] leading-relaxed text-charcoal/60">{body}</span>
+        <span className="mt-1.5 block text-[13.5px] leading-relaxed text-charcoal/65">{body}</span>
       </span>
       <ArrowUpRight className="flip-rtl mt-1 h-5 w-5 shrink-0 text-charcoal/40 transition-colors group-hover:text-charcoal" strokeWidth={1.5} />
     </a>

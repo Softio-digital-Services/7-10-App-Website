@@ -6,7 +6,7 @@ type SectionLabelProps = {
 };
 
 export function SectionLabel({ index, children, className = "", tone = "dark" }: SectionLabelProps) {
-  const muted = tone === "light" ? "text-cream/70" : "text-charcoal/60";
+  const muted = tone === "light" ? "text-cream/70" : "text-charcoal/65";
   const line = tone === "light" ? "bg-cream/40" : "bg-charcoal/30";
   return (
     <p className={`eyebrow flex items-center gap-3 ${muted} ${className}`}>

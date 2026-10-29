@@ -7,7 +7,7 @@ export default async function AdminMessagesPage() {
   const messages = await prisma.contactMessage.findMany({ orderBy: [{ read: "asc" }, { createdAt: "desc" }], take: 200 });
 
   if (messages.length === 0) {
-    return <p className="border border-dashed border-charcoal/25 px-6 py-16 text-center text-charcoal/55">No messages yet. Anything sent from the Contact page shows up here.</p>;
+    return <p className="border border-dashed border-charcoal/25 px-6 py-16 text-center text-charcoal/65">No messages yet. Anything sent from the Contact page shows up here.</p>;
   }
 
   return (
@@ -19,9 +19,9 @@ export default async function AdminMessagesPage() {
               <p className="flex items-center gap-2.5 font-medium">
                 {!m.read && <span className="dot-signal" />}
                 {m.name}
-                <span className="font-normal text-charcoal/55">· {m.email}</span>
+                <span className="font-normal text-charcoal/65">· {m.email}</span>
               </p>
-              <p className="mt-1 text-[12.5px] text-charcoal/50">
+              <p className="mt-1 text-[12.5px] text-charcoal/65">
                 {m.subject && <span className="me-2 bg-charcoal px-2 py-0.5 text-cream">{m.subject}</span>}
                 {dateFmt.format(m.createdAt)}
               </p>

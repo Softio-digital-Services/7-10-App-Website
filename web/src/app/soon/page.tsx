@@ -5,16 +5,17 @@ import { InstagramIcon } from "@/components/icons";
 import { LangSwitch } from "@/components/lang-switch";
 import { NewsletterForm } from "@/components/newsletter-form";
 import { SoonCountdown } from "@/components/soon-countdown";
+import { fmt } from "@/lib/i18n";
 import { getI18n } from "@/lib/i18n/server";
-import { isBeforeLaunch, store } from "@/lib/store-config";
+import { isBeforeLaunch, launchDateLong, launchStamp, store } from "@/lib/store-config";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const { dict } = await getI18n();
-  return { title: dict.soon.title, description: dict.soon.body };
+  const { dict, locale } = await getI18n();
+  return { title: dict.soon.title, description: fmt(dict.soon.body, { date: launchDateLong(locale) }) };
 }
 
 export default async function SoonPage() {
-  const { dict: t } = await getI18n();
+  const { dict: t, locale } = await getI18n();
 
   return (
     <main className="theme-olive relative isolate flex min-h-svh flex-col overflow-hidden">
@@ -38,8 +39,8 @@ export default async function SoonPage() {
         <h1 className="rise display mt-4 text-[26vw] font-semibold leading-[0.85] sm:text-[11rem] md:text-[13rem]" style={{ animationDelay: "0.15s" }}>
           {t.soon.title}
         </h1>
-        <p className="rise mt-6 max-w-md text-[16.5px] leading-relaxed text-cream/80" style={{ animationDelay: "0.2s" }}>
-          {t.soon.body}
+        <p className="rise mt-6 max-w-md text-[16.5px] leading-relaxed text-cream" style={{ animationDelay: "0.2s" }}>
+          {fmt(t.soon.body, { date: launchDateLong(locale) })}
         </p>
 
         {isBeforeLaunch() && (
@@ -49,7 +50,7 @@ export default async function SoonPage() {
         )}
 
         <div className="rise mt-12 w-full max-w-md text-start" style={{ animationDelay: "0.3s" }}>
-          <p className="text-[14px] text-cream/75">{t.soon.notify}</p>
+          <p className="text-[14px] text-cream">{t.soon.notify}</p>
           <NewsletterForm tone="light" />
         </div>
 
@@ -65,8 +66,8 @@ export default async function SoonPage() {
       </div>
 
       <footer className="container-x flex h-16 items-center justify-between border-t border-cream/15 text-[12px] text-cream/60">
-        <span className="font-display tracking-[0.3em] keep-tracking" dir="ltr">07 — 10 — 2026</span>
-        <span>{t.footer.rights}</span>
+        <span className="font-display tracking-[0.3em] keep-tracking" dir="ltr">{launchStamp(" — ")}</span>
+        <span>{fmt(t.footer.rights, { year: new Date().getFullYear() })}</span>
       </footer>
     </main>
   );

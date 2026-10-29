@@ -24,6 +24,9 @@ type CartContextValue = {
   syncStock: (stock: Record<string, number>, prices?: Record<string, { price: number; compareAt: number | null }>) => void;
   refresh: () => Promise<void>;
   clearCart: () => void;
+  /** Lines the last stock check removed or cut down ("Utility Tee · M"), until dismissed. */
+  stockNotice: string[];
+  dismissStockNotice: () => void;
 };
 
 const CartContext = createContext<CartContextValue | null>(null);
@@ -33,6 +36,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const ready = useHydrated();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [lastAddedId, setLastAddedId] = useState<string | null>(null);
+  const [stockNotice, setStockNotice] = useState<string[]>([]);
 
   const addItem = useCallback<CartContextValue["addItem"]>((item, quantity = 1, options) => {
     if (item.maxStock <= 0) return "unavailable";
@@ -66,6 +70,12 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const syncStock = useCallback<CartContextValue["syncStock"]>((stock, prices) => {
+    // Tell the shopper what changed instead of silently shrinking the bag.
+    const cut = bag
+      .get()
+      .filter((i) => stock[i.variantId] !== undefined && stock[i.variantId] < i.quantity)
+      .map((i) => `${i.productName} · ${i.size}`);
+    if (cut.length) setStockNotice(cut);
     bag.set((current) =>
       current
         .map((i) => {
@@ -96,6 +106,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   }, [syncStock]);
 
   const clearCart = useCallback(() => bag.set(EMPTY), []);
+  const dismissStockNotice = useCallback(() => setStockNotice([]), []);
   const openDrawer = useCallback(() => setDrawerOpen(true), []);
   const closeDrawer = useCallback(() => setDrawerOpen(false), []);
 
@@ -117,8 +128,10 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       syncStock,
       refresh,
       clearCart,
+      stockNotice,
+      dismissStockNotice,
     };
-  }, [items, ready, drawerOpen, lastAddedId, openDrawer, closeDrawer, addItem, removeItem, updateQuantity, syncStock, refresh, clearCart]);
+  }, [items, ready, drawerOpen, lastAddedId, openDrawer, closeDrawer, addItem, removeItem, updateQuantity, syncStock, refresh, clearCart, stockNotice, dismissStockNotice]);
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 }

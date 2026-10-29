@@ -9,35 +9,8 @@ const siteUrl = () => store.siteUrl;
 
 type DbClient = PrismaClient | Prisma.TransactionClient;
 
-export async function setVariantStock(
-  variantId: string,
-  stock: number,
-  db: DbClient = prisma,
-) {
-  const before = await db.productVariant.findUnique({
-    where: { id: variantId },
-    include: { product: true },
-  });
-
-  if (!before) throw new Error("Variant not found");
-
-  const wasOut = before.stock <= 0;
-  const updated = await db.productVariant.update({
-    where: { id: variantId },
-    data: { stock },
-    include: { product: true },
-  });
-
-  await checkStockAlerts(updated, db);
-
-  if (wasOut && stock > 0) {
-    await notifyProductBackInStock(updated.product.id, updated.product.slug, updated.product.name, db);
-  }
-
-  return updated;
-}
-
-async function notifyProductBackInStock(
+/** Emails everyone waiting on this product, once, then marks them notified. */
+export async function notifyProductBackInStock(
   productId: string,
   slug: string,
   name: string,
@@ -58,37 +31,6 @@ async function notifyProductBackInStock(
       data: { notified: true },
     });
   }
-}
-
-export async function decrementStock(
-  variantId: string,
-  quantity: number,
-  db: DbClient = prisma,
-) {
-  const variant = await db.productVariant.findUnique({
-    where: { id: variantId },
-    include: { product: true },
-  });
-
-  if (!variant) {
-    throw new Error("Variant not found");
-  }
-
-  if (variant.stock < quantity) {
-    throw new Error(`Insufficient stock for ${variant.product.name}`);
-  }
-
-  const newStock = variant.stock - quantity;
-
-  const updated = await db.productVariant.update({
-    where: { id: variantId },
-    data: { stock: newStock },
-    include: { product: true },
-  });
-
-  await checkStockAlerts(updated, db);
-
-  return updated;
 }
 
 export async function checkStockAlerts(

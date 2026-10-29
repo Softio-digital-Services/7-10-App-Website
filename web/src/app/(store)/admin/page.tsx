@@ -38,12 +38,12 @@ export default async function AdminPage() {
         {stats.map((s) => {
           const body = (
             <>
-              <p className="text-[13px] text-charcoal/60">{s.label}</p>
+              <p className="text-[13px] text-charcoal/65">{s.label}</p>
               <p className="mt-3 flex items-center gap-3 font-display text-4xl font-medium" dir="ltr">
                 {s.value}
                 {s.alert && <span className="dot-signal pulse-signal" />}
               </p>
-              {s.sub && <p className="mt-1 text-[12.5px] text-charcoal/50">{s.sub}</p>}
+              {s.sub && <p className="mt-1 text-[12.5px] text-charcoal/65">{s.sub}</p>}
             </>
           );
           return s.href ? (
@@ -75,7 +75,7 @@ export default async function AdminPage() {
         </div>
         <div className="mt-5 overflow-x-auto border border-charcoal/15">
           <table className="w-full min-w-[640px] text-[14px]">
-            <thead className="bg-cream-2 text-start text-[12px] text-charcoal/60">
+            <thead className="bg-cream-2 text-start text-[12px] text-charcoal/65">
               <tr>
                 <th className="px-5 py-3 text-start font-normal">Order</th>
                 <th className="px-5 py-3 text-start font-normal">Customer</th>
@@ -104,7 +104,7 @@ export default async function AdminPage() {
               ))}
               {recent.length === 0 && (
                 <tr>
-                  <td colSpan={6} className="px-5 py-10 text-center text-charcoal/55">No orders yet.</td>
+                  <td colSpan={6} className="px-5 py-10 text-center text-charcoal/65">No orders yet.</td>
                 </tr>
               )}
             </tbody>

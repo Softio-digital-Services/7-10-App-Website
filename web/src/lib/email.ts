@@ -6,10 +6,18 @@ type EmailPayload = {
   html: string;
 };
 
+const smtpPort = Number(process.env.SMTP_PORT ?? 587);
+
 const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST ?? "smtp.gmail.com",
-  port: Number(process.env.SMTP_PORT ?? 587),
-  secure: false,
+  port: smtpPort,
+  // 465 is TLS from the first byte; 587 upgrades with STARTTLS, which must not be skippable.
+  secure: smtpPort === 465,
+  requireTLS: smtpPort !== 465,
+  // A mail server that hangs must not hold a serverless request until it times out.
+  connectionTimeout: 10_000,
+  greetingTimeout: 10_000,
+  socketTimeout: 15_000,
   auth: {
     user: process.env.SMTP_USER,
     pass: process.env.SMTP_PASS,

@@ -4,9 +4,11 @@ type MarqueeProps = {
   itemClassName?: string;
   duration?: number;
   separator?: React.ReactNode;
+  /** Stops the scroll (for a pause control). */
+  paused?: boolean;
 };
 
-export function Marquee({ items, className = "", itemClassName = "", duration = 38, separator }: MarqueeProps) {
+export function Marquee({ items, className = "", itemClassName = "", duration = 38, separator, paused = false }: MarqueeProps) {
   const sep = separator ?? <span className="tri-signal mx-6 md:mx-10" aria-hidden="true" />;
   const row = (hidden: boolean) => (
     <div className="flex shrink-0 items-center" aria-hidden={hidden || undefined}>
@@ -22,7 +24,7 @@ export function Marquee({ items, className = "", itemClassName = "", duration = 
   );
 
   return (
-    <div className={`marquee overflow-hidden ${className}`}>
+    <div className={`marquee overflow-hidden ${paused ? "marquee-paused" : ""} ${className}`}>
       <div className="marquee-track" style={{ "--marquee-duration": `${duration}s` } as React.CSSProperties}>
         {row(false)}
         {row(true)}

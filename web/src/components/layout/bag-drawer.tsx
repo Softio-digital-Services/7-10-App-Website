@@ -6,7 +6,9 @@ import { useEffect } from "react";
 import { ArrowRight, Minus, Plus, X } from "lucide-react";
 import { LogoMark } from "@/components/brand/logo";
 import { useCart } from "@/components/cart-provider";
+import { StockNotice } from "@/components/checkout/stock-notice";
 import { useI18n } from "@/components/i18n-provider";
+import { useDialogFocus } from "@/components/use-dialog-focus";
 import { useDragDismiss } from "@/components/use-drag-dismiss";
 import { useLockBody } from "@/components/use-lock-body";
 import { formatPrice } from "@/lib/format";
@@ -16,6 +18,7 @@ export function BagDrawer() {
   const { t, f, dir } = useI18n();
   const { items, count, subtotal, drawerOpen, closeDrawer, updateQuantity, removeItem, refresh, lastAddedId } = useCart();
   useLockBody(drawerOpen);
+  const focusRef = useDialogFocus(drawerOpen);
   const { panelRef, backdropRef, panelProps } = useDragDismiss<HTMLElement, HTMLDivElement>({ side: "end", dir, onClose: closeDrawer });
 
   useEffect(() => {
@@ -33,7 +36,7 @@ export function BagDrawer() {
   const progress = Math.min(100, (subtotal / store.freeDeliveryOver) * 100);
 
   return (
-    <div className={`fixed inset-0 z-[70] ${drawerOpen ? "pointer-events-auto" : "pointer-events-none"}`} aria-hidden={!drawerOpen} inert={!drawerOpen}>
+    <div ref={focusRef} className={`fixed inset-0 z-[70] ${drawerOpen ? "pointer-events-auto" : "pointer-events-none"}`} aria-hidden={!drawerOpen} inert={!drawerOpen}>
       <div
         ref={backdropRef}
         className={`absolute inset-0 bg-charcoal/50 transition-opacity duration-500 ${drawerOpen ? "opacity-100" : "opacity-0"}`}
@@ -52,12 +55,14 @@ export function BagDrawer() {
         <div className="flex h-16 items-center justify-between border-b border-charcoal/10 px-5 md:h-[76px] md:px-7">
           <h2 className="flex items-baseline gap-3">
             <span className="display text-2xl">{t.bag.title}</span>
-            <span className="font-display text-sm text-charcoal/50" dir="ltr">({count})</span>
+            <span className="font-display text-sm text-charcoal/65" dir="ltr">({count})</span>
           </h2>
           <button type="button" onClick={closeDrawer} className="press -me-2 grid h-11 w-11 place-items-center" aria-label={t.common.close}>
             <X className="h-5 w-5" strokeWidth={1.5} />
           </button>
         </div>
+
+        <StockNotice className="mx-5 mt-4 md:mx-7" />
 
         {items.length === 0 ? (
           <div className="flex flex-1 flex-col items-center justify-center px-8 text-center">
@@ -65,7 +70,7 @@ export function BagDrawer() {
               <LogoMark className="h-16 w-auto" tone="silver" />
             </div>
             <p className="display mt-4 text-3xl">{t.bag.empty}</p>
-            <p className="mt-2 text-charcoal/60">{t.bag.emptyBody}</p>
+            <p className="mt-2 text-charcoal/65">{t.bag.emptyBody}</p>
             <Link href="/shop" onClick={closeDrawer} className="btn btn-primary mt-8">
               {t.common.shopAll}
               <ArrowRight className="flip-rtl h-4 w-4" />
@@ -108,13 +113,13 @@ export function BagDrawer() {
                       <button
                         type="button"
                         onClick={() => removeItem(item.variantId)}
-                        className="-me-1 -mt-1 grid h-8 w-8 shrink-0 place-items-center text-charcoal/50 hover:text-charcoal"
+                        className="-me-1 -mt-1 grid h-8 w-8 shrink-0 place-items-center text-charcoal/65 hover:text-charcoal"
                         aria-label={t.bag.remove}
                       >
                         <X className="h-4 w-4" strokeWidth={1.5} />
                       </button>
                     </div>
-                    <p className="mt-1 text-[13px] text-charcoal/60">
+                    <p className="mt-1 text-[13px] text-charcoal/65">
                       {t.bag.size}: <span dir="ltr">{item.size}</span>
                       {item.color && item.color !== "Default" ? ` · ${item.color}` : ""}
                     </p>
@@ -127,9 +132,9 @@ export function BagDrawer() {
                       />
                       <div className="text-end" dir="ltr">
                         {item.compareAt && (
-                          <p className="text-xs text-charcoal/45 line-through">{formatPrice(item.compareAt * item.quantity)}</p>
+                          <p className="text-xs text-charcoal/65 line-through">{formatPrice(item.compareAt * item.quantity)}</p>
                         )}
-                        <p className={`text-[15px] font-medium ${item.compareAt ? "text-signal" : ""}`}>
+                        <p className={`text-[15px] font-medium ${item.compareAt ? "text-signal-ink" : ""}`}>
                           {formatPrice(item.price * item.quantity)}
                         </p>
                       </div>
@@ -144,7 +149,7 @@ export function BagDrawer() {
                 <span className="eyebrow">{t.bag.subtotal}</span>
                 <span className="font-display text-2xl" dir="ltr">{formatPrice(subtotal)}</span>
               </div>
-              <p className="mt-1 text-[13px] text-charcoal/55">{t.bag.deliveryAtCheckout}</p>
+              <p className="mt-1 text-[13px] text-charcoal/65">{t.bag.deliveryAtCheckout}</p>
               <Link href="/checkout" onClick={closeDrawer} className="btn btn-primary mt-5 w-full">
                 {t.bag.checkout}
                 <ArrowRight className="flip-rtl h-4 w-4" />

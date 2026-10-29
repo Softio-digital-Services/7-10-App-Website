@@ -15,15 +15,15 @@ export async function POST(request: Request) {
 
   const order = await prisma.order.findUnique({
     where: { orderNumber: parsed.data.orderNumber },
-    select: { id: true, orderNumber: true, total: true, externalId: true, paymentStatus: true, paymentMethod: true },
+    select: { id: true, orderNumber: true, total: true, externalId: true, paymentStatus: true, paymentMethod: true, status: true },
   });
-  if (!order || !isWhishMethod(order.paymentMethod)) {
+  if (!order || !isWhishMethod(order.paymentMethod) || order.status === "CANCELLED") {
     return NextResponse.json({ error: "not_found" }, { status: 404 });
   }
-  if (order.paymentStatus === "PAID") return NextResponse.json({ paid: true });
   if (!(await rememberedOrders()).includes(order.orderNumber)) {
     return NextResponse.json({ error: "not_found" }, { status: 404 });
   }
+  if (order.paymentStatus === "PAID") return NextResponse.json({ paid: true });
 
   try {
     const payUrl = await startWhishCheckout(order);

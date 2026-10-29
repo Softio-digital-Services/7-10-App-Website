@@ -15,7 +15,7 @@ export function AdminNav({ items }: { items: { href: string; label: string; badg
             href={item.href}
             aria-current={active ? "page" : undefined}
             className={`flex shrink-0 items-center gap-2 border-b-2 px-4 py-3.5 text-[14px] transition-colors ${
-              active ? "border-charcoal text-charcoal" : "border-transparent text-charcoal/55 hover:text-charcoal"
+              active ? "border-charcoal text-charcoal" : "border-transparent text-charcoal/65 hover:text-charcoal"
             }`}
           >
             {item.label}

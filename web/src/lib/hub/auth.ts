@@ -5,10 +5,14 @@ import { prisma } from "@/lib/prisma";
 
 const PLACEHOLDER = "change-me-to-a-long-random-key";
 
+/** Shorter keys are refused: whoever holds the key can link a laptop and receive the staff-password secret. */
+const MIN_KEY_LENGTH = 32;
+
 export function shopKey() {
   // SEVENTEN_API_KEY is the older name, still accepted when SHOP_SYNC_KEY is empty.
   const key = process.env.SHOP_SYNC_KEY || process.env.SEVENTEN_API_KEY || "";
-  return key && key !== PLACEHOLDER ? key : "";
+  if (key && key.length < MIN_KEY_LENGTH) console.error(`[hub] SHOP_SYNC_KEY must be at least ${MIN_KEY_LENGTH} characters; linking is disabled.`);
+  return key && key !== PLACEHOLDER && key.length >= MIN_KEY_LENGTH ? key : "";
 }
 
 function safeEqual(a: string, b: string) {

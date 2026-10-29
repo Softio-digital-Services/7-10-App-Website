@@ -39,6 +39,7 @@ export type Region = {
 export const regions: Region[] = [
   { id: "beirut", en: "Beirut", ar: "بيروت", fee: 3 },
   { id: "mount-lebanon", en: "Mount Lebanon", ar: "جبل لبنان", fee: 4 },
+  { id: "keserwan-jbeil", en: "Keserwan-Jbeil", ar: "كسروان جبيل", fee: 4 },
   { id: "north", en: "North", ar: "الشمال", fee: 5 },
   { id: "akkar", en: "Akkar", ar: "عكار", fee: 5 },
   { id: "south", en: "South", ar: "الجنوب", fee: 5 },
@@ -72,6 +73,29 @@ export function sortSizes(sizes: string[]) {
 export function whatsappLink(message?: string) {
   const base = `https://wa.me/${store.whatsapp}`;
   return message ? `${base}?text=${encodeURIComponent(message)}` : base;
+}
+
+const launchParts = () => {
+  const parts = new Intl.DateTimeFormat("en-GB", { day: "2-digit", month: "2-digit", year: "numeric", timeZone: "Asia/Beirut" })
+    .formatToParts(new Date(store.launchAt));
+  const get = (type: string) => parts.find((p) => p.type === type)?.value ?? "";
+  return { day: get("day"), month: get("month"), year: get("year") };
+};
+
+/** Launch date as the brand stamps it: "07.10.2026" (or with another separator). Follows NEXT_PUBLIC_LAUNCH_AT. */
+export function launchStamp(separator = ".") {
+  const { day, month, year } = launchParts();
+  return [day, month, year].join(separator);
+}
+
+/** Launch date in words for running text: "7 October 2026" / "7 أكتوبر 2026". */
+export function launchDateLong(locale: "en" | "ar") {
+  return new Intl.DateTimeFormat(locale === "ar" ? "ar-LB-u-nu-latn" : "en-GB", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+    timeZone: "Asia/Beirut",
+  }).format(new Date(store.launchAt));
 }
 
 export function isBeforeLaunch(now = Date.now()) {
