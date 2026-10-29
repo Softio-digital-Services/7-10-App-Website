@@ -105,6 +105,24 @@ if not errorlevel 1 (
   exit /b 0
 )
 
+REM 4c. Production mode (default) serves prebuilt pages, so every click responds immediately.
+REM     Run "run.bat dev" instead for live-reload while editing code (slower: pages compile on demand).
+set MODE=%~1
+if /i not "%MODE%"=="dev" (
+  powershell -NoProfile -Command "$id = Get-Item '.next\BUILD_ID' -ErrorAction SilentlyContinue; if (-not $id) { exit 1 }; $files = @(Get-ChildItem src, public, prisma, scripts -Recurse -File -ErrorAction SilentlyContinue) + @(Get-Item package.json, package-lock.json, next.config.ts, postcss.config.mjs, .env, ..\desktop\appsettings.json -ErrorAction SilentlyContinue); $newest = $files | Where-Object { $_.Name -notmatch '\.db(-journal|-wal|-shm)?$' } | Sort-Object LastWriteTime -Descending | Select-Object -First 1; if ($newest -and $newest.LastWriteTime -gt $id.LastWriteTime) { exit 1 }; exit 0" >nul 2>nul
+  if errorlevel 1 (
+    echo [Build] Code changed since the last build. Building the optimized website...
+    echo (This takes about a minute and only happens after changes.)
+    call npm run build
+    if errorlevel 1 (
+      echo.
+      echo [Error] Build failed. See the messages above.
+      pause
+      exit /b 1
+    )
+  )
+)
+
 echo.
 echo Starting the website server on %URL%
 echo Keep this window open while browsing. Close it to stop the server.
@@ -113,7 +131,11 @@ echo.
 REM 5. Wait for the server to be ready before opening the browser
 start "" /b powershell -NoProfile -WindowStyle Hidden -Command "$url = '%URL%'; $max = 90; while ($max -gt 0) { Start-Sleep -Seconds 1; try { $r = Invoke-WebRequest -Uri $url -UseBasicParsing -TimeoutSec 1; if ($r.StatusCode -ge 200 -and $r.StatusCode -lt 400) { break } } catch {}; $max-- }; $chrome = @($env:ProgramFiles + '\Google\Chrome\Application\chrome.exe', ${env:ProgramFiles(x86)} + '\Google\Chrome\Application\chrome.exe', $env:LOCALAPPDATA + '\Google\Chrome\Application\chrome.exe') | Where-Object { Test-Path $_ } | Select-Object -First 1; if ($chrome) { Start-Process $chrome $url } else { Start-Process $url }"
 
-call npm run dev -- -p %PORT%
+if /i "%MODE%"=="dev" (
+  call npm run dev -- -p %PORT%
+) else (
+  call npx next start -p %PORT%
+)
 if errorlevel 1 (
   echo.
   echo [Error] Dev server stopped or encountered an error.
