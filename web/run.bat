@@ -59,6 +59,14 @@ if not exist ".env" (
   )
 )
 
+REM 1b. Replace a missing/placeholder AUTH_SECRET with a random one (the server refuses to start otherwise)
+node scripts\ensure-auth-secret.js
+if errorlevel 1 (
+  echo [Error] Could not set AUTH_SECRET in .env. Set it manually to a random value of 32+ characters.
+  pause
+  exit /b 1
+)
+
 REM 2. Ensure node_modules dependencies are installed
 if not exist "node_modules" (
   echo [Setup] First-time setup detected: Installing npm dependencies...
