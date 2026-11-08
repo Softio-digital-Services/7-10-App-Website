@@ -72,7 +72,7 @@ export function ContactForm({ account }: { account: { name: string; email: strin
 
   if (status === "sent") {
     return (
-      <div className="flex min-h-[420px] flex-col items-start justify-center border border-charcoal/15 p-8 md:p-12" role="status">
+      <div className="flex min-h-[420px] flex-col items-start justify-center border rounded border-charcoal/15 p-8 md:p-12" role="status">
         <span className="grid h-14 w-14 place-items-center bg-olive text-cream">
           <Check className="h-7 w-7" strokeWidth={1.75} />
         </span>
@@ -96,8 +96,7 @@ export function ContactForm({ account }: { account: { name: string; email: strin
           {t.contact.topics.map((label, i) => (
             <label
               key={label}
-              className={`cursor-pointer border px-4 py-2.5 text-[14px] transition-colors has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-olive ${
-                topic === i ? "border-charcoal bg-charcoal text-cream" : "border-charcoal/20 hover:border-charcoal"
+              className={`cursor-pointer border rounded px-4 py-2.5 text-[14px] transition-colors has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-olive ${ topic === i ? "border-charcoal bg-charcoal text-cream" : "border-charcoal/20 hover:border-charcoal"
               }`}
             >
               <input type="radio" name="topic" className="sr-only" checked={topic === i} onChange={() => setTopic(i)} />
@@ -161,7 +160,7 @@ export function ContactForm({ account }: { account: { name: string; email: strin
       </Field>
 
       {status === "error" && (
-        <div role="alert" className="flex items-start gap-3 border border-signal/40 bg-signal/5 px-5 py-4 text-[14px]">
+        <div role="alert" className="flex items-start gap-3 border rounded border-signal/40 bg-signal/5 px-5 py-4 text-[14px]">
           <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-signal-ink" />
           {t.contact.error}
         </div>

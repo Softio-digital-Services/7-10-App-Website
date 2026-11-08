@@ -20,7 +20,7 @@ export default async function NotFound() {
         <h1 className="display text-5xl md:text-7xl">{t.notFound.title}</h1>
         <p className="mx-auto mt-4 max-w-md text-[16px] text-charcoal/65">{t.notFound.body}</p>
 
-        <form action="/shop" className="relative mx-auto mt-10 flex w-full max-w-md items-center border border-charcoal/25 focus-within:border-charcoal">
+        <form action="/shop" className="relative mx-auto mt-10 flex w-full max-w-md items-center border rounded border-charcoal/25 focus-within:border-charcoal">
           <Brackets size="sm" inset="-6px" className="text-charcoal/50" />
           <Search className="ms-4 h-[18px] w-[18px] shrink-0 text-charcoal/50" strokeWidth={1.5} />
           <label htmlFor="nf-q" className="sr-only">{t.notFound.search}</label>
@@ -33,7 +33,7 @@ export default async function NotFound() {
         {categories.length > 0 && (
           <div className="mt-8 flex flex-wrap justify-center gap-2">
             {categories.slice(0, 6).map((c) => (
-              <Link key={c.slug} href={`/shop?c=${c.slug}`} className="border border-charcoal/15 px-4 py-2 text-[13.5px] transition-colors hover:border-charcoal hover:bg-charcoal hover:text-cream">
+              <Link key={c.slug} href={`/shop?c=${c.slug}`} className="border rounded border-charcoal/15 px-4 py-2 text-[13.5px] transition-colors hover:border-charcoal hover:bg-charcoal hover:text-cream">
                 {c.name}
               </Link>
             ))}

@@ -39,31 +39,24 @@ export function ProductGallery({ images, name, badges }: GalleryProps) {
   const badgeEls = (
     <div className="pointer-events-none absolute start-4 top-4 z-[2] flex flex-col items-start gap-1.5">
       {badges.soldOut ? (
-        <span className="eyebrow bg-charcoal px-2.5 py-1.5 text-[10px] text-cream">{t.common.soldOut}</span>
+        <span className="rounded bg-charcoal px-2.5 py-1 text-[11px] font-semibold text-white">{t.common.soldOut}</span>
       ) : (
         <>
           {badges.discount > 0 && (
-            <span className="bg-signal px-2.5 py-1.5 font-display text-[12px] font-medium text-white" dir="ltr">
+            <span className="rounded bg-signal px-2.5 py-1 text-[12px] font-bold text-white" dir="ltr">
               −{badges.discount}%
             </span>
           )}
-          {badges.isNew && <span className="eyebrow bg-cream px-2.5 py-1.5 text-[10px] text-charcoal">{t.common.new}</span>}
+          {badges.isNew && <span className="rounded bg-signal px-2.5 py-1 text-[11px] font-bold text-white">{t.common.new}</span>}
         </>
       )}
     </div>
   );
 
-  const spanFor = (i: number) => {
-    if (n <= 2 || i === 0) return "col-span-2 aspect-[4/5]";
-    const restOdd = (n - 1) % 2 === 1;
-    if (restOdd && i === n - 1) return "col-span-2 aspect-[4/5]";
-    return "aspect-[3/4]";
-  };
-
   return (
     <>
-      {/* Mobile / tablet: swipeable */}
-      <div className="relative -mx-5 md:-mx-8 lg:hidden">
+      {/* Phone / tablet: full-bleed swipe with dots */}
+      <div className="relative -mx-4 md:-mx-8 lg:hidden">
         {badgeEls}
         <div ref={scroller} onScroll={onScroll} className="no-scrollbar flex snap-x snap-mandatory overflow-x-auto">
           {list.map((src, i) => (
@@ -71,7 +64,7 @@ export function ProductGallery({ images, name, badges }: GalleryProps) {
               key={src + i}
               type="button"
               onClick={() => src && setZoomAt(i)}
-              className="card-img relative aspect-[4/5] w-full shrink-0 snap-center"
+              className="topo relative aspect-[4/5] w-full shrink-0 snap-center bg-cream-2"
               aria-label={f(t.product.imageOf, { i: i + 1, n })}
             >
               {src && <Img src={src} alt={i === 0 ? name : ""} fill priority={i === 0} sizes="(min-width:1024px) 1px, 100vw" className="object-cover" />}
@@ -79,45 +72,67 @@ export function ProductGallery({ images, name, badges }: GalleryProps) {
           ))}
         </div>
         {n > 1 && (
-          <>
-            <div className="absolute inset-x-5 bottom-4 flex gap-1.5" aria-hidden="true">
-              {list.map((_, i) => (
-                <span key={i} className={`h-[2px] flex-1 transition-colors duration-300 ${i === active ? "bg-charcoal" : "bg-charcoal/20"}`} />
-              ))}
-            </div>
-            <span className="absolute bottom-7 end-5 bg-cream/90 px-2.5 py-1 font-display text-[11px] tracking-widest" dir="ltr">
-              {String(active + 1).padStart(2, "0")} / {String(n).padStart(2, "0")}
-            </span>
-          </>
+          <div className="absolute inset-x-0 bottom-4 flex justify-center gap-2" aria-hidden="true">
+            {list.map((_, i) => (
+              <span
+                key={i}
+                className={`h-2 rounded-full transition-all duration-500 ease-[var(--ease-out-expo)] ${i === active ? "w-6 bg-charcoal" : "w-2 bg-charcoal/30"}`}
+              />
+            ))}
+          </div>
         )}
       </div>
 
-      {/* Desktop: editorial grid */}
-      <div className="relative hidden grid-cols-2 gap-2 lg:grid">
-        {list.map((src, i) => (
-          <button
-            key={src + i}
-            type="button"
-            onClick={() => src && setZoomAt(i)}
-            className={`card-img group relative cursor-zoom-in ${spanFor(i)}`}
-            aria-label={`${t.product.zoom} — ${f(t.product.imageOf, { i: i + 1, n })}`}
-          >
-            {i === 0 && badgeEls}
-            {src && (
+      {/* Desktop: thumbnails + main image */}
+      <div className="hidden gap-3 lg:flex">
+        {n > 1 && (
+          <div className="flex w-[72px] shrink-0 flex-col gap-2.5">
+            {list.map((src, i) => (
+              <button
+                key={src + i}
+                type="button"
+                onClick={() => setActive(i)}
+                onMouseEnter={() => setActive(i)}
+                className={`relative aspect-[4/5] overflow-hidden rounded-md bg-cream-2 transition-[box-shadow,opacity] duration-300 ${
+                  i === active ? "shadow-[0_0_0_2px_var(--color-charcoal)]" : "opacity-70 hover:opacity-100"
+                }`}
+                aria-label={f(t.product.imageOf, { i: i + 1, n })}
+                aria-current={i === active}
+              >
+                {src && <Img src={src} alt="" fill sizes="72px" className="object-cover" />}
+              </button>
+            ))}
+          </div>
+        )}
+        <button
+          type="button"
+          onClick={() => list[active] && setZoomAt(active)}
+          className="topo group relative aspect-[4/5] flex-1 cursor-zoom-in overflow-hidden rounded-lg bg-cream-2"
+          aria-label={`${t.product.zoom} — ${f(t.product.imageOf, { i: active + 1, n })}`}
+        >
+          {badgeEls}
+          {n > 1 && (
+            <span className="absolute end-4 top-4 z-[2] rounded-full bg-white px-3 py-1.5 text-[10px] font-bold tracking-[0.14em] text-charcoal" dir="ltr">
+              {String(active + 1).padStart(2, "0")} / {String(n).padStart(2, "0")}
+            </span>
+          )}
+          {list.map((src, i) =>
+            src ? (
               <Img
+                key={src + i}
                 src={src}
                 alt={i === 0 ? name : ""}
                 fill
                 priority={i === 0}
-                sizes={spanFor(i).includes("col-span-2") ? "(min-width:1024px) 56vw, 100vw" : "(min-width:1024px) 28vw, 50vw"}
-                className="img-zoom object-cover"
+                sizes="(min-width:1024px) 50vw, 1px"
+                className={`img-zoom object-cover transition-opacity duration-500 ${i === active ? "opacity-100" : "opacity-0"}`}
               />
-            )}
-            <span className="absolute bottom-4 end-4 grid h-10 w-10 place-items-center bg-cream/90 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-              <ZoomIn className="h-4 w-4" strokeWidth={1.5} />
-            </span>
-          </button>
-        ))}
+            ) : null,
+          )}
+          <span className="absolute bottom-4 end-4 grid h-10 w-10 place-items-center rounded-full bg-white/90 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+            <ZoomIn className="h-4 w-4" strokeWidth={1.5} />
+          </span>
+        </button>
       </div>
 
       <Lightbox images={list.filter(Boolean)} name={name} index={zoomAt} onClose={() => setZoomAt(null)} onIndex={(i) => { setZoomAt(i); goTo(i); }} />
@@ -244,7 +259,7 @@ function Lightbox({ images, name, index, onClose, onIndex }: { images: string[];
         <span className="font-display text-[12px] tracking-widest text-cream/70" dir="ltr">
           {String(index + 1).padStart(2, "0")} / {String(n).padStart(2, "0")}
         </span>
-        <button type="button" onClick={onClose} className="press grid h-12 w-12 place-items-center border border-cream/25 hover:bg-cream hover:text-charcoal" aria-label={t.common.close}>
+        <button type="button" onClick={onClose} className="press grid h-12 w-12 place-items-center border rounded border-cream/25 hover:bg-cream hover:text-charcoal" aria-label={t.common.close}>
           <X className="h-5 w-5" strokeWidth={1.5} />
         </button>
       </div>
@@ -253,7 +268,7 @@ function Lightbox({ images, name, index, onClose, onIndex }: { images: string[];
           <button
             type="button"
             onClick={() => step(-1)}
-            className="press absolute start-3 top-1/2 grid h-12 w-12 -translate-y-1/2 place-items-center border border-cream/25 hover:bg-cream hover:text-charcoal md:start-6"
+            className="press absolute start-3 top-1/2 grid h-12 w-12 -translate-y-1/2 place-items-center border rounded border-cream/25 hover:bg-cream hover:text-charcoal md:start-6"
             aria-label={t.common.previous}
           >
             <ChevronLeft className="flip-rtl h-5 w-5" />
@@ -261,7 +276,7 @@ function Lightbox({ images, name, index, onClose, onIndex }: { images: string[];
           <button
             type="button"
             onClick={() => step(1)}
-            className="press absolute end-3 top-1/2 grid h-12 w-12 -translate-y-1/2 place-items-center border border-cream/25 hover:bg-cream hover:text-charcoal md:end-6"
+            className="press absolute end-3 top-1/2 grid h-12 w-12 -translate-y-1/2 place-items-center border rounded border-cream/25 hover:bg-cream hover:text-charcoal md:end-6"
             aria-label={t.common.next}
           >
             <ChevronRight className="flip-rtl h-5 w-5" />

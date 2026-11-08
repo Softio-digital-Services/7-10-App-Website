@@ -5,7 +5,7 @@ import { useI18n } from "@/components/i18n-provider";
 export function LangSwitch({ className = "" }: { className?: string }) {
   const { t, locale, setLocale, switching } = useI18n();
   return (
-    <div className={`inline-flex items-center border border-current/30 ${className}`} role="group" aria-label={t.common.language}>
+    <div className={`inline-flex items-center overflow-hidden rounded border border-current/30 ${className}`} role="group" aria-label={t.common.language}>
       {(["en", "ar"] as const).map((l) => (
         <button
           key={l}

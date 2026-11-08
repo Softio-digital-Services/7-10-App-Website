@@ -5,17 +5,17 @@ type SectionLabelProps = {
   tone?: "dark" | "light";
 };
 
+/** Small spaced caps above a heading, e.g. "01 · THE DIFFERENCE". Numbered labels are red on light sections. */
 export function SectionLabel({ index, children, className = "", tone = "dark" }: SectionLabelProps) {
-  const muted = tone === "light" ? "text-cream/70" : "text-charcoal/65";
-  const line = tone === "light" ? "bg-cream/40" : "bg-charcoal/30";
+  const color = tone === "light" ? "text-cream/70" : index ? "text-signal" : "text-charcoal/70";
   return (
-    <p className={`eyebrow flex items-center gap-3 ${muted} ${className}`}>
+    <p className={`eyebrow flex items-center gap-2 text-[10.5px] ${color} ${className}`}>
       {index && (
-        <span className="font-display keep-tracking tracking-[0.2em]" dir="ltr">
-          [{index}]
-        </span>
+        <>
+          <span dir="ltr">{index}</span>
+          <span aria-hidden="true">·</span>
+        </>
       )}
-      <span className={`h-px w-8 ${line}`} aria-hidden="true" />
       <span>{children}</span>
     </p>
   );

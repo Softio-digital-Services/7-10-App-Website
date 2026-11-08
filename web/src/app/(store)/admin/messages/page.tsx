@@ -7,13 +7,13 @@ export default async function AdminMessagesPage() {
   const messages = await prisma.contactMessage.findMany({ orderBy: [{ read: "asc" }, { createdAt: "desc" }], take: 200 });
 
   if (messages.length === 0) {
-    return <p className="border border-dashed border-charcoal/25 px-6 py-16 text-center text-charcoal/65">No messages yet. Anything sent from the Contact page shows up here.</p>;
+    return <p className="border rounded border-dashed border-charcoal/25 px-6 py-16 text-center text-charcoal/65">No messages yet. Anything sent from the Contact page shows up here.</p>;
   }
 
   return (
     <ul className="space-y-3">
       {messages.map((m) => (
-        <li key={m.id} className={`border p-5 md:p-6 ${m.read ? "border-charcoal/10" : "border-charcoal bg-cream-2/50"}`}>
+        <li key={m.id} className={`border rounded p-5 md:p-6 ${m.read ? "border-charcoal/10" : "border-charcoal bg-cream-2/50"}`}>
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div>
               <p className="flex items-center gap-2.5 font-medium">

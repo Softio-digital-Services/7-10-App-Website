@@ -64,7 +64,7 @@ export function ProductRail({ products }: { products: StoreProduct[] }) {
             type="button"
             onClick={() => step(-1)}
             disabled={atStart}
-            className="grid h-11 w-11 place-items-center border border-charcoal/25 transition-colors hover:bg-charcoal hover:text-cream disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-charcoal"
+            className="grid h-11 w-11 place-items-center border rounded border-charcoal/25 transition-colors hover:bg-charcoal hover:text-cream disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-charcoal"
             aria-label={t.common.previous}
           >
             <ArrowLeft className="flip-rtl h-4 w-4" strokeWidth={1.5} />
@@ -73,7 +73,7 @@ export function ProductRail({ products }: { products: StoreProduct[] }) {
             type="button"
             onClick={() => step(1)}
             disabled={atEnd}
-            className="grid h-11 w-11 place-items-center border border-charcoal/25 transition-colors hover:bg-charcoal hover:text-cream disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-charcoal"
+            className="grid h-11 w-11 place-items-center border rounded border-charcoal/25 transition-colors hover:bg-charcoal hover:text-cream disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-charcoal"
             aria-label={t.common.next}
           >
             <ArrowRight className="flip-rtl h-4 w-4" strokeWidth={1.5} />

@@ -1,23 +1,17 @@
 import type { Metadata } from "next";
 import { Img as Image } from "@/components/img";
 import Link from "next/link";
-import { ArrowDown, ArrowRight, ArrowUpRight, Banknote, RefreshCcw, Truck } from "lucide-react";
-import { Brackets } from "@/components/brand/brackets";
-import { LogoMark } from "@/components/brand/logo";
-import { SectionLabel } from "@/components/brand/section-label";
-import { Countdown } from "@/components/countdown";
+import { SectionHeading } from "@/components/brand/section-heading";
 import { WhatsAppIcon } from "@/components/icons";
-import { Marquee } from "@/components/marquee";
 import { NewsletterForm } from "@/components/newsletter-form";
 import { ProductCard } from "@/components/product-card";
-import { ProductRail } from "@/components/product-rail";
 import { Reveal } from "@/components/reveal";
 import { getCategories, getProducts } from "@/lib/catalog";
-import { editorial } from "@/lib/editorial";
 import { formatPrice } from "@/lib/format";
 import { alternatesFor, fmt } from "@/lib/i18n";
 import { getI18n } from "@/lib/i18n/server";
-import { isBeforeLaunch, launchStamp, store } from "@/lib/store-config";
+import { siteFacts, siteGallery, siteImage, siteReviews } from "@/lib/site-content";
+import { store, whatsappLink } from "@/lib/store-config";
 
 export async function generateMetadata(): Promise<Metadata> {
   const { locale } = await getI18n();
@@ -35,359 +29,391 @@ const organizationLd = {
   ...(store.phone ? { telephone: store.phone } : {}),
   address: { "@type": "PostalAddress", addressCountry: "LB", ...(store.address ? { streetAddress: store.address } : {}) },
   sameAs: store.instagram ? [`https://instagram.com/${store.instagram}`] : [],
-  contactPoint: store.whatsapp
-    ? [{ "@type": "ContactPoint", contactType: "customer service", url: `https://wa.me/${store.whatsapp}`, availableLanguage: ["en", "ar"] }]
-    : [],
 };
 
-export default async function HomePage() {
-  const { dict: t, locale } = await getI18n();
-  const [products, categories] = await Promise.all([getProducts({ sort: "featured" }, locale), getCategories(locale)]);
+/** Category tile colours, in the design's order: linen, olive, khaki, soft. */
+const tileTones = [
+  { bg: "bg-[#D5D4C2]", ink: "text-[#313B2B]" },
+  { bg: "bg-[#313B2B]", ink: "text-[#D5D4C2]" },
+  { bg: "bg-[#8A8863]", ink: "text-[#FFFFFF]" },
+  { bg: "bg-[#F4F3EC]", ink: "text-[#313B2B]" },
+];
 
-  const newest = [...products].sort((a, b) => b.createdAt.localeCompare(a.createdAt)).slice(0, 10);
-  const featured = products.filter((p) => !p.soldOut).slice(0, 4);
-  const heroProduct = products.find((p) => p.featured && !p.soldOut) ?? products[0];
-  const beforeLaunch = isBeforeLaunch();
-  // Category slugs come from the desktop app, so the lookbook only links to outerwear when that category exists.
-  const outerwear = categories.find((c) => /outer|jacket/i.test(c.slug));
+const spanClass: Record<string, string> = {
+  large: "col-span-2 row-span-2",
+  tall: "row-span-2",
+  wide: "col-span-2",
+  normal: "",
+};
+
+function Stars({ n, size = 16, label }: { n: number; size?: number; label: string }) {
+  return (
+    <span role="img" aria-label={label} className="flex gap-0.5">
+      {Array.from({ length: 5 }, (_, i) => (
+        <svg key={i} width={size} height={size} viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4l-5.9 3.1 1.2-6.5L2.5 9.4l6.6-.9z" fill={i < n ? "#B51515" : "#D5D4C2"} />
+        </svg>
+      ))}
+    </span>
+  );
+}
+
+export default async function HomePage() {
+  const { dict, locale } = await getI18n();
+  const t = dict.design;
+  const altLang = locale === "ar" ? "en" : "ar";
+  const [products, categories, fact, hero, fabric, gallery, reviewData] = await Promise.all([
+    getProducts({ sort: "new" }, locale),
+    getCategories(locale),
+    siteFacts(locale),
+    siteImage("hero"),
+    siteImage("fabric"),
+    siteGallery(),
+    siteReviews(),
+  ]);
+
+  // One card per style: the first colour stands in for the rest, which show as swatches.
+  const seen = new Set<string>();
+  const olive = (p: (typeof products)[number]) => (p.colorName?.toLowerCase() === "olive" ? 0 : 1);
+  const perStyle = [...products].sort((a, b) => olive(a) - olive(b)).filter((p) => {
+    const key = p.styleCode || p.id;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+  const fresh = [...perStyle.filter((p) => p.isNew), ...perStyle.filter((p) => !p.isNew)].slice(0, 8);
+  const heroCaption = hero ? (locale === "ar" ? hero.captionAr : hero.captionEn) : "";
+  const heroProduct =
+    perStyle.find((p) => heroCaption && p.name.toLowerCase() === heroCaption.toLowerCase()) ?? perStyle.find((p) => p.featured) ?? perStyle[0];
+  const catSlug = (re: RegExp) => categories.find((c) => re.test(c.slug))?.slug;
+  const women = catSlug(/^women/);
+  const men = catSlug(/^men/);
+  const handle = fact("instagram_handle", store.instagram ? `@${store.instagram}` : "[@7.10]");
+  const reviews = reviewData.reviews.slice(0, 3);
 
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationLd).replace(/</g, "\\u003c") }} />
 
       {/* HERO */}
-      <section className="theme-olive relative -mt-16 overflow-hidden md:-mt-[76px]">
-        <span
-          aria-hidden="true"
-          className="text-outline pointer-events-none absolute inset-0 flex select-none items-center justify-center font-display text-[46vw] font-semibold leading-none md:text-[34vw]"
-          dir="ltr"
-        >
-          7.10
-        </span>
-
-        <div className="container-x relative grid min-h-[100svh] items-center gap-12 pb-16 pt-28 md:pt-36 lg:grid-cols-12 lg:gap-8 lg:pb-20">
-          <div className="lg:col-span-7">
-            <p className="rise eyebrow flex items-center gap-3 text-cream/70" style={{ animationDelay: "0.1s" }}>
-              <span className="dot-signal pulse-signal" />
-              {t.home.heroLabel}
-            </p>
-            <h1
-              className="rise display mt-6 text-[15.5vw] font-semibold leading-[0.95] sm:text-[11vw] lg:text-[5.9rem] xl:text-[7rem] 2xl:text-[7.6rem]"
-              style={{ animationDelay: "0.22s" }}
-            >
-              <span className="block">{t.home.heroTitleA}</span>
-              <span className="block">
-                {t.home.heroTitleB}
-                <span
-                  className="ms-[0.18em] inline-block h-0 w-0 -translate-y-[0.08em] border-x-[0.17em] border-t-[0.28em] border-x-transparent border-t-signal align-middle"
-                  aria-hidden="true"
-                />
+      <section className="theme-olive overflow-hidden">
+        <div className="container-x flex flex-wrap items-center gap-12 pb-20 pt-14 md:pb-[88px] md:pt-20">
+          <div className="flex min-w-0 flex-[1_1_460px] flex-col gap-6">
+            <span className="rise eyebrow text-khaki-60">{t.hero.eyebrow}</span>
+            <h1 className="display text-[clamp(64px,9vw,136px)] leading-[0.92] text-white">
+              <span className="line-mask">
+                <span style={{ "--d": "0.08s" } as React.CSSProperties}>{t.hero.titleA}</span>
+              </span>
+              <span className="line-mask">
+                <span style={{ "--d": "0.2s" } as React.CSSProperties}>{t.hero.titleB}</span>
               </span>
             </h1>
-            <p className="rise mt-7 max-w-lg text-[16px] leading-relaxed text-cream md:text-[17px]" style={{ animationDelay: "0.36s" }}>
-              {t.home.heroBody}
+            <p
+              lang={altLang}
+              aria-hidden="true"
+              className={`rise text-sand ${altLang === "ar" ? "font-[Changa] text-[clamp(40px,5vw,64px)] font-extrabold leading-[1.2]" : "display text-[clamp(32px,4vw,52px)]"}`}
+              style={{ animationDelay: "0.3s" }}
+            >
+              {t.hero.alt}
             </p>
-            <div className="rise mt-9 flex flex-wrap gap-3" style={{ animationDelay: "0.48s" }}>
-              <Link href="/shop" className="btn btn-cream">
-                {t.home.ctaShop}
-                <ArrowRight className="flip-rtl h-4 w-4" />
+            <p className="rise max-w-[460px] text-[18px] leading-relaxed text-sand" style={{ animationDelay: "0.38s" }}>
+              {t.hero.body}
+            </p>
+            <div className="rise mt-2 flex flex-wrap gap-3" style={{ animationDelay: "0.46s" }}>
+              <Link href={women ? `/shop?c=${women}` : "/shop"} className="btn btn-primary min-h-[52px] px-7 text-[16px]">
+                {t.hero.shopWomen}
               </Link>
-              <Link href="/about" className="btn btn-outline-cream">
-                {t.home.ctaStory}
+              <Link href={men ? `/shop?c=${men}` : "/shop"} className="btn btn-outline-cream min-h-[52px] px-7 text-[16px]">
+                {t.hero.shopMen}
               </Link>
-            </div>
-
-            <div className="rise mt-12" style={{ animationDelay: "0.6s" }}>
-              {beforeLaunch ? (
-                <>
-                  <p className="eyebrow mb-3 flex items-center gap-3 text-cream/60">
-                    {t.home.countdownLabel}
-                    <span className="font-display keep-tracking tracking-[0.35em] text-cream" dir="ltr">
-                      {launchStamp(" — ")}
-                    </span>
-                  </p>
-                  <Countdown target={store.launchAt} />
-                </>
-              ) : (
-                <p className="inline-flex items-center gap-3 border border-cream/25 px-4 py-3 eyebrow text-cream">
-                  <span className="dot-signal pulse-signal" />
-                  {t.home.liveLabel}
-                </p>
-              )}
             </div>
           </div>
 
-          <div className="relative lg:col-span-5">
-            {heroProduct?.images[0] ? (
-              <Link
-                href={`/products/${heroProduct.slug}`}
-                className="rise group relative mx-auto block aspect-[4/5] w-full max-w-md text-cream/70 lg:ms-auto lg:me-0"
-                style={{ animationDelay: "0.35s" }}
-              >
-                <Brackets size="lg" inset="-1rem" />
-                <div className="relative h-full w-full overflow-hidden bg-olive-card">
-                  <Image
-                    src={heroProduct.images[0]}
-                    alt={heroProduct.name}
-                    fill
-                    priority
-                    sizes="(min-width:1024px) 34vw, 90vw"
-                    className="img-zoom object-cover"
-                  />
-                  <div className="absolute inset-x-0 top-0 flex items-center justify-between p-4 font-display text-[10px] uppercase keep-tracking tracking-[0.3em] text-cream/90" dir="ltr">
-                    <span>33.89° N — 35.50° E</span>
-                    <span className="flex items-center gap-2">
-                      <span className="dot-signal pulse-signal" /> REC
-                    </span>
-                  </div>
-                </div>
-                <div className="absolute -bottom-6 start-4 end-4 flex items-center justify-between gap-4 bg-cream p-4 text-charcoal shadow-xl md:start-auto md:-end-6 md:w-72">
-                  <div className="min-w-0">
-                    <p className="eyebrow text-[10px] text-charcoal/65">{heroProduct.category}</p>
-                    <p className="truncate font-medium">{heroProduct.name}</p>
-                    <p className="text-sm text-charcoal/70" dir="ltr">{formatPrice(heroProduct.price)}</p>
-                  </div>
-                  <span className="grid h-11 w-11 shrink-0 place-items-center bg-charcoal text-cream transition-colors group-hover:bg-signal">
-                    <ArrowUpRight className="flip-rtl h-5 w-5" />
+          <div className="rise relative grid min-h-[420px] min-w-0 flex-[1.3_1_520px] place-items-center overflow-hidden rounded-[10px] bg-sand md:min-h-[560px]" style={{ animationDelay: "0.2s" }}>
+            {hero?.src ? (
+              <Image src={hero.src} alt="" fill priority sizes="(min-width:1024px) 55vw, 100vw" className="object-cover" />
+            ) : heroProduct?.images[0] ? (
+              <Image src={heroProduct.images[0]} alt="" fill priority sizes="(min-width:1024px) 55vw, 100vw" className="object-cover" />
+            ) : null}
+            <span className="topo topo-drift pointer-events-none absolute inset-0 opacity-60 mix-blend-multiply" aria-hidden="true" />
+            <span className="absolute start-5 top-5 rounded-full bg-[#FFFFFF] px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.12em] text-[#313B2B]">
+              {t.hero.campaignTag}
+            </span>
+            {heroProduct && (
+              <div className="absolute inset-x-5 bottom-5 flex flex-wrap items-center justify-between gap-3 rounded-[10px] bg-white/80 px-4 py-3.5 text-[#313B2B] backdrop-blur-xl">
+                <div className="flex min-w-0 flex-col">
+                  <span className="truncate text-[16px] font-bold">{heroProduct.name}</span>
+                  <span className="truncate text-[14px] text-[#55584A]">
+                    {[heroProduct.spec, formatPrice(heroProduct.price)].filter(Boolean).join(" · ")}
                   </span>
                 </div>
-              </Link>
-            ) : (
-              <div className="rise relative mx-auto grid aspect-square w-full max-w-sm place-items-center text-cream/60">
-                <Brackets size="lg" />
-                <LogoMark className="h-48 w-auto md:h-64" tone="silver" />
+                <Link href={`/products/${heroProduct.slug}`} className="btn btn-dark min-h-11 px-[18px] text-[14px]">
+                  {t.hero.shopLook}
+                </Link>
               </div>
             )}
           </div>
         </div>
-
-        <div className="container-x relative hidden items-center justify-between border-t border-cream/15 py-4 text-cream/60 md:flex">
-          <span className="eyebrow">[ {t.home.dropTag} ]</span>
-          <a href="#new-in" className="eyebrow flex items-center gap-2 hover:text-cream">
-            {t.home.scroll} <ArrowDown className="h-3.5 w-3.5" />
-          </a>
-        </div>
-      </section>
-
-      {/* TICKER */}
-      <section className="border-y border-charcoal bg-charcoal py-5 text-cream md:py-7" aria-hidden="true">
-        <Marquee
-          items={[...t.home.ticker, launchStamp(), "7.10 Brand"]}
-          duration={30}
-          itemClassName="display text-4xl md:text-6xl"
-          separator={<span className="mx-6 inline-block h-0 w-0 border-x-[10px] border-t-[16px] border-x-transparent border-t-signal md:mx-10" />}
-        />
       </section>
 
       {/* CATEGORIES */}
       {categories.length > 0 && (
-        <section className="container-x py-20 md:py-28">
-          <Reveal className="flex flex-wrap items-end justify-between gap-6">
-            <div>
-              <SectionLabel index="01">{t.home.categoriesLabel}</SectionLabel>
-              <h2 className="display mt-4 text-5xl md:text-7xl">{t.home.categoriesTitle}</h2>
-            </div>
-            <Link href="/shop" className="btn btn-outline btn-sm">
-              {t.common.shopAll} <ArrowRight className="flip-rtl h-3.5 w-3.5" />
-            </Link>
+        <section id="categories" className="container-x pb-10 pt-[88px]">
+          <Reveal>
+            <SectionHeading title={t.categoriesTitle} alt={t.categoriesAlt} locale={locale} />
           </Reveal>
-
-          <div className="mt-12 grid auto-rows-[260px] grid-cols-2 gap-3 md:auto-rows-[300px] md:grid-cols-4 md:gap-4">
-            {categories.slice(0, 5).map((c, i) => (
-              <Reveal
-                key={c.slug}
-                delay={i * 0.06}
-                className={
-                  i === 0
-                    ? "col-span-2 row-span-2"
-                    : categories.length === 2 && i === 1
-                      ? "col-span-2 row-span-2"
-                      : categories.length <= 3
-                        ? "col-span-2"
-                        : ""
-                }
-              >
-                <Link href={`/shop?c=${c.slug}`} className="group relative block h-full overflow-hidden bg-cream-2 text-cream">
-                  {c.image && (
-                    <Image
-                      src={c.image}
-                      alt={c.name}
-                      fill
-                      sizes={i === 0 ? "(min-width:768px) 50vw, 100vw" : "(min-width:768px) 25vw, 50vw"}
-                      className="img-zoom object-cover"
-                    />
-                  )}
-                  <span className="absolute inset-0 bg-gradient-to-t from-charcoal/75 via-charcoal/10 to-transparent" />
-                  <span className="absolute inset-4 opacity-0 transition-all duration-500 group-hover:inset-3 group-hover:opacity-100 md:inset-6 md:group-hover:inset-4">
-                    <Brackets size="sm" inset="0" />
-                  </span>
-                  <span className="absolute start-4 top-4 font-display text-[11px] keep-tracking tracking-[0.25em] text-cream/80 md:start-6 md:top-6" dir="ltr">
-                    [{String(i + 1).padStart(2, "0")}]
-                  </span>
-                  <span className="absolute inset-x-4 bottom-4 flex items-end justify-between gap-3 md:inset-x-6 md:bottom-6">
-                    <span>
-                      <span className={`display block ${i === 0 ? "text-4xl md:text-6xl" : "text-2xl md:text-4xl"}`}>{c.name}</span>
-                      <span className="mt-1 block text-[13px] text-cream/75">{fmt(c.count === 1 ? t.shop.countOne : t.shop.count, { n: c.count })}</span>
+          <div className="mt-7 grid grid-cols-2 gap-4 lg:grid-cols-4">
+            {categories.slice(0, 4).map((c, i) => {
+              const tone = tileTones[i % tileTones.length];
+              return (
+                <Reveal key={c.slug} delay={i * 0.06}>
+                  <Link
+                    href={`/shop?c=${c.slug}`}
+                    className={`rh-tile relative flex aspect-[4/5] flex-col justify-end overflow-hidden rounded-[10px] p-4 md:p-6 ${tone.bg} ${tone.ink}`}
+                  >
+                    {c.image && <Image src={c.image} alt="" fill sizes="(min-width:1024px) 22vw, 46vw" className="object-cover" />}
+                    <span className="relative flex items-baseline justify-between gap-2">
+                      <span className="font-display text-[22px] font-bold uppercase leading-none md:text-[30px]">{c.name}</span>
+                      {c.altName && (
+                        <span lang={altLang} className={altLang === "ar" ? "font-[Changa] text-[15px] font-bold md:text-[18px]" : "font-display text-[15px] font-bold uppercase md:text-[18px]"}>
+                          {c.altName}
+                        </span>
+                      )}
                     </span>
-                    <span className="grid h-10 w-10 shrink-0 place-items-center border border-cream/40 transition-colors group-hover:border-cream group-hover:bg-cream group-hover:text-charcoal">
-                      <ArrowUpRight className="flip-rtl h-4 w-4" />
-                    </span>
-                  </span>
-                </Link>
-              </Reveal>
-            ))}
+                  </Link>
+                </Reveal>
+              );
+            })}
           </div>
         </section>
       )}
 
-      {/* NEW IN */}
-      <section id="new-in" className={`container-x pb-20 md:pb-28 ${categories.length === 0 ? "pt-20 md:pt-28" : ""}`}>
-        <Reveal className="flex flex-wrap items-end justify-between gap-6">
-          <div>
-            <SectionLabel index="02">{t.home.newInLabel}</SectionLabel>
-            <h2 className="display mt-4 text-5xl md:text-7xl">{t.home.newInTitle}</h2>
-          </div>
-          {newest.length > 0 && (
-            <Link href="/shop?sort=new" className="link-line eyebrow">
-              {t.common.viewAll}
-            </Link>
-          )}
-        </Reveal>
-        <div className="mt-12">
-          {newest.length > 0 ? (
-            <ProductRail products={newest} />
-          ) : (
-            <div className="relative border border-charcoal/15 px-6 py-16 text-center md:py-24">
-              <Brackets size="sm" inset="-1px" className="text-charcoal/60" />
-              <p className="display text-4xl md:text-5xl">{t.shop.comingSoonTitle}</p>
-              <p className="mx-auto mt-4 max-w-md text-charcoal/65">{t.shop.comingSoonBody}</p>
-              <div className="mx-auto mt-8 max-w-md">
-                <NewsletterForm tone="dark" />
-              </div>
-            </div>
-          )}
-        </div>
-      </section>
-
-      {/* STORY */}
-      <section className="theme-olive relative overflow-hidden">
-        <div className="container-x grid items-center gap-14 py-20 md:py-28 lg:grid-cols-2 lg:gap-20">
-          <Reveal className="relative text-cream/60">
-            <Brackets size="lg" inset="-1rem" />
-            <div className="relative aspect-[4/5] overflow-hidden bg-olive-card">
-              <Image src={editorial.story} alt="" fill sizes="(min-width:1024px) 45vw, 100vw" className="object-cover" />
-            </div>
-            <span className="absolute -bottom-5 end-6 bg-signal px-4 py-2 font-display text-[11px] uppercase keep-tracking tracking-[0.3em] text-white" dir="ltr">
-              {launchStamp()}
-            </span>
-          </Reveal>
-          <div>
-            <Reveal>
-              <SectionLabel index="03" tone="light">{t.home.storyLabel}</SectionLabel>
-              <h2 className="display mt-5 text-5xl md:text-7xl">{t.home.storyTitle}</h2>
-              <p className="mt-7 max-w-xl text-[17px] leading-relaxed text-cream">{t.home.storyBody}</p>
-            </Reveal>
-            <Reveal delay={0.1} className="mt-12 grid grid-cols-3 border-y border-cream/15">
-              {t.home.stats.map((s, i) => (
-                <div key={s.label} className={`py-6 ${i > 0 ? "border-s border-cream/15 ps-4 md:ps-6" : ""}`}>
-                  <p className="font-display text-4xl md:text-6xl" dir="ltr">{s.value}</p>
-                  <p className="mt-2 text-[13px] leading-snug text-cream/70">{s.label}</p>
-                </div>
-              ))}
-            </Reveal>
-            <Reveal delay={0.2}>
-              <Link href="/about" className="btn btn-outline-cream mt-10">
-                {t.home.storyCta} <ArrowRight className="flip-rtl h-4 w-4" />
+      {/* NEW THIS SEASON */}
+      <section id="new-in" className="container-x pb-24 pt-14">
+        <Reveal>
+          <SectionHeading
+            title={t.newTitle}
+            alt={t.newAlt}
+            locale={locale}
+            aside={
+              <Link href="/shop?sort=new" className="text-[16px] font-bold underline underline-offset-4 hover:text-signal">
+                {t.shopAllNew}
               </Link>
-            </Reveal>
-          </div>
-        </div>
-      </section>
-
-      {/* MOST WANTED */}
-      {featured.length > 0 && (
-        <section className="container-x py-20 md:py-28">
-          <Reveal className="flex flex-wrap items-end justify-between gap-6">
-            <div>
-              <SectionLabel index="04">{t.home.featuredLabel}</SectionLabel>
-              <h2 className="display mt-4 text-5xl md:text-7xl">{t.home.featuredTitle}</h2>
-            </div>
-            <Link href="/shop" className="link-line eyebrow">
-              {t.common.viewAll}
-            </Link>
-          </Reveal>
-          <div className="mt-12 grid grid-cols-2 gap-x-3 gap-y-10 md:gap-x-5 lg:grid-cols-4">
-            {featured.map((p, i) => (
-              <Reveal key={p.id} delay={i * 0.06}>
-                <ProductCard product={p} />
+            }
+          />
+        </Reveal>
+        {fresh.length > 0 ? (
+          <div className="mt-8 grid grid-cols-2 gap-x-3 gap-y-10 md:gap-x-5 lg:grid-cols-4">
+            {fresh.map((p, i) => (
+              <Reveal key={p.id} delay={(i % 4) * 0.05} className="h-full">
+                <ProductCard product={p} index={i} sizes="(min-width:1024px) 24vw, 48vw" />
               </Reveal>
             ))}
           </div>
-        </section>
-      )}
+        ) : (
+          <div className="mt-8 rounded-[10px] bg-stone px-6 py-16 text-center">
+            <p className="display text-4xl">{dict.shop.comingSoonTitle}</p>
+            <p className="mx-auto mt-4 max-w-md text-ash">{dict.shop.comingSoonBody}</p>
+            <div className="mx-auto mt-8 max-w-md">
+              <NewsletterForm tone="dark" />
+            </div>
+          </div>
+        )}
+      </section>
 
-      {/* LOOKBOOK */}
-      <section className="relative isolate overflow-hidden bg-charcoal text-cream">
-        <Image src={editorial.lookbook} alt="" fill sizes="100vw" className="-z-10 object-cover opacity-70" />
-        <div className="absolute inset-0 -z-10 bg-gradient-to-t from-charcoal/85 via-charcoal/30 to-charcoal/10" />
-        <div className="container-x flex min-h-[80vh] flex-col justify-end py-16 md:min-h-[88vh] md:py-24">
-          <Reveal className="max-w-3xl">
-            <SectionLabel index="05" tone="light">{t.home.lookLabel}</SectionLabel>
-            <h2 className="display mt-5 text-5xl md:text-8xl">{t.home.lookTitle}</h2>
-            <Link href={outerwear ? `/shop?c=${outerwear.slug}` : "/shop"} className="btn btn-cream mt-10">
-              {outerwear ? t.home.lookCta : t.common.shopAll} <ArrowRight className="flip-rtl h-4 w-4" />
-            </Link>
+      {/* MODEST CUTS */}
+      <section className="theme-olive">
+        <div className="container-x flex flex-wrap items-center gap-14 py-24">
+          <Reveal className="relative grid aspect-[4/3] min-w-0 flex-[1_1_420px] place-items-center overflow-hidden rounded-[10px] bg-olive-card">
+            {fabric?.src && <Image src={fabric.src} alt="" fill sizes="(min-width:1024px) 45vw, 100vw" className="object-cover" />}
+            <span className="absolute start-4 top-4 rounded-full bg-[#D5D4C2] px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.12em] text-[#313B2B]">{t.modest.tag}</span>
+          </Reveal>
+          <Reveal delay={0.08} className="flex min-w-0 flex-[1_1_420px] flex-col gap-5">
+            <span className="eyebrow text-khaki-60">{t.modest.eyebrow}</span>
+            <h2 className="display text-[clamp(44px,5vw,72px)] text-white">{t.modest.title}</h2>
+            <p className="text-[17px] leading-relaxed">{t.modest.body}</p>
+            <ul className="grid">
+              {[
+                [t.modest.coverage, t.modest.coverageV],
+                [t.modest.fabric, fact("fabric_spec", "[Fabric spec]")],
+                [t.modest.tested, t.modest.testedV],
+              ].map(([k, v], i) => (
+                <li key={k} className={`flex justify-between gap-4 border-t border-olive-card py-3.5 ${i === 2 ? "border-b" : ""}`}>
+                  <span>{k}</span>
+                  <span className="text-end text-white">{v}</span>
+                </li>
+              ))}
+            </ul>
           </Reveal>
         </div>
       </section>
 
-      {/* USPs */}
-      <section className="border-y border-charcoal/10">
-        <div className="mx-auto grid max-w-[1480px] grid-cols-2 gap-px bg-charcoal/10 lg:grid-cols-4">
-          {[
-            { icon: <Banknote className="h-6 w-6" strokeWidth={1.25} />, title: t.home.uspCodTitle, body: t.home.uspCodBody },
-            { icon: <Truck className="h-6 w-6" strokeWidth={1.25} />, title: t.home.uspDeliveryTitle, body: fmt(t.home.uspDeliveryBody, { days: store.deliveryDays }) },
-            { icon: <RefreshCcw className="h-6 w-6" strokeWidth={1.25} />, title: t.home.uspExchangeTitle, body: fmt(t.home.uspExchangeBody, { days: store.exchangeDays }) },
-            { icon: <WhatsAppIcon className="h-6 w-6" />, title: t.home.uspSupportTitle, body: t.home.uspSupportBody },
-          ].map((u, i) => (
-            <Reveal
-              key={u.title}
-              delay={i * 0.06}
-              className="bg-cream px-5 py-10 md:px-8 md:py-14 xl:px-12"
-            >
-              <div className="flex items-center justify-between">
-                {u.icon}
-                <span className="font-display text-[11px] text-charcoal/35" dir="ltr">0{i + 1}</span>
-              </div>
-              <p className="display mt-6 text-xl md:text-2xl">{u.title}</p>
-              <p className="mt-2 text-[14px] text-charcoal/65">{u.body}</p>
+      {/* VALUES */}
+      <section className="bg-stone">
+        <div className="container-x grid gap-10 py-[72px] md:grid-cols-3">
+          {t.values.map((v, i) => (
+            <Reveal key={v.title} delay={i * 0.06} className="flex flex-col gap-3">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={`/brand/icons/${v.icon}.svg`} alt="" aria-hidden="true" className="h-14 w-14" />
+              <h3 className="font-display text-[28px] font-bold uppercase leading-[1.05]">{v.title}</h3>
+              <p className="text-[15px] leading-relaxed text-ash">{v.body}</p>
             </Reveal>
           ))}
         </div>
       </section>
 
-      {/* JOIN */}
-      <section className="relative overflow-hidden bg-olive-deep text-cream">
-        <span
-          aria-hidden="true"
-          className="text-outline pointer-events-none absolute -bottom-[0.18em] end-0 select-none font-display text-[30vw] font-semibold uppercase leading-none md:text-[20vw]"
-          dir="ltr"
-        >
-          Join
-        </span>
-        <div className="container-x relative grid gap-10 py-20 md:py-28 lg:grid-cols-2">
-          <Reveal>
-            <SectionLabel index="06" tone="light">{t.home.joinLabel}</SectionLabel>
-            <h2 className="display mt-5 text-6xl md:text-8xl">{t.home.joinTitle}</h2>
-          </Reveal>
-          <Reveal delay={0.1} className="self-end">
-            <p className="max-w-md text-[17px] text-cream/80">{t.home.joinBody}</p>
-            <div className="mt-8 max-w-lg">
-              <NewsletterForm tone="light" />
-            </div>
+      {/* ORDER YOUR WAY */}
+      <section className="container-x py-24">
+        <Reveal>
+          <SectionHeading title={t.order.title} alt={t.order.alt} locale={locale} />
+        </Reveal>
+        <div className="mt-8 grid gap-5 md:grid-cols-3">
+          {[
+            { n: "01", title: t.order.codTitle, body: t.order.codBody, icon: "shipping" },
+            { n: "02", title: t.order.whishTitle, body: t.order.whishBody, icon: "returns" },
+          ].map((c, i) => (
+            <Reveal key={c.n} delay={i * 0.06} className="rh-tile flex h-full flex-col gap-3.5 rounded-[10px] border-[1.5px] border-charcoal p-6 md:p-8">
+              <div className="flex items-center gap-3 md:block">
+                <span className="display block text-[44px] leading-none text-signal md:text-[64px]" dir="ltr">
+                  {c.n}
+                </span>
+                <h3 className="font-display text-[24px] font-bold uppercase leading-none md:mt-3.5 md:text-[30px]">{c.title}</h3>
+              </div>
+              <p className="text-[15px] leading-relaxed text-ash">{c.body}</p>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={`/brand/icons/${c.icon}.svg`} alt="" aria-hidden="true" className="mt-auto hidden h-14 w-14 md:block" />
+            </Reveal>
+          ))}
+          <Reveal delay={0.12} className="flex h-full flex-col gap-3.5 rounded-[10px] bg-sand p-6 md:p-8">
+            <span className="display text-[44px] leading-none text-signal md:text-[64px]" dir="ltr">
+              03
+            </span>
+            <h3 className="display text-[32px] leading-none md:text-[40px]">{t.order.sizeTitle}</h3>
+            <p className="text-[15px] leading-relaxed">{t.order.sizeBody}</p>
+            <a href={whatsappLink()} target="_blank" rel="noreferrer" className="btn btn-primary mt-auto min-h-[52px] w-fit px-6">
+              <WhatsAppIcon className="h-5 w-5" /> {t.order.sizeCta}
+            </a>
           </Reveal>
         </div>
       </section>
+
+      {/* QUOTE */}
+      <section className="relative overflow-hidden bg-khaki">
+        <span className="topo topo-drift pointer-events-none absolute inset-0 opacity-50" aria-hidden="true" />
+        <div className="container-x relative flex max-w-[1080px] flex-col items-center gap-7 py-[104px] text-center">
+          <Reveal>
+            <p className="display text-[clamp(36px,4.4vw,60px)] leading-[1.45] text-[#313B2B]">
+              <span className="highlight-box px-3">{t.quote}</span>
+            </p>
+            <p lang={altLang} className={`mt-7 text-white ${altLang === "ar" ? "font-[Changa] text-[30px] font-bold leading-normal" : "display text-[28px]"}`}>
+              {t.quoteAlt}
+            </p>
+          </Reveal>
+        </div>
+      </section>
+
+      {/* GALLERY */}
+      {gallery.length > 0 && (
+        <section id="gallery" aria-labelledby="gallery-title" className="container-x pt-24">
+          <Reveal className="mb-8 flex flex-wrap items-end justify-between gap-x-10 gap-y-4">
+            <div className="flex max-w-[620px] flex-col gap-3.5">
+              <span className="eyebrow text-signal">{t.gallery.eyebrow}</span>
+              <h2 id="gallery-title" className="display text-[clamp(48px,6vw,88px)]">
+                {t.gallery.title}
+              </h2>
+              <p className="text-[17px] leading-relaxed text-ash">{fmt(t.gallery.body, { handle })}</p>
+            </div>
+            <div className="flex flex-col items-start gap-3.5 md:items-end">
+              <span lang={altLang} className={`hidden sm:block ${altLang === "ar" ? "font-[Changa] text-[32px] font-bold" : "display text-[28px]"}`}>
+                {t.gallery.alt}
+              </span>
+              {store.instagram && (
+                <a href={`https://instagram.com/${store.instagram}`} target="_blank" rel="noreferrer" className="btn btn-outline min-h-12 px-5">
+                  {t.gallery.cta}
+                </a>
+              )}
+            </div>
+          </Reveal>
+          <div className="grid auto-rows-[160px] grid-cols-2 gap-3 md:auto-rows-[220px] md:grid-cols-4">
+            {gallery.map((g, i) => {
+              const caption = locale === "ar" ? g.captionAr : g.captionEn;
+              return (
+                <Reveal key={i} delay={(i % 4) * 0.05} className={`rh-tile relative overflow-hidden rounded-[10px] bg-sand ${spanClass[g.span] ?? ""}`}>
+                  <figure className="absolute inset-0 m-0">
+                    {g.src && <Image src={g.src} alt={caption} fill sizes="(min-width:768px) 50vw, 100vw" className="object-cover" />}
+                    {caption && (
+                      <figcaption className="absolute bottom-3.5 start-3.5 max-w-[calc(100%-28px)] rounded-md bg-white/90 px-3 py-1.5 text-[13px] font-bold leading-tight text-[#313B2B] backdrop-blur">
+                        {caption}
+                      </figcaption>
+                    )}
+                  </figure>
+                </Reveal>
+              );
+            })}
+          </div>
+        </section>
+      )}
+
+      {/* REVIEWS */}
+      {reviews.length > 0 && (
+        <section id="reviews" aria-labelledby="reviews-title" className="container-x py-24">
+          <Reveal className="mb-8 flex flex-wrap items-end justify-between gap-x-8 gap-y-4">
+            <div className="flex flex-col gap-3">
+              <h2 id="reviews-title" className="display text-[clamp(40px,5vw,64px)]">
+                {t.reviews.title}
+              </h2>
+              <div className="flex items-center gap-2.5 text-[15px] text-ash">
+                <Stars n={Math.round(reviewData.average ?? 5)} label={fmt(t.reviews.rating, { n: reviewData.average ?? "[4.9]" })} />
+                <span>
+                  {reviewData.count > 0
+                    ? fmt(t.reviews.average, { avg: reviewData.average ?? "", n: reviewData.count })
+                    : fmt(t.reviews.average, { avg: "[4.9]", n: "[120]" })}
+                </span>
+              </div>
+            </div>
+            <span lang={altLang} className={`hidden sm:block ${altLang === "ar" ? "font-[Changa] text-[32px] font-bold" : "display text-[28px]"}`}>
+              {t.reviews.alt}
+            </span>
+          </Reveal>
+          <div className="grid gap-5 md:grid-cols-3">
+            {reviews.map((r, i) => (
+              <Reveal key={r.id} delay={i * 0.06}>
+                <figure lang={r.lang} dir={r.lang === "ar" ? "rtl" : "ltr"} className="m-0 flex h-full flex-col gap-4 rounded-[10px] bg-stone p-7">
+                  <div className="flex items-center justify-between">
+                    <Stars n={r.rating} size={18} label={fmt(t.reviews.rating, { n: r.rating })} />
+                    <svg width="28" height="28" viewBox="0 0 24 24" aria-hidden="true" className="rtl:-scale-x-100">
+                      <path d="M4 18v-5.5C4 8.4 6.2 6 9.5 5.5l.6 1.6C8.2 7.8 7.4 9.2 7.3 11H10v7H4zm10 0v-5.5c0-4.1 2.2-6.5 5.5-7l.6 1.6c-1.9.7-2.7 2.1-2.8 3.9H20v7h-6z" fill="#B51515" />
+                    </svg>
+                  </div>
+                  <blockquote className="m-0 text-[17px] leading-relaxed">{r.quote}</blockquote>
+                  {r.product && (
+                    <span className="self-start rounded-full bg-white px-3 py-1.5 text-[12px] font-bold">
+                      {fmt(reviewLabels[r.lang].bought, { product: r.product })}
+                    </span>
+                  )}
+                  <figcaption className="mt-auto flex items-center gap-3 border-t border-hairline pt-4">
+                    <span aria-hidden="true" className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-forest text-[15px] font-bold text-sand">
+                      {r.placeholder ? (r.lang === "ar" ? "[ر]" : "[A]") : r.customer.charAt(0).toUpperCase()}
+                    </span>
+                    <span className="flex flex-col">
+                      <b className="text-[15px]">{r.customer}</b>
+                      <span className="text-[13px] text-ash">
+                        {[r.city, reviewLabels[r.lang].verified].filter(Boolean).join(" · ")}
+                      </span>
+                    </span>
+                  </figcaption>
+                </figure>
+              </Reveal>
+            ))}
+          </div>
+        </section>
+      )}
     </>
   );
 }
+
+/** Review cards keep their own language's labels whatever the page language. */
+const reviewLabels = {
+  en: { bought: "Bought: {product}", verified: "Verified buyer" },
+  ar: { bought: "اشترى: {product}", verified: "مشتري موثّق" },
+};

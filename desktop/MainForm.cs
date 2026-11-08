@@ -14,6 +14,7 @@ namespace InventorySystem
         // on borderless maximized WinForms windows (other apps show behind the form).
         private Forms.PartsForm partsForm;
         private Forms.UsersForm usersForm;
+        private Forms.WebsiteForm websiteForm;
         private InventorySystem.Forms.DashboardForm dashboardForm;
         private InventorySystem.Forms.ReportsForm reportsForm;
         private InventorySystem.Forms.HistoryForm historyForm;
@@ -400,6 +401,7 @@ namespace InventorySystem
 
             // Forms Setup
             usersForm = InitializeForm<Forms.UsersForm>();
+            websiteForm = InitializeForm<Forms.WebsiteForm>();
             partsForm = InitializeForm<Forms.PartsForm>();
             posForm = InitializeForm<Forms.POSForm>();
             reportsForm = InitializeForm<Forms.ReportsForm>();
@@ -436,6 +438,7 @@ namespace InventorySystem
             if (isAdmin)
             {
                 AddNavButton(pnlNav, "Nav_Users", "users", "btnUsers", () => ShowForm(usersForm));
+                AddNavButton(pnlNav, "Nav_Website", "language", "btnWebsite", () => ShowForm(websiteForm));
             }
 
             ShowForm(dashboardForm);

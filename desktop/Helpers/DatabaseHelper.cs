@@ -444,6 +444,44 @@ namespace InventorySystem
                 if (!ColumnExists("parts", "gender")) ExecuteNonQuery("ALTER TABLE parts ADD COLUMN gender TEXT DEFAULT 'Unisex';");
                 if (!ColumnExists("parts", "fabric")) ExecuteNonQuery("ALTER TABLE parts ADD COLUMN fabric TEXT;");
                 if (!ColumnExists("parts", "collection")) ExecuteNonQuery("ALTER TABLE parts ADD COLUMN collection TEXT;");
+
+                // Website content managed from the app and synced to the 7.10 website (see Services/SiteContent.cs).
+                if (!ColumnExists("categories", "category_name_ar")) ExecuteNonQuery("ALTER TABLE categories ADD COLUMN category_name_ar TEXT;");
+                if (!ColumnExists("categories", "sort_order")) ExecuteNonQuery("ALTER TABLE categories ADD COLUMN sort_order INTEGER DEFAULT 0;");
+                if (!ColumnExists("parts", "is_new")) ExecuteNonQuery("ALTER TABLE parts ADD COLUMN is_new INTEGER DEFAULT 0;");
+                ExecuteNonQuery(@"
+                    CREATE TABLE IF NOT EXISTS site_settings (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        setting_key TEXT NOT NULL UNIQUE,
+                        value_en TEXT,
+                        value_ar TEXT,
+                        note TEXT
+                    );");
+                ExecuteNonQuery(@"
+                    CREATE TABLE IF NOT EXISTS site_media (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        slot TEXT NOT NULL,
+                        image_path TEXT,
+                        caption_en TEXT,
+                        caption_ar TEXT,
+                        span TEXT DEFAULT 'normal',
+                        sort_order INTEGER DEFAULT 0,
+                        is_active INTEGER DEFAULT 1
+                    );");
+                ExecuteNonQuery(@"
+                    CREATE TABLE IF NOT EXISTS site_reviews (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        quote TEXT NOT NULL,
+                        lang TEXT DEFAULT 'en',
+                        product_name TEXT,
+                        customer_name TEXT,
+                        city TEXT,
+                        rating INTEGER DEFAULT 5,
+                        is_placeholder INTEGER DEFAULT 0,
+                        is_approved INTEGER DEFAULT 1,
+                        sort_order INTEGER DEFAULT 0,
+                        date_added TEXT DEFAULT (datetime('now'))
+                    );");
                 ExecuteNonQuery(@"
                     CREATE TABLE IF NOT EXISTS product_materials (
                         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -637,7 +675,8 @@ namespace InventorySystem
                     WHERE part_name LIKE '% - %' 
                       AND ((size IS NOT NULL AND size != '') OR (color IS NOT NULL AND color != ''));");
 
-                EnsureMenWomenFashionCatalog();
+                // The old automatic fashion demo catalogue is no longer inserted on start-up;
+                // demo data is loaded on request from the Website screen (SiteContent.SeedTrailDemo).
             }
             catch (Exception ex)
             {

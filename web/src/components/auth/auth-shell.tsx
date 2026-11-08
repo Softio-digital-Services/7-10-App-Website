@@ -1,57 +1,70 @@
 import Link from "next/link";
 import { Check } from "lucide-react";
-import { Brackets } from "@/components/brand/brackets";
-import { LogoMark } from "@/components/brand/logo";
-import { Img } from "@/components/img";
-import { editorial } from "@/lib/editorial";
 import type { Dict } from "@/lib/i18n/en";
 
 type AuthShellProps = {
   t: Dict;
   title: string;
   body: string;
+  active: "signin" | "register";
   children: React.ReactNode;
 };
 
-export function AuthShell({ t, title, body, children }: AuthShellProps) {
+export function AuthShell({ t, title, body, active, children }: AuthShellProps) {
+  const tabs = [
+    { key: "signin", href: "/login", label: t.ui.signInTab },
+    { key: "register", href: "/register", label: t.ui.createTab },
+  ] as const;
   return (
-    <section className="container-x grid gap-10 py-10 md:py-16 lg:grid-cols-12 lg:gap-16">
-      <aside className="relative isolate hidden overflow-hidden bg-charcoal text-cream lg:col-span-6 lg:flex lg:min-h-[640px] lg:flex-col lg:justify-between lg:p-12">
-        <Img src={editorial.auth} alt="" fill sizes="50vw" className="-z-10 object-cover opacity-55" />
-        <div className="absolute inset-0 -z-10 bg-gradient-to-t from-charcoal via-charcoal/30 to-transparent" />
-        <Brackets size="lg" inset="1.5rem" className="text-cream/60" />
-        <LogoMark className="h-14 w-auto self-start" tone="cream" />
-        <div>
-          <p className="eyebrow text-cream/70">{t.auth.perksLabel}</p>
-          <ul className="mt-6 space-y-4">
-            {t.auth.perks.map((perk) => (
-              <li key={perk} className="flex items-center gap-4 text-[17px]">
-                <span className="grid h-7 w-7 shrink-0 place-items-center border border-cream/40">
-                  <Check className="h-3.5 w-3.5" strokeWidth={2} />
-                </span>
-                {perk}
-              </li>
-            ))}
-          </ul>
-        </div>
+    <section className="container-x grid gap-6 pb-12 lg:grid-cols-12 lg:gap-6 lg:py-10">
+      <aside className="theme-olive -mx-4 flex flex-col px-5 pb-8 pt-7 md:-mx-8 md:px-8 lg:col-span-6 lg:mx-0 lg:min-h-[620px] lg:rounded-lg lg:p-10">
+        <p className="rise eyebrow text-khaki-60">{t.design.auth.eyebrow}</p>
+        <h1 className="display mt-3 text-[3rem] leading-[0.92] text-white md:text-[4.4rem]">
+          <span className="line-mask">
+            <span style={{ "--d": "0.05s" } as React.CSSProperties}>{title}</span>
+          </span>
+        </h1>
+        <p className="rise mt-4 max-w-md text-[15px] leading-relaxed text-cream/85" style={{ animationDelay: "0.15s" }}>
+          {body}
+        </p>
+        <ul className="mt-10 hidden border-t border-cream/15 lg:mt-auto lg:block">
+          {t.design.auth.perks.map(([title, line], i) => (
+            <li key={title} className="rise flex items-start gap-4 border-b border-cream/15 py-4" style={{ animationDelay: `${0.2 + i * 0.08}s` }}>
+              <span className="mt-0.5 grid h-7 w-7 shrink-0 place-items-center rounded-full bg-signal text-white">
+                <Check className="h-3.5 w-3.5" strokeWidth={3} />
+              </span>
+              <span>
+                <b className="block text-[16px] text-white">{title}</b>
+                <span className="text-[14px] text-sand">{line}</span>
+              </span>
+            </li>
+          ))}
+        </ul>
       </aside>
 
-      <div className="flex flex-col justify-center lg:col-span-6 lg:py-8 xl:px-8">
+      <div className="flex flex-col justify-center lg:col-span-6 lg:rounded-lg lg:border lg:border-charcoal/12 lg:p-10">
         <div className="mx-auto w-full max-w-md">
-          <p className="eyebrow flex items-center gap-3 text-charcoal/65">
-            <span className="dot-signal" /> {t.auth.accountLabel}
-          </p>
-          <h1 className="display mt-4 text-5xl md:text-6xl">{title}</h1>
-          <p className="mt-4 text-[15.5px] leading-relaxed text-charcoal/70">{body}</p>
-          <div className="mt-10">{children}</div>
-          <div className="mt-10 flex items-start gap-3 border-t border-charcoal/10 pt-6 text-[13.5px] text-charcoal/65">
-            <span className="mt-1.5 h-0 w-0 shrink-0 border-x-[4px] border-t-[7px] border-x-transparent border-t-signal" aria-hidden="true" />
-            <p>
-              {t.auth.guestHint}{" "}
-              <Link href="/track" className="text-charcoal underline underline-offset-4">
-                {t.common.track}
+          <div className="grid grid-cols-2 rounded-lg bg-[#ecebe4] p-1">
+            {tabs.map((tab) => (
+              <Link
+                key={tab.key}
+                href={tab.href}
+                aria-current={active === tab.key ? "page" : undefined}
+                className={`grid h-11 place-items-center rounded-md text-[15px] font-bold transition-[background-color,color,box-shadow] duration-300 ${
+                  active === tab.key ? "bg-white text-charcoal shadow-[0_1px_3px_rgba(47,58,44,0.25)]" : "text-charcoal/65 hover:text-charcoal"
+                }`}
+              >
+                {tab.label}
               </Link>
-            </p>
+            ))}
+          </div>
+          <div className="mt-7">{children}</div>
+          <div className="mt-7 rounded-lg bg-stone px-4 py-3.5 text-[14px] text-charcoal/85">
+            {t.ui.guestQ}{" "}
+            <Link href="/cart" className="font-bold text-charcoal underline underline-offset-4">
+              {t.ui.guestLink}
+            </Link>{" "}
+            {t.ui.guestTail}
           </div>
         </div>
       </div>

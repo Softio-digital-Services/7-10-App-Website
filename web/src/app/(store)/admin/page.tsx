@@ -47,11 +47,11 @@ export default async function AdminPage() {
             </>
           );
           return s.href ? (
-            <Link key={s.label} href={s.href} className="border border-charcoal/15 p-6 transition-colors hover:border-charcoal">
+            <Link key={s.label} href={s.href} className="border rounded border-charcoal/15 p-6 transition-colors hover:border-charcoal">
               {body}
             </Link>
           ) : (
-            <div key={s.label} className="border border-charcoal/15 p-6">
+            <div key={s.label} className="border rounded border-charcoal/15 p-6">
               {body}
             </div>
           );
@@ -73,7 +73,7 @@ export default async function AdminPage() {
             All orders
           </Link>
         </div>
-        <div className="mt-5 overflow-x-auto border border-charcoal/15">
+        <div className="mt-5 overflow-x-auto border rounded border-charcoal/15">
           <table className="w-full min-w-[640px] text-[14px]">
             <thead className="bg-cream-2 text-start text-[12px] text-charcoal/65">
               <tr>

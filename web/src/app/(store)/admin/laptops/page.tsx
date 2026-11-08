@@ -40,14 +40,14 @@ export default async function AdminLaptopsPage() {
       </p>
 
       {devices.length === 0 ? (
-        <p className="border border-dashed border-charcoal/25 px-6 py-16 text-center text-charcoal/65">No laptops linked yet.</p>
+        <p className="border rounded border-dashed border-charcoal/25 px-6 py-16 text-center text-charcoal/65">No laptops linked yet.</p>
       ) : (
         <ul className="space-y-3">
           {devices.map((d) => {
             const online = !d.revokedAt && d.lastSeenAt && now - d.lastSeenAt.getTime() < 5 * 60_000;
             const behind = Math.max(0, head - d.cursor);
             return (
-              <li key={d.id} className={`border p-5 md:p-6 ${d.revokedAt ? "border-charcoal/10 opacity-60" : "border-charcoal/15"}`}>
+              <li key={d.id} className={`border rounded p-5 md:p-6 ${d.revokedAt ? "border-charcoal/10 opacity-60" : "border-charcoal/15"}`}>
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div>
                     <p className="flex items-center gap-2.5 font-medium">

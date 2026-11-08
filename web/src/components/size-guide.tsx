@@ -41,7 +41,7 @@ export function SizeGuideContent({ initial = "tops", highlight }: { initial?: Si
     <div>
       <p className="text-[14.5px] leading-relaxed text-charcoal/70">{g.intro}</p>
 
-      <div className="mt-6 inline-flex border border-charcoal/20" role="tablist">
+      <div className="mt-6 inline-flex border rounded border-charcoal/20" role="tablist">
         {(["tops", "bottoms"] as const).map((key) => (
           <button
             key={key}
@@ -85,7 +85,7 @@ export function SizeGuideContent({ initial = "tops", highlight }: { initial?: Si
         </table>
       </div>
 
-      <div className="mt-8 bg-cream-2 p-5">
+      <div className="mt-8 rounded-lg bg-stone p-5">
         <p className="eyebrow text-[10.5px] text-charcoal/65">{g.howTo}</p>
         <ul className="mt-3 space-y-1.5 text-[14px] text-charcoal/75">
           {(tab === "tops" ? [g.howChest] : [g.howWaist, g.howHip, g.howInseam]).map((line) => (
@@ -126,7 +126,7 @@ export function SizeGuideDialog({ open, onClose, initial, highlight }: { open: b
     >
       <div className={`absolute inset-0 bg-charcoal/50 transition-opacity duration-500 ${open ? "opacity-100" : "opacity-0"}`} onClick={onClose} />
       <div
-        className={`absolute inset-y-0 end-0 flex w-full max-w-[520px] flex-col bg-cream transition-transform duration-700 ease-[var(--ease-out-expo)] ${
+        className={`absolute inset-y-0 end-0 flex w-full max-w-[520px] flex-col bg-white transition-transform duration-700 ease-[var(--ease-out-expo)] ${
           open ? "translate-x-0" : "translate-x-full rtl:-translate-x-full"
         }`}
       >

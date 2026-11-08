@@ -34,3 +34,27 @@ export function Wordmark({ className }: { className?: string }) {
     </span>
   );
 }
+
+type LogoProps = {
+  variant?: "horizontal" | "stacked" | "mark";
+  /** "auto" swaps to the on-dark artwork in dark mode; "on-dark" is for olive grounds. */
+  tone?: "auto" | "on-dark";
+  className?: string;
+};
+
+/** The 7.10 logo kit in /public/brand/logo, following the design system's logo rules. */
+export function Logo({ variant = "horizontal", tone = "auto", className = "" }: LogoProps) {
+  const base = `/brand/logo/710-${variant}`;
+  if (tone === "on-dark") {
+    // eslint-disable-next-line @next/next/no-img-element
+    return <img src={`${base}-on-dark.svg`} alt="7.10" className={className} />;
+  }
+  return (
+    <>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src={`${base}.svg`} alt="7.10" className={className} data-logo-light="" />
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src={`${base}-on-dark.svg`} alt="7.10" className={className} data-logo-dark="" />
+    </>
+  );
+}

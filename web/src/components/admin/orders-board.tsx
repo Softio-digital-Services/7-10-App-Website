@@ -126,8 +126,7 @@ export function OrdersBoard() {
               type="button"
               onClick={() => navigate({ status: tab.id })}
               aria-pressed={status === tab.id}
-              className={`flex items-center gap-2 border px-3.5 py-2 text-[13.5px] transition-colors ${
-                status === tab.id ? "border-charcoal bg-charcoal text-cream" : "border-charcoal/15 hover:border-charcoal"
+              className={`flex items-center gap-2 border rounded px-3.5 py-2 text-[13.5px] transition-colors ${ status === tab.id ? "border-charcoal bg-charcoal text-cream" : "border-charcoal/15 hover:border-charcoal"
               }`}
             >
               {tab.label}
@@ -141,7 +140,7 @@ export function OrdersBoard() {
             autoOpened.current = false;
             navigate({ q: query.trim() });
           }}
-          className="flex w-full items-center border border-charcoal/20 focus-within:border-charcoal sm:w-80"
+          className="flex w-full items-center border rounded border-charcoal/20 focus-within:border-charcoal sm:w-80"
         >
           <Search className="ms-3 h-4 w-4 shrink-0 text-charcoal/45" />
           <input
@@ -161,7 +160,7 @@ export function OrdersBoard() {
         </p>
       )}
 
-      <div className="mt-6 divide-y divide-charcoal/10 border border-charcoal/15">
+      <div className="mt-6 divide-y divide-charcoal/10 border rounded border-charcoal/15">
         {orders === null &&
           Array.from({ length: 4 }).map((_, i) => (
             <div key={i} className="flex items-center gap-6 px-5 py-5">
@@ -236,10 +235,10 @@ export function OrdersBoard() {
                       <p className="mt-2 font-medium">{order.customerName}</p>
                       {order.customerEmail && <p className="text-charcoal/65">{order.customerEmail}</p>}
                       <div className="mt-2 flex flex-wrap gap-2">
-                        <a href={`tel:+${phoneDigits}`} className="inline-flex items-center gap-2 border border-charcoal/20 px-3 py-1.5 text-[13px] hover:border-charcoal" dir="ltr">
+                        <a href={`tel:+${phoneDigits}`} className="inline-flex items-center gap-2 border rounded border-charcoal/20 px-3 py-1.5 text-[13px] hover:border-charcoal" dir="ltr">
                           <Phone className="h-3.5 w-3.5" /> {order.customerPhone}
                         </a>
-                        <a href={`https://wa.me/${phoneDigits}`} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 border border-charcoal/20 px-3 py-1.5 text-[13px] hover:border-charcoal">
+                        <a href={`https://wa.me/${phoneDigits}`} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 border rounded border-charcoal/20 px-3 py-1.5 text-[13px] hover:border-charcoal">
                           <WhatsAppIcon className="h-3.5 w-3.5 text-[#25D366]" /> WhatsApp
                         </a>
                       </div>

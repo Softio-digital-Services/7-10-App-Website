@@ -55,7 +55,7 @@ export function LoginForm({ callbackUrl, explicitCallback, google }: { callbackU
     <>
       <form ref={formRef} onSubmit={submit} noValidate className="space-y-6">
         {failed && (
-          <div role="alert" className="flex items-start gap-3 border border-signal/40 bg-signal/5 px-5 py-4 text-[14px]">
+          <div role="alert" className="flex items-start gap-3 border rounded border-signal/40 bg-signal/5 px-5 py-4 text-[14px]">
             <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-signal-ink" />
             {t.auth.invalid}
           </div>

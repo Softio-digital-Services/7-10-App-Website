@@ -3,15 +3,16 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { AlertTriangle, Banknote, ChevronDown, LoaderCircle, Lock, ShoppingBag, Wallet } from "lucide-react";
-import { Brackets } from "@/components/brand/brackets";
+import { AlertTriangle, ChevronDown, LoaderCircle, Lock, ShoppingBag, Truck, Wallet } from "lucide-react";
 import { useCart } from "@/components/cart-provider";
+import { CheckoutSteps, orderMessage } from "@/components/checkout/checkout-steps";
 import { StockNotice } from "@/components/checkout/stock-notice";
 import { Field } from "@/components/form-field";
 import { useI18n } from "@/components/i18n-provider";
+import { WhatsAppIcon } from "@/components/icons";
 import { Img } from "@/components/img";
 import { formatPrice, isValidPhone } from "@/lib/format";
-import { deliveryFeeFor, regions, store } from "@/lib/store-config";
+import { deliveryFeeFor, regions, store, whatsappLink } from "@/lib/store-config";
 
 type Form = {
   name: string;
@@ -66,6 +67,8 @@ export function CheckoutView({ account }: { account: { name: string; email: stri
   const [status, setStatus] = useState<"idle" | "placing" | "done">("idle");
   const [banner, setBanner] = useState<string | null>(null);
   const [summaryOpen, setSummaryOpen] = useState(false);
+  // Third option from the design: hand the order to the team on WhatsApp instead of placing it here.
+  const [viaWa, setViaWa] = useState(false);
   const bannerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -121,6 +124,18 @@ export function CheckoutView({ account }: { account: { name: string; email: stri
     if (Object.keys(errs).length) {
       setBanner(t.checkout.fixErrors);
       focusFirst(errs);
+      return;
+    }
+
+    if (viaWa) {
+      const region = regions.find((r) => r.id === form.region);
+      const message = orderMessage(t.ui.waIntro, items, [
+        `${t.checkout.total}: ${formatPrice(total)}`,
+        `${form.name} · ${store.phonePrefix} ${form.phone}`,
+        [region?.[locale], form.city, form.address].filter(Boolean).join(", "),
+        form.notes.trim(),
+      ].filter(Boolean));
+      window.open(whatsappLink(message), "_blank", "noopener");
       return;
     }
 
@@ -201,8 +216,7 @@ export function CheckoutView({ account }: { account: { name: string; email: stri
   if (items.length === 0) {
     return (
       <div className="container-x py-20 md:py-28">
-        <div className="relative mx-auto max-w-xl border border-charcoal/15 px-6 py-16 text-center">
-          <Brackets size="sm" inset="-1px" className="text-charcoal/60" />
+        <div className="relative mx-auto max-w-xl rounded-lg bg-stone px-6 py-16 text-center">
           <ShoppingBag className="mx-auto h-8 w-8 text-charcoal/40" strokeWidth={1.25} />
           <h1 className="display mt-6 text-4xl md:text-5xl">{t.checkout.emptyTitle}</h1>
           <p className="mt-3 text-charcoal/65">{t.checkout.emptyBody}</p>
@@ -218,10 +232,10 @@ export function CheckoutView({ account }: { account: { name: string; email: stri
     <>
       <ul className="divide-y divide-charcoal/10">
         {items.map((item) => (
-          <li key={item.variantId} className="flex gap-4 py-4 first:pt-0">
-            <div className="card-img relative h-24 w-[72px] shrink-0">
+          <li key={item.variantId} className="flex items-center gap-4 py-3 first:pt-0">
+            <div className="card-img relative h-[52px] w-[44px] shrink-0 bg-cream-2">
               {item.imageUrl && <Img src={item.imageUrl} alt={item.productName} fill sizes="72px" className="object-cover" />}
-              <span className="absolute -end-2 -top-2 grid h-6 min-w-6 place-items-center rounded-full bg-charcoal px-1.5 font-display text-[11px] text-cream">
+              <span className="pop absolute -end-2 -top-2 grid h-5 min-w-5 place-items-center rounded-full bg-charcoal px-1.5 font-display text-[11px] text-cream">
                 {item.quantity}
               </span>
             </div>
@@ -259,9 +273,9 @@ export function CheckoutView({ account }: { account: { name: string; email: stri
         )}
       </dl>
 
-      <div className="mt-5 flex items-end justify-between border-t border-charcoal pt-5">
-        <span className="eyebrow">{t.checkout.total}</span>
-        <span className="font-display text-3xl font-medium" dir="ltr">
+      <div className="mt-5 flex items-end justify-between border-t border-charcoal/20 pt-5">
+        <span className="text-[15px] font-semibold">{t.checkout.total}</span>
+        <span className="font-display text-[2rem] font-bold leading-none" dir="ltr">
           <span className="me-1.5 align-middle text-[12px] font-normal text-charcoal/65">{store.currency}</span>
           {formatPrice(total)}
         </span>
@@ -270,8 +284,12 @@ export function CheckoutView({ account }: { account: { name: string; email: stri
   );
 
   const placeButton = (className: string) => (
-    <button type="submit" disabled={status === "placing"} className={`btn btn-primary w-full min-h-14 text-[13.5px] ${className}`}>
-      {status === "placing" ? (
+    <button type="submit" disabled={status === "placing"} className={`btn btn-primary w-full min-h-12 text-[15px] ${className}`}>
+      {viaWa ? (
+        <>
+          <WhatsAppIcon className="h-4 w-4" /> {t.ui.waSend}
+        </>
+      ) : status === "placing" ? (
         <>
           <LoaderCircle className="h-4 w-4 animate-spin" /> {form.payment === "WHISH" ? t.checkout.openingWhish : t.checkout.placing}
         </>
@@ -285,18 +303,9 @@ export function CheckoutView({ account }: { account: { name: string; email: stri
   );
 
   return (
-    <div className="container-x pb-24 pt-8 md:pt-12">
-      <div className="flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <p className="eyebrow flex items-center gap-2 text-charcoal/65">
-            <Lock className="h-3.5 w-3.5" strokeWidth={1.75} /> {t.checkout.secure}
-          </p>
-          <h1 className="display mt-4 text-5xl md:text-7xl">{t.checkout.title}</h1>
-        </div>
-        <Link href="/cart" className="link-line eyebrow">
-          {t.checkout.editBag}
-        </Link>
-      </div>
+    <div className="container-x pb-36 pt-4 lg:pb-24 lg:pt-6">
+      <CheckoutSteps current={2} />
+      <h1 className="display mt-6 hidden text-[4rem] lg:block">{t.checkout.title}</h1>
       {!account && (
         <p className="mt-4 text-[14px] text-charcoal/65">
           {t.checkout.guestNote} {t.checkout.haveAccount}{" "}
@@ -307,19 +316,18 @@ export function CheckoutView({ account }: { account: { name: string; email: stri
       )}
 
       {/* Mobile summary */}
-      <div className="mt-8 border border-charcoal/15 lg:hidden">
+      <div className="mt-6 overflow-hidden rounded-lg bg-stone lg:hidden">
         <button
           type="button"
           onClick={() => setSummaryOpen((v) => !v)}
           aria-expanded={summaryOpen}
-          className="flex w-full items-center justify-between gap-3 bg-cream-2 px-5 py-4 text-[14px]"
+          className="flex w-full items-center justify-between gap-3 bg-stone px-5 py-4 text-[14px]"
         >
-          <span className="flex items-center gap-2 font-medium">
-            <ShoppingBag className="h-4 w-4" strokeWidth={1.5} />
-            {summaryOpen ? t.checkout.hideSummary : t.checkout.showSummary}
-            <ChevronDown className={`h-4 w-4 transition-transform ${summaryOpen ? "rotate-180" : ""}`} />
+          <span className="flex items-center gap-2 font-bold">
+            {t.ui.yourOrder} · {f(count === 1 ? t.bag.countOne : t.bag.count, { n: count })}
+            <ChevronDown className={`h-4 w-4 transition-transform duration-300 ${summaryOpen ? "rotate-180" : ""}`} />
           </span>
-          <span className="font-display text-lg" dir="ltr">{formatPrice(total)}</span>
+          <span className="font-display text-[20px] font-bold" dir="ltr">{formatPrice(total)}</span>
         </button>
         <div className={`grid transition-[grid-template-rows] duration-500 ease-[var(--ease-out-expo)] ${summaryOpen ? "grid-rows-[1fr]" : "grid-rows-[0fr]"}`}>
           <div className="overflow-hidden">
@@ -328,17 +336,18 @@ export function CheckoutView({ account }: { account: { name: string; email: stri
         </div>
       </div>
 
-      <form noValidate onSubmit={submit} className="mt-8 grid gap-12 md:mt-12 lg:grid-cols-12 lg:gap-16">
-        <div className="space-y-12 lg:col-span-7">
+      <form noValidate onSubmit={submit} className="mt-8 grid gap-10 lg:mt-6 lg:grid-cols-12 lg:gap-10">
+        <div className="space-y-10 lg:col-span-7">
           {!banner && <StockNotice />}
           {banner && (
-            <div ref={bannerRef} role="alert" className="flex items-start gap-3 border border-signal/40 bg-signal/5 px-5 py-4 text-[14px] text-charcoal">
+            <div ref={bannerRef} role="alert" className="flex items-start gap-3 border rounded border-signal/40 bg-signal/5 px-5 py-4 text-[14px] text-charcoal">
               <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-signal-ink" />
               {banner}
             </div>
           )}
 
           <Step index="01" title={t.checkout.contact}>
+            <div className="grid gap-5 md:grid-cols-2">
             <Field id="co-name" label={t.checkout.fullName} error={errors.name}>
               <input
                 id="co-name"
@@ -353,12 +362,12 @@ export function CheckoutView({ account }: { account: { name: string; email: stri
             </Field>
             <Field id="co-phone" label={t.checkout.phone} error={errors.phone} hint={t.checkout.phoneHint}>
               <div className="flex" dir="ltr">
-                <span className="grid shrink-0 place-items-center border border-e-0 border-charcoal/20 bg-cream-2 px-4 font-display text-[14px] tracking-wider">
+                <span className="grid shrink-0 place-items-center rounded-s border border-e-0 border-charcoal/45 bg-stone px-4 text-[14px] font-semibold">
                   {store.phonePrefix}
                 </span>
                 <input
                   id="co-phone"
-                  className="field"
+                  className="field rounded-s-none"
                   value={form.phone}
                   onChange={(e) => set("phone", e.target.value.replace(/[^\d\s+-]/g, ""))}
                   onBlur={() => blur("phone")}
@@ -370,6 +379,7 @@ export function CheckoutView({ account }: { account: { name: string; email: stri
                 />
               </div>
             </Field>
+            </div>
             <Field id="co-email" label={t.checkout.email} optional error={errors.email} hint={t.checkout.emailHint}>
               <input
                 id="co-email"
@@ -387,6 +397,7 @@ export function CheckoutView({ account }: { account: { name: string; email: stri
           </Step>
 
           <Step index="02" title={t.checkout.delivery}>
+            <div className="grid gap-5 md:grid-cols-2">
             <Field id="co-region" label={t.checkout.region} error={errors.region}>
               <div className="relative">
                 <select
@@ -427,6 +438,7 @@ export function CheckoutView({ account }: { account: { name: string; email: stri
                 aria-describedby={errors.city ? "co-city-error" : undefined}
               />
             </Field>
+            </div>
             <Field id="co-address" label={t.checkout.address} error={errors.address}>
               <input
                 id="co-address"
@@ -455,27 +467,40 @@ export function CheckoutView({ account }: { account: { name: string; email: stri
           <Step index="03" title={t.checkout.payment}>
             <div className="grid gap-3" role="radiogroup" aria-label={t.checkout.payment}>
               <PaymentOption
-                checked={form.payment === "COD"}
-                onSelect={() => set("payment", "COD")}
-                icon={<Banknote className="h-5 w-5" strokeWidth={1.5} />}
+                checked={!viaWa && form.payment === "COD"}
+                onSelect={() => {
+                  setViaWa(false);
+                  set("payment", "COD");
+                }}
+                icon={<Truck className="h-5 w-5 text-signal" strokeWidth={1.5} />}
                 title={t.checkout.cod}
                 body={t.checkout.codDesc}
               />
               <PaymentOption
-                checked={form.payment === "WHISH"}
-                onSelect={() => set("payment", "WHISH")}
-                icon={<Wallet className="h-5 w-5" strokeWidth={1.5} />}
+                checked={!viaWa && form.payment === "WHISH"}
+                onSelect={() => {
+                  setViaWa(false);
+                  set("payment", "WHISH");
+                }}
+                icon={<Wallet className="h-5 w-5 text-signal" strokeWidth={1.5} />}
                 title={t.checkout.whish}
                 body={t.checkout.whishDesc}
                 extra={
                   <span className="flex gap-1.5" dir="ltr" aria-hidden="true">
                     {["WHISH", "VISA", "MC"].map((b) => (
-                      <span key={b} className="border border-charcoal/20 px-1.5 py-0.5 font-display text-[9.5px] tracking-wider text-charcoal/65">
+                      <span key={b} className="border rounded border-charcoal/20 px-1.5 py-0.5 font-display text-[9.5px] tracking-wider text-charcoal/65">
                         {b}
                       </span>
                     ))}
                   </span>
                 }
+              />
+              <PaymentOption
+                checked={viaWa}
+                onSelect={() => setViaWa(true)}
+                icon={<WhatsAppIcon className="h-5 w-5 text-signal" />}
+                title={t.ui.waOption}
+                body={t.ui.waOptionDesc}
               />
             </div>
           </Step>
@@ -485,28 +510,36 @@ export function CheckoutView({ account }: { account: { name: string; email: stri
               <input type="checkbox" checked={remember} onChange={(e) => setRemember(e.target.checked)} className="h-[18px] w-[18px] accent-[var(--color-olive)]" />
               {t.checkout.remember}
             </label>
-            <div className="lg:hidden">{placeButton("")}</div>
             <p className="text-[12.5px] leading-relaxed text-charcoal/65 lg:hidden">
               <TermsNote />
             </p>
+            <div className="fixed inset-x-0 bottom-0 z-40 border-t border-charcoal/10 bg-white/95 px-4 pb-[calc(env(safe-area-inset-bottom)+10px)] pt-3 backdrop-blur-md lg:hidden">
+              <div className="mb-2 flex items-center justify-between text-[14px]">
+                <span className="text-charcoal/80">{t.ui.totalInclDelivery}</span>
+                <span className="font-display text-[20px] font-bold" dir="ltr">
+                  {formatPrice(total)}
+                </span>
+              </div>
+              {placeButton("")}
+            </div>
           </div>
         </div>
 
         <aside className="lg:col-span-5">
           <div className="lg:sticky lg:top-[100px]">
-            <div className="hidden bg-cream-2 p-7 lg:block xl:p-9">
-              <p className="eyebrow mb-6 text-charcoal/65">{t.checkout.summary}</p>
+            <div className="hidden rounded-lg bg-stone p-6 lg:block xl:p-7">
+              <div className="mb-5 flex items-center justify-between">
+                <p className="heading-cond text-[20px]">{t.ui.yourOrder}</p>
+                <Link href="/cart" className="text-[13px] font-semibold underline underline-offset-4 hover:text-signal">
+                  {t.ui.editCart}
+                </Link>
+              </div>
               {summary}
               <div className="mt-7">{placeButton("")}</div>
               <p className="mt-4 text-[12.5px] leading-relaxed text-charcoal/65">
                 <TermsNote />
               </p>
             </div>
-            <ul className="mt-5 hidden grid-cols-3 gap-2 text-center text-[11.5px] text-charcoal/65 lg:grid">
-              <li className="border border-charcoal/10 px-2 py-3">{t.home.uspCodTitle}</li>
-              <li className="border border-charcoal/10 px-2 py-3">{f(t.home.uspDeliveryBody, { days: store.deliveryDays })}</li>
-              <li className="border border-charcoal/10 px-2 py-3">{f(t.home.uspExchangeBody, { days: store.exchangeDays })}</li>
-            </ul>
           </div>
         </aside>
       </form>
@@ -517,12 +550,9 @@ export function CheckoutView({ account }: { account: { name: string; email: stri
 function Step({ index, title, children }: { index: string; title: string; children: React.ReactNode }) {
   return (
     <section>
-      <div className="mb-6 flex items-center gap-4 border-b border-charcoal/10 pb-4">
-        <span className="grid h-8 w-8 place-items-center bg-charcoal font-display text-[12px] text-cream" dir="ltr">
-          {index}
-        </span>
-        <h2 className="display text-2xl md:text-3xl">{title}</h2>
-      </div>
+      <h2 className="heading-cond mb-5 text-[21px]">
+        <span dir="ltr">{Number(index)}</span> · {title}
+      </h2>
       <div className="space-y-5">{children}</div>
     </section>
   );
@@ -531,13 +561,12 @@ function Step({ index, title, children }: { index: string; title: string; childr
 function PaymentOption({ checked, onSelect, icon, title, body, extra }: { checked: boolean; onSelect: () => void; icon: React.ReactNode; title: string; body: string; extra?: React.ReactNode }) {
   return (
     <label
-      className={`relative flex cursor-pointer items-start gap-4 border p-5 transition-colors has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-olive ${
-        checked ? "border-charcoal bg-cream-2" : "border-charcoal/20 hover:border-charcoal/50"
+      className={`relative flex cursor-pointer items-start gap-4 rounded-lg border p-5 transition-colors has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-signal ${ checked ? "border-charcoal bg-stone shadow-[inset_0_0_0_1px_var(--color-charcoal)]" : "border-sand hover:border-charcoal/50"
       }`}
     >
       <input type="radio" name="payment" checked={checked} onChange={onSelect} className="sr-only" />
       <span className={`mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full border ${checked ? "border-charcoal" : "border-charcoal/30"}`}>
-        {checked && <span className="h-2.5 w-2.5 rounded-full bg-charcoal" />}
+        {checked && <span className="h-3 w-3 rounded-full border-[3px] border-white bg-charcoal outline outline-2 outline-charcoal" />}
       </span>
       <span className="flex-1">
         <span className="flex items-center justify-between gap-3">

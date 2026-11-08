@@ -19,7 +19,13 @@
   "dependencies": {
     "@auth/prisma-adapter": "^2.10.0",
     "@fontsource-variable/oswald": "^5.3.0",
+    "@fontsource/barlow-condensed": "^5.3.0",
+    "@fontsource/changa": "^5.3.0",
+    "@fontsource/changa-one": "^5.3.0",
     "@fontsource/ibm-plex-sans-arabic": "^5.3.0",
+    "@fontsource/russo-one": "^5.3.0",
+    "@fontsource/squada-one": "^5.3.0",
+    "@fontsource/tajawal": "^5.3.0",
     "@libsql/client": "^0.15.15",
     "@prisma/adapter-libsql": "^6.19.3",
     "@prisma/client": "^6.16.1",

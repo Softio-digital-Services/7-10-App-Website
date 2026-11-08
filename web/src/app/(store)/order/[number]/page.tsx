@@ -38,7 +38,7 @@ export default async function OrderPage({ params, searchParams }: { params: Para
   if (!order) {
     return (
       <div className="container-x py-20 md:py-28">
-        <div className="relative mx-auto max-w-xl border border-charcoal/15 px-6 py-14 text-center">
+        <div className="relative mx-auto max-w-xl border rounded border-charcoal/15 px-6 py-14 text-center">
           <Brackets size="sm" inset="-1px" className="text-charcoal/60" />
           <p className="eyebrow text-charcoal/65">{t.order.number}</p>
           <p className="mt-2 font-display text-3xl tracking-wider" dir="ltr">{orderNumber}</p>
@@ -102,12 +102,12 @@ export default async function OrderPage({ params, searchParams }: { params: Para
                   : t.order.body}
           </p>
 
-          <div className="rise mt-10 inline-flex flex-wrap items-center gap-x-6 gap-y-3 border border-cream/25 px-6 py-5" style={{ animationDelay: "0.3s" }}>
+          <div className="rise mt-10 inline-flex flex-wrap items-center gap-x-6 gap-y-3 border rounded border-cream/25 px-6 py-5" style={{ animationDelay: "0.3s" }}>
             <div>
               <p className="eyebrow text-[10px] text-cream/60">{t.order.number}</p>
               <p className="mt-1 font-display text-3xl tracking-[0.12em] md:text-4xl" dir="ltr">{order.orderNumber}</p>
             </div>
-            <CopyButton value={order.orderNumber} label={t.order.copy} doneLabel={t.order.copied} className="border border-cream/30 px-3 py-2 hover:bg-cream hover:text-charcoal" />
+            <CopyButton value={order.orderNumber} label={t.order.copy} doneLabel={t.order.copied} className="border rounded border-cream/30 px-3 py-2 hover:bg-cream hover:text-charcoal" />
             <p className="w-full text-[13px] text-cream/60">{t.order.saveNumber}</p>
           </div>
         </div>
@@ -124,7 +124,7 @@ export default async function OrderPage({ params, searchParams }: { params: Para
           <ol className="mt-8 space-y-6">
             {[t.order.step1, t.order.step2, fmt(online ? t.order.step3Whish : t.order.step3, { days: store.deliveryDays })].map((step, i) => (
               <li key={i} className="flex gap-5">
-                <span className="grid h-9 w-9 shrink-0 place-items-center border border-charcoal font-display text-[13px]" dir="ltr">
+                <span className="grid h-9 w-9 shrink-0 place-items-center border rounded border-charcoal font-display text-[13px]" dir="ltr">
                   0{i + 1}
                 </span>
                 <p className="pt-1.5 text-[15.5px] leading-relaxed text-charcoal/80">{step}</p>
@@ -154,7 +154,7 @@ export default async function OrderPage({ params, searchParams }: { params: Para
         </div>
 
         <aside className="lg:col-span-5">
-          <div className="bg-cream-2 p-6 md:p-8">
+          <div className="rounded-lg bg-stone p-6 md:p-8">
             <div className="flex items-center justify-between">
               <p className="eyebrow text-charcoal/65">{t.order.items}</p>
               <p className="text-[12.5px] text-charcoal/65">{fmt(t.track.placedOn, { date: formatDate(order.createdAt, locale) })}</p>

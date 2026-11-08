@@ -40,7 +40,7 @@ export default async function HelpPage() {
         <p className="mt-5 max-w-xl text-[16.5px] leading-relaxed text-charcoal/70">{t.help.intro}</p>
         <nav className="mt-10 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-5" aria-label={t.help.title}>
           {nav.map(({ id, label, icon: Icon }, i) => (
-            <a key={id} href={`#${id}`} className="group flex items-center justify-between gap-3 border border-charcoal/15 px-4 py-4 transition-colors hover:border-charcoal hover:bg-charcoal hover:text-cream">
+            <a key={id} href={`#${id}`} className="group flex items-center justify-between gap-3 border rounded border-charcoal/15 px-4 py-4 transition-colors hover:border-charcoal hover:bg-charcoal hover:text-cream">
               <span className="flex items-center gap-3 text-[14px]">
                 <Icon className="h-[18px] w-[18px] shrink-0" strokeWidth={1.5} />
                 {label}
@@ -58,7 +58,7 @@ export default async function HelpPage() {
               <Bullet key={line}>{fmt(line, vars)}</Bullet>
             ))}
           </ul>
-          <div className="mt-8 overflow-hidden border border-charcoal/10">
+          <div className="mt-8 overflow-hidden border rounded border-charcoal/10">
             <table className="w-full text-[14.5px]">
               <thead className="bg-cream-2">
                 <tr>
@@ -87,7 +87,7 @@ export default async function HelpPage() {
             {t.help.payment.map((line, i) => {
               const [title, ...rest] = line.split(" — ");
               return (
-                <div key={line} className="bg-cream-2 p-6">
+                <div key={line} className="rounded-lg bg-stone p-6">
                   {i === 0 ? <Banknote className="h-6 w-6" strokeWidth={1.25} /> : <Wallet className="h-6 w-6" strokeWidth={1.25} />}
                   <p className="display mt-5 text-2xl">{title}</p>
                   <p className="mt-2 text-[14.5px] leading-relaxed text-charcoal/70">{rest.join(" — ")}</p>
@@ -101,7 +101,7 @@ export default async function HelpPage() {
           <ol className="space-y-4">
             {t.help.returns.map((line, i) => (
               <li key={line} className="flex gap-5">
-                <span className="grid h-8 w-8 shrink-0 place-items-center border border-charcoal font-display text-[12px]" dir="ltr">
+                <span className="grid h-8 w-8 shrink-0 place-items-center border rounded border-charcoal font-display text-[12px]" dir="ltr">
                   {i + 1}
                 </span>
                 <p className="pt-1 text-[15.5px] leading-relaxed text-charcoal/80">{fmt(line, { days: store.exchangeDays })}</p>

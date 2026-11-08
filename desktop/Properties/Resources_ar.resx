@@ -663,6 +663,9 @@
   <data name="Msg_CustomerQuotations" xml:space="preserve">
     <value>عروض أسعار العملاء</value>
   </data>
+  <data name="Nav_Website" xml:space="preserve">
+    <value>الموقع الإلكتروني</value>
+  </data>
   <data name="Nav_Users" xml:space="preserve">
     <value>إدارة المستخدمين</value>
   </data>

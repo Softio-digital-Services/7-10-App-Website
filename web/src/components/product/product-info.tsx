@@ -1,12 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
-import { Banknote, Check, LoaderCircle, Mail, Minus, Plus, RefreshCcw, Ruler, Share2, Truck } from "lucide-react";
+import { useRef, useState } from "react";
+import { Banknote, Check, LoaderCircle, Mail, Minus, Plus, RefreshCcw, Ruler, ShoppingBag, Truck } from "lucide-react";
 import { useCart } from "@/components/cart-provider";
 import { useI18n } from "@/components/i18n-provider";
 import { WhatsAppIcon } from "@/components/icons";
-import { Img } from "@/components/img";
 import { SizeGuideDialog, chartFor } from "@/components/size-guide";
 import type { StoreProduct } from "@/lib/catalog";
 import { formatPrice } from "@/lib/format";
@@ -29,8 +28,6 @@ export function ProductInfo({ product }: { product: StoreProduct }) {
   const [shakeKey, setShakeKey] = useState(0);
   const [status, setStatus] = useState<"idle" | "added" | "capped">("idle");
   const [guideOpen, setGuideOpen] = useState(false);
-  const [shared, setShared] = useState(false);
-  const [barVisible, setBarVisible] = useState(false);
 
   const buyRef = useRef<HTMLDivElement>(null);
   const sizesRef = useRef<HTMLDivElement>(null);
@@ -38,14 +35,6 @@ export function ProductInfo({ product }: { product: StoreProduct }) {
   const selected = sizeStock.find((s) => s.size === size) ?? null;
   const selectedSoldOut = !!selected && selected.stock <= 0;
   const maxQty = Math.max(1, selected?.stock ?? 1);
-
-  useEffect(() => {
-    const el = buyRef.current;
-    if (!el) return;
-    const io = new IntersectionObserver(([entry]) => setBarVisible(!entry.isIntersecting && entry.boundingClientRect.top < 0), { threshold: 0 });
-    io.observe(el);
-    return () => io.disconnect();
-  }, []);
 
   const pickSize = (value: string) => {
     const stock = sizeStock.find((s) => s.size === value)?.stock ?? 1;
@@ -82,21 +71,6 @@ export function ProductInfo({ product }: { product: StoreProduct }) {
     setTimeout(() => setStatus("idle"), 2200);
   };
 
-  const share = async () => {
-    const url = window.location.href;
-    try {
-      if (navigator.share) {
-        await navigator.share({ title: product.name, url });
-        return;
-      }
-      await navigator.clipboard.writeText(url);
-      setShared(true);
-      setTimeout(() => setShared(false), 1800);
-    } catch {
-      /* user cancelled */
-    }
-  };
-
   const waMessage = () =>
     f(t.product.whatsappMessage, {
       name: product.name,
@@ -112,53 +86,45 @@ export function ProductInfo({ product }: { product: StoreProduct }) {
 
   return (
     <div>
-      <div className="flex items-center justify-between gap-4">
-        <Link href={`/shop?c=${product.categorySlug}`} className="eyebrow text-charcoal/65 hover:text-charcoal">
-          {product.category}
-        </Link>
-        <button type="button" onClick={share} className="flex items-center gap-2 text-[12.5px] text-charcoal/65 hover:text-charcoal">
-          {shared ? <Check className="h-4 w-4" /> : <Share2 className="h-4 w-4" strokeWidth={1.5} />}
-          {shared ? t.product.copied : t.product.share}
-        </button>
-      </div>
+      <Link href={`/shop?c=${product.categorySlug}`} className="eyebrow text-[10.5px] text-signal hover:text-charcoal">
+        {[product.category, product.colorName].filter(Boolean).join(" · ")}
+      </Link>
 
-      <h1 className="display mt-3 text-[2.6rem] leading-[0.95] md:text-5xl xl:text-[3.6rem]">{product.name}</h1>
+      <h1 className="display mt-2 text-[2.4rem] leading-[0.95] md:text-5xl xl:text-[3.4rem]">{product.name}</h1>
 
-      <div className="mt-5 flex items-baseline gap-3" dir="ltr">
-        <span className={`text-2xl font-medium ${product.compareAt ? "text-signal-ink" : ""}`}>{formatPrice(product.price)}</span>
+      <div className="mt-4 flex items-baseline gap-3" dir="ltr">
+        <span className={`font-display text-[1.9rem] font-bold leading-none ${product.compareAt ? "text-signal-ink" : ""}`}>{formatPrice(product.price)}</span>
         {product.compareAt && (
           <>
             <span className="text-lg text-charcoal/65 line-through">{formatPrice(product.compareAt)}</span>
-            <span className="bg-signal px-2 py-0.5 font-display text-[12px] text-white">−{product.discount}%</span>
+            <span className="rounded bg-signal px-2 py-0.5 text-[12px] font-bold text-white">−{product.discount}%</span>
           </>
         )}
       </div>
 
-      {product.description && <p className="mt-6 max-w-xl text-[15.5px] leading-relaxed text-charcoal/75">{product.description}</p>}
+      {product.description && <p className="mt-3 line-clamp-3 max-w-xl text-[15px] leading-relaxed text-charcoal/80">{product.description}</p>}
 
       {product.colorName && (
-        <p className="mt-7 flex items-center gap-2 text-[14px]">
-          <span className="field-label mb-0">{t.product.colour}</span>
-          <span>{product.colorName}</span>
+        <p className="mt-5 text-[13px]">
+          <span className="font-bold">{t.product.colour}:</span> {product.colorName}
         </p>
       )}
 
       {/* SIZES */}
       {!onlyOne || onlyOne.size !== "OS" ? (
-        <div ref={sizesRef} className="mt-7 scroll-mt-32">
+        <div ref={sizesRef} className="mt-5 scroll-mt-32">
           <div className="flex items-center justify-between">
-            <p className="field-label mb-0">
-              {t.product.size}
-              {selected && <span className="ms-2 normal-case tracking-normal text-charcoal">— {selected.size}</span>}
+            <p className="text-[13px]">
+              <span className="font-bold">{t.product.size}:</span> {selected?.size ?? "—"}
             </p>
             {hasChart && (
-              <button type="button" onClick={() => setGuideOpen(true)} className="flex items-center gap-2 text-[13px] underline underline-offset-4 hover:text-olive">
+              <button type="button" onClick={() => setGuideOpen(true)} className="flex items-center gap-1.5 text-[13px] font-semibold underline underline-offset-4 hover:text-signal">
                 <Ruler className="h-4 w-4" strokeWidth={1.5} />
                 {t.product.sizeGuide}
               </button>
             )}
           </div>
-          <div key={shakeKey} className={`mt-3 grid grid-cols-5 gap-2 ${shakeKey ? "[animation:shake_.45s_ease]" : ""}`} dir="ltr" role="radiogroup" aria-label={t.product.size}>
+          <div key={shakeKey} style={{ gridTemplateColumns: `repeat(${Math.min(Math.max(sizeStock.length, 4), 5)}, minmax(0, 1fr))` }} className={`mt-2.5 grid gap-2 ${shakeKey ? "[animation:shake_.45s_ease]" : ""}`} dir="ltr" role="radiogroup" aria-label={t.product.size}>
             {sizeStock.map((s) => {
               const active = size === s.size;
               const out = s.stock <= 0;
@@ -170,11 +136,11 @@ export function ProductInfo({ product }: { product: StoreProduct }) {
                   aria-checked={active}
                   aria-label={out ? `${s.size} — ${t.common.soldOut}` : undefined}
                   onClick={() => pickSize(s.size)}
-                  className={`relative h-12 font-display text-[14px] tracking-wider transition-colors ${
+                  className={`relative h-11 rounded text-[14px] font-medium transition-colors ${
                     active
                       ? out
                         ? "border border-charcoal bg-cream-2 text-charcoal/65"
-                        : "bg-charcoal text-cream"
+                        : "bg-charcoal text-white"
                       : out
                         ? "border border-charcoal/10 text-charcoal/30"
                         : needSize
@@ -199,12 +165,9 @@ export function ProductInfo({ product }: { product: StoreProduct }) {
                 <span className="dot-signal pulse-signal" />
                 {f(t.product.onlyLeft, { n: selected!.stock })}
               </span>
-            ) : selected ? (
-              <span className="flex items-center gap-2 text-olive">
-                <span className="h-2 w-2 rounded-full bg-olive" />
-                {t.product.inStock}
-              </span>
-            ) : null}
+            ) : (
+              t.ui.loosefitNote
+            )}
           </p>
         </div>
       ) : null}
@@ -214,8 +177,8 @@ export function ProductInfo({ product }: { product: StoreProduct }) {
         {product.soldOut || selectedSoldOut ? (
           <NotifyForm productId={product.id} />
         ) : (
-          <div className="flex gap-3">
-            <div className="inline-flex h-[3.25rem] shrink-0 items-center border border-charcoal/20" dir="ltr">
+          <div className="hidden gap-3 lg:flex">
+            <div className="inline-flex h-[3.25rem] shrink-0 items-center rounded border border-charcoal/50" dir="ltr">
               <button type="button" onClick={() => setQty((q) => Math.max(1, q - 1))} disabled={qty <= 1} className="grid h-full w-11 place-items-center hover:bg-charcoal/5 disabled:opacity-30" aria-label={t.bag.decrease}>
                 <Minus className="h-3.5 w-3.5" />
               </button>
@@ -233,9 +196,9 @@ export function ProductInfo({ product }: { product: StoreProduct }) {
                 </>
               ) : (
                 <>
+                  <ShoppingBag className="h-4 w-4" />
                   {addLabel}
-                  <span className="opacity-50">—</span>
-                  <span dir="ltr">{formatPrice(product.price * qty)}</span>
+                  {selected && <span dir="ltr">· {selected.size}</span>}
                 </>
               )}
             </button>
@@ -250,28 +213,39 @@ export function ProductInfo({ product }: { product: StoreProduct }) {
           className="btn btn-outline mt-3 w-full"
         >
           <WhatsAppIcon className="h-[18px] w-[18px]" />
-          {t.product.buyWhatsApp}
+          {t.ui.askWhatsApp}
         </a>
       </div>
 
       {/* PROMISES */}
-      <ul className="mt-8 grid gap-3 border-y border-charcoal/10 py-6 text-[14px]">
+      <ul className="mt-5 grid gap-3.5 rounded-lg bg-stone p-5 text-[13.5px]">
         <li className="flex items-center gap-3">
-          <Truck className="h-[18px] w-[18px] shrink-0 text-olive" strokeWidth={1.5} />
-          {f(t.product.deliveryNote, { days: store.deliveryDays })}
+          <Truck className="h-[18px] w-[18px] shrink-0 text-signal" strokeWidth={1.5} />
+          <span>
+            <b>{t.checkout.cod}</b> {f(t.ui.deliveryLine, { days: store.deliveryDays })}
+          </span>
         </li>
         <li className="flex items-center gap-3">
-          <Banknote className="h-[18px] w-[18px] shrink-0 text-olive" strokeWidth={1.5} />
-          {f(t.product.freeOver, { free: formatPrice(store.freeDeliveryOver) })}
+          <Banknote className="h-[18px] w-[18px] shrink-0 text-signal" strokeWidth={1.5} />
+          <span>
+            <b>{t.checkout.whish}</b> {t.ui.whishLine}
+          </span>
         </li>
         <li className="flex items-center gap-3">
-          <RefreshCcw className="h-[18px] w-[18px] shrink-0 text-olive" strokeWidth={1.5} />
-          {f(t.product.exchangeNote, { days: store.exchangeDays })}
+          <RefreshCcw className="h-[18px] w-[18px] shrink-0 text-signal" strokeWidth={1.5} />
+          <span>
+            <b>{t.ui.easyReturns}</b> {f(t.ui.returnsLine, { days: store.exchangeDays })}
+          </span>
         </li>
       </ul>
 
       {/* DETAILS */}
-      <div className="divide-y divide-charcoal/10 border-b border-charcoal/10">
+      <div className="mt-6 divide-y divide-charcoal/15 border-y border-charcoal/15">
+        {product.description && (
+          <Accordion title={t.product.description} defaultOpen>
+            <p>{product.description}</p>
+          </Accordion>
+        )}
         <Accordion title={t.product.fabric}>
           <p>{t.product.fabricBody}</p>
         </Accordion>
@@ -289,41 +263,42 @@ export function ProductInfo({ product }: { product: StoreProduct }) {
         </Accordion>
       </div>
 
-      <a href={whatsappLink(waMessage())} target="_blank" rel="noreferrer" className="mt-6 flex items-center gap-3 text-[13.5px] text-charcoal/70 hover:text-charcoal">
-        <WhatsAppIcon className="h-5 w-5 text-[#25D366]" />
-        {t.product.whatsappHelp}
-      </a>
 
       {hasChart && <SizeGuideDialog open={guideOpen} onClose={() => setGuideOpen(false)} initial={chart} highlight={selected?.size} />}
 
-      {/* STICKY MOBILE BAR */}
-      <div
-        className={`fixed inset-x-0 bottom-0 z-40 border-t border-charcoal/10 bg-cream/95 px-4 pb-[calc(env(safe-area-inset-bottom)+12px)] pt-3 backdrop-blur-md transition-transform duration-500 ease-[var(--ease-out-expo)] lg:hidden ${
-          barVisible ? "translate-y-0" : "translate-y-full"
-        }`}
-        aria-hidden={!barVisible}
-        inert={!barVisible}
-      >
-        <div className="flex items-center gap-3">
-          <div className="card-img relative h-14 w-11 shrink-0">
-            {product.images[0] && <Img src={product.images[0]} alt="" fill sizes="44px" className="object-cover" />}
+      {/* PHONE BUY BAR: always on, as in the design */}
+      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-charcoal/10 bg-white/95 px-4 pb-[calc(env(safe-area-inset-bottom)+12px)] pt-3 backdrop-blur-md lg:hidden">
+        {product.soldOut || selectedSoldOut ? (
+          <p className="py-2 text-center text-[14px] font-semibold text-charcoal/70">{t.common.soldOut}</p>
+        ) : (
+          <div className="flex items-center gap-3">
+            <div className="inline-flex h-12 shrink-0 items-center rounded border border-charcoal/50" dir="ltr">
+              <button type="button" onClick={() => setQty((q) => Math.max(1, q - 1))} disabled={qty <= 1} className="grid h-full w-10 place-items-center disabled:opacity-30" aria-label={t.bag.decrease}>
+                <Minus className="h-3.5 w-3.5" />
+              </button>
+              <output className="w-6 text-center text-[15px] font-semibold tabular-nums">{qty}</output>
+              <button type="button" onClick={() => setQty((q) => Math.min(maxQty, q + 1))} disabled={qty >= maxQty} className="grid h-full w-10 place-items-center disabled:opacity-30" aria-label={t.bag.increase}>
+                <Plus className="h-3.5 w-3.5" />
+              </button>
+            </div>
+            <button type="button" onClick={add} className={`btn min-h-12 flex-1 px-4 ${status === "added" ? "btn-olive" : "btn-primary"}`}>
+              {status === "added" ? (
+                <Check className="pop h-4 w-4" />
+              ) : (
+                <>
+                  <ShoppingBag className="h-4 w-4" />
+                  {selected ? (
+                    <>
+                      {addLabel} <span dir="ltr">· {selected.size}</span>
+                    </>
+                  ) : (
+                    t.product.selectSize
+                  )}
+                </>
+              )}
+            </button>
           </div>
-          <div className="min-w-0 flex-1">
-            <p className="truncate text-[13.5px] font-medium">{product.name}</p>
-            <p className="text-[13px] text-charcoal/65" dir="ltr">
-              {formatPrice(product.price)}
-              {selected && <span className="ms-2 text-charcoal/65">· {selected.size}</span>}
-            </p>
-          </div>
-          <button
-            type="button"
-            onClick={add}
-            disabled={product.soldOut || selectedSoldOut}
-            className={`btn btn-sm min-h-12 shrink-0 px-5 ${status === "added" ? "btn-olive" : "btn-primary"} disabled:opacity-50`}
-          >
-            {status === "added" ? <Check className="h-4 w-4" /> : selected ? addLabel : t.product.selectSize}
-          </button>
-        </div>
+        )}
       </div>
     </div>
   );
@@ -331,12 +306,15 @@ export function ProductInfo({ product }: { product: StoreProduct }) {
 
 function Accordion({ title, children, defaultOpen }: { title: string; children: React.ReactNode; defaultOpen?: boolean }) {
   return (
-    <details className="group" open={defaultOpen}>
-      <summary className="flex cursor-pointer list-none items-center justify-between py-5 font-display text-[13px] uppercase tracking-[0.2em] [&::-webkit-details-marker]:hidden">
+    <details className="smooth group" open={defaultOpen}>
+      <summary className="heading-cond flex cursor-pointer list-none items-center justify-between py-4 text-[16px] [&::-webkit-details-marker]:hidden">
         {title}
-        <Plus className="h-4 w-4 transition-transform duration-300 group-open:rotate-45" strokeWidth={1.5} />
+        <span className="relative h-4 w-4" aria-hidden="true">
+          <Minus className="absolute inset-0 h-4 w-4" strokeWidth={2} />
+          <Minus className="absolute inset-0 h-4 w-4 rotate-90 transition-transform duration-300 group-open:rotate-0" strokeWidth={2} />
+        </span>
       </summary>
-      <div className="pb-6 text-[14.5px] leading-relaxed text-charcoal/75">{children}</div>
+      <div className="pb-5 text-[14px] leading-relaxed text-charcoal/75">{children}</div>
     </details>
   );
 }
@@ -363,14 +341,14 @@ function NotifyForm({ productId }: { productId: string }) {
 
   if (state === "done") {
     return (
-      <p className="flex items-center gap-3 bg-olive px-5 py-4 text-[14px] text-cream">
+      <p className="flex items-center gap-3 rounded-md bg-forest px-5 py-4 text-[14px] text-cream">
         <Check className="h-4 w-4 shrink-0" /> {t.product.notifyDone}
       </p>
     );
   }
 
   return (
-    <form onSubmit={submit} className="bg-cream-2 p-5">
+    <form onSubmit={submit} className="rounded-lg bg-stone p-5">
       <p className="display text-xl">{t.product.notifyTitle}</p>
       <p className="mt-1 text-[14px] text-charcoal/65">{t.product.notifyBody}</p>
       <div className="mt-4 flex gap-2">
@@ -386,7 +364,7 @@ function NotifyForm({ productId }: { productId: string }) {
             placeholder={t.product.notifyPlaceholder}
             aria-label={t.product.notifyPlaceholder}
             aria-invalid={state === "error"}
-            className="field bg-cream ps-11"
+            className="field ps-11"
             required
           />
         </div>

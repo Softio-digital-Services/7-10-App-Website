@@ -49,7 +49,7 @@ export function Countdown({ target, tone = "light", onDone }: { target: string; 
   const faint = tone === "light" ? "text-cream/40" : "text-charcoal/65";
 
   return (
-    <div className={`grid w-full max-w-md grid-cols-4 divide-x rtl:divide-x-reverse border ${border}`} role="timer" aria-live="off">
+    <div className={`grid w-full max-w-md grid-cols-4 divide-x rtl:divide-x-reverse border rounded ${border}`} role="timer" aria-live="off">
       {cells.map((c) => (
         <div key={c.en} className="flex flex-col items-center gap-1 px-2 py-4 md:py-5">
           <span className="font-display text-3xl font-medium tabular-nums leading-none md:text-4xl" dir="ltr">

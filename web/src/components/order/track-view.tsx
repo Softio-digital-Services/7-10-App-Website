@@ -79,12 +79,12 @@ export function TrackView({ initialOrder }: { initialOrder: string }) {
             <div>
               <label htmlFor="tr-phone" className="field-label">{t.track.phone}</label>
               <div className="flex" dir="ltr">
-                <span className="grid shrink-0 place-items-center border border-e-0 border-charcoal/20 bg-cream-2 px-4 font-display text-[14px] tracking-wider">
+                <span className="grid shrink-0 place-items-center rounded-s border border-e-0 border-charcoal/45 bg-stone px-4 text-[14px] font-semibold">
                   {store.phonePrefix}
                 </span>
                 <input
                   id="tr-phone"
-                  className="field"
+                  className="field rounded-s-none"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value.replace(/[^\d\s+-]/g, ""))}
                   inputMode="tel"
@@ -94,7 +94,7 @@ export function TrackView({ initialOrder }: { initialOrder: string }) {
               </div>
             </div>
             {(state === "error" || state === "rate") && (
-              <p role="alert" className="flex items-start gap-3 border border-signal/40 bg-signal/5 px-4 py-3 text-[14px]">
+              <p role="alert" className="flex items-start gap-3 border rounded border-signal/40 bg-signal/5 px-4 py-3 text-[14px]">
                 <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-signal-ink" />
                 {state === "rate" ? t.common.somethingWrong : t.track.notFound}
               </p>
@@ -114,7 +114,7 @@ export function TrackView({ initialOrder }: { initialOrder: string }) {
         <div className="lg:col-span-7">
           {order ? (
             <div className="[animation:fade-in_.5s_ease_both]">
-              <div className="bg-cream-2 p-6 md:p-10">
+              <div className="rounded-lg bg-stone p-6 md:p-10">
                 <div className="flex flex-wrap items-start justify-between gap-4">
                   <div>
                     <p className="eyebrow text-[10px] text-charcoal/65">{t.order.number}</p>
@@ -169,7 +169,7 @@ export function TrackView({ initialOrder }: { initialOrder: string }) {
               </a>
             </div>
           ) : (
-            <div className="relative grid min-h-[420px] place-items-center border border-dashed border-charcoal/20 p-10 text-center">
+            <div className="relative grid min-h-[420px] place-items-center border rounded border-dashed border-charcoal/20 p-10 text-center">
               <Brackets size="md" inset="-1px" className="text-charcoal/50" />
               <div>
                 <p className="font-display text-[11px] uppercase tracking-[0.35em] text-charcoal/65" dir="ltr">

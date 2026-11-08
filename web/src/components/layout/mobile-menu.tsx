@@ -96,7 +96,7 @@ export function MobileMenu({ open, onClose, categories, isStaff, signedIn }: Mob
                     <span className="font-display text-[11px] text-cream/45" dir="ltr">
                       {String(i + 1).padStart(2, "0")}
                     </span>
-                    <span className="display text-[2.4rem]">{item.label}</span>
+                    <span className="heading-cond text-[30px]">{item.label}</span>
                   </span>
                   <ArrowUpRight className="flip-rtl h-5 w-5 text-cream/50 transition-colors group-hover:text-cream" />
                 </Link>

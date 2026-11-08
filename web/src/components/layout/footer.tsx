@@ -1,133 +1,104 @@
 import Link from "next/link";
-import { Banknote, Wallet } from "lucide-react";
-import { LogoMark } from "@/components/brand/logo";
-import { InstagramIcon, WhatsAppIcon } from "@/components/icons";
-import { LangSwitch } from "@/components/lang-switch";
+import { Logo } from "@/components/brand/logo";
+import { FooterSwitch } from "@/components/layout/footer-switch";
 import { NewsletterForm } from "@/components/newsletter-form";
 import { fmt } from "@/lib/i18n";
 import { getI18n } from "@/lib/i18n/server";
 import type { StoreCategory } from "@/lib/catalog";
-import { launchStamp, store, whatsappLink } from "@/lib/store-config";
+import { store, whatsappLink } from "@/lib/store-config";
 
 export async function Footer({ categories }: { categories: StoreCategory[] }) {
   const { dict: t } = await getI18n();
+  const phone = store.phone || `+${store.whatsapp}`;
 
-  const columns = [
-    {
-      title: t.footer.shop,
-      links: [
-        { href: "/shop", label: t.common.shopAll },
-        { href: "/shop?sort=new", label: t.common.newIn },
-        ...categories.slice(0, 4).map((c) => ({ href: `/shop?c=${c.slug}`, label: c.name })),
-      ],
-    },
-    {
-      title: t.footer.support,
-      links: [
-        { href: "/track", label: t.common.track },
-        { href: "/help#delivery", label: t.help.shippingTitle },
-        { href: "/help#exchange", label: t.help.returnsTitle },
-        { href: "/help#size-guide", label: t.product.sizeGuide },
-        { href: "/help#faq", label: t.help.faqTitle },
-        { href: "/terms", label: t.legal.terms.title },
-        { href: "/privacy", label: t.legal.privacy.title },
-      ],
-    },
-    {
-      title: t.footer.brand,
-      links: [
-        { href: "/about", label: t.common.about },
-        { href: "/contact", label: t.common.contact },
-        { href: "/login", label: t.common.account },
-      ],
-    },
+  const help = [
+    { href: "/help#delivery", label: t.design.footer.delivery },
+    { href: "/help#exchange", label: t.design.footer.returns },
+    { href: "/help#size-guide", label: t.design.footer.sizeGuide },
+    { href: "/track", label: t.common.track },
   ];
 
-  return (
-    <footer className="theme-olive relative overflow-hidden">
-      <div className="container-x relative pt-16 md:pt-24">
-        <div className="grid gap-14 lg:grid-cols-12">
-          <div className="lg:col-span-5">
-            <div className="flex items-center gap-4">
-              <LogoMark className="h-12 w-auto" tone="silver" />
-              <span className="font-display text-base font-semibold uppercase keep-tracking tracking-[0.3em]" dir="ltr">
-                7.10 Brand
-              </span>
-            </div>
-            <p className="mt-6 max-w-sm text-cream">{t.footer.tagline}</p>
+  const logo = (
+    <Link href="/" className="inline-flex items-center" aria-label={t.common.homeLink}>
+      <Logo variant="horizontal" tone="on-dark" className="h-11 w-auto" />
+    </Link>
+  );
 
-            <div className="mt-10 max-w-md">
-              <p className="eyebrow text-cream/60">{t.footer.newsletter}</p>
-              <div className="mt-2">
-                <NewsletterForm tone="light" compact />
-              </div>
+  const waLink = (
+    <a href={whatsappLink()} target="_blank" rel="noreferrer" className="hover:text-white hover:underline hover:underline-offset-4">
+      WhatsApp <span dir="ltr">{phone}</span>
+    </a>
+  );
+
+  const full = (
+    <footer className="theme-olive">
+      <div className="container-x pt-12 md:pt-14">
+        <div className="grid gap-10 md:grid-cols-12">
+          <div className="md:col-span-6">
+            {logo}
+            <p className="mt-4 max-w-xs text-[14px] text-cream/90">{t.design.footer.tagline}</p>
+            <p className="mt-6 text-[12px] font-bold text-cream">{t.design.footer.newsletter}</p>
+            <div className="mt-2 max-w-[380px]">
+              <NewsletterForm tone="light" compact />
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-10 sm:grid-cols-3 lg:col-span-7">
-            {columns.map((col) => (
-              <div key={col.title}>
-                <p className="eyebrow text-cream/55">{col.title}</p>
-                <ul className="mt-5 space-y-3">
-                  {col.links.map((link) => (
-                    <li key={link.href + link.label}>
-                      <Link href={link.href} className="link-line text-[15px] text-cream">
-                        {link.label}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-            <div className="col-span-2 sm:col-span-3">
-              <p className="eyebrow text-cream/55">{t.footer.follow}</p>
-              <div className="mt-4 flex flex-wrap items-center gap-3">
-                <a
-                  href={whatsappLink()}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="flex h-11 items-center gap-2 border border-cream/25 px-4 text-[14px] transition-colors hover:border-cream hover:bg-cream hover:text-charcoal"
-                >
-                  <WhatsAppIcon className="h-4 w-4" /> WhatsApp
-                </a>
-                <a
-                  href={`https://instagram.com/${store.instagram}`}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="flex h-11 items-center gap-2 border border-cream/25 px-4 text-[14px] transition-colors hover:border-cream hover:bg-cream hover:text-charcoal"
-                >
-                  <InstagramIcon className="h-4 w-4" /> <span dir="ltr">@{store.instagram}</span>
-                </a>
-              </div>
+          <div className="grid grid-cols-2 gap-8 md:col-span-6">
+            <div>
+              <p className="heading-cond text-[15px] text-cream">{t.design.footer.shop}</p>
+              <ul className="mt-3 space-y-2 text-[14px] text-cream/85">
+                <li>
+                  <Link href="/shop" className="hover:text-white hover:underline hover:underline-offset-4">{t.common.shopAll}</Link>
+                </li>
+                {categories.slice(0, 4).map((c) => (
+                  <li key={c.slug}>
+                    <Link href={`/shop?c=${c.slug}`} className="hover:text-white hover:underline hover:underline-offset-4">{c.name}</Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <p className="heading-cond text-[15px] text-cream">{t.design.footer.help}</p>
+              <ul className="mt-3 space-y-2 text-[14px] text-cream/85">
+                {help.map((l) => (
+                  <li key={l.href}>
+                    <Link href={l.href} className="hover:text-white hover:underline hover:underline-offset-4">{l.label}</Link>
+                  </li>
+                ))}
+                <li>{waLink}</li>
+              </ul>
             </div>
           </div>
         </div>
 
-        <div
-          aria-hidden="true"
-          className="text-outline pointer-events-none mt-16 select-none text-center font-display text-[34vw] font-semibold uppercase leading-[0.8] md:mt-10 lg:text-[26vw]"
-          dir="ltr"
-        >
-          7.10
-        </div>
-
-        <div className="relative -mt-[6vw] flex flex-col gap-5 border-t border-cream/15 py-6 text-[12px] text-cream/65 md:flex-row md:items-center md:justify-between">
-          <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
-            <span className="eyebrow">{fmt(t.footer.rights, { year: new Date().getFullYear() })}</span>
-            <span className="flex items-center gap-2 font-display keep-tracking tracking-[0.3em]" dir="ltr">
-              <span className="dot-signal" /> {launchStamp()}
-            </span>
-          </div>
-          <div className="flex flex-wrap items-center gap-4">
-            <span className="flex items-center gap-2">
-              <Banknote className="h-4 w-4" strokeWidth={1.5} />
-              <Wallet className="h-4 w-4" strokeWidth={1.5} />
-              {t.footer.payments}
-            </span>
-            <LangSwitch />
-          </div>
+        <div className="mt-10 flex flex-col gap-2 border-t border-cream/15 py-4 text-[11.5px] text-cream/70 md:mt-12 md:flex-row md:items-center md:justify-between">
+          <span className="flex flex-wrap gap-x-4 gap-y-1">
+            {fmt(t.design.footer.rights, { year: new Date().getFullYear() })}
+            <Link href="/terms" className="hover:text-white">{t.legal.terms.title}</Link>
+            <Link href="/privacy" className="hover:text-white">{t.legal.privacy.title}</Link>
+          </span>
+          <span>{t.design.footer.payments}</span>
         </div>
       </div>
     </footer>
   );
+
+  const slim = (
+    <footer className="theme-olive">
+      <div className="container-x flex flex-wrap items-center justify-between gap-x-8 gap-y-4 py-6 md:py-7">
+        {logo}
+        <nav className="flex flex-wrap items-center gap-x-6 gap-y-2 text-[13px] text-cream/90 underline underline-offset-4">
+          {help.slice(0, 3).map((l) => (
+            <Link key={l.href} href={l.href} className="hover:text-white">
+              {l.label}
+            </Link>
+          ))}
+          {waLink}
+        </nav>
+        <span className="text-[11.5px] text-cream/70">{fmt(t.design.footer.rights, { year: new Date().getFullYear() })}</span>
+      </div>
+    </footer>
+  );
+
+  return <FooterSwitch full={full} slim={slim} />;
 }

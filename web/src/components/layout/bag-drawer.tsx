@@ -48,7 +48,7 @@ export function BagDrawer() {
         role="dialog"
         aria-modal="true"
         aria-label={t.bag.title}
-        className={`absolute inset-y-0 end-0 flex w-full max-w-[440px] flex-col bg-cream shadow-2xl transition-transform duration-700 ease-[var(--ease-out-expo)] ${
+        className={`absolute inset-y-0 end-0 flex w-full max-w-[440px] flex-col bg-white shadow-2xl transition-transform duration-700 ease-[var(--ease-out-expo)] ${
           drawerOpen ? "translate-x-0" : "translate-x-full rtl:-translate-x-full"
         }`}
       >
@@ -144,7 +144,7 @@ export function BagDrawer() {
               ))}
             </ul>
 
-            <div className="border-t border-charcoal/10 bg-cream-2/60 px-5 pb-6 pt-5 md:px-7">
+            <div className="border-t border-charcoal/10 bg-stone px-5 pb-6 pt-5 md:px-7">
               <div className="flex items-baseline justify-between">
                 <span className="eyebrow">{t.bag.subtotal}</span>
                 <span className="font-display text-2xl" dir="ltr">{formatPrice(subtotal)}</span>
@@ -181,7 +181,7 @@ export function QtyStepper({
   const h = size === "md" ? "h-12" : "h-9";
   const w = size === "md" ? "w-12" : "w-9";
   return (
-    <div className={`inline-flex items-center border border-charcoal/20 ${h}`} dir="ltr">
+    <div className={`inline-flex items-center rounded border border-charcoal/50 ${h}`} dir="ltr">
       <button
         type="button"
         onClick={() => onChange(value - 1)}
@@ -190,7 +190,7 @@ export function QtyStepper({
       >
         <Minus className="h-3.5 w-3.5" />
       </button>
-      <span className="w-8 text-center font-display text-sm tabular-nums" aria-live="polite">
+      <span className="w-8 text-center text-[15px] font-semibold tabular-nums" aria-live="polite">
         {value}
       </span>
       <button

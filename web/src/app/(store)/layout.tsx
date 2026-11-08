@@ -13,7 +13,7 @@ export default async function StoreLayout({ children }: { children: React.ReactN
   return (
     <>
       <AnnouncementBar />
-      <Suspense fallback={<div className="h-16 md:h-[76px]" />}>
+      <Suspense fallback={<div className="h-[98px] lg:h-[72px]" />}>
         <Header categories={categories} />
       </Suspense>
       <main id="main" className="min-h-[60vh]">

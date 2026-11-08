@@ -83,7 +83,7 @@ function Channel({ href, icon, label, value, body }: { href: string; icon: React
     <a
       href={href}
       {...(external ? { target: "_blank", rel: "noreferrer" } : {})}
-      className="group flex items-start gap-5 border border-charcoal/15 p-6 transition-colors hover:border-charcoal"
+      className="group flex items-start gap-5 border rounded border-charcoal/15 p-6 transition-colors hover:border-charcoal"
     >
       <span className="grid h-11 w-11 shrink-0 place-items-center bg-cream-2">{icon}</span>
       <span className="min-w-0 flex-1">

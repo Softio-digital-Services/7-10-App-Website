@@ -43,6 +43,25 @@ namespace InventorySystem
                 return;
             }
 
+            // Loads the trail demo collection shown in the website designs, without opening the window.
+            if (args != null && args.Any(a => string.Equals(a, "--seed-trail-demo", StringComparison.OrdinalIgnoreCase)))
+            {
+                try
+                {
+                    DatabaseInitializer.Initialize();
+                    DatabaseHelper.EnsureSchema();
+                    var result = InventorySystem.Services.SiteContent.SeedTrailDemo();
+                    Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(result));
+                    Environment.Exit(0);
+                }
+                catch (Exception ex)
+                {
+                    Console.Error.WriteLine(ex.Message);
+                    Environment.Exit(1);
+                }
+                return;
+            }
+
             if (args != null && args.Any(a => string.Equals(a, "--cloud", StringComparison.OrdinalIgnoreCase)))
             {
                 Environment.Exit(InventorySystem.Services.Cloud.CloudSyncCli.Run(args));
@@ -2190,6 +2209,20 @@ namespace InventorySystem
                         _ = InventoryBroadcaster.Broadcast("InventoryChanged", result.Message);
                         _ = InventoryBroadcaster.Broadcast("SuppliersChanged", $"Imported purchase #{itemId}");
                         return Microsoft.AspNetCore.Http.Results.Ok(result);
+                    }
+                    catch (Exception ex) { return Microsoft.AspNetCore.Http.Results.Problem(ex.Message); }
+                });
+
+                // Loads the trail demo collection shown in the website designs (this computer only).
+                app.MapPost("/api/dev/seed-trail-demo", (Microsoft.AspNetCore.Http.HttpContext ctx) =>
+                {
+                    if (ctx.Connection.RemoteIpAddress is not System.Net.IPAddress ip || !System.Net.IPAddress.IsLoopback(ip))
+                        return Microsoft.AspNetCore.Http.Results.Forbid();
+                    try
+                    {
+                        var summary = InventorySystem.Services.SiteContent.SeedTrailDemo();
+                        _ = InventoryBroadcaster.Broadcast("InventoryChanged", "Trail demo seed");
+                        return Microsoft.AspNetCore.Http.Results.Ok(summary);
                     }
                     catch (Exception ex) { return Microsoft.AspNetCore.Http.Results.Problem(ex.Message); }
                 });

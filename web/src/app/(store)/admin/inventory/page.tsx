@@ -39,8 +39,7 @@ export default async function AdminInventoryPage({ searchParams }: { searchParam
               key={tab.id}
               href={tab.id === "all" ? "/admin/inventory" : `/admin/inventory?view=${tab.id}`}
               aria-current={view === tab.id ? "page" : undefined}
-              className={`border px-3.5 py-2 text-[13.5px] transition-colors ${
-                view === tab.id ? "border-charcoal bg-charcoal text-cream" : "border-charcoal/15 hover:border-charcoal"
+              className={`border rounded px-3.5 py-2 text-[13.5px] transition-colors ${ view === tab.id ? "border-charcoal bg-charcoal text-cream" : "border-charcoal/15 hover:border-charcoal"
               }`}
             >
               {tab.label}
@@ -53,7 +52,7 @@ export default async function AdminInventoryPage({ searchParams }: { searchParam
         </p>
       </div>
 
-      <div className="mt-6 overflow-x-auto border border-charcoal/15">
+      <div className="mt-6 overflow-x-auto border rounded border-charcoal/15">
         <table className="w-full min-w-[760px] text-[14px]">
           <thead className="bg-cream-2 text-[12px] text-charcoal/65">
             <tr>
@@ -86,8 +85,7 @@ export default async function AdminInventoryPage({ searchParams }: { searchParam
                       {variants.map((v) => (
                         <span
                           key={v.id}
-                          className={`inline-flex items-center gap-1.5 border px-2 py-1 text-[12.5px] ${
-                            v.stock <= 0 ? "border-signal/40 bg-signal/5 text-signal-ink" : v.stock <= store.lowStockAt ? "border-charcoal bg-cream-2" : "border-charcoal/15"
+                          className={`inline-flex items-center gap-1.5 border rounded px-2 py-1 text-[12.5px] ${ v.stock <= 0 ? "border-signal/40 bg-signal/5 text-signal-ink" : v.stock <= store.lowStockAt ? "border-charcoal bg-cream-2" : "border-charcoal/15"
                           }`}
                           dir="ltr"
                         >

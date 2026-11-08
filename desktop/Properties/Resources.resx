@@ -708,6 +708,9 @@
   <data name="Msg_CustomerQuotations" xml:space="preserve">
     <value>Customer Quotations</value>
   </data>
+  <data name="Nav_Website" xml:space="preserve">
+    <value>Website</value>
+  </data>
   <data name="Nav_Users" xml:space="preserve">
     <value>Users Management</value>
   </data>

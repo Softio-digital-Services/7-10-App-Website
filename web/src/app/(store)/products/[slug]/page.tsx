@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { SectionLabel } from "@/components/brand/section-label";
 import { ProductGallery } from "@/components/product/product-gallery";
 import { ProductInfo } from "@/components/product/product-info";
-import { ProductRail } from "@/components/product-rail";
-import { RecentlyViewed } from "@/components/product/recently-viewed";
+import { SectionHeading } from "@/components/brand/section-heading";
+import { Img } from "@/components/img";
 import { getProductBySlug, getRelated } from "@/lib/catalog";
-import { alternatesFor } from "@/lib/i18n";
+import { formatPrice } from "@/lib/format";
+import { alternatesFor, dictionaries } from "@/lib/i18n";
 import { getI18n } from "@/lib/i18n/server";
 import { regions, store } from "@/lib/store-config";
 
@@ -44,7 +44,8 @@ export default async function ProductPage({ params }: { params: Params }) {
   const product = await getProductBySlug(slug, locale);
   if (!product) notFound();
 
-  const related = await getRelated(product, locale, 10);
+  const related = await getRelated(product, locale, 4);
+  const alt = dictionaries[locale === "ar" ? "en" : "ar"];
 
   const url = `${store.siteUrl}/products/${product.slug}`;
   const jsonLd = [
@@ -98,18 +99,18 @@ export default async function ProductPage({ params }: { params: Params }) {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }} />
 
-      <div className="container-x pt-5 md:pt-8">
-        <nav className="mb-5 hidden items-center gap-2 text-[12.5px] text-charcoal/65 md:flex" aria-label={t.common.breadcrumb}>
-          <Link href="/" className="hover:text-charcoal">{t.common.home}</Link>
+      <div className="container-x pt-0 md:pt-6">
+        <nav className="mb-5 hidden items-center gap-2 text-[12.5px] lg:flex" aria-label={t.common.breadcrumb}>
+          <Link href="/" className="underline underline-offset-2 hover:text-signal">{t.common.home}</Link>
           <span aria-hidden="true">/</span>
-          <Link href="/shop" className="hover:text-charcoal">{t.common.shop}</Link>
+          <Link href="/shop" className="underline underline-offset-2 hover:text-signal">{t.common.shop}</Link>
           <span aria-hidden="true">/</span>
-          <Link href={`/shop?c=${product.categorySlug}`} className="hover:text-charcoal">{product.category}</Link>
+          <Link href={`/shop?c=${product.categorySlug}`} className="underline underline-offset-2 hover:text-signal">{product.category}</Link>
           <span aria-hidden="true">/</span>
-          <span className="truncate text-charcoal">{product.name}</span>
+          <span className="truncate font-medium">{product.name}</span>
         </nav>
 
-        <div className="grid gap-8 lg:grid-cols-12 lg:gap-12 xl:gap-16">
+        <div className="grid gap-6 lg:grid-cols-12 lg:gap-10 xl:gap-12">
           <div className="lg:col-span-7">
             <ProductGallery
               images={product.images}
@@ -118,7 +119,7 @@ export default async function ProductPage({ params }: { params: Params }) {
             />
           </div>
           <div className="lg:col-span-5">
-            <div className="lg:sticky lg:top-[100px]">
+            <div className="lg:sticky lg:top-[96px]">
               <ProductInfo product={product} />
             </div>
           </div>
@@ -126,25 +127,28 @@ export default async function ProductPage({ params }: { params: Params }) {
       </div>
 
       {related.length > 0 && (
-        <section className="container-x mt-24 md:mt-32">
-          <div className="flex flex-wrap items-end justify-between gap-6">
-            <div>
-              <SectionLabel index="01">{product.category}</SectionLabel>
-              <h2 className="display mt-4 text-4xl md:text-6xl">{t.product.related}</h2>
+        <section className="mt-12 bg-stone py-10 md:mt-20 md:py-14">
+          <div className="container-x">
+            <SectionHeading title={t.product.related} alt={alt.product.related} locale={locale} />
+            <div className="no-scrollbar -mx-4 mt-6 flex snap-x scroll-px-4 gap-3 overflow-x-auto px-4 md:mx-0 md:mt-8 md:grid md:grid-cols-4 md:gap-4 md:overflow-visible md:px-0">
+              {related.slice(0, 4).map((p, i) => (
+                <Link key={p.id} href={`/products/${p.slug}`} className="group w-[42%] shrink-0 snap-start md:w-auto">
+                  <span className={`card-img lift relative block aspect-square ${["bg-[#d6d8d4]", "bg-cream-2", "bg-white", "bg-sand"][i % 4]}`}>
+                    {p.images[0] && <Img src={p.images[0]} alt={p.name} fill sizes="(min-width:768px) 22vw, 42vw" className="img-zoom object-cover" />}
+                  </span>
+                  <span className="mt-2.5 flex flex-col justify-between gap-1 text-[13px] font-bold md:flex-row md:gap-3">
+                    <span className="truncate group-hover:underline group-hover:underline-offset-4">{p.name}</span>
+                    <span className="shrink-0" dir="ltr">{formatPrice(p.price)}</span>
+                  </span>
+                </Link>
+              ))}
             </div>
-            <Link href={`/shop?c=${product.categorySlug}`} className="link-line eyebrow">
-              {t.common.viewAll}
-            </Link>
-          </div>
-          <div className="mt-10">
-            <ProductRail products={related} />
           </div>
         </section>
       )}
 
-      <RecentlyViewed current={product} />
-
-      <div className="h-24 md:h-32" />
+      {/* Room for the phone buy bar */}
+      <div className="h-24 lg:h-0" />
     </>
   );
 }

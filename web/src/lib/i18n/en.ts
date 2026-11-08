@@ -22,12 +22,12 @@ export const en = {
     signOut: "Sign out",
     myOrders: "My orders",
     admin: "Admin",
-    bag: "Bag",
+    bag: "Cart",
     close: "Close",
     menu: "Menu",
     switchLanguage: "العربية",
     viewAll: "View all",
-    addToBag: "Add to bag",
+    addToBag: "Add to cart",
     quickAdd: "Quick add",
     adding: "Adding…",
     added: "Added",
@@ -107,6 +107,14 @@ export const en = {
     joinCta: "Notify me",
     joinDone: "You're in. We'll be in touch.",
     joinInvalid: "Enter a valid email or phone number.",
+    orderTitle: "Order your way",
+    payCodBody: "Order online and pay the driver when your parcel arrives, anywhere in Lebanon.",
+    payWhishTitle: "Whish Money",
+    payWhishBody: "Pay at checkout with your Whish wallet, then we deliver to your door.",
+    sizeHelpTitle: "Not sure about your size?",
+    sizeHelpBody: "Send us your height and how you like it to fit. We reply on WhatsApp with the right size.",
+    sizeHelpCta: "Ask on WhatsApp",
+    shopTheLook: "Shop the look",
   },
   shop: {
     title: "Shop all",
@@ -201,13 +209,13 @@ export const en = {
     help: "Still unsure? Message us on WhatsApp and we'll help you pick.",
   },
   bag: {
-    title: "Your bag",
+    title: "Your cart",
     stockChanged: "Stock changed while you were away. We updated your bag:",
     empty: "Your bag is empty.",
     emptyBody: "Everything you add will show up here.",
     subtotal: "Subtotal",
     deliveryAtCheckout: "Delivery is calculated at checkout.",
-    checkout: "Checkout",
+    checkout: "Go to checkout",
     viewBag: "View bag",
     remove: "Remove",
     freeProgress: "You're {amount} away from free delivery",
@@ -457,6 +465,279 @@ export const en = {
     guestOrders: "Ordered as a guest?",
     guestOrdersBody: "Track any order with its number and your phone.",
     staff: "Staff dashboard",
+  },
+  design: {
+    "announcement": [
+      "Cash on delivery across Lebanon",
+      "Pay with Whish Money",
+      "Questions? Message us on WhatsApp"
+    ],
+    "announcementAr": "الدفع عند الاستلام في كل لبنان",
+    "nav": {
+      "home": "Home",
+      "categories": "Categories",
+      "gallery": "Gallery",
+      "reviews": "Reviews",
+      "sizeGuide": "Size Guide",
+      "about": "About Us",
+      "seeAll": "See all categories",
+      "new": "New"
+    },
+    "hero": {
+      "eyebrow": "New drop · Trail Series",
+      "titleA": "Go",
+      "titleB": "further",
+      "alt": "إلى أبعد",
+      "body": "Modest athletic and outdoor wear, built for the climb. Long sleeves, loose cuts and breathable fabrics, from summit to street.",
+      "shopWomen": "Shop women",
+      "shopMen": "Shop men",
+      "campaignTag": "Campaign photo · on the trail",
+      "shopLook": "Shop the look"
+    },
+    "categoriesTitle": "Shop by category",
+    "categoriesAlt": "تسوّق حسب الفئة",
+    "newTitle": "New this season",
+    "newAlt": "جديد هذا الموسم",
+    "shopAllNew": "Shop all new",
+    "colours": "Colours",
+    "modest": {
+      "tag": "Fabric close-up",
+      "eyebrow": "Designed for modesty",
+      "title": "Modest cuts that keep up",
+      "body": "Outdoor brands cut short and tight. Modest brands are not built for the trail. We design for both.",
+      "coverage": "Coverage",
+      "coverageV": "Long sleeves, loose fits, longer hems",
+      "fabric": "Fabric",
+      "tested": "Tested",
+      "testedV": "On real trails, by our team"
+    },
+    "values": [
+      {
+        "title": "Modest, without giving up performance",
+        "body": "Long sleeves, loose fits and sports hijabs cut to move, breathe and layer.",
+        "icon": "materials"
+      },
+      {
+        "title": "Tested on real trails",
+        "body": "Technical fabrics and cuts tried on the hike before they reach the shop.",
+        "icon": "shipping"
+      },
+      {
+        "title": "Made by the community",
+        "body": "If a product isn't good enough for us to wear, it isn't good enough to sell.",
+        "icon": "community"
+      }
+    ],
+    "order": {
+      "title": "Order your way",
+      "alt": "اطلب بالطريقة التي تناسبك",
+      "codTitle": "Cash on delivery",
+      "codBody": "Order online and pay the driver when your parcel arrives, anywhere in Lebanon.",
+      "whishTitle": "Whish Money",
+      "whishBody": "Pay at checkout with your Whish wallet. We confirm your order straight away.",
+      "sizeTitle": "Not sure about your size?",
+      "sizeBody": "Send us your height and how you like it to fit. We reply on WhatsApp with the right size, usually the same day.",
+      "sizeCta": "Ask on WhatsApp"
+    },
+    "quote": "A success you build. A trust you wear. An environment you protect.",
+    "quoteAlt": "نجاحٌ تصنعه.. أمانةٌ ترتديها.. وبيئةٌ تحميها",
+    "gallery": {
+      "eyebrow": "From the trail · من المسار",
+      "title": "Gallery",
+      "alt": "معرض الصور",
+      "body": "Real moments from real trails, shot by our community. Share yours with #GoFurther and tag {handle}.",
+      "cta": "See the full gallery"
+    },
+    "reviews": {
+      "title": "Worn on the trail",
+      "alt": "آراء عملائنا",
+      "average": "{avg} average from {n} reviews",
+      "none": "Reviews from our first customers appear here.",
+      "readAll": "Read all reviews",
+      "bought": "Bought: {product}",
+      "verified": "Verified buyer",
+      "rating": "{n} out of 5"
+    },
+    "footer": {
+      "tagline": "Athletic and outdoor wear for young Muslims. Go further.",
+      "newsletter": "Hear about new drops first",
+      "signUp": "Sign up",
+      "shop": "Shop",
+      "help": "Help",
+      "delivery": "Delivery in Lebanon",
+      "returns": "Returns",
+      "sizeGuide": "Size guide",
+      "rights": "© {year} 7.10 · Lebanon",
+      "payments": "Cash on delivery · Whish Money · WhatsApp"
+    },
+    "about": {
+      "eyebrow": "About 7.10 · من نحن",
+      "title": "Who are we",
+      "alt": "من نحن؟",
+      "lead": "7.10 began with a simple question: why should young Muslims who love sport and the outdoors have to choose between gear that performs and clothing that reflects their values?",
+      "body": "7.10 is our answer: athletic, outdoor and everyday wear that is modest, comfortable and built to last. More than a brand, 7.10 is a way of moving through the world: with purpose, with discipline, and always a little further than yesterday.",
+      "bodyAr": "بدأت 7.10 بسؤال بسيط: لماذا يضطر الشباب المسلم المحبّ للرياضة والطبيعة إلى الاختيار بين ملابس عملية وملابس تعبّر عن قيمه؟ 7.10 هي جوابنا.",
+      "photoTag": "[Founders photo · on the trail]",
+      "essence": "Brand essence",
+      "essenceTitle": "Purpose in motion",
+      "essenceAlt": "هدفٌ في حركة",
+      "whyEyebrow": "01 · The difference",
+      "whyTitle": "Why us",
+      "whyAlt": "لماذا نحن؟",
+      "why": [
+        [
+          "We choose quality over quantity.",
+          "لأننا نختار الجودة على الكمية."
+        ],
+        [
+          "If a product isn't good enough for us to wear, it isn't good enough to sell.",
+          "لأن القطعة التي لا نرتديها نحن، لا نبيعها لأحد."
+        ],
+        [
+          "We design for modesty without giving up performance.",
+          "لأننا نصمّم للحشمة دون التنازل عن الأداء."
+        ],
+        [
+          "Environmental responsibility is one of our highest priorities.",
+          "لأن المسؤولية البيئية من أولوياتنا."
+        ],
+        [
+          "We support small, independent makers.",
+          "لأننا ندعم المشاريع الصغيرة الناشئة."
+        ],
+        [
+          "Success is built, not imported.",
+          "لأن النجاح يُصنع ولا يُستورد."
+        ]
+      ],
+      "missionEyebrow": "02 · Our mission · مهمتنا",
+      "missionTitle": "Our mission",
+      "mission": "We strive to provide young Muslims with high-quality, meaningful products that reflect their passions and ambitions, while helping build an active, capable and confident generation that takes pride in its identity and lives its values.",
+      "missionAr": "نسعى إلى تقديم منتجات عالية الجودة وذات معنى للشباب المسلم، تعكس شغفهم وطموحاتهم، وتساهم في بناء جيل نشيط وقادر وواثق يعتزّ بهويته ويعيش قيمه.",
+      "visionEyebrow": "03 · Our vision · رؤيتنا",
+      "visionTitle": "Our vision",
+      "vision": "To become a leading brand that brings athletic, outdoor and technical influences together at a new standard of quality and style. Not merely an alternative, but the first choice: an identity for every young Muslim man and woman who wants to pursue their passions with confidence, practicality and comfort.",
+      "visionAr": "أن نصبح علامة رائدة تجمع الطابع الرياضي والمغامرة والعملية بمعيار جديد من الجودة والأناقة؛ لا بديلًا فحسب، بل الخيار الأول.",
+      "valuesEyebrow": "04 · What we live by",
+      "valuesTitle": "Our values",
+      "valuesAlt": "قيمنا",
+      "values": [
+        [
+          "Discipline",
+          "انضباط",
+          "Small steps, every day."
+        ],
+        [
+          "Resilience",
+          "صلابة",
+          "Keep going when the trail gets steep."
+        ],
+        [
+          "Determination",
+          "عزيمة",
+          "Decide, then climb."
+        ],
+        [
+          "Purpose",
+          "غاية",
+          "Every journey needs a reason."
+        ]
+      ],
+      "ctaTitle": "Go further",
+      "ctaAlt": "إلى أبعد. خطوة كل يوم.",
+      "ctaBody": "Gear that keeps up with you and with your values.",
+      "ctaFit": "Find your fit",
+      "ctaWhatsApp": "Talk to us on WhatsApp"
+    },
+    "auth": {
+      "eyebrow": "Your 7.10 account · حسابك",
+      "perks": [
+        [
+          "Track every order",
+          "From confirmed to your door, with WhatsApp updates."
+        ],
+        [
+          "Check out in seconds",
+          "Your address and payment choice, saved."
+        ],
+        [
+          "Save your fit",
+          "Your sizes, so every order fits the first time."
+        ],
+        [
+          "First on new drops",
+          "Early access to new collections and trail days."
+        ]
+      ]
+    },
+    "account": {
+      "hello": "Hello, {name}",
+      "helloAlt": "أهلاً بك",
+      "memberSince": "Member since {date}",
+      "tabs": {
+        "overview": "Overview",
+        "orders": "Orders",
+        "addresses": "Addresses",
+        "fit": "My fit",
+        "wishlist": "Wishlist",
+        "details": "Account details"
+      },
+      "latest": "Latest order",
+      "all": "All orders",
+      "ask": "Ask about this order",
+      "steps": [
+        "Confirmed",
+        "Packed",
+        "Out for delivery",
+        "Delivered"
+      ],
+      "help": "Need help?",
+      "helpBody": "Message us on WhatsApp. We reply within {time}.",
+      "fitTitle": "My fit",
+      "fitEmpty": "Save your height and how you like it to fit, and we pre-select your size on every product.",
+      "addressEmpty": "Your saved delivery addresses appear here after your first order.",
+      "wishlistEmpty": "Save pieces you like and we tell you on WhatsApp when they are back or on offer.",
+      "soon": "Coming soon",
+      "details": "Your name, mobile number and email for receipts.",
+      "noOrders": "No orders yet. Your first one shows up here."
+    }
+  },
+  ui: {
+    categories: "Categories",
+    seeAllCategories: "See all categories",
+    sizeGuide: "Size guide",
+    aboutUs: "About us",
+    steps: ["Cart", "Delivery and payment", "Confirmation"],
+    cart: "Cart",
+    readyToDeliver: "In stock · ready to deliver",
+    orderCartWhatsApp: "Order this cart on WhatsApp",
+    orCartWhatsApp: "Or order this cart on WhatsApp",
+    orderSummary: "Order summary",
+    nothingCharged: "Nothing is charged now. Pay on delivery or with Whish Money.",
+    yourOrder: "Your order",
+    editCart: "Edit cart",
+    totalInclDelivery: "Total incl. delivery",
+    waOption: "Order on WhatsApp",
+    waOptionDesc: "Send this order to our team and finish it in chat.",
+    waSend: "Send order on WhatsApp",
+    waIntro: "Hi! I'd like to order:",
+    waCartIntro: "Hi! I'd like to order this cart:",
+    askWhatsApp: "Ask about this on WhatsApp",
+    signInTab: "Sign in",
+    createTab: "Create account",
+    guestQ: "Just checking out?",
+    guestLink: "Continue as a guest",
+    guestTail: "— no account needed.",
+    hello: "Hello, {name}",
+    myAccount: "My account",
+    talkWhatsApp: "Talk to us on WhatsApp",
+    needHelp: "Need help?",
+    needHelpBody: "Message us on WhatsApp. Real people, fast replies.",
+    loosefitNote: "Between sizes? Take your usual size, or ask us on WhatsApp.",
+    deliveryLine: "anywhere in Lebanon · {days} working days",
+    whishLine: "accepted at checkout",
+    returnsLine: "within {days} days",
+    easyReturns: "Easy exchange",
   },
   footer: {
     tagline: "Utility essentials in clean cuts and durable fabrics.",

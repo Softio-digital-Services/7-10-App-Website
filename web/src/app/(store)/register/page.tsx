@@ -20,7 +20,7 @@ export default async function RegisterPage({ searchParams }: { searchParams: Sea
   if (session?.user) redirect(callbackUrl);
 
   return (
-    <AuthShell t={t} title={t.auth.registerTitle} body={t.auth.registerBody}>
+    <AuthShell t={t} title={t.auth.registerTitle} body={t.auth.registerBody} active="register">
       <RegisterForm callbackUrl={callbackUrl} explicitCallback={explicit} google={!!process.env.AUTH_GOOGLE_ID} />
     </AuthShell>
   );

@@ -73,7 +73,7 @@ export function SearchOverlay({ open, onClose }: { open: boolean; onClose: () =>
         role="dialog"
         aria-modal="true"
         aria-label={t.common.search}
-        className={`absolute inset-x-0 top-0 max-h-[92dvh] overflow-y-auto bg-cream transition-transform duration-700 ease-[var(--ease-out-expo)] ${
+        className={`absolute inset-x-0 top-0 max-h-[92dvh] overflow-y-auto bg-white transition-transform duration-700 ease-[var(--ease-out-expo)] ${
           open ? "translate-y-0" : "-translate-y-full"
         }`}
       >

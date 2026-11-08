@@ -18,7 +18,7 @@ const schema = z.object({
   appVersion: z.string().max(40).optional(),
 });
 
-const STOREFRONT_TABLES = new Set(["parts", "categories", "product_images"]);
+const STOREFRONT_TABLES = new Set(["parts", "categories", "product_images", "site_settings", "site_media", "site_reviews"]);
 
 /**
  * One round trip per sync cycle: store the laptop's changes and website-order results,

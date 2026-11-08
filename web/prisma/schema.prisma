@@ -65,6 +65,10 @@ model Category {
   id        String    @id @default(cuid())
   name      String    @unique
   slug      String    @unique
+  /// Arabic name, order and tile image, all set in the desktop app.
+  nameAr    String?
+  sortOrder Int       @default(0)
+  imageUrl  String?
   products  Product[]
   createdAt DateTime  @default(now())
 }
@@ -84,6 +88,12 @@ model Product {
   /// JSON array of extra gallery image URLs
   images        String              @default("[]")
   colorName     String?
+  /// "Women · quick-dry knit": the line under the name, from the desktop app's gender and fabric.
+  spec          String              @default("")
+  /// Same style in other colours shares this code (colour swatches).
+  styleCode     String              @default("")
+  /// Marked "new" in the desktop app.
+  isNewFlag     Boolean             @default(false)
   featured      Boolean             @default(false)
   category      String
   categoryId    String?

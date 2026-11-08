@@ -162,12 +162,12 @@ export function ShopView({ products, categories, sizes, scopeTotal, filters }: S
 
       {/* TOOLBAR */}
       {!catalogEmpty && (
-        <div className="sticky top-16 z-30 mt-8 border-y border-charcoal/10 bg-cream/95 backdrop-blur-md md:top-[76px] md:mt-10">
+        <div className="sticky top-16 z-30 mt-8 border-y border-charcoal/10 bg-white/95 backdrop-blur-md md:top-[72px] md:mt-10">
           <div className="container-x flex h-14 items-center gap-3">
             <button
               type="button"
               onClick={() => setDrawerOpen(true)}
-              className="flex h-10 items-center gap-2.5 border border-charcoal/20 px-4 font-display text-[12px] uppercase tracking-[0.18em] transition-colors hover:border-charcoal"
+              className="flex h-10 items-center gap-2.5 border rounded border-charcoal/20 px-4 font-display text-[12px] uppercase tracking-[0.18em] transition-colors hover:border-charcoal"
             >
               <SlidersHorizontal className="h-4 w-4" strokeWidth={1.5} />
               {t.shop.filter}
@@ -239,7 +239,7 @@ export function ShopView({ products, categories, sizes, scopeTotal, filters }: S
       {/* GRID */}
       <section className="container-x pb-24 pt-8 md:pb-32 md:pt-10" aria-busy={pending}>
         {catalogEmpty ? (
-          <div className="relative mt-4 border border-charcoal/15 px-6 py-16 text-center md:py-24">
+          <div className="relative mt-4 border rounded border-charcoal/15 px-6 py-16 text-center md:py-24">
             <Brackets size="sm" inset="-1px" className="text-charcoal/60" />
             <p className="display text-4xl md:text-5xl">{t.shop.comingSoonTitle}</p>
             <p className="mx-auto mt-4 max-w-md text-charcoal/65">{t.shop.comingSoonBody}</p>
@@ -248,7 +248,7 @@ export function ShopView({ products, categories, sizes, scopeTotal, filters }: S
             </div>
           </div>
         ) : products.length === 0 ? (
-          <div className="relative mx-auto max-w-2xl border border-charcoal/15 px-6 py-16 text-center md:py-20">
+          <div className="relative mx-auto max-w-2xl border rounded border-charcoal/15 px-6 py-16 text-center md:py-20">
             <Brackets size="sm" inset="-1px" className="text-charcoal/60" />
             <p className="display text-3xl md:text-5xl">{view.q ? f(t.common.searchNoResults, { q: view.q }) : t.shop.empty}</p>
             {refinements > 0 && (
@@ -259,7 +259,7 @@ export function ShopView({ products, categories, sizes, scopeTotal, filters }: S
             <p className="eyebrow mt-10 text-charcoal/65">{t.shop.tryCategories}</p>
             <div className="mt-4 flex flex-wrap justify-center gap-2">
               {categories.map((c) => (
-                <Link key={c.slug} href={`/shop?c=${c.slug}`} className="border border-charcoal/20 px-4 py-2 text-[13.5px] transition-colors hover:border-charcoal hover:bg-charcoal hover:text-cream">
+                <Link key={c.slug} href={`/shop?c=${c.slug}`} className="border rounded border-charcoal/20 px-4 py-2 text-[13.5px] transition-colors hover:border-charcoal hover:bg-charcoal hover:text-cream">
                   {c.name}
                 </Link>
               ))}
@@ -317,8 +317,7 @@ function CategoryChip({ active, onClick, label, count }: { active: boolean; onCl
       type="button"
       onClick={onClick}
       aria-pressed={active}
-      className={`flex h-11 shrink-0 items-center gap-2.5 border px-5 text-[14px] transition-colors ${
-        active ? "border-charcoal bg-charcoal text-cream" : "border-charcoal/20 hover:border-charcoal"
+      className={`flex h-11 shrink-0 items-center gap-2.5 border rounded px-5 text-[14px] transition-colors ${ active ? "border-charcoal bg-charcoal text-cream" : "border-charcoal/20 hover:border-charcoal"
       }`}
     >
       {label}
@@ -331,7 +330,7 @@ function CategoryChip({ active, onClick, label, count }: { active: boolean; onCl
 
 function ActivePill({ label, onRemove, removeLabel }: { label: string; onRemove: () => void; removeLabel: string }) {
   return (
-    <span className="flex h-8 shrink-0 items-center gap-1 bg-cream-2 ps-3 text-[12.5px]">
+    <span className="flex h-8 shrink-0 items-center gap-1 rounded-full bg-stone ps-3 text-[12.5px]">
       {label}
       <button type="button" onClick={onRemove} aria-label={removeLabel} className="grid h-8 w-8 place-items-center text-charcoal/65 hover:text-charcoal">
         <X className="h-3.5 w-3.5" />

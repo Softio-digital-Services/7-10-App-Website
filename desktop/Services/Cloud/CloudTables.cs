@@ -76,6 +76,10 @@ namespace InventorySystem.Services.Cloud
                 new() { Name = "parts", Pk = "id", Fks = Fk("category_id", "categories", "supplier_id", "suppliers"),
                         Counters = Cols("quantity_in_stock"), Files = Cols("part_image") },
                 new() { Name = "product_images", Pk = "id", Fks = Fk("part_id", "parts"), Files = Cols("image_path") },
+                // Website content edited in the Website screen and shown on the 7.10 website.
+                new() { Name = "site_settings", Pk = "id" },
+                new() { Name = "site_media", Pk = "id", Files = Cols("image_path") },
+                new() { Name = "site_reviews", Pk = "id" },
                 new() { Name = "product_materials", Pk = "id", Fks = Fk("part_id", "parts", "supplier_id", "suppliers") },
                 new() { Name = "stock_levels", Pk = "id", Fks = Fk("part_id", "parts", "warehouse_id", "warehouses"),
                         Counters = Cols("quantity") },

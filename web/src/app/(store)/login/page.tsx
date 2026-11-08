@@ -23,7 +23,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Search
   }
 
   return (
-    <AuthShell t={t} title={t.auth.signInTitle} body={t.auth.signInBody}>
+    <AuthShell t={t} title={t.auth.signInTitle} body={t.auth.signInBody} active="signin">
       <LoginForm callbackUrl={callbackUrl} explicitCallback={explicit} google={!!process.env.AUTH_GOOGLE_ID} />
     </AuthShell>
   );

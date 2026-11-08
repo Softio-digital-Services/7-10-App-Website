@@ -24,6 +24,11 @@ export type StoreProduct = {
   category: string;
   categorySlug: string;
   colorName: string | null;
+  /** "Women · quick-dry knit" */
+  spec: string;
+  styleCode: string;
+  /** The same style in every colour, this one included. */
+  swatches: { color: string; slug: string }[];
   featured: boolean;
   isNew: boolean;
   createdAt: string;
@@ -36,8 +41,11 @@ export type StoreProduct = {
 export type StoreCategory = {
   slug: string;
   name: string;
+  /** The name in the other language, for bilingual tiles. */
+  altName: string | null;
   count: number;
   image: string | null;
+  sortOrder: number;
 };
 
 export type SortKey = "featured" | "new" | "price-asc" | "price-desc";
@@ -60,7 +68,7 @@ export const CATALOG_TAG = "catalog";
 async function loadActiveRows() {
   const rows = await prisma.product.findMany({
     where: { active: true },
-    include: { variants: true, categoryRef: { select: { slug: true, name: true } } },
+    include: { variants: true, categoryRef: { select: { slug: true, name: true, nameAr: true, sortOrder: true, imageUrl: true } } },
     // Purchase cost never leaves the server, not even into the page cache.
     omit: { cost: true },
     orderBy: { createdAt: "desc" },
@@ -73,7 +81,7 @@ async function loadActiveRows() {
 }
 
 // Stock changes call refreshCatalog(); the 60 s limit only covers changes made outside this app.
-const cachedActiveRows = unstable_cache(loadActiveRows, ["catalog-active-v1"], { tags: [CATALOG_TAG], revalidate: 60 });
+const cachedActiveRows = unstable_cache(loadActiveRows, ["catalog-active-v2"], { tags: [CATALOG_TAG], revalidate: 60 });
 const activeRows = cache(() => cachedActiveRows());
 
 /** Call after anything that changes products or stock, so the next page view reads fresh data. */
@@ -119,8 +127,12 @@ export function toStoreProduct(row: ProductRow, locale: Locale): StoreProduct {
     category: categoryLabel(dict, categorySlug, row.categoryRef?.name ?? row.category),
     categorySlug,
     colorName: row.colorName ?? (variants[0]?.color && variants[0].color !== "Default" ? variants[0].color : null),
+    spec: row.spec,
+    styleCode: row.styleCode,
+    swatches: [],
     featured: row.featured,
-    isNew: new Date(row.createdAt).getTime() >= newCutoff,
+    // Marked "new" in the desktop app; older catalogues without the flag fall back to the date.
+    isNew: row.isNewFlag || (!row.styleCode && new Date(row.createdAt).getTime() >= newCutoff),
     createdAt: row.createdAt,
     variants,
     sizes: sortSizes([...new Set(variants.map((v) => v.size))]),
@@ -129,12 +141,29 @@ export function toStoreProduct(row: ProductRow, locale: Locale): StoreProduct {
   };
 }
 
+/** Fills each product's colour swatches from the other products that share its style code. */
+function withSwatches(products: StoreProduct[], rows: ProductRow[]) {
+  const byStyle = new Map<string, { color: string; slug: string }[]>();
+  for (const r of rows) {
+    if (!r.styleCode) continue;
+    const list = byStyle.get(r.styleCode) ?? [];
+    list.push({ color: r.colorName ?? "", slug: r.slug });
+    byStyle.set(r.styleCode, list);
+  }
+  for (const p of products) {
+    const list = p.styleCode ? byStyle.get(p.styleCode) : undefined;
+    p.swatches = list && list.length > 1 ? list : [];
+  }
+  return products;
+}
+
 export async function getProducts(filters: ProductFilters, locale: Locale) {
-  let rows = await activeRows();
+  const allRows = await activeRows();
+  let rows = allRows;
   if (filters.category) rows = rows.filter((r) => r.categoryRef?.slug === filters.category || r.category === filters.category);
   if (filters.sale) rows = rows.filter((r) => r.discount > 0);
 
-  let products = rows.map((row) => toStoreProduct(row, locale));
+  let products = withSwatches(rows.map((row) => toStoreProduct(row, locale)), allRows);
 
   if (filters.q) {
     const needle = filters.q.trim().toLowerCase();
@@ -181,8 +210,9 @@ export async function getProducts(filters: ProductFilters, locale: Locale) {
 
 /** React cache(): generateMetadata and the page share one lookup per request. */
 export const getProductBySlug = cache(async (slug: string, locale: Locale) => {
-  const row = (await activeRows()).find((r) => r.slug === slug);
-  return row ? toStoreProduct(row, locale) : null;
+  const rows = await activeRows();
+  const row = rows.find((r) => r.slug === slug);
+  return row ? withSwatches([toStoreProduct(row, locale)], rows)[0] : null;
 });
 
 /** Slugs and last-change dates for the sitemap. */
@@ -205,13 +235,16 @@ export async function getCategories(locale: Locale): Promise<StoreCategory[]> {
     const map = new Map<string, StoreCategory>();
     for (const row of rows) {
       const slug = row.categoryRef?.slug ?? slugify(row.category || "general");
-      const name = categoryLabel(dict, slug, row.categoryRef?.name ?? row.category);
-      const entry = map.get(slug) ?? { slug, name, count: 0, image: null };
+      const en = row.categoryRef?.name ?? row.category;
+      const ar = row.categoryRef?.nameAr ?? null;
+      const name = locale === "ar" && ar ? ar : categoryLabel(dict, slug, en);
+      const altName = locale === "ar" ? en : ar;
+      const entry = map.get(slug) ?? { slug, name, altName, count: 0, image: row.categoryRef?.imageUrl ?? null, sortOrder: row.categoryRef?.sortOrder ?? 0 };
       entry.count += 1;
-      if (!entry.image || row.featured) entry.image = row.imageUrl;
+      if (!entry.image || (!row.categoryRef?.imageUrl && row.featured)) entry.image = row.categoryRef?.imageUrl ?? row.imageUrl;
       map.set(slug, entry);
     }
-    return [...map.values()].sort((a, b) => b.count - a.count);
+    return [...map.values()].sort((a, b) => a.sortOrder - b.sortOrder || b.count - a.count);
   } catch (err) {
     console.error("Failed to load categories from database:", err);
     return [];

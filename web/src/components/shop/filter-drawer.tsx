@@ -57,7 +57,7 @@ export function FilterDrawer({ open, onClose, sizes, filters, total, pending, so
       <div
         ref={panelRef}
         {...panelProps}
-        className={`absolute inset-y-0 start-0 flex w-full max-w-[420px] flex-col bg-cream transition-transform duration-700 ease-[var(--ease-out-expo)] ${
+        className={`absolute inset-y-0 start-0 flex w-full max-w-[420px] flex-col bg-white transition-transform duration-700 ease-[var(--ease-out-expo)] ${
           open ? "translate-x-0" : "-translate-x-full rtl:translate-x-full"
         }`}
       >

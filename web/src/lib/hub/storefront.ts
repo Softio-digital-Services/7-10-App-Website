@@ -53,6 +53,10 @@ type Desired = {
   name: string;
   description: string;
   category: string;
+  categoryInfo: { nameAr: string | null; sortOrder: number; imageUrl: string | null };
+  spec: string;
+  styleCode: string;
+  isNew: boolean;
   price: number;
   colorName: string | null;
   images: string[];
@@ -68,6 +72,7 @@ async function desiredCatalog(): Promise<Desired[]> {
   const stock = new Map(counters.map((c) => [c.gid, Math.max(0, Math.floor(c.value))]));
 
   const categories = new Map<string, string>();
+  const categoryInfo = new Map<string, { nameAr: string | null; sortOrder: number; image: string }>();
   const gallery = new Map<string, { path: string; order: number }[]>();
   const parts: { gid: string; row: Row }[] = [];
   for (const r of rows) {
@@ -77,7 +82,10 @@ async function desiredCatalog(): Promise<Desired[]> {
     } catch {
       continue;
     }
-    if (r.tbl === "categories") categories.set(r.gid, str(data.category_name));
+    if (r.tbl === "categories") {
+      categories.set(r.gid, str(data.category_name));
+      categoryInfo.set(r.gid, { nameAr: str(data.category_name_ar) || null, sortOrder: num(data.sort_order), image: str(data.category_image) });
+    }
     else if (r.tbl === "product_images") {
       const part = str(data.part_id);
       if (!part) continue;
@@ -138,6 +146,14 @@ async function desiredCatalog(): Promise<Desired[]> {
       name: names.sort((a, b) => a.length - b.length)[0],
       description: members.map((m) => str(m.row.description)).find(Boolean) ?? "",
       category: categories.get(str(first.category_id)) || "General",
+      categoryInfo: (() => {
+        const info = categoryInfo.get(str(first.category_id));
+        const media = info?.image ? mediaNameOf(info.image) : null;
+        return { nameAr: info?.nameAr ?? null, sortOrder: info?.sortOrder ?? 0, imageUrl: media && !missing.has(media) ? `/media/${media}` : null };
+      })(),
+      spec: [str(first.gender), str(first.fabric)].filter(Boolean).join(" · "),
+      styleCode: str(first.style_code),
+      isNew: members.some((m) => flag(m.row.is_new, false)),
       price: Math.max(...members.map((m) => num(m.row.selling_price))),
       colorName: color || null,
       images: images.slice(0, 8),
@@ -199,7 +215,8 @@ export async function rebuildStorefront(budgetMs = Number.POSITIVE_INFINITY) {
     let categoryId = categoryIds.get(d.category);
     if (!categoryId) {
       const slug = slugify(d.category) || "general";
-      const cat = await prisma.category.upsert({ where: { slug }, update: {}, create: { name: d.category, slug } });
+      const info = { nameAr: d.categoryInfo.nameAr, sortOrder: d.categoryInfo.sortOrder, imageUrl: d.categoryInfo.imageUrl };
+      const cat = await prisma.category.upsert({ where: { slug }, update: info, create: { name: d.category, slug, ...info } });
       categoryId = cat.id;
       categoryIds.set(d.category, categoryId);
     }
@@ -212,6 +229,9 @@ export async function rebuildStorefront(budgetMs = Number.POSITIVE_INFINITY) {
       imageUrl,
       images: JSON.stringify(gallery),
       colorName: d.colorName,
+      spec: d.spec,
+      styleCode: d.styleCode,
+      isNewFlag: d.isNew,
       category: d.category,
       categoryId,
       active: true,
@@ -233,6 +253,9 @@ export async function rebuildStorefront(budgetMs = Number.POSITIVE_INFINITY) {
         !sameList(JSON.parse(product.images || "[]"), gallery) ||
         product.colorName !== fields.colorName ||
         product.categoryId !== categoryId ||
+        product.spec !== fields.spec ||
+        product.styleCode !== fields.styleCode ||
+        product.isNewFlag !== fields.isNewFlag ||
         !product.active;
       if (changed) {
         await prisma.product.update({ where: { id: product.id }, data: fields });

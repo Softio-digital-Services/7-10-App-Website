@@ -33,7 +33,7 @@ export function NewsletterForm({ tone = "light", compact = false }: { tone?: "li
   if (state === "done") {
     return (
       <p className={`flex items-center gap-3 ${compact ? "py-3" : "py-4"} ${light ? "text-cream" : "text-charcoal"}`} role="status">
-        <span className="grid h-8 w-8 place-items-center bg-signal text-white">
+        <span className="grid h-8 w-8 place-items-center rounded-full bg-signal text-white">
           <Check className="h-4 w-4" />
         </span>
         {t.home.joinDone}
@@ -44,29 +44,25 @@ export function NewsletterForm({ tone = "light", compact = false }: { tone?: "li
   return (
     <form onSubmit={submit} noValidate className="relative">
       <Honeypot />
-      <div
-        className={`flex items-stretch border-b ${light ? "border-cream/40 focus-within:border-cream" : "border-charcoal/30 focus-within:border-charcoal"} transition-colors`}
-      >
+      <div className="flex items-stretch gap-2">
         <input
           value={value}
           onChange={(e) => {
             setValue(e.target.value);
             if (state === "error") setState("idle");
           }}
-          placeholder={t.home.joinPlaceholder}
+          placeholder={compact ? "name@example.com" : t.home.joinPlaceholder}
           aria-label={t.home.joinPlaceholder}
           aria-invalid={state === "error"}
-          className={`min-w-0 flex-1 bg-transparent py-4 text-[16px] focus:outline-none ${
-            light ? "placeholder:text-cream/50" : "placeholder:text-charcoal/40"
+          className={`min-w-0 flex-1 rounded border px-3.5 ${compact ? "h-11" : "h-12"} text-[15px] transition-colors focus:outline-none ${
+            light
+              ? "border-cream/30 bg-black/15 text-cream placeholder:text-cream/50 focus:border-cream"
+              : "border-charcoal/40 bg-white placeholder:text-charcoal/45 focus:border-charcoal"
           }`}
         />
-        <button
-          type="submit"
-          disabled={state === "loading"}
-          className={`group flex shrink-0 items-center gap-3 ps-4 eyebrow ${light ? "text-cream" : "text-charcoal"} disabled:opacity-50`}
-        >
-          {t.home.joinCta}
-          <ArrowRight className="flip-rtl h-4 w-4 transition-transform duration-500 group-hover:translate-x-1 rtl:group-hover:-translate-x-1" />
+        <button type="submit" disabled={state === "loading"} className={`btn btn-primary shrink-0 ${compact ? "min-h-11 px-4" : ""}`}>
+          {compact ? t.design.footer.signUp : t.home.joinCta}
+          {!compact && <ArrowRight className="flip-rtl h-4 w-4" />}
         </button>
       </div>
       {state === "error" && <p className={`mt-2 text-[13px] ${light ? "text-cream" : "text-signal-ink"}`}>{t.home.joinInvalid}</p>}

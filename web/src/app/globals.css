@@ -1,22 +1,34 @@
 @import "tailwindcss";
 
 @theme {
-  --color-olive: #6e6e3f;
-  --color-olive-deep: #56563a;
-  --color-olive-card: #5f5f3a;
-  --color-olive-dark: #3b3b24;
-  --color-cream: #f1eee4;
-  --color-cream-2: #e9e5d8;
-  --color-cream-3: #dcd7c4;
-  --color-charcoal: #1d1d16;
-  --color-signal: #f51e0f;
-  /* Signal red darkened for text on cream: #f51e0f is only 3.6:1, this is 5:1 (WCAG AA). */
-  --color-signal-ink: #c8160a;
-  --color-ash: #6b6a58;
-  --color-mute: #b9b5a2;
-  --color-silver: #c7c6c0;
+  /* 7.10 design system (from the trail design system): earth tones lead, crimson is the one signal. */
+  --color-forest: #313b2b; /* olive / ink / brand-field */
+  --color-charcoal: #313b2b;
+  --color-khaki: #8a8863;
+  --color-khaki-60: #b9b8a1; /* accent text on olive */
+  --color-sand: #d5d4c2; /* linen */
+  --color-linen-20: #f7f6f3;
+  --color-stone: #f4f3ec; /* surface-soft */
+  --color-hairline: #e6e5da;
+  --color-field: #c9c8b6;
+  --color-olive: #5a6255;
+  --color-olive-card: #47503b;
+  --color-olive-deep: #262e21;
+  --color-olive-dark: #1e231a;
+  --color-ridge: #6c6e52;
+  --color-cream: #f7f6f3;
+  --color-cream-2: #e8e7e0;
+  --color-cream-3: #d5d4c2;
+  --color-signal: #b51515; /* crimson: the one action colour */
+  --color-signal-hover: #911111;
+  --color-signal-pressed: #6d0d0d;
+  --color-signal-ink: #b51515;
+  --color-ash: #55584a; /* ink-muted */
+  --color-mute: #8a8b7c; /* ink-subtle: notes and footers only */
+  --color-silver: #d5d4c2;
 
-  --ease-out-expo: cubic-bezier(0.22, 1, 0.36, 1);
+  /* "Climb" easing from the design system: quick start, long settle. */
+  --ease-out-expo: cubic-bezier(0.22, 0.8, 0.24, 1);
   --ease-in-out-quart: cubic-bezier(0.76, 0, 0.24, 1);
 
   --breakpoint-xs: 420px;
@@ -24,8 +36,11 @@
 }
 
 @theme inline {
-  --font-sans: "IBM Plex Sans Arabic", system-ui, sans-serif;
-  --font-display: "Oswald Variable", "IBM Plex Sans Arabic", sans-serif;
+  --font-sans: "Tajawal", "Segoe UI", system-ui, sans-serif;
+  /* English secondary: labels, navigation, prices and numbers. */
+  --font-display: "Barlow Condensed", "Changa", sans-serif;
+  /* Square jersey-style headline face (free stand-in for Franklin M54). Arabic falls back to Changa. */
+  --font-heavy: "Squada One", "Changa", sans-serif;
 }
 
 @layer base {
@@ -48,7 +63,7 @@
   }
 
   body {
-    background: var(--color-cream);
+    background: #ffffff;
     color: var(--color-charcoal);
     font-family: var(--font-sans);
     line-height: 1.6;
@@ -97,9 +112,9 @@
 @layer components {
   .container-x {
     width: 100%;
-    max-width: 1480px;
+    max-width: 1320px;
     margin-inline: auto;
-    padding-inline: 1.25rem;
+    padding-inline: 1rem;
   }
 
   @media (min-width: 768px) {
@@ -114,20 +129,35 @@
     }
   }
 
+  /* Small spaced caps above headings: "NEW DROP · TRAIL SERIES". */
   .eyebrow {
-    font-family: var(--font-display);
-    font-size: 11px;
-    /* Oswald's 400 strokes are too thin to render cleanly at 11px. */
-    font-weight: 500;
+    font-family: var(--font-sans);
+    font-size: 12px;
+    font-weight: 700;
     line-height: 1.4;
     text-transform: uppercase;
-    letter-spacing: 0.35em;
+    letter-spacing: 0.16em;
   }
 
   .display {
-    font-family: var(--font-display);
+    font-family: var(--font-heavy);
+    font-weight: 400;
+    font-synthesis: none;
     text-transform: uppercase;
-    line-height: 0.92;
+    line-height: 0.95;
+    letter-spacing: 0.005em;
+    /* Squada One draws smaller and lighter than the design's Franklin M54: scale caps up and add weight. */
+    font-size-adjust: cap-height 0.8;
+    -webkit-text-stroke: 0.022em currentColor;
+    paint-order: stroke fill;
+  }
+
+  /* Condensed bold caps for card titles and sub-headings: "CASH ON DELIVERY". */
+  .heading-cond {
+    font-family: var(--font-display);
+    font-weight: 700;
+    text-transform: uppercase;
+    line-height: 1.1;
     letter-spacing: 0.01em;
   }
 
@@ -136,21 +166,21 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 0.75rem;
-    min-height: 3.25rem;
-    padding: 0 1.75rem;
-    font-family: var(--font-display);
-    font-size: 13px;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.24em;
+    gap: 0.6rem;
+    min-height: 2.875rem;
+    padding: 0 1.5rem;
+    border-radius: 4px;
+    font-family: var(--font-sans);
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0;
     white-space: nowrap;
     isolation: isolate;
     overflow: hidden;
     transition:
-      color 0.45s var(--ease-out-expo),
-      background-color 0.45s var(--ease-out-expo),
-      border-color 0.45s var(--ease-out-expo),
+      color 0.3s var(--ease-out-expo),
+      background-color 0.3s var(--ease-out-expo),
+      border-color 0.3s var(--ease-out-expo),
       opacity 0.2s,
       scale 0.2s var(--ease-out-expo);
   }
@@ -158,7 +188,7 @@
   /* Feedback lands on press, not release. */
   .btn:active:not(:disabled) {
     scale: 0.98;
-    transition-duration: 0.45s, 0.45s, 0.45s, 0.2s, 0.08s;
+    transition-duration: 0.3s, 0.3s, 0.3s, 0.2s, 0.08s;
   }
 
   .btn::before {
@@ -166,13 +196,12 @@
     position: absolute;
     inset: 0;
     z-index: -1;
-    transform: scaleY(0);
-    transform-origin: bottom;
-    transition: transform 0.55s var(--ease-out-expo);
+    opacity: 0;
+    transition: opacity 0.3s var(--ease-out-expo);
   }
 
   .btn:hover::before {
-    transform: scaleY(1);
+    opacity: 1;
   }
 
   .btn:disabled {
@@ -183,108 +212,95 @@
     display: none;
   }
 
-  .btn-primary {
-    background: var(--color-charcoal);
-    color: var(--color-cream);
-  }
-
-  .btn-primary::before {
-    background: var(--color-olive);
-  }
-
-  .btn-cream {
-    background: var(--color-cream);
-    color: var(--color-charcoal);
-  }
-
-  .btn-cream::before {
-    background: #ffffff;
-  }
-
-  .btn-olive {
-    background: var(--color-olive);
-    color: var(--color-cream);
-  }
-
-  .btn-olive::before {
-    background: var(--color-olive-deep);
-  }
-
+  /* Main action: red, as in "Add to cart", "Go to checkout", "Place order". */
+  .btn-primary,
   .btn-signal {
     background: var(--color-signal);
     color: #fff;
   }
 
+  .btn-primary::before,
   .btn-signal::before {
-    background: var(--color-charcoal);
+    background: #93100f;
+  }
+
+  /* Secondary solid: forest, as in "Shop the look". */
+  .btn-dark,
+  .btn-olive {
+    background: var(--color-forest);
+    color: #fff;
+  }
+
+  .btn-dark::before,
+  .btn-olive::before {
+    background: var(--color-olive-deep);
+  }
+
+  .btn-cream {
+    background: #fff;
+    color: var(--color-forest);
+  }
+
+  .btn-cream::before {
+    background: var(--color-stone);
   }
 
   .btn-outline {
-    border: 1px solid currentColor;
+    border: 1px solid var(--color-forest);
+    color: var(--color-forest);
+    background: #fff;
   }
 
   .btn-outline::before {
-    background: var(--color-charcoal);
-  }
-
-  .btn-outline:hover {
-    color: var(--color-cream);
-    border-color: var(--color-charcoal);
+    background: var(--color-stone);
   }
 
   .btn-outline-cream {
-    border: 1px solid color-mix(in oklab, var(--color-cream) 60%, transparent);
-    color: var(--color-cream);
+    border: 1px solid color-mix(in oklab, #fff 75%, transparent);
+    color: #fff;
   }
 
   .btn-outline-cream::before {
-    background: var(--color-cream);
-  }
-
-  .btn-outline-cream:hover {
-    color: var(--color-charcoal);
-    border-color: var(--color-cream);
+    background: color-mix(in oklab, #fff 12%, transparent);
   }
 
   .btn-sm {
     min-height: 2.5rem;
-    padding: 0 1.1rem;
-    font-size: 11px;
+    padding: 0 1rem;
+    font-size: 13px;
   }
 
   .field {
     display: block;
     width: 100%;
-    min-height: 3.25rem;
-    padding: 0.75rem 1rem;
-    background: transparent;
-    border: 1px solid color-mix(in oklab, var(--color-charcoal) 22%, transparent);
-    border-radius: 0;
+    min-height: 3rem;
+    padding: 0.7rem 0.9rem;
+    background: #fff;
+    border: 1px solid color-mix(in oklab, var(--color-charcoal) 45%, transparent);
+    border-radius: 4px;
     font-size: 15px;
     transition:
-      border-color 0.25s,
-      background-color 0.25s,
-      box-shadow 0.25s;
+      border-color 0.2s,
+      box-shadow 0.2s;
   }
 
   .field::placeholder {
-    color: color-mix(in oklab, var(--color-charcoal) 45%, transparent);
+    color: color-mix(in oklab, var(--color-charcoal) 50%, transparent);
   }
 
   .field:hover {
-    border-color: color-mix(in oklab, var(--color-charcoal) 45%, transparent);
+    border-color: color-mix(in oklab, var(--color-charcoal) 70%, transparent);
   }
 
   .field:focus {
     outline: none;
     border-color: var(--color-charcoal);
-    background: color-mix(in oklab, #ffffff 45%, transparent);
-    box-shadow: inset 0 -2px 0 var(--color-charcoal);
+    box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-charcoal) 14%, transparent);
   }
 
   .field[aria-invalid="true"] {
     border-color: var(--color-signal);
-    box-shadow: inset 0 -2px 0 var(--color-signal);
+    box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-signal) 14%, transparent);
   }
 
   .field-label {
@@ -292,13 +308,42 @@
     align-items: baseline;
     justify-content: space-between;
     gap: 0.5rem;
-    margin-bottom: 0.5rem;
-    font-family: var(--font-display);
-    font-size: 11px;
+    margin-bottom: 0.4rem;
+    font-family: var(--font-sans);
+    font-size: 13px;
     font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.22em;
-    color: color-mix(in oklab, var(--color-charcoal) 75%, transparent);
+    color: var(--color-charcoal);
+  }
+
+  /* Contour-line texture from the campaign artwork. */
+  .topo {
+    background-image: url("/topo.svg");
+    background-size: 600px 600px;
+    background-repeat: repeat;
+  }
+
+  /* Off-white label boxes behind a heading, one per line. They wipe in when the block is revealed. */
+  .highlight-box {
+    background-image: linear-gradient(var(--color-stone), var(--color-stone));
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    background-position: 0 0;
+    padding: 0.06em 0.22em 0;
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
+    transition: background-size 1.1s var(--ease-out-expo) 0.15s;
+  }
+
+  [data-reveal] .highlight-box {
+    background-size: 0% 100%;
+  }
+
+  [data-reveal="in"] .highlight-box {
+    background-size: 100% 100%;
+  }
+
+  html[dir="rtl"] .highlight-box {
+    background-position: 100% 0;
   }
 
   .link-line {
@@ -326,12 +371,14 @@
     -webkit-text-stroke: 1px color-mix(in oklab, var(--color-charcoal) 16%, transparent);
   }
 
+  /* Dark forest band: hero, story, footer. */
   .theme-olive {
-    background: var(--color-olive);
+    background: var(--color-forest);
     color: var(--color-cream);
   }
 
   .theme-olive .field {
+    background: color-mix(in oklab, #000 18%, transparent);
     border-color: color-mix(in oklab, var(--color-cream) 30%, transparent);
   }
 
@@ -341,13 +388,13 @@
 
   .theme-olive .field:focus {
     border-color: var(--color-cream);
-    background: color-mix(in oklab, var(--color-cream) 8%, transparent);
-    box-shadow: inset 0 -2px 0 var(--color-cream);
+    box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-cream) 18%, transparent);
   }
 
   .card-img {
     position: relative;
     overflow: hidden;
+    border-radius: 8px;
     background: var(--color-cream-2);
   }
 
@@ -363,6 +410,7 @@
     display: inline-block;
     width: 6px;
     height: 6px;
+    border-radius: 999px;
     background: var(--color-signal);
   }
 
@@ -389,8 +437,16 @@ html[lang="ar"] [class*="tracking-"]:not(.keep-tracking) {
   letter-spacing: 0;
 }
 
+/* Russo One has no Arabic; the Changa fallback needs its heavy cut. */
 html[lang="ar"] .display {
-  line-height: 1.15;
+  font-weight: 800;
+  line-height: 1.2;
+  font-size-adjust: none;
+  -webkit-text-stroke: 0;
+}
+
+html[lang="ar"] .heading-cond {
+  font-weight: 700;
 }
 
 html[dir="rtl"] .flip-rtl {
@@ -415,14 +471,14 @@ html[dir="rtl"] .flip-rtl {
 
 /* Translucent chrome: content stays faintly visible as it scrolls beneath. */
 .material-bar {
-  background: color-mix(in oklab, var(--color-cream) 78%, transparent);
+  background: color-mix(in oklab, #ffffff 92%, transparent);
   backdrop-filter: blur(20px) saturate(160%);
   -webkit-backdrop-filter: blur(20px) saturate(160%);
 }
 
 @media (prefers-reduced-transparency: reduce) {
   .material-bar {
-    background: var(--color-cream);
+    background: #ffffff;
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
   }
@@ -430,7 +486,7 @@ html[dir="rtl"] .flip-rtl {
 
 @media (prefers-contrast: more) {
   .material-bar {
-    background: var(--color-cream);
+    background: #ffffff;
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
     border-color: var(--color-charcoal);
@@ -622,7 +678,150 @@ html[dir="rtl"] .progress-indeterminate {
   animation-direction: reverse;
 }
 
+/* ---- Motion touches ---- */
+
+/* Big headings rise line by line out of a mask. */
+.line-mask {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.06em;
+  margin-bottom: -0.06em;
+}
+
+.line-mask > span {
+  display: block;
+  animation: line-up 1s var(--ease-out-expo) both;
+  animation-delay: var(--d, 0s);
+}
+
+@keyframes line-up {
+  from {
+    transform: translateY(105%);
+  }
+  to {
+    transform: none;
+  }
+}
+
+/* Contour lines drift very slowly, like a map under a moving hand. */
+.topo-drift {
+  animation: topo-drift 120s linear infinite;
+}
+
+@keyframes topo-drift {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: 600px 300px;
+  }
+}
+
+/* Cart count and success ticks pop in. */
+.pop {
+  animation: pop 0.45s var(--ease-out-expo) both;
+}
+
+@keyframes pop {
+  0% {
+    transform: scale(0.4);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.18);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Nav underline grows from the start edge. */
+.nav-line {
+  position: relative;
+}
+
+.nav-line::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  bottom: -3px;
+  height: 2px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: var(--origin, left);
+  transition: transform 0.45s var(--ease-out-expo);
+}
+
+html[dir="rtl"] .nav-line::after {
+  --origin: right;
+}
+
+.nav-line:hover::after,
+[aria-current="page"] > .nav-line::after,
+.nav-line[aria-current="page"]::after {
+  transform: scaleX(1);
+}
+
+/* Cards lift a touch on hover. */
+.lift {
+  transition:
+    transform 0.5s var(--ease-out-expo),
+    box-shadow 0.5s var(--ease-out-expo);
+}
+
+@media (hover: hover) {
+  .lift:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 18px 30px -22px rgba(47, 58, 44, 0.55);
+  }
+}
+
+/* Accordions open smoothly where the browser can animate to auto height. */
+:root {
+  interpolate-size: allow-keywords;
+}
+
+details.smooth::details-content {
+  height: 0;
+  overflow: clip;
+  transition:
+    height 0.45s var(--ease-out-expo),
+    content-visibility 0.45s allow-discrete;
+}
+
+details.smooth[open]::details-content {
+  height: auto;
+}
+
+/* Step progress bars fill in on load. */
+.fill-in {
+  transform-origin: left;
+  animation: fill-in 0.9s var(--ease-out-expo) both;
+}
+
+html[dir="rtl"] .fill-in {
+  transform-origin: right;
+}
+
+@keyframes fill-in {
+  from {
+    transform: scaleX(0);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .highlight-box,
+  [data-reveal] .highlight-box {
+    background-size: 100% 100%;
+  }
+
+  .line-mask > span,
+  .topo-drift,
+  .fill-in {
+    animation: none;
+  }
+
   *,
   *::before,
   *::after {
@@ -648,5 +847,128 @@ html[dir="rtl"] .progress-indeterminate {
   select,
   textarea {
     font-size: 16px;
+  }
+}
+
+/* ---- Dark theme: linen on deep olive, from the design system's dark tokens ---- */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  /* Ink-type colours flip to linen; the fills that used them are pinned back below. */
+  --color-charcoal: #d5d4c2;
+  --color-ash: #b5b4a6;
+  --color-mute: #9a9a8c;
+  --color-signal-ink: #b9b8a1;
+  --color-hairline: #47503b;
+  --color-field: #838980;
+}
+
+:root[data-theme="dark"] body {
+  background: #262e21;
+  color: #d5d4c2;
+}
+
+/* Surfaces */
+:root[data-theme="dark"] .bg-white,
+:root[data-theme="dark"] .field,
+:root[data-theme="dark"] .btn-outline,
+:root[data-theme="dark"] .btn-cream {
+  background-color: #262e21;
+}
+:root[data-theme="dark"] .bg-stone,
+:root[data-theme="dark"] .bg-cream,
+:root[data-theme="dark"] .bg-cream-2,
+:root[data-theme="dark"] .bg-linen-20,
+:root[data-theme="dark"] [class*="bg-[#d6d8d4]"],
+:root[data-theme="dark"] [class*="bg-[#ecebe4]"] {
+  background-color: #313b2b;
+}
+:root[data-theme="dark"] .bg-sand,
+:root[data-theme="dark"] .bg-cream-3 {
+  background-color: #3a4232;
+}
+/* Dark fills (selected chips, secondary buttons, avatars) become the light secondary fill with olive text. */
+:root[data-theme="dark"] .bg-charcoal,
+:root[data-theme="dark"] .btn-dark,
+:root[data-theme="dark"] .btn-olive {
+  background-color: #d5d4c2;
+  color: #313b2b;
+}
+:root[data-theme="dark"] .bg-forest {
+  background-color: #47503b;
+}
+:root[data-theme="dark"] .theme-olive {
+  background: #47503b;
+  color: #d5d4c2;
+}
+:root[data-theme="dark"] .bg-white\/95,
+:root[data-theme="dark"] .material-bar,
+:root[data-theme="dark"] header.sticky {
+  background: rgba(38, 46, 33, 0.82);
+}
+:root[data-theme="dark"] .highlight-box {
+  color: #313b2b;
+}
+/* Olive line icons and graphics turn linen on dark grounds; the crimson detail goes with them. */
+:root[data-theme="dark"] img[src^="/brand/icons/"],
+:root[data-theme="dark"] img[src^="/brand/graphics/"] {
+  filter: brightness(0) invert(0.84) sepia(0.15);
+}
+:root[data-theme="dark"] .text-white {
+  color: #f7f6f3;
+}
+:root[data-theme="dark"] .topo {
+  background-blend-mode: soft-light;
+}
+:root[data-theme="dark"] img[data-logo-light] {
+  display: none;
+}
+:root:not([data-theme="dark"]) img[data-logo-dark] {
+  display: none;
+}
+
+/* Theme switch fades rather than snapping. */
+:root.theme-anim,
+:root.theme-anim * {
+  transition:
+    background-color 0.25s var(--ease-out-expo),
+    color 0.25s var(--ease-out-expo),
+    border-color 0.25s var(--ease-out-expo) !important;
+}
+:root[data-theme="dark"] .bg-charcoal.text-white,
+:root[data-theme="dark"] .bg-charcoal .text-white,
+:root[data-theme="dark"] .btn-dark .text-white {
+  color: #313b2b;
+}
+
+/* Design system press and tile motion (climb easing). */
+.rh-press {
+  transition:
+    transform 120ms var(--ease-out-expo),
+    background-color 150ms var(--ease-out-expo),
+    box-shadow 150ms var(--ease-out-expo);
+}
+.rh-press:active {
+  transform: scale(0.97);
+}
+.rh-tile {
+  transition: transform 400ms var(--ease-out-expo);
+}
+@media (hover: hover) {
+  .rh-tile:hover {
+    transform: translateY(-4px);
+  }
+}
+.rh-tile:active {
+  transform: scale(0.98);
+}
+@media (prefers-reduced-motion: reduce) {
+  .rh-press,
+  .rh-tile {
+    transition: none;
+  }
+  .rh-press:active,
+  .rh-tile:hover,
+  .rh-tile:active {
+    transform: none;
   }
 }
