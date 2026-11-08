@@ -178,7 +178,7 @@ namespace InventorySystem.Forms
             pnlType.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 120F));
             pnlType.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 120F));
 
-            Label lblType = new Label { Name = "lblType", Text = "Customer Type", Font = new Font("Segoe UI", 9F, FontStyle.Bold), ForeColor = ThemeConfig.TextColorDark, AutoSize = true, Anchor = AnchorStyles.Left };
+            Label lblType = new Label { Name = "lblType", Text = "Customer Type", Font = new Font(InventorySystem.ThemeConfig.AppFontFamily, 9F, FontStyle.Bold), ForeColor = ThemeConfig.TextColorDark, AutoSize = true, Anchor = AnchorStyles.Left };
             rdoCompany = new RadioButton { Text = "Company", Font = ThemeConfig.StandardFont, AutoSize = true, Anchor = AnchorStyles.Left };
             rdoIndividual = new RadioButton { Text = "Individual", Font = ThemeConfig.StandardFont, AutoSize = true, Anchor = AnchorStyles.Left, Checked = true };
             
@@ -216,7 +216,7 @@ namespace InventorySystem.Forms
             // Reminder Card
             Panel cardReminders = new Panel { Dock = DockStyle.Fill, AutoSize = true, Padding = new Padding(15), Margin = new Padding(0, 5, 0, 15) };
             cardReminders.Paint += (s, e) => {
-                ThemeConfig.FillRoundedBackground(e.Graphics, cardReminders.ClientRectangle, 12f, Color.FromArgb(252, 253, 255));
+                ThemeConfig.FillRoundedBackground(e.Graphics, cardReminders.ClientRectangle, 12f, Color.FromArgb(247, 246, 243));
                 ThemeConfig.DrawRoundedBorder(e.Graphics, cardReminders.ClientRectangle, 12f, ThemeConfig.BorderColor, 1f);
             };
 

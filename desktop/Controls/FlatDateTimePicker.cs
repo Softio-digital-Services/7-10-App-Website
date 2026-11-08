@@ -74,7 +74,7 @@ namespace InventorySystem.Controls
             lblDate = new Label();
             lblDate.Dock = DockStyle.Fill;
             lblDate.TextAlign = ContentAlignment.MiddleLeft;
-            lblDate.Font = new Font("Segoe UI", 10F);
+            lblDate.Font = new Font(InventorySystem.ThemeConfig.AppFontFamily, 10F);
             lblDate.Text = _value.HasValue
                 ? _value.Value.ToShortDateString()
                 : Helpers.LocalizationManager.GetString("Common_NoDate", "No Date");

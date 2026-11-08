@@ -97,7 +97,7 @@ namespace InventorySystem.Plugins
             _display.ReadOnly    = true;
             _display.TabStop     = false;
             _display.Text        = "0";
-            _display.Font        = new Font("Segoe UI", 28, FontStyle.Bold);
+            _display.Font        = new Font(InventorySystem.ThemeConfig.AppFontFamily, 28, FontStyle.Bold);
             _display.TextAlign   = HorizontalAlignment.Right;
             _display.BorderStyle = BorderStyle.None;
             _display.BackColor   = ThemeConfig.SurfaceColor;
@@ -138,7 +138,7 @@ namespace InventorySystem.Plugins
                     btn.FlatStyle = FlatStyle.Flat;
                     btn.FlatAppearance.BorderSize = 0;
                     btn.TabStop   = false;
-                    btn.Font      = new Font("Segoe UI", 14, FontStyle.Regular);
+                    btn.Font      = new Font(InventorySystem.ThemeConfig.AppFontFamily, 14, FontStyle.Regular);
                     btn.Cursor    = Cursors.Hand;
 
                     if (label == "=")
@@ -155,7 +155,7 @@ namespace InventorySystem.Plugins
                     {
                         btn.BackColor = ThemeConfig.ActiveBackColor;
                         btn.ForeColor = ThemeConfig.PrimaryColor;
-                        btn.Font      = new Font("Segoe UI", 16, FontStyle.Bold);
+                        btn.Font      = new Font(InventorySystem.ThemeConfig.AppFontFamily, 16, FontStyle.Bold);
                     }
                     else
                     {

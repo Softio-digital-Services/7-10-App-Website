@@ -130,7 +130,7 @@ namespace InventorySystem.Forms
             this.btnDetails.BackColor = Color.Transparent;
             this.btnDetails.Cursor = Cursors.Hand;
             this.btnDetails.Click += BtnDetails_Click;
-            this.btnDetails.Paint += (s, e) => ThemeConfig.DrawIconButton(btnDetails, e.Graphics, "view", "Sup_Details", ThemeConfig.TextColorLight, Color.FromArgb(139, 92, 246), false);
+            this.btnDetails.Paint += (s, e) => ThemeConfig.DrawIconButton(btnDetails, e.Graphics, "view", "Sup_Details", ThemeConfig.TextColorLight, Color.FromArgb(90, 98, 85), false);
 
             // Delete Selected Button
             Button btnDeleteSelected = new Button();

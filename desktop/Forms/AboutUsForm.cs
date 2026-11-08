@@ -272,7 +272,7 @@ namespace InventorySystem.Forms
             var bounds = _pnlLogo.ClientRectangle;
             const float radius = 26f;
             using (var path = ThemeConfig.GetRoundedPathF(new RectangleF(0, 0, bounds.Width, bounds.Height), radius))
-            using (var fill = new SolidBrush(Color.FromArgb(5, 13, 36)))
+            using (var fill = new SolidBrush(Color.FromArgb(30, 35, 26)))
             {
                 g.FillPath(fill, path);
                 g.SetClip(path);
@@ -291,7 +291,7 @@ namespace InventorySystem.Forms
             }
             else
             {
-                TextRenderer.DrawText(g, "Softio", new Font("Segoe UI", 16F, FontStyle.Bold),
+                TextRenderer.DrawText(g, "Softio", new Font(InventorySystem.ThemeConfig.AppFontFamily, 16F, FontStyle.Bold),
                     bounds, Color.White, TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter);
             }
         }

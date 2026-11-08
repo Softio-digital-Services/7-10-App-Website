@@ -158,7 +158,7 @@ namespace InventorySystem
             this.Dashboard_btn.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
             this.Dashboard_btn.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
             this.Dashboard_btn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.Dashboard_btn.ForeColor = System.Drawing.Color.FromArgb(31, 41, 55);
+            this.Dashboard_btn.ForeColor = System.Drawing.Color.FromArgb(49, 59, 43);
             this.Dashboard_btn.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.Dashboard_btn.Location = new System.Drawing.Point(12, 174);
             this.Dashboard_btn.Name = "Dashboard_btn";

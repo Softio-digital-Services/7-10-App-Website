@@ -41,7 +41,9 @@ function readSaved(): Partial<Omit<Form, "payment">> & { payment?: string } {
   }
 }
 
-export function CheckoutView({ account }: { account: { name: string; email: string } | null }) {
+type Account = { name: string; email: string; phone?: string; region?: string; city?: string; address?: string };
+
+export function CheckoutView({ account }: { account: Account | null }) {
   const { t, f, locale } = useI18n();
   const router = useRouter();
   const { items, ready, subtotal, count, syncStock, refresh, clearCart } = useCart();
@@ -52,11 +54,11 @@ export function CheckoutView({ account }: { account: { name: string; email: stri
     const payment = saved.payment === "WHISH" || saved.payment === "CARD" ? "WHISH" : "COD";
     return {
       name: account?.name ?? "",
-      phone: "",
+      phone: account?.phone ?? "",
       email: account?.email ?? "",
-      region: "",
-      city: "",
-      address: "",
+      region: account?.region ?? "",
+      city: account?.city ?? "",
+      address: account?.address ?? "",
       notes: "",
       ...saved,
       payment,

@@ -83,7 +83,7 @@ namespace InventorySystem.Forms
             {
                 Name = "total_amount", HeaderText = LocalizationManager.GetString("Msg_Total"), DataPropertyName = "total_amount",
                 Width = 110, ReadOnly = true,
-                DefaultCellStyle = new DataGridViewCellStyle { Font = new Font("Segoe UI", 9.5F, FontStyle.Bold), ForeColor = ThemeConfig.PrimaryColor, Alignment = DataGridViewContentAlignment.MiddleCenter }
+                DefaultCellStyle = new DataGridViewCellStyle { Font = new Font(InventorySystem.ThemeConfig.AppFontFamily, 9.5F, FontStyle.Bold), ForeColor = ThemeConfig.PrimaryColor, Alignment = DataGridViewContentAlignment.MiddleCenter }
             };
             dgvQuotes.Columns.Add(colTotal);
             dgvQuotes.CellFormatting += DgvQuotes_CellFormatting;

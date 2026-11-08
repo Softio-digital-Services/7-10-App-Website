@@ -62,11 +62,11 @@ namespace InventorySystem.Controls
             btnNext.FlatAppearance.BorderSize = 0;
             btnNext.Click += (s, e) => { _currentViewDate = _currentViewDate.AddMonths(1); RenderCalendar(); };
 
-            Button btnClear = new Button { Text = "Clear", Width = 45, Dock = DockStyle.Right, FlatStyle = FlatStyle.Flat, Font = new Font("Segoe UI", 8), ForeColor = ThemeConfig.DangerColor };
+            Button btnClear = new Button { Text = "Clear", Width = 45, Dock = DockStyle.Right, FlatStyle = FlatStyle.Flat, Font = new Font(InventorySystem.ThemeConfig.AppFontFamily, 8), ForeColor = ThemeConfig.DangerColor };
             btnClear.FlatAppearance.BorderSize = 0;
             btnClear.Click += (s, e) => { SelectedDate = null; DateSelected?.Invoke(this, EventArgs.Empty); this.Close(); };
 
-            lblMonthYear = new Label { Dock = DockStyle.Fill, TextAlign = ContentAlignment.MiddleCenter, Font = new Font("Segoe UI", 10, FontStyle.Bold) };
+            lblMonthYear = new Label { Dock = DockStyle.Fill, TextAlign = ContentAlignment.MiddleCenter, Font = new Font(InventorySystem.ThemeConfig.AppFontFamily, 10, FontStyle.Bold) };
             
             pnlHeader.Controls.Add(lblMonthYear);
             pnlHeader.Controls.Add(btnClear);
@@ -84,7 +84,7 @@ namespace InventorySystem.Controls
             for(int i=0; i<7; i++)
             {
                 tlpWeek.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 14.28f));
-                Label l = new Label { Text = days[i], TextAlign = ContentAlignment.MiddleCenter, Dock = DockStyle.Fill, ForeColor = ThemeConfig.SecondaryColor, Font = new Font("Segoe UI", 8) };
+                Label l = new Label { Text = days[i], TextAlign = ContentAlignment.MiddleCenter, Dock = DockStyle.Fill, ForeColor = ThemeConfig.SecondaryColor, Font = new Font(InventorySystem.ThemeConfig.AppFontFamily, 8) };
                 tlpWeek.Controls.Add(l, i, 0);
             }
 
@@ -125,14 +125,14 @@ namespace InventorySystem.Controls
                 btn.Margin = new Padding(margin);
                 btn.FlatStyle = FlatStyle.Flat;
                 btn.FlatAppearance.BorderSize = 0;
-                btn.Font = new Font("Segoe UI", 9);
+                btn.Font = new Font(InventorySystem.ThemeConfig.AppFontFamily, 9);
                 btn.Cursor = Cursors.Hand;
                 
                 DateTime btnDate = new DateTime(_currentViewDate.Year, _currentViewDate.Month, day);
                 
                 if (btnDate.Date < MinDate.Date)
                 {
-                    btn.BackColor = Color.FromArgb(240, 240, 240);
+                    btn.BackColor = Color.FromArgb(238, 238, 231);
                     btn.ForeColor = ThemeConfig.MutedTextColor;
                     btn.Cursor = Cursors.Default;
                     btn.Enabled = false;
@@ -145,7 +145,7 @@ namespace InventorySystem.Controls
                 else if (btnDate.Date == DateTime.Today)
                 {
                     btn.ForeColor = ThemeConfig.PrimaryColor;
-                    btn.Font = new Font("Segoe UI", 9, FontStyle.Bold);
+                    btn.Font = new Font(InventorySystem.ThemeConfig.AppFontFamily, 9, FontStyle.Bold);
                 }
                 else
                 {

@@ -80,7 +80,7 @@ namespace InventorySystem.Forms
             dgvItems.Columns.Add(new DataGridViewTextBoxColumn { Name = "UnitPrice", DataPropertyName = "price", HeaderText = LocalizationManager.GetString("POS_GridPrice"), Width = 100, ReadOnly = true });
             
             DataGridViewTextBoxColumn colReturn = new DataGridViewTextBoxColumn { Name = "QtyToReturn", DataPropertyName = "QtyToReturn", HeaderText = LocalizationManager.GetString("Return_Qty"), Width = 100 };
-            colReturn.DefaultCellStyle.BackColor = Color.FromArgb(240, 248, 255);
+            colReturn.DefaultCellStyle.BackColor = Color.FromArgb(247, 246, 243);
             dgvItems.Columns.Add(colReturn);
             
             dgvItems.CellValueChanged += DgvItems_CellValueChanged;

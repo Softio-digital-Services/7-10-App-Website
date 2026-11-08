@@ -96,7 +96,7 @@ namespace InventorySystem.Controls
         {
             // Label
             lblTitle = new Label { 
-                Font = new Font("Segoe UI", 9F, FontStyle.Bold), 
+                Font = new Font(InventorySystem.ThemeConfig.AppFontFamily, 9F, FontStyle.Bold), 
                 ForeColor = ThemeConfig.TextColorDark, 
                 AutoSize = true, 
                 Location = new Point(5, 0) 
@@ -115,7 +115,7 @@ namespace InventorySystem.Controls
             // Input TextBox
             txtInput = new TextBox { 
                 BorderStyle = BorderStyle.None, 
-                Font = new Font("Segoe UI", 10F), 
+                Font = new Font(InventorySystem.ThemeConfig.AppFontFamily, 10F), 
                 ForeColor = ThemeConfig.TextColorDark, 
                 BackColor = ThemeConfig.SurfaceColor,
                 Dock = DockStyle.Fill,

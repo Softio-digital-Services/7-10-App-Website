@@ -75,7 +75,7 @@ namespace InventorySystem.Forms
             // URL label
             lblUrl = new Label
             {
-                Font = new Font("Segoe UI", 14f, FontStyle.Bold),
+                Font = new Font(InventorySystem.ThemeConfig.AppFontFamily, 14f, FontStyle.Bold),
                 ForeColor = ThemeConfig.PrimaryColor,
                 TextAlign = ContentAlignment.MiddleCenter,
                 Dock = DockStyle.Fill,

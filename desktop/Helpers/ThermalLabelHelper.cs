@@ -319,7 +319,7 @@ namespace InventorySystem.Helpers
         {
             Color borderColor = _grayscale ? Color.FromArgb(100, 100, 100) : Color.FromArgb(148, 163, 184);
             Color textColor = Color.Black;
-            Color accent = _grayscale ? Color.FromArgb(40, 40, 40) : Color.FromArgb(5, 150, 105);
+            Color accent = _grayscale ? Color.FromArgb(40, 40, 40) : Color.FromArgb(46, 125, 50);
 
             using (var border = new Pen(borderColor, Math.Max(1f, bounds.Height / 80f)))
                 g.DrawRectangle(border, bounds);
@@ -346,9 +346,9 @@ namespace InventorySystem.Helpers
             float skuPt = Math.Max(4.5f, Math.Min(10f, bounds.Height * 0.055f));
             float pricePt = Math.Max(5.5f, Math.Min(13f, bounds.Height * 0.075f));
 
-            using (var nameFont = new Font("Segoe UI", namePt, FontStyle.Bold))
+            using (var nameFont = new Font(InventorySystem.ThemeConfig.AppFontFamily, namePt, FontStyle.Bold))
             using (var skuFont = new Font("Consolas", skuPt))
-            using (var priceFont = new Font("Segoe UI", pricePt, FontStyle.Bold))
+            using (var priceFont = new Font(InventorySystem.ThemeConfig.AppFontFamily, pricePt, FontStyle.Bold))
             using (var textBrush = new SolidBrush(textColor))
             using (var accentBrush = new SolidBrush(accent))
             {

@@ -23,8 +23,50 @@ model User {
   requests      ProductRequest[] @relation("MemberRequests")
   managedRequests ProductRequest[] @relation("ManagerRequests")
   stockAlerts   StockNotification[]
+  addresses     Address[]
+  wishlist      WishlistItem[]
+  /// Account details and "My fit", edited on the account page.
+  phone         String?
+  locale        String?
+  waUpdates     Boolean          @default(false)
+  fitHeight     Int?
+  fitStyle      String?
+  fitTops       String?
+  fitPants      String?
+  fitHijab      String?
   createdAt     DateTime         @default(now())
   updatedAt     DateTime         @updatedAt
+}
+
+/// A saved delivery address (account page, prefilled at checkout).
+model Address {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  label      String   @default("Home")
+  name       String
+  phone      String
+  region     String
+  city       String
+  street     String
+  floor      String   @default("")
+  landmark   String   @default("")
+  isDefault  Boolean  @default(false)
+  createdAt  DateTime @default(now())
+
+  @@index([userId])
+}
+
+/// A product saved to a customer's wishlist.
+model WishlistItem {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, productId])
 }
 
 model Account {
@@ -103,6 +145,7 @@ model Product {
   comments    Comment[]
   requests    ProductRequest[]
   stockAlerts StockNotification[]
+  wishlisted  WishlistItem[]
   createdAt   DateTime            @default(now())
   updatedAt   DateTime            @updatedAt
 

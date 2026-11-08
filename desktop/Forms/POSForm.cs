@@ -160,7 +160,7 @@ namespace InventorySystem.Forms
             btnManageDrafts = new InventorySystem.Controls.ModernButton { Name = "btnManageDrafts", Text = LocalizationManager.GetString("POS_ManageDrafts"), Cursor = Cursors.Hand, Height = 35, Width = 160 };
             btnAddShipping = new InventorySystem.Controls.ModernButton { Name = "btnAddShipping", Text = LocalizationManager.GetString("POS_AddShipping"), Cursor = Cursors.Hand, Height = 35, Width = 200 };
 
-            ThemeConfig.ApplyPaletteButton(btnManageDrafts, Color.FromArgb(99, 102, 241)); // Indigo
+            ThemeConfig.ApplyPaletteButton(btnManageDrafts, Color.FromArgb(138, 136, 99)); // Indigo
             ThemeConfig.ApplyPaletteButton(btnAddShipping, ThemeConfig.PrimaryColor); // Gold
 
             btnManageDrafts.Click += (s, ev) =>
@@ -509,7 +509,7 @@ namespace InventorySystem.Forms
                 AutoSize = false,
                 Size = new Size(28, 28),
                 Cursor = Cursors.Hand,
-                Font = new Font("Segoe UI", 12F, FontStyle.Bold),
+                Font = new Font(InventorySystem.ThemeConfig.AppFontFamily, 12F, FontStyle.Bold),
                 BackColor = Color.Transparent,
                 ForeColor = ThemeConfig.SecondaryColor,
                 Margin = new Padding(0),
@@ -607,8 +607,8 @@ namespace InventorySystem.Forms
             }
 
             // Card dimensions  wider to accommodate icon + text
-            var nameFont = ThemeConfig.SmallBoldFont ?? new Font("Segoe UI", 9F, FontStyle.Bold);
-            var countFont = new Font("Segoe UI", 7.5F);
+            var nameFont = ThemeConfig.SmallBoldFont ?? new Font(InventorySystem.ThemeConfig.AppFontFamily, 9F, FontStyle.Bold);
+            var countFont = new Font(InventorySystem.ThemeConfig.AppFontFamily, 7.5F);
             int nameW = TextRenderer.MeasureText(label, nameFont).Width;
             int cntW = TextRenderer.MeasureText(countText, countFont).Width;
             countFont.Dispose();
@@ -686,7 +686,7 @@ namespace InventorySystem.Forms
                 TextRenderer.DrawText(g, label, nameFont,
                     new Rectangle(textX, textBlockY, textW, 17), ThemeConfig.TextColorDark, textFlags);
 
-                using (var cf = new Font("Segoe UI", 7.5F))
+                using (var cf = new Font(InventorySystem.ThemeConfig.AppFontFamily, 7.5F))
                     TextRenderer.DrawText(g, countText, cf,
                         new Rectangle(textX, textBlockY + 19, textW, 16),
                         isActive ? activeBorder : ThemeConfig.SecondaryColor, textFlags);
@@ -897,7 +897,7 @@ namespace InventorySystem.Forms
             Label lblCat = new Label
             {
                 Text = part.CategoryName,
-                Font = new Font("Segoe UI", 7.5F, FontStyle.Italic),
+                Font = new Font(InventorySystem.ThemeConfig.AppFontFamily, 7.5F, FontStyle.Italic),
                 ForeColor = ThemeConfig.SecondaryColor,
                 AutoSize = false,
                 Width = CARD_W - 20,
@@ -912,7 +912,7 @@ namespace InventorySystem.Forms
             Label lblName = new Label
             {
                 Text = part.PartName,
-                Font = new Font("Segoe UI", 9F, FontStyle.Bold),
+                Font = new Font(InventorySystem.ThemeConfig.AppFontFamily, 9F, FontStyle.Bold),
                 ForeColor = ThemeConfig.TextColorDark,
                 AutoSize = false,
                 Width = CARD_W - 20,
@@ -926,7 +926,7 @@ namespace InventorySystem.Forms
             Label lblDesc = new Label
             {
                 Text = part.Description,
-                Font = new Font("Segoe UI", 7.5F),
+                Font = new Font(InventorySystem.ThemeConfig.AppFontFamily, 7.5F),
                 ForeColor = Color.Gray,
                 AutoSize = false,
                 Width = CARD_W - 20,
@@ -956,7 +956,7 @@ namespace InventorySystem.Forms
             Label lblPrice = new Label
             {
                 Text = CurrencyService.Format(part.SellingPrice),
-                Font = new Font("Segoe UI", 9.5F, FontStyle.Bold),
+                Font = new Font(InventorySystem.ThemeConfig.AppFontFamily, 9.5F, FontStyle.Bold),
                 ForeColor = ThemeConfig.PrimaryColor,
                 AutoSize = false,          // fixed size so DoFooterLayout() can centre it immediately
                 Width = 80,
@@ -983,7 +983,7 @@ namespace InventorySystem.Forms
                     pe.Graphics.DrawPath(pen, path);
                 Color textCol = btnMinus.Enabled ? ThemeConfig.TextColorDark : ThemeConfig.SecondaryColor;
                 TextRenderer.DrawText(pe.Graphics, "-",
-                    new Font("Segoe UI", 10F),
+                    new Font(InventorySystem.ThemeConfig.AppFontFamily, 10F),
                     new Rectangle(0, 0, btnMinus.Width, btnMinus.Height),
                     textCol,
                     TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter | TextFormatFlags.NoPadding);
@@ -994,7 +994,7 @@ namespace InventorySystem.Forms
                 Text = "1",
                 Size = new Size(30, BTN_SIZE),
                 TextAlign = HorizontalAlignment.Center,
-                Font = new Font("Segoe UI", 9F, FontStyle.Bold),
+                Font = new Font(InventorySystem.ThemeConfig.AppFontFamily, 9F, FontStyle.Bold),
                 ForeColor = ThemeConfig.TextColorDark,
                 BackColor = cardBgColor,
                 BorderStyle = BorderStyle.None,
@@ -1039,7 +1039,7 @@ namespace InventorySystem.Forms
                     sf.Alignment = StringAlignment.Center;
                     sf.LineAlignment = StringAlignment.Center;
                     using (var wb = new SolidBrush(Color.White))
-                        pe.Graphics.DrawString("+", new Font("Segoe UI", 11F, FontStyle.Bold), wb,
+                        pe.Graphics.DrawString("+", new Font(InventorySystem.ThemeConfig.AppFontFamily, 11F, FontStyle.Bold), wb,
                             new RectangleF(cx, cy, d, d), sf);
                 }
             };
@@ -1085,7 +1085,7 @@ namespace InventorySystem.Forms
                 Label lblBadge = new Label
                 {
                     Text = LocalizationManager.GetString("POS_OutOfStockBadge"),
-                    Font = new Font("Segoe UI", 7.5F, FontStyle.Bold),
+                    Font = new Font(InventorySystem.ThemeConfig.AppFontFamily, 7.5F, FontStyle.Bold),
                     ForeColor = Color.White,
                     AutoSize = false,
                     Width = CARD_W - 20,
@@ -1111,7 +1111,7 @@ namespace InventorySystem.Forms
                 Label lblStock = new Label
                 {
                     Text = string.Format(LocalizationManager.GetString("POS_LowStock"), part.QuantityInStock),
-                    Font = new Font("Segoe UI", 7F),
+                    Font = new Font(InventorySystem.ThemeConfig.AppFontFamily, 7F),
                     ForeColor = ThemeConfig.WarningColor,
                     AutoSize = true,
                     Location = new Point(10, footerY - 14),
@@ -1499,7 +1499,7 @@ namespace InventorySystem.Forms
         private void PrintReceiptPage(object sender, System.Drawing.Printing.PrintPageEventArgs e)
         {
             Graphics g = e.Graphics;
-            Font fH = new Font("Segoe UI", 12, FontStyle.Bold), fS = new Font("Segoe UI", 9), fI = new Font("Consolas", 9);
+            Font fH = new Font(InventorySystem.ThemeConfig.AppFontFamily, 12, FontStyle.Bold), fS = new Font(InventorySystem.ThemeConfig.AppFontFamily, 9), fI = new Font("Consolas", 9);
             int y = 20, m = 10, w = Math.Min(e.PageBounds.Width, 300) - (m * 2);
             StringFormat cA = new StringFormat { Alignment = StringAlignment.Center }, rA = new StringFormat { Alignment = StringAlignment.Far };
             g.DrawString(ThemeConfig.CompanyName.ToUpper(), fH, Brushes.Black, new Rectangle(m, y, w, 25), cA); y += 30;

@@ -81,7 +81,7 @@ namespace InventorySystem.Forms
             dgvItems.Columns.Add(new DataGridViewTextBoxColumn { Name = "UnitPrice", DataPropertyName = "price", HeaderText = LocalizationManager.GetString("POS_GridPrice"), Width = 100, ReadOnly = true });
             
             DataGridViewTextBoxColumn colReturn = new DataGridViewTextBoxColumn { Name = "QtyToReturn", DataPropertyName = "quantity", HeaderText = LocalizationManager.GetString("Return_Qty"), Width = 120 };
-            colReturn.DefaultCellStyle.BackColor = Color.FromArgb(240, 248, 255);
+            colReturn.DefaultCellStyle.BackColor = Color.FromArgb(247, 246, 243);
             dgvItems.Columns.Add(colReturn);
             
             DataGridViewButtonColumn colRemove = new DataGridViewButtonColumn { Name = "Remove", HeaderText = "", Text = "X", UseColumnTextForButtonValue = true, Width = 50, FlatStyle = FlatStyle.Flat };

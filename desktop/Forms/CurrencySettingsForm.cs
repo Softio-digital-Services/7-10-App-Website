@@ -109,7 +109,7 @@ namespace InventorySystem.Forms
                 Dock = DockStyle.Fill,
                 AutoSize = true,
                 ForeColor = ThemeConfig.SecondaryColor,
-                Font = new Font("Segoe UI", 8f, FontStyle.Italic),
+                Font = new Font(InventorySystem.ThemeConfig.AppFontFamily, 8f, FontStyle.Italic),
                 TextAlign = LocalizationManager.IsArabic ? ContentAlignment.BottomRight : ContentAlignment.BottomLeft
             };
             tlpMain.Controls.Add(lblStatus, 0, 1);
@@ -148,7 +148,7 @@ namespace InventorySystem.Forms
             {
                 Text = LocalizationManager.GetString("Curr_InfoBox"),
                 Dock = DockStyle.Fill,
-                Font = new Font("Segoe UI", 8.5f, FontStyle.Italic),
+                Font = new Font(InventorySystem.ThemeConfig.AppFontFamily, 8.5f, FontStyle.Italic),
                 ForeColor = ThemeConfig.SecondaryColor,
                 TextAlign = LocalizationManager.IsArabic ? ContentAlignment.MiddleRight : ContentAlignment.MiddleLeft
             };

@@ -153,7 +153,7 @@ namespace InventorySystem.Controls
             // Label
             lblTitle = new Label();
             lblTitle.Text = ""; 
-            lblTitle.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            lblTitle.Font = new Font(InventorySystem.ThemeConfig.AppFontFamily, 9F, FontStyle.Bold);
             lblTitle.ForeColor = ThemeConfig.TextColorDark;
             lblTitle.AutoSize = true;
             lblTitle.Location = new Point(5, 0); // Top left
@@ -172,7 +172,7 @@ namespace InventorySystem.Controls
             // TextBox
             txtInput = new TextBox();
             txtInput.BorderStyle = BorderStyle.None;
-            txtInput.Font = new Font("Segoe UI", 10F); // premium size
+            txtInput.Font = new Font(InventorySystem.ThemeConfig.AppFontFamily, 10F); // premium size
             txtInput.ForeColor = ThemeConfig.TextColorDark;
             txtInput.Dock = DockStyle.Fill;
             txtInput.BackColor = ThemeConfig.SurfaceColor;

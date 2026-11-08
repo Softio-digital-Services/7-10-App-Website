@@ -125,7 +125,7 @@ namespace InventorySystem.Forms
                     Label lblCompany = new Label
                     {
                         Text = ThemeConfig.CompanyName.ToUpper(),
-                        Font = new Font("Segoe UI", 24, FontStyle.Bold),
+                        Font = new Font(InventorySystem.ThemeConfig.AppFontFamily, 24, FontStyle.Bold),
                         ForeColor = ThemeConfig.PrimaryColor,
                         Location = new Point(40, hy),
                         AutoSize = true
@@ -135,7 +135,7 @@ namespace InventorySystem.Forms
                     Label lblQuoteTitle = new Label
                     {
                         Text = LocalizationManager.GetString("QuotePreview_Quote", "QUOTATION"),
-                        Font = new Font("Segoe UI", 20, FontStyle.Bold),
+                        Font = new Font(InventorySystem.ThemeConfig.AppFontFamily, 20, FontStyle.Bold),
                         ForeColor = Color.DimGray,
                         Location = new Point(page.Width - 350, hy + 5),
                         Size = new Size(310, 35),
@@ -147,7 +147,7 @@ namespace InventorySystem.Forms
                     Label lblCompInfo = new Label
                     {
                         Text = ThemeConfig.CompanyInfoLine,
-                        Font = new Font("Segoe UI", 9),
+                        Font = new Font(InventorySystem.ThemeConfig.AppFontFamily, 9),
                         Location = new Point(40, hy),
                         Size = new Size(500, 35),
                         ForeColor = Color.Gray
@@ -167,15 +167,15 @@ namespace InventorySystem.Forms
                             DateTime.Now.ToString("dd MMM yyyy"),
                             customerId ?? "N/A",
                             L("QuotePreview_ValidityDays", "15 Days")),
-                        Font = new Font("Segoe UI", 9, FontStyle.Bold),
-                        ForeColor = Color.FromArgb(64, 64, 64),
+                        Font = new Font(InventorySystem.ThemeConfig.AppFontFamily, 9, FontStyle.Bold),
+                        ForeColor = Color.FromArgb(85, 88, 74),
                         Dock = DockStyle.Fill,
                         TextAlign = ContentAlignment.MiddleCenter
                     };
                     pnlDetails.Controls.Add(lblQuoteInfo);
 
                     hy += 60;
-                    Label lblCustHeader = new Label { Text = LocalizationManager.GetString("QuotePreview_CustHeader"), Font = new Font("Segoe UI", 10, FontStyle.Bold), ForeColor = ThemeConfig.PrimaryColor, Location = new Point(40, hy), AutoSize = true };
+                    Label lblCustHeader = new Label { Text = LocalizationManager.GetString("QuotePreview_CustHeader"), Font = new Font(InventorySystem.ThemeConfig.AppFontFamily, 10, FontStyle.Bold), ForeColor = ThemeConfig.PrimaryColor, Location = new Point(40, hy), AutoSize = true };
                     page.Controls.Add(lblCustHeader);
                     hy += 25;
 
@@ -209,7 +209,7 @@ namespace InventorySystem.Forms
                             custAddress,
                             L("Popup_Phone", "Phone"),
                             custPhone),
-                        Font = new Font("Segoe UI", 10),
+                        Font = new Font(InventorySystem.ThemeConfig.AppFontFamily, 10),
                         Location = new Point(40, hy),
                         Size = new Size(600, 45),
                         ForeColor = Color.Black
@@ -224,7 +224,7 @@ namespace InventorySystem.Forms
                     Label lblCont = new Label
                     {
                         Text = string.Format(L("QuotePreview_ContinuedPage", "QUOTATION #{0} (Continued - Page {1})"), _orderId, pageNumber),
-                        Font = new Font("Segoe UI", 10, FontStyle.Bold),
+                        Font = new Font(InventorySystem.ThemeConfig.AppFontFamily, 10, FontStyle.Bold),
                         ForeColor = Color.Gray,
                         Location = new Point(40, 40),
                         AutoSize = true
@@ -260,7 +260,7 @@ namespace InventorySystem.Forms
                 grid.Columns.Add(new DataGridViewTextBoxColumn { Name = "Desc", HeaderText = LocalizationManager.GetString("QuotePreview_ColDesc"), AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill, DefaultCellStyle = new DataGridViewCellStyle { Alignment = DataGridViewContentAlignment.MiddleCenter } });
                 grid.Columns.Add(new DataGridViewTextBoxColumn { Name = "Qty", HeaderText = LocalizationManager.GetString("POS_GridQty"), Width = 60, DefaultCellStyle = new DataGridViewCellStyle { Alignment = DataGridViewContentAlignment.MiddleCenter } });
                 grid.Columns.Add(new DataGridViewTextBoxColumn { Name = "Price", HeaderText = LocalizationManager.GetString("POS_GridPrice"), Width = 100, DefaultCellStyle = new DataGridViewCellStyle { Alignment = DataGridViewContentAlignment.MiddleCenter } });
-                grid.Columns.Add(new DataGridViewTextBoxColumn { Name = "Total", HeaderText = LocalizationManager.GetString("POS_GridTotal"), Width = 110, DefaultCellStyle = new DataGridViewCellStyle { Alignment = DataGridViewContentAlignment.MiddleCenter, Font = new Font("Segoe UI", 9.5F, FontStyle.Bold) } });
+                grid.Columns.Add(new DataGridViewTextBoxColumn { Name = "Total", HeaderText = LocalizationManager.GetString("POS_GridTotal"), Width = 110, DefaultCellStyle = new DataGridViewCellStyle { Alignment = DataGridViewContentAlignment.MiddleCenter, Font = new Font(InventorySystem.ThemeConfig.AppFontFamily, 9.5F, FontStyle.Bold) } });
 
                 // Calculate available grid height depending on whether this can be the final page
                 int remainingItems = items.Count - currentItemIndex;
@@ -306,7 +306,7 @@ namespace InventorySystem.Forms
                     Label lblTermsHead = new Label
                     {
                         Text = LocalizationManager.GetString("QuotePreview_TermsHead", "TERMS AND CONDITIONS"),
-                        Font = new Font("Segoe UI", 9, FontStyle.Bold),
+                        Font = new Font(InventorySystem.ThemeConfig.AppFontFamily, 9, FontStyle.Bold),
                         ForeColor = ThemeConfig.PrimaryColor,
                         Location = new Point(0, 0),
                         AutoSize = true
@@ -318,7 +318,7 @@ namespace InventorySystem.Forms
                     Label lblTerms = new Label
                     {
                         Text = termsText,
-                        Font = new Font("Segoe UI", 8.5F),
+                        Font = new Font(InventorySystem.ThemeConfig.AppFontFamily, 8.5F),
                         Location = new Point(0, 25),
                         Size = new Size(400, 140),
                         ForeColor = Color.DimGray
@@ -341,11 +341,11 @@ namespace InventorySystem.Forms
                     for (int i = 0; i < lbls.Count; i++)
                     {
                         bool isLast = (i == lbls.Count - 1);
-                        Label lblL = new Label { Text = lbls[i], Font = new Font("Segoe UI", isLast ? 10 : 9, isLast ? FontStyle.Bold : FontStyle.Regular), Location = new Point(sx, i * 28), Size = new Size(130, 25), TextAlign = ContentAlignment.MiddleRight };
+                        Label lblL = new Label { Text = lbls[i], Font = new Font(InventorySystem.ThemeConfig.AppFontFamily, isLast ? 10 : 9, isLast ? FontStyle.Bold : FontStyle.Regular), Location = new Point(sx, i * 28), Size = new Size(130, 25), TextAlign = ContentAlignment.MiddleRight };
                         Label lblV = new Label
                         {
                             Text = vls[i],
-                            Font = new Font("Segoe UI", isLast ? 12 : 10, isLast ? FontStyle.Bold : FontStyle.Regular),
+                            Font = new Font(InventorySystem.ThemeConfig.AppFontFamily, isLast ? 12 : 10, isLast ? FontStyle.Bold : FontStyle.Regular),
                             Location = new Point(sx + 135, i * 28),
                             Size = new Size(140, 25),
                             TextAlign = ContentAlignment.MiddleRight,
@@ -358,7 +358,7 @@ namespace InventorySystem.Forms
                     Label lblFinal = new Label
                     {
                         Text = LocalizationManager.GetString("QuotePreview_FinalMsg", "Thank you for your business! Please contact us if you have any questions."),
-                        Font = new Font("Segoe UI", 10, FontStyle.Bold | FontStyle.Italic),
+                        Font = new Font(InventorySystem.ThemeConfig.AppFontFamily, 10, FontStyle.Bold | FontStyle.Italic),
                         Location = new Point(0, 1050),
                         Size = new Size(page.Width, 30),
                         TextAlign = ContentAlignment.MiddleCenter,
@@ -369,7 +369,7 @@ namespace InventorySystem.Forms
                     Label lblContactFooter = new Label
                     {
                         Text = ThemeConfig.ContactFooterLine,
-                        Font = new Font("Segoe UI", 8.5F),
+                        Font = new Font(InventorySystem.ThemeConfig.AppFontFamily, 8.5F),
                         Location = new Point(0, 1085),
                         Size = new Size(page.Width, 25),
                         TextAlign = ContentAlignment.MiddleCenter,
@@ -385,7 +385,7 @@ namespace InventorySystem.Forms
                     Label lblPageFooter = new Label
                     {
                         Text = string.Format(L("QuotePreview_PageN", "Page {0}"), pageNumber),
-                        Font = new Font("Segoe UI", 8.5F, FontStyle.Italic),
+                        Font = new Font(InventorySystem.ThemeConfig.AppFontFamily, 8.5F, FontStyle.Italic),
                         ForeColor = Color.Silver,
                         Location = new Point(0, 1100),
                         Size = new Size(page.Width, 20),

@@ -38,8 +38,8 @@ namespace InventorySystem.Forms
 
         private static readonly Color RailBg = Color.FromArgb(255, 255, 255);
         private static readonly Color SoftBg = Color.FromArgb(246, 248, 251);
-        private static readonly Color Line = Color.FromArgb(226, 232, 240);
-        private static readonly Color Muted = Color.FromArgb(100, 116, 139);
+        private static readonly Color Line = Color.FromArgb(230, 229, 218);
+        private static readonly Color Muted = Color.FromArgb(85, 88, 74);
         // Cart rows sit on a white rail, so the divider grey used elsewhere is too
         // faint to read as an edge. These are a couple of steps darker.
         private static readonly Color CardBorder = Color.FromArgb(209, 217, 228);
@@ -775,9 +775,9 @@ namespace InventorySystem.Forms
             grid.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
             grid.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
 
-            _btnReturn = ActionBtn(LocalizationManager.GetString("POS_ItemReturn", "Return"), Color.FromArgb(220, 38, 38));
-            _btnDraft = ActionBtn(LocalizationManager.GetString("POS_SaveDraft", "Draft"), Color.FromArgb(124, 58, 237));
-            _btnQuote = ActionBtn(LocalizationManager.GetString("POS_Quotation", "Quote"), Color.FromArgb(37, 99, 235));
+            _btnReturn = ActionBtn(LocalizationManager.GetString("POS_ItemReturn", "Return"), Color.FromArgb(181, 21, 21));
+            _btnDraft = ActionBtn(LocalizationManager.GetString("POS_SaveDraft", "Draft"), Color.FromArgb(108, 110, 82));
+            _btnQuote = ActionBtn(LocalizationManager.GetString("POS_Quotation", "Quote"), Color.FromArgb(49, 59, 43));
             _btnBill = ActionBtn(LocalizationManager.GetString("POS_CustomerBill", "Bill"), ThemeConfig.PrimaryColor);
 
             _btnReturn.Click += (s, e) => ReturnClick?.Invoke(this, EventArgs.Empty);
@@ -1312,7 +1312,7 @@ namespace InventorySystem.Forms
             {
                 _lblDiscountVal.Text = disc > 0 ? "-" + CurrencyService.Format(disc) : CurrencyService.Format(0);
                 _lblDiscountVal.Visible = !ApplyDiscount;
-                _lblDiscountVal.ForeColor = disc > 0 ? Color.FromArgb(220, 38, 38) : Muted;
+                _lblDiscountVal.ForeColor = disc > 0 ? Color.FromArgb(181, 21, 21) : Muted;
             }
             if (_lblTotalVal != null) _lblTotalVal.Text = CurrencyService.Format(Math.Max(0, s + t + ship - disc));
         }

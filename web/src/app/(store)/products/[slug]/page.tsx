@@ -5,7 +5,9 @@ import { ProductGallery } from "@/components/product/product-gallery";
 import { ProductInfo } from "@/components/product/product-info";
 import { SectionHeading } from "@/components/brand/section-heading";
 import { Img } from "@/components/img";
+import { auth } from "@/lib/auth";
 import { getProductBySlug, getRelated } from "@/lib/catalog";
+import { prisma } from "@/lib/prisma";
 import { formatPrice } from "@/lib/format";
 import { alternatesFor, dictionaries } from "@/lib/i18n";
 import { getI18n } from "@/lib/i18n/server";
@@ -45,6 +47,13 @@ export default async function ProductPage({ params }: { params: Params }) {
   if (!product) notFound();
 
   const related = await getRelated(product, locale, 4);
+  // Pre-select the customer's saved size for this kind of garment.
+  const session = await auth();
+  const fit = session?.user?.id
+    ? await prisma.user.findUnique({ where: { id: session.user.id }, select: { fitTops: true, fitPants: true, fitHijab: true } })
+    : null;
+  const kind = `${product.category} ${product.name}`.toLowerCase();
+  const preferredSize = fit ? (/hijab/.test(kind) ? fit.fitHijab : /pant|trouser|bottom|jean|short/.test(kind) ? fit.fitPants : fit.fitTops) : null;
   const alt = dictionaries[locale === "ar" ? "en" : "ar"];
 
   const url = `${store.siteUrl}/products/${product.slug}`;
@@ -120,7 +129,7 @@ export default async function ProductPage({ params }: { params: Params }) {
           </div>
           <div className="lg:col-span-5">
             <div className="lg:sticky lg:top-[96px]">
-              <ProductInfo product={product} />
+              <ProductInfo product={product} preferredSize={preferredSize} />
             </div>
           </div>
         </div>

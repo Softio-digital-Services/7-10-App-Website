@@ -1,3 +1,9 @@
+/* 7.10 brand fonts (OFL): Tajawal body, Barlow Condensed labels, Squada One display. */
+@font-face { font-family: 'Tajawal'; src: url('Tajawal-Regular.ttf') format('truetype'); font-weight: 400; font-display: swap; }
+@font-face { font-family: 'Tajawal'; src: url('Tajawal-Medium.ttf') format('truetype'); font-weight: 500; font-display: swap; }
+@font-face { font-family: 'Tajawal'; src: url('Tajawal-Bold.ttf') format('truetype'); font-weight: 600 800; font-display: swap; }
+@font-face { font-family: 'Barlow Condensed'; src: url('BarlowCondensed-Bold.ttf') format('truetype'); font-weight: 600 800; font-display: swap; }
+@font-face { font-family: 'Squada One'; src: url('SquadaOne-Regular.ttf') format('truetype'); font-weight: 400; font-display: swap; }
 /* Material Symbols Rounded - local offline copy */
 @font-face {
   font-family: 'Material Symbols Rounded';

@@ -339,7 +339,7 @@ namespace InventorySystem.Forms
             Button btn = new Button();
             btn.Text = text;
             btn.Name = "btnTab" + text.Replace(" ", "");
-            btn.Font = new Font("Segoe UI", 11F, FontStyle.Regular);
+            btn.Font = new Font(InventorySystem.ThemeConfig.AppFontFamily, 11F, FontStyle.Regular);
             btn.ForeColor = ThemeConfig.SecondaryColor;
             btn.FlatAppearance.BorderSize = 0;
             btn.FlatStyle = FlatStyle.Flat;
@@ -388,13 +388,13 @@ namespace InventorySystem.Forms
                 if (b == null) continue;
                 b.ForeColor = ThemeConfig.SecondaryColor;
                 b.BackColor = Color.Transparent;
-                b.Font = new Font("Segoe UI", 11F, FontStyle.Regular);
+                b.Font = new Font(InventorySystem.ThemeConfig.AppFontFamily, 11F, FontStyle.Regular);
             }
 
             // Set Active
             clickedBtn.ForeColor = ThemeConfig.PrimaryColor;
             clickedBtn.BackColor = ThemeConfig.ActiveBackColor;
-            clickedBtn.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
+            clickedBtn.Font = new Font(InventorySystem.ThemeConfig.AppFontFamily, 11F, FontStyle.Bold);
             
             // Move Indicator
             pnlIndicator.Visible = true;

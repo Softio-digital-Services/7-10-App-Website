@@ -143,7 +143,7 @@ namespace InventorySystem.Controls
             // Labels
             _lblTitle = new Label
             {
-                Font = new Font("Segoe UI", 11F, FontStyle.Bold),
+                Font = new Font(InventorySystem.ThemeConfig.AppFontFamily, 11F, FontStyle.Bold),
                 ForeColor = ThemeConfig.MutedTextColor,
                 AutoSize = false,
                 AutoEllipsis = false,
@@ -153,7 +153,7 @@ namespace InventorySystem.Controls
 
             _lblValue = new Label
             {
-                Font = new Font("Segoe UI", 22F, FontStyle.Bold),
+                Font = new Font(InventorySystem.ThemeConfig.AppFontFamily, 22F, FontStyle.Bold),
                 ForeColor = ThemeConfig.TextColorDark,
                 AutoSize = true,
                 Location = new Point(18, 40),
@@ -162,7 +162,7 @@ namespace InventorySystem.Controls
 
             _lblSubtitle = new Label
             {
-                Font = new Font("Segoe UI", 10F, FontStyle.Bold),
+                Font = new Font(InventorySystem.ThemeConfig.AppFontFamily, 10F, FontStyle.Bold),
                 ForeColor = ThemeConfig.MutedTextColor,
                 AutoSize = true,
                 Location = new Point(22, 85),
@@ -176,7 +176,7 @@ namespace InventorySystem.Controls
             this.Controls.Add(_lblTitle);
 
             // Initial Theme
-            this.ThemeColor = Color.FromArgb(67, 24, 255); // Default Blue
+            this.ThemeColor = Color.FromArgb(49, 59, 43); // Default Blue
             
             this.RightToLeftChanged += (s, e) => RepositionForRTL();
             RepositionForRTL();
@@ -328,7 +328,7 @@ namespace InventorySystem.Controls
         {
             if (!_valueFonts.TryGetValue(size, out Font f))
             {
-                f = new Font("Segoe UI", size, FontStyle.Bold);
+                f = new Font(InventorySystem.ThemeConfig.AppFontFamily, size, FontStyle.Bold);
                 _valueFonts[size] = f;
             }
             return f;

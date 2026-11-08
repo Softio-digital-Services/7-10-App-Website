@@ -57,7 +57,7 @@ namespace InventorySystem.Forms
             lblMessage = new Label
             {
                 Text = "Message Text",
-                Font = new Font("Segoe UI", 10.5F, FontStyle.Regular), // Increased from StandardFont (9pt)
+                Font = new Font(InventorySystem.ThemeConfig.AppFontFamily, 10.5F, FontStyle.Regular), // Increased from StandardFont (9pt)
                 ForeColor = ThemeConfig.TextColorDark,
                 Dock = DockStyle.Fill,
                 TextAlign = LocalizationManager.IsArabic ? ContentAlignment.MiddleRight : ContentAlignment.MiddleLeft,

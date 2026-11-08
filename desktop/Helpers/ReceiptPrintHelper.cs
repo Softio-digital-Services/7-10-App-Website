@@ -119,10 +119,10 @@ namespace InventorySystem.Helpers
             int w = Math.Max(40, e.MarginBounds.Width);
             // Scale fonts slightly for narrow (58mm) vs wide (80mm+) rolls
             float scale = Math.Max(0.85f, Math.Min(1.15f, w / 280f));
-            Font fH = new Font("Segoe UI", 11f * scale, FontStyle.Bold);
-            Font fS = new Font("Segoe UI", 8.5f * scale);
+            Font fH = new Font(InventorySystem.ThemeConfig.AppFontFamily, 11f * scale, FontStyle.Bold);
+            Font fS = new Font(InventorySystem.ThemeConfig.AppFontFamily, 8.5f * scale);
             Font fI = new Font("Consolas", 8f * scale);
-            Font fB = new Font("Segoe UI", 9.5f * scale, FontStyle.Bold);
+            Font fB = new Font(InventorySystem.ThemeConfig.AppFontFamily, 9.5f * scale, FontStyle.Bold);
 
             int m = e.MarginBounds.Left;
             int y = e.MarginBounds.Top;

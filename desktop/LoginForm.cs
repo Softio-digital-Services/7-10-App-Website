@@ -118,17 +118,16 @@ namespace InventorySystem
         private void ApplyTheme()
         {
             // Background
-            this.tableLayoutPanel1.BackColor = ThemeConfig.BackgroundColor; 
+            // Olive brand field behind a white card, as on the website's sign-in screen.
+            this.tableLayoutPanel1.BackColor = ThemeConfig.SidebarColor;
             
             // Brand name
-            Label lblBrand = new Label
+            PictureBox lblBrand = new PictureBox
             {
-                Text = ThemeConfig.CompanyName,
-                AutoSize = false,
-                Size = new Size(200, 48),
-                Font = new Font("Segoe UI", 22F, FontStyle.Bold),
-                ForeColor = ThemeConfig.PrimaryColor,
-                TextAlign = ContentAlignment.MiddleCenter,
+                Image = InventorySystem.Helpers.BrandLogo.Render(LogicalToDeviceUnits(52), onDark: false),
+                SizeMode = PictureBoxSizeMode.CenterImage,
+                Size = new Size(260, 64),
+                BackColor = Color.Transparent,
                 Anchor = AnchorStyles.Top
             };
             panelLoginCard.Controls.Add(lblBrand);
@@ -148,7 +147,8 @@ namespace InventorySystem
             chkShowPass.Visible = false; // Hide old checkbox
             
             // Labels
-            labelTitle.Font = new Font("Segoe UI", 24F, FontStyle.Bold);
+            labelTitle.Font = new Font(ThemeConfig.HeadingFontFamily, 30F, FontStyle.Bold);
+            labelTitle.Text = labelTitle.Text.ToUpperInvariant();
             
             // Window Controls
             ThemeConfig.ApplyWindowControl(btnClose, "Close");
@@ -163,18 +163,18 @@ namespace InventorySystem
             txtPassword.KeyDown += txtPassword_KeyDown;
 
             // Close and Minimize Buttons
-            btnClose.ForeColor = ThemeConfig.SecondaryColor;
-            btnClose.MouseEnter += (s, e) => btnClose.ForeColor = ThemeConfig.DangerColor;
-            btnClose.MouseLeave += (s, e) => btnClose.ForeColor = ThemeConfig.SecondaryColor;
+            btnClose.ForeColor = ThemeConfig.LinenColor;
+            btnClose.MouseEnter += (s, e) => btnClose.ForeColor = Color.White;
+            btnClose.MouseLeave += (s, e) => btnClose.ForeColor = ThemeConfig.LinenColor;
 
-            btnMinimize.ForeColor = ThemeConfig.SecondaryColor;
-            btnMinimize.MouseEnter += (s, e) => btnMinimize.ForeColor = ThemeConfig.PrimaryColor;
-            btnMinimize.MouseLeave += (s, e) => btnMinimize.ForeColor = ThemeConfig.SecondaryColor;
+            btnMinimize.ForeColor = ThemeConfig.LinenColor;
+            btnMinimize.MouseEnter += (s, e) => btnMinimize.ForeColor = Color.White;
+            btnMinimize.MouseLeave += (s, e) => btnMinimize.ForeColor = ThemeConfig.LinenColor;
 
             // Rounded Corners for Card
             panelLoginCard.Resize += (s, e) => 
             {
-                int radius = 20; 
+                int radius = 10;
                 using (System.Drawing.Drawing2D.GraphicsPath path = GetRoundedPath(panelLoginCard.ClientRectangle, radius))
                 {
                     panelLoginCard.Region = new Region(path);
@@ -189,7 +189,7 @@ namespace InventorySystem
 
             panelLoginCard.BackColor = ThemeConfig.SurfaceColor;
             panelLoginCard.PerformLayout();
-            using (System.Drawing.Drawing2D.GraphicsPath path = GetRoundedPath(panelLoginCard.ClientRectangle, 20))
+            using (System.Drawing.Drawing2D.GraphicsPath path = GetRoundedPath(panelLoginCard.ClientRectangle, 10))
             {
                 panelLoginCard.Region = new Region(path);
             }

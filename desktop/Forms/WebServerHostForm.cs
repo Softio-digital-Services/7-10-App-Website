@@ -111,7 +111,7 @@ namespace InventorySystem
                         AutoSize = false,
                         Size = new Size(280, 72),
                         Text = ThemeConfig.CompanyName,
-                        Font = new Font("Segoe UI", 32f, FontStyle.Bold),
+                        Font = new Font(InventorySystem.ThemeConfig.AppFontFamily, 32f, FontStyle.Bold),
                         ForeColor = Color.White,
                         BackColor = Color.Transparent,
                         TextAlign = ContentAlignment.MiddleCenter
@@ -473,7 +473,7 @@ namespace InventorySystem
             int w = Math.Max(320, ClientSize.Width - left - right);
             int h = Math.Max(240, ClientSize.Height - top - bottom);
             _webView.Bounds = new Rectangle(left, top, w, h);
-            BackColor = Color.FromArgb(15, 23, 42);
+            BackColor = Color.FromArgb(49, 59, 43);
             _webView.BringToFront();
         }
 

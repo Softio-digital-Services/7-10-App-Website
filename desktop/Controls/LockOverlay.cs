@@ -48,7 +48,7 @@ namespace InventorySystem.Controls
             // Title
             Label lblTitle = new Label {
                 Text = LocalizationManager.GetString("Lock_Title", "Session Locked"),
-                Font = new Font("Segoe UI", 18, FontStyle.Bold),
+                Font = new Font(InventorySystem.ThemeConfig.AppFontFamily, 18, FontStyle.Bold),
                 ForeColor = ThemeConfig.TextColorDark,
                 TextAlign = ContentAlignment.MiddleCenter,
                 Location = new Point(20, 120),
@@ -80,7 +80,7 @@ namespace InventorySystem.Controls
             // Password Input
             txtPassword = new TextBox {
                 PasswordChar = '\u25CF',
-                Font = new Font("Segoe UI", 12),
+                Font = new Font(InventorySystem.ThemeConfig.AppFontFamily, 12),
                 BorderStyle = BorderStyle.None,
                 Width = pnlCard.Width - 90
             };

@@ -179,7 +179,7 @@ namespace InventorySystem.Forms
             var lblServerUrl = new Label
             {
                 Text = "📶 " + serverUrl,
-                Font = new Font("Segoe UI", 10f),
+                Font = new Font(InventorySystem.ThemeConfig.AppFontFamily, 10f),
                 ForeColor = ThemeConfig.PrimaryColor,
                 AutoSize = true,
                 TextAlign = ContentAlignment.MiddleLeft,
@@ -214,7 +214,7 @@ namespace InventorySystem.Forms
                 Height = 35
             };
             ThemeConfig.ApplyPrimaryButton(btnScan);
-            btnScan.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            btnScan.Font = new Font(InventorySystem.ThemeConfig.AppFontFamily, 9F, FontStyle.Bold);
             btnScan.Click += (s, e) => new ScanToConnectForm().ShowDialog();
             _btnScan = btnScan;
 

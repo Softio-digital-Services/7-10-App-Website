@@ -366,7 +366,7 @@ namespace InventorySystem.Forms
 
             lblItemCount = new Label
             {
-                AutoSize = true, Font = new Font("Segoe UI", 13F, FontStyle.Bold),
+                AutoSize = true, Font = new Font(InventorySystem.ThemeConfig.AppFontFamily, 13F, FontStyle.Bold),
                 ForeColor = ThemeConfig.TextColorDark, BackColor = Color.Transparent,
                 Location = new Point(4, 8)
             };
@@ -1016,7 +1016,7 @@ namespace InventorySystem.Forms
             // Category label (muted)
             Label lblCat = new Label
             {
-                Text = category, Font = new Font("Segoe UI", 7.5F),
+                Text = category, Font = new Font(InventorySystem.ThemeConfig.AppFontFamily, 7.5F),
                 ForeColor = ThemeConfig.SecondaryColor, BackColor = Color.Transparent,
                 AutoSize = false, Size = new Size(CardW - 12, 18), Location = new Point(6, 88),
                 TextAlign = ContentAlignment.MiddleCenter
@@ -1025,7 +1025,7 @@ namespace InventorySystem.Forms
             // Product name (bold)
             Label lblName = new Label
             {
-                Text = name, Font = new Font("Segoe UI", 9F, FontStyle.Bold),
+                Text = name, Font = new Font(InventorySystem.ThemeConfig.AppFontFamily, 9F, FontStyle.Bold),
                 ForeColor = ThemeConfig.TextColorDark, BackColor = Color.Transparent,
                 AutoSize = false, Size = new Size(CardW - 12, 18), Location = new Point(6, 106),
                 TextAlign = ContentAlignment.TopCenter
@@ -1034,7 +1034,7 @@ namespace InventorySystem.Forms
             // Product description
             Label lblDesc = new Label
             {
-                Text = description, Font = new Font("Segoe UI", 7.5F),
+                Text = description, Font = new Font(InventorySystem.ThemeConfig.AppFontFamily, 7.5F),
                 ForeColor = Color.Gray, BackColor = Color.Transparent,
                 AutoSize = false, Size = new Size(CardW - 12, 16), Location = new Point(6, 124),
                 TextAlign = ContentAlignment.TopCenter
@@ -1044,7 +1044,7 @@ namespace InventorySystem.Forms
             Label lblPrice = new Label
             {
                 Text = InventorySystem.Services.CurrencyService.Format(price),
-                Font = new Font("Segoe UI", 9.5F, FontStyle.Bold),
+                Font = new Font(InventorySystem.ThemeConfig.AppFontFamily, 9.5F, FontStyle.Bold),
                 ForeColor = ThemeConfig.PrimaryColor, BackColor = Color.Transparent,
                 AutoSize = false, Size = new Size(CardW - 12, 22), Location = new Point(6, 143),
                 TextAlign = ContentAlignment.MiddleCenter
@@ -1055,7 +1055,7 @@ namespace InventorySystem.Forms
             {
                 Text = isActive ? (LocalizationManager.GetString("Status_Active", "Active"))
                                 : (LocalizationManager.GetString("Status_Inactive", "Inactive")),
-                Font = new Font("Segoe UI", 7.5F, FontStyle.Bold),
+                Font = new Font(InventorySystem.ThemeConfig.AppFontFamily, 7.5F, FontStyle.Bold),
                 ForeColor = isActive ? ThemeConfig.SuccessBadgeText : ThemeConfig.DangerBadgeText,
                 BackColor = isActive ? ThemeConfig.SuccessBadgeBg : ThemeConfig.DangerBadgeBg,
                 AutoSize = false, Size = new Size(60, 20), Location = new Point((CardW - 60) / 2, 168),

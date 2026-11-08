@@ -351,14 +351,13 @@ namespace InventorySystem
             pnlNav.Controls.Add(pnlLogoContainer);
             pnlLogoContainer.BringToFront();
 
-            Label lblSidebarBrand = new Label
+            // 7.10 logo, on-dark artwork for the olive sidebar (same shapes as the website's logo kit).
+            PictureBox lblSidebarBrand = new PictureBox
             {
                 Name = "lblSidebarBrand",
                 Dock = DockStyle.Fill,
-                Text = ThemeConfig.CompanyName,
-                Font = new Font("Segoe UI", 16F, FontStyle.Bold),
-                ForeColor = ThemeConfig.PrimaryColor,
-                TextAlign = ContentAlignment.MiddleCenter,
+                Image = InventorySystem.Helpers.BrandLogo.Render(LogicalToDeviceUnits(46), onDark: true),
+                SizeMode = PictureBoxSizeMode.CenterImage,
                 BackColor = Color.Transparent
             };
             pnlLogoContainer.Controls.Add(lblSidebarBrand);
@@ -483,11 +482,12 @@ namespace InventorySystem
             button3.SendToBack(); // Puts it at the absolute bottom edge
             button3.Height = 50;
             button3.Text = "  " + LocalizationManager.GetString("Nav_Logout");
-            button3.ForeColor = ThemeConfig.DangerColor;
+            button3.ForeColor = ThemeConfig.LinenColor;
+            button3.BackColor = ThemeConfig.SidebarColor;
             Image logoutIcon = ThemeConfig.GetNuricon("logout");
             if (logoutIcon != null) { button3.Image = ResizeImage(logoutIcon, 22, 22); }
             button3.Font = Dashboard_btn.Font;
-            button3.FlatAppearance.MouseOverBackColor = ThemeConfig.DangerLight;
+            button3.FlatAppearance.MouseOverBackColor = ThemeConfig.ActionColor;
 
             SetupHeaderIcons();
             SetupFooter();
@@ -509,7 +509,7 @@ namespace InventorySystem
             {
                 Text = string.Format(LocalizationManager.GetString("Nav_VersionFooter"), LocalizationManager.GetString("Nav_MainTitle")),
                 AutoSize = true,
-                Font = new Font("Segoe UI", 8.5f),
+                Font = new Font(InventorySystem.ThemeConfig.AppFontFamily, 8.5f),
                 ForeColor = ThemeConfig.TextColorDark,
                 TextAlign = ContentAlignment.MiddleLeft,
                 Dock = DockStyle.Left
@@ -520,7 +520,7 @@ namespace InventorySystem
             {
                 Text = LocalizationManager.GetString("Msg_DevelopedBy", "Developed by Softio"),
                 AutoSize = true,
-                Font = new Font("Segoe UI", 8.5f, FontStyle.Italic),
+                Font = new Font(InventorySystem.ThemeConfig.AppFontFamily, 8.5f, FontStyle.Italic),
                 ForeColor = ThemeConfig.PrimaryColor,
                 TextAlign = ContentAlignment.MiddleRight,
                 Dock = DockStyle.Right
@@ -729,7 +729,7 @@ namespace InventorySystem
             panel1.BorderStyle = BorderStyle.None; // Remove border that adds padding
             label1.Text = string.Format(LocalizationManager.GetString("WelcomeUser", "Welcome, {0}"), UserSession.FullName, UserSession.Role);
             label1.Font = ThemeConfig.SmallBoldFont;
-            label1.ForeColor = Color.FromArgb(180, 255, 255, 255); // Subtle white
+            label1.ForeColor = ThemeConfig.LinenColor; // Linen on the olive top bar
 
             panel1.BackColor = ThemeConfig.HeaderColor; // Theme Red Header
             panel1.Paint += (s, e) =>
@@ -737,7 +737,7 @@ namespace InventorySystem
                 // No border needed for deep blue header
             };
 
-            panel2.BackColor = Color.FromArgb(248, 250, 252); // Light Gray Sidebar
+            panel2.BackColor = ThemeConfig.SidebarColor; // Olive sidebar, as in the design's contents bar
             panel3.BackColor = ThemeConfig.BackgroundColor;
 
             itemAddUser.Click += ItemAddUser_Click;
@@ -787,7 +787,7 @@ namespace InventorySystem
         {
             if (sender is Button btn && btn.Tag != null && (bool)btn.Tag)
             {
-                using (Pen pen = new Pen(ThemeConfig.PrimaryColor, 5))
+                using (Pen pen = new Pen(ThemeConfig.ActionColor, 4)) // crimson marker, like the logo's flag
                 {
                     if (LocalizationManager.IsArabic)
                         e.Graphics.DrawLine(pen, btn.Width - 1, 0, btn.Width - 1, btn.Height);

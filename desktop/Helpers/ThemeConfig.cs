@@ -105,70 +105,78 @@ namespace InventorySystem
             System.Text.RegularExpressions.Regex.Replace(CompanyWebsite ?? "", @"^https?://", "").TrimEnd('/');
 
         // ==========================================
-        // COLOR PALETTE (Light / Horizon Blue)
+        // COLOR PALETTE (7.10 design system: earth tones, one crimson signal)
         // ==========================================
         
-        // Primary Brand Color (7-10 olive — matches logo background)
-        public static Color PrimaryColor { get; } = Color.FromArgb(122, 117, 79); // #7A754F (logo olive)
-        public static Color PrimaryHoverColor { get; } = Color.FromArgb(95, 91, 60); // #5F5B3C
+        // Signal colour: primary buttons, the active-nav marker, badges.
+        public static Color ActionColor { get; } = Color.FromArgb(181, 21, 21); // #B51515 crimson
+        public static Color ActionHoverColor { get; } = Color.FromArgb(145, 17, 17); // #911111
+        public static Color LinenColor { get; } = Color.FromArgb(213, 212, 194); // #D5D4C2 text on olive
+        public static Color KhakiColor { get; } = Color.FromArgb(138, 136, 99); // #8A8863
+        public static Color SidebarHoverColor { get; } = Color.FromArgb(58, 66, 50); // #3A4232
+        public static Color SidebarActiveColor { get; } = Color.FromArgb(71, 80, 59); // #47503B
+
+        // Primary brand colour: deep olive
+        public static Color PrimaryColor { get; } = Color.FromArgb(49, 59, 43); // #313B2B olive / ink: headers, active nav, headings
+        public static Color PrimaryHoverColor { get; } = Color.FromArgb(38, 46, 33); // #262E21 olive pressed
 
         // Gradient Colors for Primary Buttons
-        public static Color GradientStart { get; } = Color.FromArgb(163, 158, 120); // #A39E78
-        public static Color GradientEnd { get; } = Color.FromArgb(122, 117, 79);   // #7A754F
+        public static Color GradientStart { get; } = Color.FromArgb(71, 80, 59); // #47503B olive card
+        public static Color GradientEnd { get; } = Color.FromArgb(49, 59, 43); // #313B2B olive
 
         // Secondary / Text Colors
-        public static Color SecondaryColor { get; } = Color.FromArgb(100, 116, 139); // Slate Gray
-        public static Color SecondaryHoverColor { get; } = Color.FromArgb(210, 210, 220); 
-        public static Color TextColorDark { get; } = Color.FromArgb(15, 23, 42);    
+        public static Color SecondaryColor { get; } = Color.FromArgb(85, 88, 74); // #55584A ink-muted
+        public static Color SecondaryHoverColor { get; } = Color.FromArgb(230, 229, 218); // #E6E5DA hairline
+        public static Color TextColorDark { get; } = Color.FromArgb(49, 59, 43); // #313B2B ink
         public static Color TextColorLight { get; } = Color.White;
         public static Color TextColorWhite { get; } = Color.White;
 
         // Backgrounds
-        public static Color BackgroundColor { get; } = Color.FromArgb(255, 255, 255); 
-        public static Color SidebarColor { get; } = Color.FromArgb(255, 255, 255);     
-        public static Color HeaderColor { get; } = Color.FromArgb(122, 117, 79);      
-        public static Color ActiveBackColor { get; } = Color.FromArgb(245, 245, 245); 
+        public static Color BackgroundColor { get; } = Color.FromArgb(255, 255, 255); // #FFFFFF surface
+        public static Color SidebarColor { get; } = Color.FromArgb(49, 59, 43); // #313B2B brand-field: the sidebar
+        public static Color HeaderColor { get; } = Color.FromArgb(49, 59, 43); // #313B2B brand-field: the top bar
+        public static Color ActiveBackColor { get; } = Color.FromArgb(244, 243, 236); // #F4F3EC surface-soft
 
         
         // Semantic Token Mapping
-        public static Color SelectionBackColor { get; } = Color.FromArgb(237, 242, 247); // Light Gray-Blue selection
-        public static Color BorderColor { get; } = Color.FromArgb(226, 232, 240); // Standard Border Color (Slate-200)
-        public static Color MutedTextColor { get; } = Color.FromArgb(160, 174, 192); // Cool Gray for subtitles/muted text
-        public static Color GridHeaderBgColor { get; } = Color.FromArgb(248, 250, 252); // Light Gray #F8FAFC
+        public static Color SelectionBackColor { get; } = Color.FromArgb(232, 231, 224); // #E8E7E0 khaki-20 selection
+        public static Color BorderColor { get; } = Color.FromArgb(230, 229, 218); // #E6E5DA hairline
+        public static Color MutedTextColor { get; } = Color.FromArgb(85, 88, 74); // #55584A ink-muted (passes 4.5:1, unlike the old grey)
+        public static Color GridHeaderBgColor { get; } = Color.FromArgb(244, 243, 236); // #F4F3EC surface-soft
 
         // Status Colors
-        public static Color SuccessColor { get; } = Color.FromArgb(5, 205, 153); // Green #05CD99
-        public static Color SuccessLight { get; } = Color.FromArgb(230, 255, 250); // Light Green
+        public static Color SuccessColor { get; } = Color.FromArgb(46, 125, 50); // #2E7D32 success
+        public static Color SuccessLight { get; } = Color.FromArgb(232, 241, 230); // #E8F1E6 success-bg
 
-        public static Color DangerColor { get; } = Color.FromArgb(238, 93, 80);  // Red #EE5D50 (Main Theme Red)
-        public static Color DangerColorBright { get; } = Color.FromArgb(239, 68, 68); // Red-500 for clear visibility
-        public static Color DangerLight { get; } = Color.FromArgb(255, 240, 240); // Light Red
+        public static Color DangerColor { get; } = Color.FromArgb(181, 21, 21); // #B51515 crimson: errors and destructive actions
+        public static Color DangerColorBright { get; } = Color.FromArgb(181, 21, 21); // #B51515 crimson
+        public static Color DangerLight { get; } = Color.FromArgb(238, 238, 231); // #EEEEE7 error-bg (linen 40%)
 
-        public static Color WarningColor { get; } = Color.FromArgb(255, 181, 71); // Orange #FFB547
-        public static Color WarningLight { get; } = Color.FromArgb(255, 250, 235); // Light Orange
+        public static Color WarningColor { get; } = Color.FromArgb(138, 90, 0); // #8A5A00 warning
+        public static Color WarningLight { get; } = Color.FromArgb(251, 240, 217); // #FBF0D9 warning-bg
         
         // Status Badge Palette (Horizon UI / Tailwind inspired)
-        public static Color SuccessBadgeBg { get; } = Color.FromArgb(240, 253, 244); // Light Green
-        public static Color SuccessBadgeText { get; } = Color.FromArgb(21, 128, 61); // Dark Green
-        public static Color SuccessBorder { get; } = Color.FromArgb(34, 197, 94);   // Green-500
+        public static Color SuccessBadgeBg { get; } = Color.FromArgb(232, 241, 230); // #E8F1E6 success-bg
+        public static Color SuccessBadgeText { get; } = Color.FromArgb(46, 125, 50); // #2E7D32 success
+        public static Color SuccessBorder { get; } = Color.FromArgb(46, 125, 50); // #2E7D32 success
 
         // Standard action button colors (outline: text + border only)
-        public static Color ActionImportColor { get; } = Color.FromArgb(30, 64, 175);   // Dark Blue #1E40AF
-        public static Color ActionExportColor { get; } = Color.FromArgb(251, 146, 60);  // Light Orange #FB923C
-        public static Color ActionAddColor { get; } = Color.FromArgb(122, 117, 79);     // Olive #7A754F
-        public static Color ActionRefreshColor { get; } = Color.FromArgb(4, 120, 87);   // Dark Green #047857
+        public static Color ActionImportColor { get; } = Color.FromArgb(47, 93, 124); // #2F5D7C info
+        public static Color ActionExportColor { get; } = Color.FromArgb(138, 136, 99); // #8A8863 khaki
+        public static Color ActionAddColor { get; } = Color.FromArgb(181, 21, 21); // #B51515 crimson: the one action colour
+        public static Color ActionRefreshColor { get; } = Color.FromArgb(49, 59, 43); // #313B2B olive
 
-        public static Color DangerBadgeBg { get; } = Color.FromArgb(254, 242, 242);  // Light Red
-        public static Color DangerBadgeText { get; } = Color.FromArgb(185, 28, 28);  // Dark Red
-        public static Color DangerBorder { get; } = Color.FromArgb(239, 68, 68);    // Red-500
+        public static Color DangerBadgeBg { get; } = Color.FromArgb(238, 238, 231); // #EEEEE7 error-bg
+        public static Color DangerBadgeText { get; } = Color.FromArgb(181, 21, 21); // #B51515 crimson
+        public static Color DangerBorder { get; } = Color.FromArgb(181, 21, 21); // #B51515 crimson
 
-        public static Color WarningBadgeBg { get; } = Color.FromArgb(255, 251, 235); // Light Yellow
-        public static Color WarningBadgeText { get; } = Color.FromArgb(180, 83, 9);   // Dark Orange
-        public static Color WarningBorder { get; } = Color.FromArgb(245, 158, 11);  // Orange-500
+        public static Color WarningBadgeBg { get; } = Color.FromArgb(251, 240, 217); // #FBF0D9 warning-bg
+        public static Color WarningBadgeText { get; } = Color.FromArgb(138, 90, 0); // #8A5A00 warning
+        public static Color WarningBorder { get; } = Color.FromArgb(138, 90, 0); // #8A5A00 warning
 
-        public static Color InfoBadgeBg { get; } = Color.FromArgb(239, 246, 255);    // Light Blue
-        public static Color InfoBadgeText { get; } = Color.FromArgb(29, 78, 216);    // Dark Blue
-        public static Color InfoBorder { get; } = Color.FromArgb(59, 130, 246);      // Blue-500
+        public static Color InfoBadgeBg { get; } = Color.FromArgb(227, 236, 242); // #E3ECF2 info-bg
+        public static Color InfoBadgeText { get; } = Color.FromArgb(47, 93, 124); // #2F5D7C info
+        public static Color InfoBorder { get; } = Color.FromArgb(47, 93, 124); // #2F5D7C info
         
         // Neon / Premium Accents
         public static Color NeonBlue { get; } = Color.FromArgb(0, 245, 255); // Vibrant Neon Blue
@@ -178,27 +186,68 @@ namespace InventorySystem
         public static Color SurfaceColor { get; } = Color.White;
 
         // POS-specific tokens
-        public static Color POS_SidebarBg { get; } = Color.FromArgb(248, 249, 251);
-        public static Color POS_CartItemBg { get; } = Color.FromArgb(248, 250, 252);
-        public static Color POS_SeparatorColor { get; } = Color.FromArgb(235, 237, 240);
-        public static Color POS_ChipActive { get; } = Color.FromArgb(37, 99, 235);
-        public static Color POS_ChipActiveBorder { get; } = Color.FromArgb(29, 78, 216);
+        public static Color POS_SidebarBg { get; } = Color.FromArgb(244, 243, 236); // #F4F3EC surface-soft
+        public static Color POS_CartItemBg { get; } = Color.FromArgb(247, 246, 243); // #F7F6F3 linen-20
+        public static Color POS_SeparatorColor { get; } = Color.FromArgb(230, 229, 218); // #E6E5DA hairline
+        public static Color POS_ChipActive { get; } = Color.FromArgb(49, 59, 43); // #313B2B olive
+        public static Color POS_ChipActiveBorder { get; } = Color.FromArgb(38, 46, 33); // #262E21 olive pressed
 
 
         // ==========================================
         // FONTS
         // ==========================================
-        private static FontFamily GetAppFontFamily()
+        [DllImport("gdi32.dll", CharSet = CharSet.Unicode)]
+        private static extern int AddFontResourceEx(string name, uint flags, IntPtr reserved);
+        private const uint FR_PRIVATE = 0x10;
+
+        private static System.Drawing.Text.PrivateFontCollection _brandFonts;
+
+        /// <summary>
+        /// Loads the brand fonts shipped in Assets/Fonts for this process only: GDI+ gets them from a
+        /// PrivateFontCollection, GDI (TextRenderer, used by most controls) through AddFontResourceEx.
+        /// </summary>
+        private static System.Drawing.Text.PrivateFontCollection BrandFonts()
         {
-            return new FontFamily("Segoe UI");
+            if (_brandFonts != null) return _brandFonts;
+            _brandFonts = new System.Drawing.Text.PrivateFontCollection();
+            try
+            {
+                string dir = Path.Combine(Application.StartupPath, "Assets", "Fonts");
+                if (Directory.Exists(dir))
+                {
+                    foreach (string file in Directory.GetFiles(dir, "*.ttf"))
+                    {
+                        _brandFonts.AddFontFile(file);
+                        AddFontResourceEx(file, FR_PRIVATE, IntPtr.Zero);
+                    }
+                }
+            }
+            catch { }
+            return _brandFonts;
         }
 
+        private static FontFamily BrandFamily(string name, string fallback)
+        {
+            foreach (FontFamily f in BrandFonts().Families)
+                if (string.Equals(f.Name, name, StringComparison.OrdinalIgnoreCase)) return f;
+            return new FontFamily(fallback);
+        }
+
+        private static FontFamily GetAppFontFamily() => BrandFamily("Tajawal", "Segoe UI");
+
+        /// <summary>Body text: Tajawal (Latin and Arabic).</summary>
         public static FontFamily AppFontFamily { get; } = GetAppFontFamily();
 
-        public static Font HeaderFont { get; } = new Font(AppFontFamily, 14F, FontStyle.Bold); 
-        public static Font CardTitleFont { get; } = new Font(AppFontFamily, 12F, FontStyle.Bold);
-        public static Font SubHeaderFont { get; } = new Font(AppFontFamily, 10F, FontStyle.Bold);
-        public static Font StandardFont { get; } = new Font(AppFontFamily, 9F, FontStyle.Regular);
+        /// <summary>Headings, labels and numbers: Barlow Condensed, as on the website.</summary>
+        public static FontFamily HeadingFontFamily { get; } = BrandFamily("Barlow Condensed", "Segoe UI");
+
+        /// <summary>Big display numbers and titles: Squada One (stand-in for the brand's jersey face).</summary>
+        public static FontFamily DisplayFontFamily { get; } = BrandFamily("Squada One", "Segoe UI");
+
+        public static Font HeaderFont { get; } = new Font(HeadingFontFamily, 17F, FontStyle.Bold);
+        public static Font CardTitleFont { get; } = new Font(HeadingFontFamily, 13F, FontStyle.Bold);
+        public static Font SubHeaderFont { get; } = new Font(HeadingFontFamily, 11F, FontStyle.Bold);
+        public static Font StandardFont { get; } = new Font(AppFontFamily, 9.5F, FontStyle.Regular);
         public static Font SmallFont { get; } = new Font(AppFontFamily, 8F, FontStyle.Regular);
         public static Font ButtonFont { get; } = new Font(AppFontFamily, 9F, FontStyle.Bold);
         public static Font SmallBoldFont { get; } = new Font(AppFontFamily, 9F, FontStyle.Bold);
@@ -216,7 +265,7 @@ namespace InventorySystem
             return new Label
             {
                 Name = "lblStandardHeader", // Ensures global themer identifies this as a header label
-                Text = text,
+                Text = (text ?? "").ToUpperInvariant(),
                 Font = HeaderFont,
                 ForeColor = PrimaryColor,
                 AutoSize = false,
@@ -348,15 +397,17 @@ namespace InventorySystem
         {
             btn.FlatStyle = FlatStyle.Flat;
             btn.FlatAppearance.BorderSize = 0;
-            btn.BackColor = PrimaryColor;
+            btn.BackColor = ActionColor;
+            btn.FlatAppearance.MouseDownBackColor = Color.FromArgb(109, 13, 13); // #6D0D0D pressed
             btn.Height = 35;
             btn.ForeColor = TextColorLight;
             btn.Font = SmallBoldFont;
             btn.Cursor = Cursors.Hand;
             btn.TextAlign = ContentAlignment.MiddleCenter;
             
-            btn.MouseEnter += (s, e) => btn.BackColor = PrimaryHoverColor;
-            btn.MouseLeave += (s, e) => btn.BackColor = PrimaryColor;
+            btn.MouseEnter += (s, e) => btn.BackColor = ActionHoverColor;
+            btn.MouseLeave += (s, e) => btn.BackColor = ActionColor;
+            btn.FlatAppearance.MouseDownBackColor = Color.FromArgb(109, 13, 13); // #6D0D0D pressed
 
         }
 
@@ -788,7 +839,7 @@ namespace InventorySystem
         public static readonly Color[] ChartPalette = new Color[]
         {
             PrimaryColor, SuccessColor, WarningColor, DangerColor, SecondaryColor,
-            Color.FromArgb(99, 102, 241), Color.FromArgb(168, 85, 247), Color.FromArgb(236, 72, 153)
+            Color.FromArgb(138, 136, 99), Color.FromArgb(138, 136, 99), Color.FromArgb(196, 68, 68)
         };
 
         public static void ApplyChartTheme(Chart chart)
@@ -825,11 +876,11 @@ namespace InventorySystem
                 area.AxisX.LabelStyle.ForeColor = SecondaryColor;
                 area.AxisY.LabelStyle.ForeColor = SecondaryColor;
 
-                area.AxisX.LineColor = Color.FromArgb(230, 230, 230);
+                area.AxisX.LineColor = Color.FromArgb(230, 229, 218);
                 area.AxisY.LineColor = Color.Transparent;
 
-                area.AxisX.MajorGrid.LineColor = Color.FromArgb(245, 245, 245);
-                area.AxisY.MajorGrid.LineColor = Color.FromArgb(245, 245, 245);
+                area.AxisX.MajorGrid.LineColor = Color.FromArgb(244, 243, 236);
+                area.AxisY.MajorGrid.LineColor = Color.FromArgb(244, 243, 236);
                 area.AxisX.MajorGrid.Enabled = false;
                 
                 // Restore premium look for series
@@ -1339,7 +1390,7 @@ namespace InventorySystem
             // 2. Styled Close Button & Title
             Label lblTitle = new Label { 
                 Text = preview.Text.ToUpper(), 
-                Font = new Font("Segoe UI", 9, FontStyle.Bold), 
+                Font = new Font(InventorySystem.ThemeConfig.AppFontFamily, 9, FontStyle.Bold), 
                 ForeColor = ThemeConfig.PrimaryColor,
                 AutoSize = true,
                 Location = new Point(20, 15)
@@ -1443,7 +1494,7 @@ namespace InventorySystem
         {
             btn.FlatStyle = FlatStyle.Flat;
             btn.FlatAppearance.BorderSize = 0;
-            btn.BackColor = Color.FromArgb(230, 230, 240);
+            btn.BackColor = Color.FromArgb(232, 231, 224);
             btn.Height = 35;
             btn.ForeColor = TextColorDark;
             btn.Font = SmallBoldFont;
@@ -1451,7 +1502,7 @@ namespace InventorySystem
             btn.TextAlign = ContentAlignment.MiddleCenter;
             
             btn.MouseEnter += (s, e) => btn.BackColor = SecondaryHoverColor;
-            btn.MouseLeave += (s, e) => btn.BackColor = Color.FromArgb(230, 230, 240);
+            btn.MouseLeave += (s, e) => btn.BackColor = Color.FromArgb(232, 231, 224);
 
         }
 
@@ -1461,9 +1512,9 @@ namespace InventorySystem
             grid.BorderStyle = BorderStyle.None;
             grid.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
             grid.EnableHeadersVisualStyles = false;
-            grid.GridColor = Color.FromArgb(230, 230, 230);
+            grid.GridColor = Color.FromArgb(230, 229, 218);
             
-            grid.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(248, 250, 252);
+            grid.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(244, 243, 236);
             grid.ColumnHeadersDefaultCellStyle.ForeColor = TextColorDark; 
             grid.ColumnHeadersDefaultCellStyle.SelectionBackColor = SelectionBackColor;
             grid.ColumnHeadersDefaultCellStyle.SelectionForeColor = TextColorDark; 
@@ -1489,7 +1540,7 @@ namespace InventorySystem
                 grid.RightToLeft = RightToLeft.No;
             }
             
-            grid.DefaultCellStyle.SelectionBackColor = Color.FromArgb(237, 242, 247);
+            grid.DefaultCellStyle.SelectionBackColor = Color.FromArgb(232, 231, 224);
             grid.DefaultCellStyle.SelectionForeColor = TextColorDark;
             grid.Padding = new Padding(12, 5, 5, 5); 
             
@@ -1520,7 +1571,7 @@ namespace InventorySystem
             grid.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             grid.AllowUserToResizeRows = false;
             grid.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
-            grid.GridColor = Color.FromArgb(240, 240, 240);
+            grid.GridColor = Color.FromArgb(238, 238, 231);
 
             grid.CurrentCellDirtyStateChanged += (s, e) =>
             {
@@ -1594,14 +1645,14 @@ namespace InventorySystem
         {
              btn.FlatStyle = FlatStyle.Flat;
              btn.FlatAppearance.BorderSize = 0;
-             btn.BackColor = isActive ? ActiveBackColor : Color.Transparent; 
-             btn.ForeColor = isActive ? PrimaryColor : Color.FromArgb(160, 174, 192); // Gray when inactive
-             btn.Font = new Font("Segoe UI", 10F, isActive ? FontStyle.Bold : FontStyle.Regular);
+             btn.BackColor = isActive ? SidebarActiveColor : Color.Transparent;
+             btn.ForeColor = isActive ? Color.White : LinenColor;
+             btn.Font = new Font(AppFontFamily, 10.5F, isActive ? FontStyle.Bold : FontStyle.Regular);
              btn.Cursor = Cursors.Hand;
              btn.TextAlign = LocalizationManager.IsArabic ? ContentAlignment.MiddleRight : ContentAlignment.MiddleLeft;
              
-             btn.FlatAppearance.MouseOverBackColor = Color.FromArgb(244, 247, 254);
-             btn.FlatAppearance.MouseDownBackColor = Color.FromArgb(230, 235, 245);
+             btn.FlatAppearance.MouseOverBackColor = SidebarHoverColor;
+             btn.FlatAppearance.MouseDownBackColor = SidebarActiveColor;
         }
 
         public static void ApplySidebarButtonIcon(Button btn, Image icon, bool isActive)
@@ -1609,7 +1660,7 @@ namespace InventorySystem
             ApplySidebarButton(btn, isActive);
             
             // Tint the icon to match the text color (Blue if active, Gray if inactive)
-            Color tintColor = isActive ? PrimaryColor : Color.FromArgb(31, 41, 55); 
+            Color tintColor = isActive ? Color.White : LinenColor;
             btn.Image = TintImage(icon, tintColor);
             
             bool isAr = LocalizationManager.IsArabic;
@@ -1690,34 +1741,34 @@ namespace InventorySystem
                     g.Clear(Color.Transparent);
 
                     // Default Gradient (Blue to Purple)
-                    Color c1 = Color.FromArgb(37, 99, 235); 
-                    Color c2 = Color.FromArgb(147, 51, 234); 
+                    Color c1 = Color.FromArgb(49, 59, 43); 
+                    Color c2 = Color.FromArgb(71, 80, 59); 
 
                     // Specific colors based on icon type
-                    if (name == "refresh") { c1 = Color.FromArgb(5, 205, 153); c2 = Color.FromArgb(37, 99, 235); }
-                    else if (name.Contains("import")) { c1 = Color.FromArgb(22, 163, 74); c2 = Color.FromArgb(20, 184, 166); } 
-                    else if (name.Contains("export")) { c1 = Color.FromArgb(37, 99, 235); c2 = Color.FromArgb(6, 182, 212); } 
-                    else if (name.Contains("filter")) { c1 = Color.FromArgb(249, 115, 22); c2 = Color.FromArgb(236, 72, 153); }
-                    else if (name.Contains("search")) { c1 = Color.FromArgb(79, 70, 229); c2 = Color.FromArgb(124, 58, 237); }
-                    else if (name.Contains("orders")) { c1 = Color.FromArgb(217, 70, 239); c2 = Color.FromArgb(168, 85, 247); }
-                    else if (name.Contains("revenue") || name.Contains("sales")) { c1 = Color.FromArgb(245, 158, 11); c2 = Color.FromArgb(252, 211, 77); }
-                    else if (name == "warning") { c1 = Color.FromArgb(245, 158, 11); c2 = Color.FromArgb(251, 191, 36); }
-                    else if (name == "info") { c1 = Color.FromArgb(59, 130, 246); c2 = Color.FromArgb(96, 165, 250); }
-                    else if (name == "check" || name == "success") { c1 = Color.FromArgb(34, 197, 94); c2 = Color.FromArgb(74, 222, 128); }
-                    else if (name == "add" || name == "plus") { c1 = Color.FromArgb(59, 130, 246); c2 = Color.FromArgb(147, 51, 234); }
-                    else if (name == "pos") { c1 = Color.FromArgb(5, 205, 153); c2 = Color.FromArgb(20, 184, 166); }
-                    else if (name == "inventory") { c1 = Color.FromArgb(99, 102, 241); c2 = Color.FromArgb(168, 85, 247); }
-                    else if (name == "customers") { c1 = Color.FromArgb(59, 130, 246); c2 = Color.FromArgb(37, 99, 235); }
-                    else if (name == "suppliers") { c1 = Color.FromArgb(20, 184, 166); c2 = Color.FromArgb(13, 148, 136); }
-                    else if (name == "reports") { c1 = Color.FromArgb(37, 99, 235); c2 = Color.FromArgb(29, 78, 216); }
+                    if (name == "refresh") { c1 = Color.FromArgb(46, 125, 50); c2 = Color.FromArgb(49, 59, 43); }
+                    else if (name.Contains("import")) { c1 = Color.FromArgb(22, 163, 74); c2 = Color.FromArgb(47, 93, 124); } 
+                    else if (name.Contains("export")) { c1 = Color.FromArgb(49, 59, 43); c2 = Color.FromArgb(169, 200, 222); } 
+                    else if (name.Contains("filter")) { c1 = Color.FromArgb(138, 90, 0); c2 = Color.FromArgb(196, 68, 68); }
+                    else if (name.Contains("search")) { c1 = Color.FromArgb(71, 80, 59); c2 = Color.FromArgb(108, 110, 82); }
+                    else if (name.Contains("orders")) { c1 = Color.FromArgb(217, 70, 239); c2 = Color.FromArgb(138, 136, 99); }
+                    else if (name.Contains("revenue") || name.Contains("sales")) { c1 = Color.FromArgb(138, 90, 0); c2 = Color.FromArgb(252, 211, 77); }
+                    else if (name == "warning") { c1 = Color.FromArgb(138, 90, 0); c2 = Color.FromArgb(251, 191, 36); }
+                    else if (name == "info") { c1 = Color.FromArgb(90, 98, 85); c2 = Color.FromArgb(169, 200, 222); }
+                    else if (name == "check" || name == "success") { c1 = Color.FromArgb(46, 125, 50); c2 = Color.FromArgb(46, 125, 50); }
+                    else if (name == "add" || name == "plus") { c1 = Color.FromArgb(90, 98, 85); c2 = Color.FromArgb(71, 80, 59); }
+                    else if (name == "pos") { c1 = Color.FromArgb(46, 125, 50); c2 = Color.FromArgb(47, 93, 124); }
+                    else if (name == "inventory") { c1 = Color.FromArgb(138, 136, 99); c2 = Color.FromArgb(138, 136, 99); }
+                    else if (name == "customers") { c1 = Color.FromArgb(90, 98, 85); c2 = Color.FromArgb(49, 59, 43); }
+                    else if (name == "suppliers") { c1 = Color.FromArgb(47, 93, 124); c2 = Color.FromArgb(13, 148, 136); }
+                    else if (name == "reports") { c1 = Color.FromArgb(49, 59, 43); c2 = Color.FromArgb(38, 46, 33); }
                     else if (name == "history" || name == "expenses") { c1 = Color.FromArgb(244, 63, 94); c2 = Color.FromArgb(225, 29, 72); }
-                    else if (name == "quotations") { c1 = Color.FromArgb(37, 99, 235); c2 = Color.FromArgb(29, 78, 216); }
-                    else if (name == "currencies") { c1 = Color.FromArgb(245, 158, 11); c2 = Color.FromArgb(217, 119, 6); }
-                    else if (name == "user") { c1 = Color.FromArgb(79, 70, 229); c2 = Color.FromArgb(67, 56, 202); }
-                    else if (name == "barcode") { c1 = Color.FromArgb(59, 130, 246); c2 = Color.FromArgb(139, 92, 246); }
-                    else if (name == "engine") { c1 = Color.FromArgb(239, 68, 68); c2 = Color.FromArgb(185, 28, 28); }
-                    else if (name == "brakes") { c1 = Color.FromArgb(249, 115, 22); c2 = Color.FromArgb(194, 65, 12); }
-                    else if (name == "accessories") { c1 = Color.FromArgb(37, 99, 235); c2 = Color.FromArgb(29, 78, 216); }
+                    else if (name == "quotations") { c1 = Color.FromArgb(49, 59, 43); c2 = Color.FromArgb(38, 46, 33); }
+                    else if (name == "currencies") { c1 = Color.FromArgb(138, 90, 0); c2 = Color.FromArgb(217, 119, 6); }
+                    else if (name == "user") { c1 = Color.FromArgb(71, 80, 59); c2 = Color.FromArgb(49, 59, 43); }
+                    else if (name == "barcode") { c1 = Color.FromArgb(90, 98, 85); c2 = Color.FromArgb(90, 98, 85); }
+                    else if (name == "engine") { c1 = Color.FromArgb(181, 21, 21); c2 = Color.FromArgb(145, 17, 17); }
+                    else if (name == "brakes") { c1 = Color.FromArgb(138, 90, 0); c2 = Color.FromArgb(194, 65, 12); }
+                    else if (name == "accessories") { c1 = Color.FromArgb(49, 59, 43); c2 = Color.FromArgb(38, 46, 33); }
 
                     using (var brush = new LinearGradientBrush(new Rectangle(8, 8, 48, 48), c1, c2, 45f))
                     {

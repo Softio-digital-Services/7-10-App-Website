@@ -49,7 +49,7 @@ namespace InventorySystem.Forms
             };
 
             Label lblLocked = new Label { 
-                Font = new Font("Segoe UI", 24, FontStyle.Bold), 
+                Font = new Font(InventorySystem.ThemeConfig.AppFontFamily, 24, FontStyle.Bold), 
                 ForeColor = ThemeConfig.TextColorDark, 
                 TextAlign = ContentAlignment.MiddleCenter, 
                 Dock = DockStyle.Top, 

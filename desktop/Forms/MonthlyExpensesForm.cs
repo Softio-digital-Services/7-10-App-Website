@@ -117,7 +117,7 @@ namespace InventorySystem.Forms
             lblDateRef = new Label {
                 Text = LocalizationManager.GetString("Hist_ColDate", "Date"),
                 // Match the label font used inside ModernNumericUpDown / ModernComboBox
-                Font = new Font("Segoe UI", 9F, FontStyle.Bold),
+                Font = new Font(InventorySystem.ThemeConfig.AppFontFamily, 9F, FontStyle.Bold),
                 ForeColor = ThemeConfig.TextColorDark,
                 Location = new Point(0, 0),
                 AutoSize = true

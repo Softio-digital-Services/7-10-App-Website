@@ -245,7 +245,7 @@ namespace InventorySystem.Forms
 
             // Expiry Date
             FlowLayoutPanel flpExp = new FlowLayoutPanel { Width = 280, Height = 67, Margin = new Padding(0,0,0,10), FlowDirection = FlowDirection.TopDown };
-            lblExp = new Label { Text = "Expiry Date", AutoSize = true, Font = ThemeConfig.SmallBoldFont ?? new Font("Segoe UI", 9F, FontStyle.Bold), ForeColor = ThemeConfig.TextColorDark };
+            lblExp = new Label { Text = "Expiry Date", AutoSize = true, Font = ThemeConfig.SmallBoldFont ?? new Font(InventorySystem.ThemeConfig.AppFontFamily, 9F, FontStyle.Bold), ForeColor = ThemeConfig.TextColorDark };
             dtpExpiry = new FlatDateTimePicker { Width = 270, Format = DateTimePickerFormat.Short, ShowCheckBox = true, Checked = false };
             flpExp.Controls.Add(lblExp); flpExp.Controls.Add(dtpExpiry);
             flpLeft.Controls.Add(flpExp);
@@ -345,10 +345,10 @@ namespace InventorySystem.Forms
             tlpPrices.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33F));
             tlpPrices.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33F));
             
-            lblLevel = new Label { Text = "Level", AutoSize = true, Font = new Font("Segoe UI", 9F, FontStyle.Bold) };
-            lblPrice = new Label { Text = "Price", AutoSize = true, Font = new Font("Segoe UI", 9F, FontStyle.Bold) };
-            lblGross = new Label { Text = "Gross %", AutoSize = true, Font = new Font("Segoe UI", 9F, FontStyle.Bold) };
-            lblProfit = new Label { Text = "Profit", AutoSize = true, Font = new Font("Segoe UI", 9F, FontStyle.Bold) };
+            lblLevel = new Label { Text = "Level", AutoSize = true, Font = new Font(InventorySystem.ThemeConfig.AppFontFamily, 9F, FontStyle.Bold) };
+            lblPrice = new Label { Text = "Price", AutoSize = true, Font = new Font(InventorySystem.ThemeConfig.AppFontFamily, 9F, FontStyle.Bold) };
+            lblGross = new Label { Text = "Gross %", AutoSize = true, Font = new Font(InventorySystem.ThemeConfig.AppFontFamily, 9F, FontStyle.Bold) };
+            lblProfit = new Label { Text = "Profit", AutoSize = true, Font = new Font(InventorySystem.ThemeConfig.AppFontFamily, 9F, FontStyle.Bold) };
             
             tlpPrices.Controls.Add(lblLevel, 0, 0);
             tlpPrices.Controls.Add(lblPrice, 1, 0);
@@ -382,7 +382,7 @@ namespace InventorySystem.Forms
                     ? LocalizationManager.GetString("Scale_StatusConnected", "Status: Connected")
                     : LocalizationManager.GetString("Scale_StatusDisconnected", "Status: Disconnected"),
                 ForeColor = ScaleService.Instance.IsConnected ? Color.Green : Color.Red,
-                Font = new Font("Segoe UI", 9F, FontStyle.Bold),
+                Font = new Font(InventorySystem.ThemeConfig.AppFontFamily, 9F, FontStyle.Bold),
                 AutoSize = true,
                 Margin = new Padding(0, 14, 15, 0),
                 RightToLeft = RightToLeft.No
@@ -411,7 +411,7 @@ namespace InventorySystem.Forms
                 Text = string.Format(
                     LocalizationManager.GetString("Scale_UnitPrice", "Unit Price (/{0}):"),
                     ScaleService.Instance.Config.DefaultUnit),
-                Font = new Font("Segoe UI", 9F, FontStyle.Bold),
+                Font = new Font(InventorySystem.ThemeConfig.AppFontFamily, 9F, FontStyle.Bold),
                 ForeColor = ThemeConfig.TextColorDark,
                 AutoSize = true,
                 Margin = new Padding(0, 14, 5, 0),
@@ -428,7 +428,7 @@ namespace InventorySystem.Forms
                 Text = string.Format(
                     LocalizationManager.GetString("Scale_Weight", "Weight: {0} {1}"),
                     "0.000", "kg"),
-                Font = new Font("Segoe UI", 11F, FontStyle.Bold),
+                Font = new Font(InventorySystem.ThemeConfig.AppFontFamily, 11F, FontStyle.Bold),
                 ForeColor = Color.DarkBlue,
                 AutoSize = true,
                 Margin = new Padding(0, 10, 15, 0),
@@ -440,7 +440,7 @@ namespace InventorySystem.Forms
                 Text = string.Format(
                     LocalizationManager.GetString("Scale_CalcPrice", "Calc Price: {0}"),
                     CurrencyService.Format(0)),
-                Font = new Font("Segoe UI", 11F, FontStyle.Bold),
+                Font = new Font(InventorySystem.ThemeConfig.AppFontFamily, 11F, FontStyle.Bold),
                 ForeColor = Color.DarkGreen,
                 AutoSize = true,
                 Margin = new Padding(0, 10, 20, 0),

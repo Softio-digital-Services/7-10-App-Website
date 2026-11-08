@@ -10,7 +10,7 @@ namespace InventorySystem.Controls
     {
         public int BorderRadius { get; set; } = 30;
         public float GradientAngle { get; set; } = 90F;
-        public Color GradientTopColor { get; set; } = Color.FromArgb(239, 246, 255); // Slight Blue Tint
+        public Color GradientTopColor { get; set; } = Color.FromArgb(247, 246, 243); // Slight Blue Tint
         public Color GradientBottomColor { get; set; } = Color.White;
 
         public ModernPanel()

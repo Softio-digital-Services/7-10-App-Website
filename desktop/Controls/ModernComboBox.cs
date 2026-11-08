@@ -119,7 +119,7 @@ namespace InventorySystem.Controls
             // Label
             lblTitle = new Label();
             lblTitle.Text = "";
-            lblTitle.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            lblTitle.Font = new Font(InventorySystem.ThemeConfig.AppFontFamily, 9F, FontStyle.Bold);
             lblTitle.ForeColor = ThemeConfig.TextColorDark;
             lblTitle.AutoSize = true;
             lblTitle.Location = new Point(5, 0);
@@ -138,7 +138,7 @@ namespace InventorySystem.Controls
             // ComboBox
             cmbInput = new ComboBox();
             cmbInput.FlatStyle = FlatStyle.Flat;
-            cmbInput.Font = new Font("Segoe UI", 10F);
+            cmbInput.Font = new Font(InventorySystem.ThemeConfig.AppFontFamily, 10F);
             cmbInput.ForeColor = ThemeConfig.TextColorDark;
             cmbInput.BackColor = ThemeConfig.SurfaceColor;
             cmbInput.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;

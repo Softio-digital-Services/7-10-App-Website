@@ -134,7 +134,7 @@ namespace InventorySystem.Forms
             {
                 Name = "lblLiveWeight",
                 Text = $"{ScaleService.Instance.LastWeight:N3} {ScaleService.Instance.LastUnit}",
-                Font = new Font("Segoe UI", 20F, FontStyle.Bold),
+                Font = new Font(InventorySystem.ThemeConfig.AppFontFamily, 20F, FontStyle.Bold),
                 ForeColor = Color.DarkBlue,
                 Location = new Point(20, 25),
                 AutoSize = true
@@ -144,7 +144,7 @@ namespace InventorySystem.Forms
             {
                 Name = "lblStatus",
                 ForeColor = ScaleService.Instance.IsConnected ? Color.Green : Color.Red,
-                Font = new Font("Segoe UI", 10F, FontStyle.Bold),
+                Font = new Font(InventorySystem.ThemeConfig.AppFontFamily, 10F, FontStyle.Bold),
                 Location = new Point(280, 34),
                 AutoSize = true
             };

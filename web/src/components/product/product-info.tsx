@@ -7,11 +7,13 @@ import { useCart } from "@/components/cart-provider";
 import { useI18n } from "@/components/i18n-provider";
 import { WhatsAppIcon } from "@/components/icons";
 import { SizeGuideDialog, chartFor } from "@/components/size-guide";
+import { WishlistButton } from "@/components/product/wishlist-button";
 import type { StoreProduct } from "@/lib/catalog";
 import { formatPrice } from "@/lib/format";
 import { store, whatsappLink } from "@/lib/store-config";
 
-export function ProductInfo({ product }: { product: StoreProduct }) {
+/** preferredSize comes from the customer's saved fit ("My fit" on the account page). */
+export function ProductInfo({ product, preferredSize }: { product: StoreProduct; preferredSize?: string | null }) {
   const { t, f } = useI18n();
   const { addItem } = useCart();
 
@@ -22,7 +24,8 @@ export function ProductInfo({ product }: { product: StoreProduct }) {
   });
   const onlyOne = sizeStock.length === 1 ? sizeStock[0] : null;
 
-  const [size, setSize] = useState<string | null>(onlyOne ? onlyOne.size : null);
+  const fitSize = preferredSize ? sizeStock.find((s) => s.size.toUpperCase() === preferredSize.toUpperCase() && s.stock > 0)?.size : undefined;
+  const [size, setSize] = useState<string | null>(onlyOne ? onlyOne.size : (fitSize ?? null));
   const [qty, setQty] = useState(1);
   const [needSize, setNeedSize] = useState(false);
   const [shakeKey, setShakeKey] = useState(0);
@@ -90,7 +93,10 @@ export function ProductInfo({ product }: { product: StoreProduct }) {
         {[product.category, product.colorName].filter(Boolean).join(" · ")}
       </Link>
 
-      <h1 className="display mt-2 text-[2.4rem] leading-[0.95] md:text-5xl xl:text-[3.4rem]">{product.name}</h1>
+      <div className="mt-2 flex items-start justify-between gap-3">
+        <h1 className="display min-w-0 text-[2.4rem] leading-[0.95] md:text-5xl xl:text-[3.4rem]">{product.name}</h1>
+        <WishlistButton productId={product.id} />
+      </div>
 
       <div className="mt-4 flex items-baseline gap-3" dir="ltr">
         <span className={`font-display text-[1.9rem] font-bold leading-none ${product.compareAt ? "text-signal-ink" : ""}`}>{formatPrice(product.price)}</span>
