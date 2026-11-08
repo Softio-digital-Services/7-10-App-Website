@@ -482,6 +482,39 @@ namespace InventorySystem
                         sort_order INTEGER DEFAULT 0,
                         date_added TEXT DEFAULT (datetime('now'))
                     );");
+                // Website customer accounts, sent by the website and editable here (Website screen > Accounts).
+                ExecuteNonQuery(@"
+                    CREATE TABLE IF NOT EXISTS web_accounts (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        customer_id INTEGER,
+                        name TEXT,
+                        email TEXT,
+                        phone TEXT,
+                        locale TEXT,
+                        wa_updates INTEGER DEFAULT 0,
+                        fit_height INTEGER,
+                        fit_style TEXT,
+                        fit_tops TEXT,
+                        fit_pants TEXT,
+                        fit_hijab TEXT,
+                        wishlist TEXT,
+                        created_at TEXT,
+                        updated_at TEXT
+                    );");
+                ExecuteNonQuery(@"
+                    CREATE TABLE IF NOT EXISTS web_addresses (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        account_id INTEGER,
+                        label TEXT,
+                        name TEXT,
+                        phone TEXT,
+                        region TEXT,
+                        city TEXT,
+                        street TEXT,
+                        floor TEXT,
+                        landmark TEXT,
+                        is_default INTEGER DEFAULT 0
+                    );");
                 ExecuteNonQuery(@"
                     CREATE TABLE IF NOT EXISTS product_materials (
                         id INTEGER PRIMARY KEY AUTOINCREMENT,

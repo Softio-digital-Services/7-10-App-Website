@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { auth } from "@/lib/auth";
+import { markAccountDirty } from "@/lib/hub/accounts";
 import { prisma } from "@/lib/prisma";
 
 /** The signed-in customer's wishlist: GET lists product ids, POST adds one, DELETE removes one. */
@@ -30,6 +31,7 @@ async function change(req: Request, add: boolean) {
   } else {
     await prisma.wishlistItem.deleteMany({ where: { userId: session.user.id, productId } });
   }
+  await markAccountDirty(session.user.id);
   return NextResponse.json({ ok: true, saved: add });
 }
 

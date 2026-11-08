@@ -34,6 +34,8 @@ model User {
   fitTops       String?
   fitPants      String?
   fitHijab      String?
+  /// Null when the account changed since it was last sent to the desktop app (see lib/hub/accounts.ts).
+  hubSyncedAt   DateTime?
   createdAt     DateTime         @default(now())
   updatedAt     DateTime         @updatedAt
 }
@@ -52,6 +54,8 @@ model Address {
   floor      String   @default("")
   landmark   String   @default("")
   isDefault  Boolean  @default(false)
+  /// Sync id shared with the desktop app's web_addresses row.
+  hubGid     String?  @unique
   createdAt  DateTime @default(now())
 
   @@index([userId])

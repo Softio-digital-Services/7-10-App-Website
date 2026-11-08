@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { authDevice, hubError } from "@/lib/hub/auth";
 import { applyChanges, changeSchema, getMeta, hubState, prunedThrough, pruneLog, readChanges } from "@/lib/hub/store";
 import { markStorefrontDirty, refreshStorefront } from "@/lib/hub/storefront";
+import { applyAccountChanges, pushAccounts } from "@/lib/hub/accounts";
 import { ackSchema, applyAcks, applyStatuses, claimWebOrders, statusSchema } from "@/lib/hub/web-orders";
 
 export const maxDuration = 60;
@@ -44,6 +45,9 @@ export async function POST(request: Request) {
       const pushed = await applyChanges(tx, device.id, body.changes);
       const acked = await applyAcks(tx, device.id, body.acks);
       const statuses = await applyStatuses(tx, body.statuses);
+      // Customer accounts: take in laptop edits, then send accounts changed on the website.
+      await applyAccountChanges(tx, pushed.accepted);
+      if (state === "ready") await pushAccounts(tx);
       if (acked > 0 || pushed.accepted.some((c) => STOREFRONT_TABLES.has(c.t))) await markStorefrontDirty(tx);
       return { ...pushed, acked, statuses };
     },

@@ -66,6 +66,9 @@ namespace InventorySystem.Services.Cloud
                 new() { Name = "categories", Pk = "id", Files = Cols("category_image") },
                 new() { Name = "suppliers", Pk = "id", Counters = Cols("balance_due") },
                 new() { Name = "customers", Pk = "customer_id", Counters = Cols("current_balance") },
+                // Website customer accounts: written by the website, edits here go back to the account page.
+                new() { Name = "web_accounts", Pk = "id", Fks = Fk("customer_id", "customers") },
+                new() { Name = "web_addresses", Pk = "id", Fks = Fk("account_id", "web_accounts") },
                 new() { Name = "warehouses", Pk = "id" },
                 new() { Name = "expense_categories", Pk = "category_id" },
                 new() { Name = "units_of_measure", Pk = "unit_id" },

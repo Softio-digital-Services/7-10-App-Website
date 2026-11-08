@@ -7,6 +7,7 @@ import { z } from "zod";
 import { auth, signOut } from "@/lib/auth";
 import { isValidPhone } from "@/lib/format";
 import { LOCALE_COOKIE } from "@/lib/i18n";
+import { emitAccountDeleted, markAccountDirty } from "@/lib/hub/accounts";
 import { prisma } from "@/lib/prisma";
 import { regions } from "@/lib/store-config";
 
@@ -50,6 +51,7 @@ export async function saveAddress(form: FormData) {
     } else {
       await tx.address.create({ data: { ...data, userId: uid, isDefault: makeDefault } });
     }
+    await markAccountDirty(uid, tx);
   });
   done("addresses");
 }
@@ -64,6 +66,7 @@ export async function deleteAddress(form: FormData) {
       const next = await prisma.address.findFirst({ where: { userId: uid }, orderBy: { createdAt: "asc" } });
       if (next) await prisma.address.update({ where: { id: next.id }, data: { isDefault: true } });
     }
+    await markAccountDirty(uid);
   }
   done("addresses");
 }
@@ -74,6 +77,7 @@ export async function makeDefaultAddress(form: FormData) {
   await prisma.$transaction([
     prisma.address.updateMany({ where: { userId: uid }, data: { isDefault: false } }),
     prisma.address.updateMany({ where: { id, userId: uid }, data: { isDefault: true } }),
+    prisma.user.update({ where: { id: uid }, data: { hubSyncedAt: null } }),
   ]);
   done("addresses");
 }
@@ -93,7 +97,7 @@ export async function saveFit(form: FormData) {
   const f = parsed.data;
   await prisma.user.update({
     where: { id: uid },
-    data: { fitHeight: f.fitHeight ?? null, fitStyle: f.fitStyle, fitTops: f.fitTops || null, fitPants: f.fitPants || null, fitHijab: f.fitHijab || null },
+    data: { fitHeight: f.fitHeight ?? null, fitStyle: f.fitStyle, fitTops: f.fitTops || null, fitPants: f.fitPants || null, fitHijab: f.fitHijab || null, hubSyncedAt: null },
   });
   done("fit");
 }
@@ -111,7 +115,7 @@ export async function saveDetails(form: FormData) {
   if (!parsed.success) return done("details", "error");
   const d = parsed.data;
   const wa = d.waUpdates === "on";
-  await prisma.user.update({ where: { id: uid }, data: { name: d.name, phone: d.phone || null, locale: d.locale, waUpdates: wa } });
+  await prisma.user.update({ where: { id: uid }, data: { name: d.name, phone: d.phone || null, locale: d.locale, waUpdates: wa, hubSyncedAt: null } });
   // WhatsApp updates use the same list as the newsletter, keyed by the mobile number.
   if (wa && d.phone) await prisma.subscriber.upsert({ where: { contact: d.phone }, update: { locale: d.locale }, create: { contact: d.phone, locale: d.locale } });
   if (!wa && d.phone) await prisma.subscriber.deleteMany({ where: { contact: d.phone } });
@@ -122,6 +126,7 @@ export async function saveDetails(form: FormData) {
 export async function removeFromWishlist(form: FormData) {
   const uid = await userId();
   await prisma.wishlistItem.deleteMany({ where: { userId: uid, productId: String(form.get("productId") ?? "") } });
+  await markAccountDirty(uid);
   done("wishlist");
 }
 
@@ -131,6 +136,8 @@ export async function deleteAccount(form: FormData) {
   if (String(form.get("confirm") ?? "").trim().toUpperCase() !== "DELETE") return done("details", "confirm");
   const user = await prisma.user.findUnique({ where: { id: uid }, select: { role: true } });
   if (user?.role !== "CUSTOMER") return done("details", "staff");
+  // Take the account off the desktop app too; its customer record and orders stay.
+  await emitAccountDeleted(uid);
   await prisma.user.delete({ where: { id: uid } });
   await signOut({ redirectTo: "/" });
 }
