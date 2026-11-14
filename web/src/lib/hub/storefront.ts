@@ -58,18 +58,81 @@ type Desired = {
   styleCode: string;
   isNew: boolean;
   price: number;
+  /** Percent off from a running promotion (0 = none). */
+  discount: number;
   colorName: string | null;
   images: string[];
   variants: { externalId: string; size: string; color: string; stock: number }[];
 };
 
+/** The shop's calendar day (promotions run by whole days in the shop's own timezone). */
+export function shopToday(now = new Date()) {
+  return new Intl.DateTimeFormat("en-CA", {
+    timeZone: process.env.SHOP_TIMEZONE || "Asia/Beirut",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(now);
+}
+
+type Promo = { kind: string; value: number; scope: string; scopeValue: string; parts: Set<string> };
+
+/** Promotions set up in the desktop app that run on the website today. */
+export function runningPromotions(rows: { tbl: string; gid: string; data: string }[]) {
+  const today = shopToday();
+  const promos = new Map<string, Promo>();
+  const items: Row[] = [];
+  for (const r of rows) {
+    let data: Row;
+    try {
+      data = JSON.parse(r.data) as Row;
+    } catch {
+      continue;
+    }
+    if (r.tbl === "promotion_items") items.push(data);
+    if (r.tbl !== "promotions") continue;
+    const from = str(data.date_from).slice(0, 10);
+    const to = str(data.date_to).slice(0, 10);
+    const channel = str(data.channel) || "both";
+    if (!flag(data.is_active, true) || channel === "shop" || !from || !to || today < from || today > to) continue;
+    promos.set(r.gid, {
+      kind: str(data.kind) === "price" ? "price" : "percent",
+      value: num(data.value),
+      scope: str(data.scope) || "all",
+      scopeValue: str(data.scope_value).trim().toLowerCase(),
+      parts: new Set(),
+    });
+  }
+  for (const it of items) promos.get(str(it.promotion_id))?.parts.add(str(it.part_id));
+  return [...promos.values()];
+}
+
+/** Lowest promotion price for one product (same rules as the desktop app: the best price wins, no stacking). */
+export function promoPrice(promos: Promo[], gid: string, row: Row, category: string) {
+  const list = num(row.selling_price);
+  let best = list;
+  for (const p of promos) {
+    const covers =
+      p.scope === "products" ? p.parts.has(gid)
+      : p.scope === "category" ? !!p.scopeValue && category.trim().toLowerCase() === p.scopeValue
+      : p.scope === "collection" ? !!p.scopeValue && str(row.collection).trim().toLowerCase() === p.scopeValue
+      : true;
+    if (!covers) continue;
+    const price = p.kind === "price" ? p.value : Math.round(list * (100 - Math.min(100, Math.max(0, p.value)))) / 100;
+    if (price >= 0 && price < best) best = price;
+  }
+  return best;
+}
+
 async function desiredCatalog(): Promise<Desired[]> {
   const rows = await prisma.syncRow.findMany({
-    where: { tbl: { in: ["parts", "categories", "product_images"] }, deleted: false },
+    where: { tbl: { in: ["parts", "categories", "product_images", "promotions", "promotion_items"] }, deleted: false },
     select: { tbl: true, gid: true, data: true },
   });
-  const counters = await prisma.syncCounter.findMany({ where: { tbl: "parts", col: "quantity_in_stock" } });
-  const stock = new Map(counters.map((c) => [c.gid, Math.max(0, Math.floor(c.value))]));
+  const promos = runningPromotions(rows);
+  // The admin PC publishes web_stock: what the website may sell, already minus the shop's reserve and capped,
+  // so exact inventory never reaches the website.
+  const stock = new Map<string, number>();
 
   const categories = new Map<string, string>();
   const categoryInfo = new Map<string, { nameAr: string | null; sortOrder: number; image: string }>();
@@ -82,6 +145,7 @@ async function desiredCatalog(): Promise<Desired[]> {
     } catch {
       continue;
     }
+    if (r.tbl === "promotions" || r.tbl === "promotion_items") continue;
     if (r.tbl === "categories") {
       categories.set(r.gid, str(data.category_name));
       categoryInfo.set(r.gid, { nameAr: str(data.category_name_ar) || null, sortOrder: num(data.sort_order), image: str(data.category_image) });
@@ -92,7 +156,10 @@ async function desiredCatalog(): Promise<Desired[]> {
       const list = gallery.get(part) ?? [];
       list.push({ path: str(data.image_path), order: num(data.sort_order) });
       gallery.set(part, list);
-    } else if (sellable(data)) parts.push({ gid: r.gid, row: data });
+    } else if (sellable(data)) {
+      parts.push({ gid: r.gid, row: data });
+      stock.set(r.gid, Math.max(0, Math.floor(num(data.web_stock))));
+    }
   }
 
   const allImageNames = new Set<string>();
@@ -141,6 +208,14 @@ async function desiredCatalog(): Promise<Desired[]> {
     }
 
     const names = members.map((m) => baseName(str(m.row.part_name), str(m.row.size), str(m.row.color)));
+    const category = categories.get(str(first.category_id)) || "General";
+    // The website shows one price per product, so the promotion becomes a percent off that price
+    const discount = promos.length
+      ? Math.min(99, Math.max(0, ...members.map((m) => {
+          const list = num(m.row.selling_price);
+          return list > 0 ? Math.round((1 - promoPrice(promos, m.gid, m.row, category) / list) * 10000) / 100 : 0;
+        })))
+      : 0;
     out.push({
       externalId: `g-${createHash("sha1").update(key).digest("hex").slice(0, 16)}`,
       name: names.sort((a, b) => a.length - b.length)[0],
@@ -155,6 +230,7 @@ async function desiredCatalog(): Promise<Desired[]> {
       styleCode: str(first.style_code),
       isNew: members.some((m) => flag(m.row.is_new, false)),
       price: Math.max(...members.map((m) => num(m.row.selling_price))),
+      discount,
       colorName: color || null,
       images: images.slice(0, 8),
       variants: [...bySize.values()].map((m) => {
@@ -226,6 +302,7 @@ export async function rebuildStorefront(budgetMs = Number.POSITIVE_INFINITY) {
       name: d.name,
       description: d.description,
       price: d.price,
+      discount: d.discount,
       imageUrl,
       images: JSON.stringify(gallery),
       colorName: d.colorName,
@@ -249,6 +326,7 @@ export async function rebuildStorefront(budgetMs = Number.POSITIVE_INFINITY) {
         product.name !== fields.name ||
         product.description !== fields.description ||
         product.price !== fields.price ||
+        product.discount !== fields.discount ||
         product.imageUrl !== fields.imageUrl ||
         !sameList(JSON.parse(product.images || "[]"), gallery) ||
         product.colorName !== fields.colorName ||
@@ -330,13 +408,21 @@ async function metaNumber(key: string) {
 /** Brings the storefront up to date when the hub changed since the last complete rebuild. */
 export async function refreshStorefront(budgetMs = 6000) {
   const want = await metaNumber("storefront_want");
-  if (want <= (await metaNumber("storefront_done"))) return null;
+  // Promotions start and end at midnight without any new data arriving, so a new day also rebuilds
+  const day = shopToday();
+  const dayChanged = (await prisma.syncMeta.findUnique({ where: { key: "storefront_day" } }))?.value !== day;
+  if (want <= (await metaNumber("storefront_done")) && !dayChanged) return null;
   const result = await rebuildStorefront(budgetMs);
   if (result.done) {
     await prisma.syncMeta.upsert({
       where: { key: "storefront_done" },
       update: { value: String(want) },
       create: { key: "storefront_done", value: String(want) },
+    });
+    await prisma.syncMeta.upsert({
+      where: { key: "storefront_day" },
+      update: { value: day },
+      create: { key: "storefront_day", value: day },
     });
   }
   return result;

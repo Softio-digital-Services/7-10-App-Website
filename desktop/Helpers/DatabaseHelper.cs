@@ -413,10 +413,39 @@ namespace InventorySystem
                 if (!ColumnExists("orders", "shipping_address")) ExecuteNonQuery("ALTER TABLE orders ADD COLUMN shipping_address TEXT;");
                 if (!ColumnExists("orders", "delivery_date")) ExecuteNonQuery("ALTER TABLE orders ADD COLUMN delivery_date TEXT;");
                 if (!ColumnExists("orders", "due_date")) ExecuteNonQuery("ALTER TABLE orders ADD COLUMN due_date TEXT;");
+                // Discount given on the whole order (incl. a manually lowered total); reports spread it over the items
+                if (!ColumnExists("orders", "discount_amount")) ExecuteNonQuery("ALTER TABLE orders ADD COLUMN discount_amount REAL DEFAULT 0;");
 
                 // Custom / quick-sale line label (when part_id is null or name overridden)
                 if (!ColumnExists("order_items", "item_name")) ExecuteNonQuery("ALTER TABLE order_items ADD COLUMN item_name TEXT;");
                 if (!ColumnExists("order_items", "amount_paid")) ExecuteNonQuery("ALTER TABLE order_items ADD COLUMN amount_paid REAL DEFAULT 0;");
+                // Cost of the item when it was sold, so later cost changes do not rewrite past profit (NULL = sold before this existed)
+                if (!ColumnExists("order_items", "cost_price")) ExecuteNonQuery("ALTER TABLE order_items ADD COLUMN cost_price REAL;");
+                // Normal price when sold, and the promotion that lowered it (for promotion reports)
+                if (!ColumnExists("order_items", "list_price")) ExecuteNonQuery("ALTER TABLE order_items ADD COLUMN list_price REAL;");
+                if (!ColumnExists("order_items", "promotion_id")) ExecuteNonQuery("ALTER TABLE order_items ADD COLUMN promotion_id INTEGER;");
+
+                // Promotions: a % off or a fixed sale price, for some products / a category / a collection / the whole shop,
+                // between two dates (inclusive), in the shop, on the website, or both. Synced to the website.
+                ExecuteNonQuery(@"CREATE TABLE IF NOT EXISTS promotions (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        name TEXT NOT NULL,
+                        kind TEXT NOT NULL DEFAULT 'percent',
+                        value REAL NOT NULL DEFAULT 0,
+                        scope TEXT NOT NULL DEFAULT 'all',
+                        scope_value TEXT,
+                        date_from TEXT NOT NULL,
+                        date_to TEXT NOT NULL,
+                        channel TEXT NOT NULL DEFAULT 'both',
+                        is_active INTEGER NOT NULL DEFAULT 1,
+                        created_at TEXT DEFAULT (datetime('now'))
+                    );");
+                // Products of a 'products' promotion; a table (not a list in a column) so sync can map ids between devices
+                ExecuteNonQuery(@"CREATE TABLE IF NOT EXISTS promotion_items (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        promotion_id INTEGER NOT NULL,
+                        part_id INTEGER NOT NULL
+                    );");
 
                 ExecuteNonQuery(@"
                     CREATE TABLE IF NOT EXISTS supplier_purchase_items (

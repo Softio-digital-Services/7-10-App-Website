@@ -14,8 +14,6 @@ namespace InventorySystem.Services
     public static class ProfitShareApi
     {
         private static readonly JsonSerializerOptions JsonOpts = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-        private const string SalesFilter =
-            "o.status IS NOT NULL AND o.status NOT IN ('Draft', 'Quotation', 'Cancelled')";
 
         public static void Map(WebApplication app)
         {
@@ -42,24 +40,11 @@ namespace InventorySystem.Services
                 decimal sales = 0, cost = 0, expenses = 0;
                 if (range.ok)
                 {
-                    sales = Sum($@"
-                        SELECT COALESCE(SUM(oi.quantity * oi.price), 0)
-                        FROM order_items oi
-                        INNER JOIN orders o ON oi.order_id = o.order_id
-                        WHERE date(o.order_date) BETWEEN date(@from) AND date(@to)
-                          AND {SalesFilter}", range.from, range.to);
-                    cost = Sum($@"
-                        SELECT COALESCE(SUM(oi.quantity * COALESCE(p.purchase_price, 0)), 0)
-                        FROM order_items oi
-                        INNER JOIN orders o ON oi.order_id = o.order_id
-                        INNER JOIN parts p ON oi.part_id = p.id
-                        WHERE date(o.order_date) BETWEEN date(@from) AND date(@to)
-                          AND {SalesFilter}", range.from, range.to);
-                    expenses = Sum(@"
-                        SELECT COALESCE(SUM(amount), 0)
-                        FROM expenses
-                        WHERE date(expense_date) BETWEEN date(@from) AND date(@to)
-                          AND date_deleted IS NULL", range.from, range.to);
+                    // Same numbers as the Reports page: net of returns, cancelled orders excluded, cost at time of sale
+                    var summary = new ReportService().GetSummary(range.from, range.to);
+                    sales = summary.TotalSales;
+                    cost = summary.TotalCost;
+                    expenses = summary.TotalExpenses;
                 }
 
                 decimal profit = sales - cost - expenses;
@@ -214,13 +199,6 @@ namespace InventorySystem.Services
         {
             if (string.IsNullOrWhiteSpace(raw)) return null;
             return int.TryParse(raw, NumberStyles.Integer, CultureInfo.InvariantCulture, out int n) ? n : null;
-        }
-
-        private static decimal Sum(string sql, DateTime from, DateTime to)
-        {
-            return DatabaseHelper.ExecuteScalar<decimal>(sql,
-                new SqliteParameter("@from", from.ToString("yyyy-MM-dd")),
-                new SqliteParameter("@to", to.ToString("yyyy-MM-dd")));
         }
 
         private static Range ResolveRange(string mode, int? year, int? month, int? collectionId)

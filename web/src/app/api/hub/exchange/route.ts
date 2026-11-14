@@ -5,6 +5,7 @@ import { applyChanges, changeSchema, getMeta, hubState, prunedThrough, pruneLog,
 import { markStorefrontDirty, refreshStorefront } from "@/lib/hub/storefront";
 import { applyAccountChanges, pushAccounts } from "@/lib/hub/accounts";
 import { ackSchema, applyAcks, applyStatuses, claimWebOrders, statusSchema } from "@/lib/hub/web-orders";
+import { ACCEPTED_FROM_LAPTOP, PUBLISHED_TABLES, allowedData } from "@/lib/hub/scope";
 
 export const maxDuration = 60;
 
@@ -19,7 +20,7 @@ const schema = z.object({
   appVersion: z.string().max(40).optional(),
 });
 
-const STOREFRONT_TABLES = new Set(["parts", "categories", "product_images", "site_settings", "site_media", "site_reviews"]);
+const STOREFRONT_TABLES = PUBLISHED_TABLES;
 
 /**
  * One round trip per sync cycle: store the laptop's changes and website-order results,
@@ -33,6 +34,11 @@ export async function POST(request: Request) {
   const parsed = schema.safeParse(await request.json().catch(() => null));
   if (!parsed.success) return hubError("invalid", 400, { issues: parsed.error.issues.slice(0, 5) });
   const body = parsed.data;
+  // Business data never lands here: keep only catalogue / website tables, and only their public columns.
+  // Stock counters ("C") are refused too; the catalogue carries a capped web_stock instead.
+  body.changes = body.changes
+    .filter((c) => ACCEPTED_FROM_LAPTOP.has(c.t) && c.o !== "C")
+    .map((c) => (c.o === "U" ? { ...c, d: allowedData(c.t, c.d) as typeof c.d } : c));
 
   const state = await hubState();
   if (state !== "ready") {

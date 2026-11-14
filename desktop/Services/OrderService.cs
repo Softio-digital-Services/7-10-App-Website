@@ -205,7 +205,11 @@ namespace InventorySystem.Services
                 }
 
                 // 3. Update Status to Completed
-                DatabaseHelper.ExecuteNonQuery("UPDATE orders SET status = 'Completed', order_date = datetime('now') WHERE order_id = @oid", 
+                DatabaseHelper.ExecuteNonQuery("UPDATE orders SET status = 'Completed', order_date = datetime('now') WHERE order_id = @oid",
+                    new SqliteParameter("@oid", orderId));
+                // The sale happens now, so its cost is today's cost, not the cost when the quotation was written
+                DatabaseHelper.ExecuteNonQuery(
+                    "UPDATE order_items SET cost_price = (SELECT purchase_price FROM parts WHERE parts.id = order_items.part_id) WHERE order_id = @oid",
                     new SqliteParameter("@oid", orderId));
 
                 // 4. Update Stock
@@ -276,13 +280,19 @@ namespace InventorySystem.Services
         {
             object partId = item.PartId > 0 ? (object)item.PartId : DBNull.Value;
             string itemName = string.IsNullOrWhiteSpace(item.PartName) ? null : item.PartName.Trim();
+            // cost_price freezes the product's cost at the moment of sale for profit reports;
+            // list_price / promotion_id record the normal price and the promotion the item was sold under
+            var (listPrice, promotionId) = PromotionService.Attribute(item.PartId, item.UnitPrice);
             DatabaseHelper.ExecuteNonQuery(
-                "INSERT INTO order_items (order_id, part_id, quantity, price, item_name) VALUES (@oid, @pid, @qty, @price, @iname)",
+                "INSERT INTO order_items (order_id, part_id, quantity, price, item_name, cost_price, list_price, promotion_id) " +
+                "VALUES (@oid, @pid, @qty, @price, @iname, (SELECT purchase_price FROM parts WHERE id = @pid), @list, @promo)",
                 new SqliteParameter("@oid", orderId),
                 new SqliteParameter("@pid", partId),
                 new SqliteParameter("@qty", item.Quantity),
                 new SqliteParameter("@price", item.UnitPrice),
-                new SqliteParameter("@iname", (object)itemName ?? DBNull.Value));
+                new SqliteParameter("@iname", (object)itemName ?? DBNull.Value),
+                new SqliteParameter("@list", (object)listPrice ?? DBNull.Value),
+                new SqliteParameter("@promo", (object)promotionId ?? DBNull.Value));
         }
     }
 }

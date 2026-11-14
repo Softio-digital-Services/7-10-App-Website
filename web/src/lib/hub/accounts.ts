@@ -42,9 +42,11 @@ async function emit(tx: Tx, changes: Omit<IncomingChange, "n">[]) {
   await applyChanges(tx, WEBSITE_DEVICE, changes.map((c) => ({ ...c, n: n++ })));
 }
 
-const digits = (s: string | null | undefined) => (s ?? "").replace(/\D/g, "");
-
-/** The desktop customer this account belongs to: an existing one with the same email or phone, else a new one. */
+/**
+ * The customer entry for this account. The website never sees the shop's customer list, so it always offers
+ * its own entry (just this person's own details); the admin PC matches it to an existing customer by
+ * email / phone when it takes it in.
+ */
 async function customerFor(
   tx: Tx,
   user: { id: string; name: string | null; email: string; phone: string | null },
@@ -55,23 +57,11 @@ async function customerFor(
   const mine = await tx.syncRow.findUnique({ where: { tbl_gid: { tbl: "customers", gid: own } }, select: { deleted: true } });
   if (mine && !mine.deleted) return own;
 
+  // The admin PC may already have linked this account to one of its customers: keep that link.
   const prev = await tx.syncRow.findUnique({ where: { tbl_gid: { tbl: "web_accounts", gid: accountGid(user.id) } } });
   if (prev && !prev.deleted) {
     const linked = (JSON.parse(prev.data) as { customer_id?: unknown }).customer_id;
-    if (typeof linked === "string") {
-      const row = await tx.syncRow.findUnique({ where: { tbl_gid: { tbl: "customers", gid: linked } }, select: { deleted: true } });
-      if (row && !row.deleted) return linked;
-    }
-  }
-
-  const email = user.email.toLowerCase();
-  const tail = digits(user.phone).slice(-8);
-  const rows = await tx.syncRow.findMany({ where: { tbl: "customers", deleted: false }, select: { gid: true, data: true } });
-  for (const r of rows) {
-    const d = JSON.parse(r.data) as { email?: unknown; phone?: unknown; date_deleted?: unknown };
-    if (d.date_deleted) continue;
-    if (typeof d.email === "string" && d.email.trim().toLowerCase() === email) return r.gid;
-    if (tail.length >= 6 && typeof d.phone === "string" && digits(d.phone).endsWith(tail)) return r.gid;
+    if (typeof linked === "string" && linked) return linked;
   }
 
   out.push({

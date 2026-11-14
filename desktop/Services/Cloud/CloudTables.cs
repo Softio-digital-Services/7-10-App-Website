@@ -23,6 +23,14 @@ namespace InventorySystem.Services.Cloud
         public HashSet<string> Encrypted { get; init; } = new(StringComparer.OrdinalIgnoreCase);
         /// <summary>Image path columns; the file itself is uploaded and the path rewritten to Assets/Products/&lt;hash&gt;.</summary>
         public HashSet<string> Files { get; init; } = new(StringComparer.OrdinalIgnoreCase);
+        /// <summary>Only these columns leave this PC (empty = all). Keeps cost, supplier, notes... local.</summary>
+        public HashSet<string> Columns { get; init; } = new(StringComparer.OrdinalIgnoreCase);
+        /// <summary>This PC sends the table to the website (the public catalogue).</summary>
+        public bool Outbound { get; init; } = true;
+        /// <summary>This PC accepts the table from the website (customer accounts created there).</summary>
+        public bool Inbound { get; init; }
+
+        public bool Sends(string column) => Columns.Count == 0 || Columns.Contains(column);
 
         public string TargetOf(string column, Func<string, string> typeValue)
         {
@@ -48,10 +56,17 @@ namespace InventorySystem.Services.Cloud
         private static HashSet<string> Cols(params string[] names) => new(names, StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
-        /// Every table that belongs to the shop, parents before children. Machine-local tables
-        /// (app_settings, currency_rates, licence, printers) are deliberately absent.
+        /// What passes between this PC and the website. All business data (sales, costs, expenses, suppliers,
+        /// purchase orders, payments, staff, the shop's customer list) stays on this PC and is not listed here.
+        /// The website only receives the public catalogue, and sends back accounts its customers created
+        /// (website orders travel separately, see TakeWebOrders). Parents before children.
         /// </summary>
         public static readonly IReadOnlyList<SyncTable> All = Build();
+
+        /// <summary>Units the website keeps back for the shop, so the last item can still be sold in store.</summary>
+        public const int WebStockReserve = 1;
+        /// <summary>The website never learns more than this per item, so it cannot reveal real inventory.</summary>
+        public const int WebStockCap = 10;
 
         private static readonly Dictionary<string, SyncTable> ByName =
             All.ToDictionary(t => t.Name, StringComparer.OrdinalIgnoreCase);
@@ -62,54 +77,30 @@ namespace InventorySystem.Services.Cloud
         {
             var list = new List<SyncTable>
             {
-                new() { Name = "users", Pk = "id", Encrypted = Cols("password") },
-                new() { Name = "categories", Pk = "id", Files = Cols("category_image") },
-                new() { Name = "suppliers", Pk = "id", Counters = Cols("balance_due") },
-                new() { Name = "customers", Pk = "customer_id", Counters = Cols("current_balance") },
-                // Website customer accounts: written by the website, edits here go back to the account page.
-                new() { Name = "web_accounts", Pk = "id", Fks = Fk("customer_id", "customers") },
-                new() { Name = "web_addresses", Pk = "id", Fks = Fk("account_id", "web_accounts") },
-                new() { Name = "warehouses", Pk = "id" },
-                new() { Name = "expense_categories", Pk = "category_id" },
-                new() { Name = "units_of_measure", Pk = "unit_id" },
-                new() { Name = "profit_parties", Pk = "id" },
-                new() { Name = "profit_collections", Pk = "id" },
-                new() { Name = "expenses", Pk = "expense_id" },
-                new() { Name = "transactions", Pk = "id" },
-                new() { Name = "parts", Pk = "id", Fks = Fk("category_id", "categories", "supplier_id", "suppliers"),
-                        Counters = Cols("quantity_in_stock"), Files = Cols("part_image") },
-                new() { Name = "product_images", Pk = "id", Fks = Fk("part_id", "parts"), Files = Cols("image_path") },
+                // --- Public catalogue: this PC -> website (one way). Only the listed columns leave the PC.
+                new() { Name = "categories", Pk = "id", Files = Cols("category_image"),
+                        Columns = Cols("category_name", "category_name_ar", "category_image", "sort_order", "description") },
+                // parts: no cost, supplier, location, notes or real stock; web_stock is added when sending
+                new() { Name = "parts", Pk = "id", Fks = Fk("category_id", "categories"), Files = Cols("part_image"),
+                        Columns = Cols("part_name", "part_number", "description", "selling_price", "category_id", "part_image",
+                            "status", "is_inactive", "is_sales_item", "item_type", "date_deleted", "size", "color", "style_code",
+                            "gender", "fabric", "collection", "is_new") },
+                new() { Name = "product_images", Pk = "id", Fks = Fk("part_id", "parts"), Files = Cols("image_path"),
+                        Columns = Cols("part_id", "image_path", "sort_order") },
+                new() { Name = "promotions", Pk = "id" },
+                new() { Name = "promotion_items", Pk = "id", Fks = Fk("promotion_id", "promotions", "part_id", "parts") },
                 // Website content edited in the Website screen and shown on the 7.10 website.
                 new() { Name = "site_settings", Pk = "id" },
                 new() { Name = "site_media", Pk = "id", Files = Cols("image_path") },
                 new() { Name = "site_reviews", Pk = "id" },
-                new() { Name = "product_materials", Pk = "id", Fks = Fk("part_id", "parts", "supplier_id", "suppliers") },
-                new() { Name = "stock_levels", Pk = "id", Fks = Fk("part_id", "parts", "warehouse_id", "warehouses"),
-                        Counters = Cols("quantity") },
-                new() { Name = "purchase_orders", Pk = "po_id", Fks = Fk("supplier_id", "suppliers", "warehouse_id", "warehouses") },
-                new() { Name = "purchase_order_items", Pk = "po_item_id", Fks = Fk("po_id", "purchase_orders", "part_id", "parts") },
-                new() { Name = "supplier_purchase_items", Pk = "id", Fks = Fk("supplier_id", "suppliers", "part_id", "parts") },
-                new() { Name = "stock_transfers", Pk = "id", Fks = Fk("from_warehouse_id", "warehouses", "to_warehouse_id", "warehouses") },
-                new() { Name = "stock_transfer_items", Pk = "id", Fks = Fk("transfer_id", "stock_transfers", "part_id", "parts") },
-                new() { Name = "orders", Pk = "order_id", Fks = Fk("customer_id", "customers") },
-                new() { Name = "order_items", Pk = "order_item_id", Fks = Fk("order_id", "orders", "part_id", "parts") },
-                new() { Name = "order_pack_checks", Pk = "id", Fks = Fk("order_id", "orders", "order_item_id", "order_items") },
-                new() { Name = "order_events", Pk = "id", Fks = Fk("order_id", "orders") },
-                new() { Name = CloudStore.WebLinksTable, Pk = "id", Fks = Fk("order_id", "orders") },
-                new() { Name = "returns", Pk = "return_id", Fks = Fk("order_id", "orders") },
-                new() { Name = "return_items", Pk = "return_item_id", Fks = Fk("return_id", "returns", "part_id", "parts") },
-                new()
-                {
-                    Name = "payments", Pk = "payment_id",
-                    PolyTypeColumn = "entity_type", PolyIdColumn = "entity_id",
-                    PolyTargets = Fk("Customer", "customers", "Supplier", "suppliers")
-                },
-                new()
-                {
-                    Name = "stock_movements", Pk = "id", Fks = Fk("part_id", "parts", "warehouse_id", "warehouses"),
-                    PolyTypeColumn = "reference_type", PolyIdColumn = "reference_id",
-                    PolyTargets = Fk("Order", "orders", "PO", "purchase_orders", "Transfer", "stock_transfers")
-                },
+
+                // --- From the website: customers create these there; this PC takes them in.
+                // The shop's own customer list is never sent (Outbound = false); a website customer entry is
+                // matched here to an existing customer by email / phone.
+                new() { Name = "customers", Pk = "customer_id", Outbound = false, Inbound = true },
+                // Accounts and addresses go both ways: staff may correct an address, which updates the account page.
+                new() { Name = "web_accounts", Pk = "id", Fks = Fk("customer_id", "customers"), Inbound = true },
+                new() { Name = "web_addresses", Pk = "id", Fks = Fk("account_id", "web_accounts"), Inbound = true },
             };
             for (int i = 0; i < list.Count; i++) list[i].Rank = i;
             return list;

@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { refreshCatalog } from "@/lib/catalog";
 import { checkStockAlerts } from "@/lib/inventory";
 import { notifyOrderPlaced } from "@/lib/email";
+import { notifyOrderOnWhatsApp } from "@/lib/whatsapp";
 import { isValidPhone, normalizePhone } from "@/lib/format";
 import { ORDER_COOKIE, generateOrderNumber, rememberedOrders, withRemembered } from "@/lib/orders";
 import { releaseUnpaidWhishOrders } from "@/lib/hub/web-orders";
@@ -169,6 +170,22 @@ export async function POST(request: Request) {
       console.error("[checkout:after]", error);
     }
   });
+
+  // WhatsApp alert to the brand, separate from the emails so one failing never blocks the other
+  after(() =>
+    notifyOrderOnWhatsApp(
+      {
+        orderNumber: placed.orderNumber,
+        customerName: placed.customerName,
+        customerPhone: placed.customerPhone,
+        paymentMethod: placed.paymentMethod,
+        address: shippingAddress,
+        total,
+        items: lines.map((l) => ({ name: l.variant.product.name, size: l.variant.size, quantity: l.quantity, price: l.price })),
+      },
+      process.env.NEXT_PUBLIC_SITE_URL ?? process.env.AUTH_URL ?? "http://localhost:3000",
+    ),
+  );
 
   let payUrl: string | null = null;
   if (paymentMethod === "WHISH") {

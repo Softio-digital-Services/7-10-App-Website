@@ -3,8 +3,8 @@
     if (!card) return;
 
     const AR = {
-        title: 'مزامنة السحابة',
-        hint: 'كل جهاز مربوط يعمل على نفس بيانات المحل — المنتجات والمخزون والزبائن والطلبات — والموقع يعرض نفس الكتالوج ويرسل طلباته إلى هنا.',
+        title: 'ربط الموقع',
+        hint: 'ينشر هذا الكمبيوتر الكتالوج على الموقع (المنتجات والأسعار والصور والعروض والتوفر فقط) ويستلم طلبات الموقع. بيانات العمل — المبيعات والتكاليف والمصروفات والموردون والموظفون والزبائن — تبقى على هذا الكمبيوتر فقط.',
         url: 'عنوان الموقع',
         key: 'مفتاح مزامنة المحل',
         name: 'اسم هذا الجهاز',
@@ -29,9 +29,11 @@
     let pendingMode = null;
 
     function translate() {
-        if (!isAr()) return;
+        const ar = isAr();
         card.querySelectorAll('[data-cs]').forEach((node) => {
-            const text = AR[node.dataset.cs];
+            // Remember the English text from the page, so switching back from Arabic restores it
+            if (node.dataset.csEn === undefined) node.dataset.csEn = node.textContent;
+            const text = ar ? AR[node.dataset.cs] : node.dataset.csEn;
             if (text) node.textContent = text;
         });
         if (lastState) render(lastState);
@@ -162,28 +164,15 @@
             }));
             box.hidden = false;
             box.className = 'form-hint cloud-choice' + (hub.state === 'founding' ? ' warn' : '');
-            if (hub.state === 'empty') {
-                pendingMode = 'create';
-                box.textContent = t(
-                    'This website has no shop yet. This laptop will upload its products, stock, customers and orders, and become the first of any number of laptops.',
-                    'هذا الموقع بلا محل بعد. سيرفع هذا الجهاز منتجاته ومخزونه وزبائنه وطلباته، ويصبح أول جهاز من أي عدد من الأجهزة.'
-                );
-                el('cs-connect-label').textContent = t('Create the shop', 'إنشاء المحل');
-                connect.hidden = false;
-            } else if (hub.state === 'ready') {
-                pendingMode = 'join';
-                box.textContent = t(
-                    'A shop already lives on this website (' + (hub.devices || 0) + ' laptop(s) linked). Joining replaces this laptop\'s products, stock, customers and staff logins with the shop\'s data.',
-                    'يوجد محل على هذا الموقع (' + (hub.devices || 0) + ' جهاز مربوط). الانضمام يستبدل منتجات هذا الجهاز ومخزونه وزبائنه وحسابات الموظفين ببيانات المحل.'
-                );
-                el('cs-connect-label').textContent = t('Join the shop', 'الانضمام إلى المحل');
-                connect.hidden = false;
-            } else {
-                box.textContent = t(
-                    'The first laptop is still uploading the shop\'s data. Wait until it finishes, then join.',
-                    'الجهاز الأول ما زال يرفع بيانات المحل. انتظر حتى ينتهي ثم انضم.'
-                );
-            }
+            // This PC is the shop's only data store: it always publishes, it never downloads ("join" is gone)
+            pendingMode = 'create';
+            box.textContent = hub.state === 'empty'
+                ? t('The website is ready. This PC will publish its catalogue (products, prices, photos, promotions, availability) and receive website orders. Business data stays here.',
+                    'الموقع جاهز. سينشر هذا الكمبيوتر الكتالوج (المنتجات والأسعار والصور والعروض والتوفر) ويستلم طلبات الموقع. بيانات العمل تبقى هنا.')
+                : t('This website was linked before. Publishing replaces the website catalogue with this PC\'s and removes any old shop data stored there. Website accounts and orders are kept.',
+                    'هذا الموقع كان مربوطاً من قبل. النشر يستبدل كتالوج الموقع بكتالوج هذا الكمبيوتر ويحذف أي بيانات محل قديمة مخزنة هناك. حسابات وطلبات الموقع تبقى.');
+            el('cs-connect-label').textContent = t('Publish to website', 'النشر على الموقع');
+            connect.hidden = false;
         } catch (err) {
             box.hidden = false;
             box.className = 'form-hint cloud-error';
@@ -199,14 +188,15 @@
         const shopKey = el('cs-key').value.trim();
         const name = el('cs-name').value.trim();
         const ok = pendingMode === 'create'
-            ? confirm(t(
-                'Create the shop on this website from this laptop\'s data? Other laptops will then join this shop.',
-                'إنشاء المحل على هذا الموقع من بيانات هذا الجهاز؟ ستنضم الأجهزة الأخرى إلى هذا المحل بعد ذلك.'
-            ))
-            : confirm(t(
+            ? await confirmDialog(t(
+                'Publish this PC\'s catalogue to the website and receive its orders here? Sales, costs, expenses, suppliers, staff and customers are never sent.',
+                'نشر كتالوج هذا الكمبيوتر على الموقع واستلام طلباته هنا؟ المبيعات والتكاليف والمصروفات والموردون والموظفون والزبائن لا تُرسل أبداً.'
+            ), { danger: false, confirmText: t('Publish', 'نشر') })
+            // Joining replaces this laptop's data, so it gets the red (danger) button
+            : await confirmDialog(t(
                 'Join the shop? This laptop\'s current products, stock, customers and staff logins will be replaced with the shop\'s data. A backup is saved first.',
                 'الانضمام إلى المحل؟ ستُستبدل منتجات هذا الجهاز ومخزونه وزبائنه وحسابات الموظفين ببيانات المحل. يُحفظ نسخة احتياطية أولاً.'
-            ));
+            ), { danger: true, confirmText: t('Join and replace', 'الانضمام والاستبدال') });
         if (!ok) return;
         setBusy(true);
         try {
@@ -242,10 +232,10 @@
     }
 
     async function disconnect() {
-        if (!confirm(t(
+        if (!await confirmDialog(t(
             'Disconnect this laptop? Its data stays as it is. You can link it again later.',
             'قطع ربط هذا الجهاز؟ تبقى بياناته كما هي. يمكن ربطه لاحقاً.'
-        ))) return;
+        ), { danger: false, confirmText: t('Disconnect', 'قطع الربط') })) return;
         setBusy(true);
         try {
             render(await readJson(await fetch('/api/cloud/disconnect', { method: 'POST' })));

@@ -99,20 +99,23 @@ namespace InventorySystem.Services.Cloud
             bool rolledBack = seq < cfg.LastPushedSeq;
             if (!foreign && !rolledBack) return;
 
+            // This PC is the only source of the shop's data: nothing is downloaded. It simply republishes its
+            // catalogue so the website matches this (restored) database again.
             using (var tx = conn.BeginTransaction())
             {
                 if (foreign) CloudStore.Exec(conn, tx, "DELETE FROM _sync_outbox");
                 else CloudStore.Exec(conn, tx, "DELETE FROM _sync_outbox WHERE seq <= @p0", cfg.LastPushedSeq);
                 BumpOutboxSequence(conn, tx, Math.Max(seq, cfg.LastPushedSeq));
                 CloudStore.SetMeta(conn, tx, "device", cfg.DeviceId);
+                EnqueueEverything(conn, tx);
                 CloudStore.Log(conn, tx, foreign
-                    ? "This database came from another laptop; downloading the shop's data again."
-                    : "A backup was restored; downloading the shop's latest data again.");
+                    ? "This database came from another computer; republishing the catalogue to the website."
+                    : "A backup was restored; republishing the catalogue to the website.");
                 tx.Commit();
             }
-            if (!(cfg.IsFounder && !cfg.Founded))
+            if (cfg.NeedsSnapshot)
             {
-                cfg.NeedsSnapshot = true;
+                cfg.NeedsSnapshot = false;
                 cfg.Save();
             }
         }
@@ -151,6 +154,8 @@ namespace InventorySystem.Services.Cloud
         public static async Task ConnectAsync(string url, string shopKey, string deviceName, bool create, bool startSync = true, CancellationToken ct = default)
         {
             if (CloudConfig.Load().IsLinked) throw new InvalidOperationException("This laptop is already linked. Disconnect it first.");
+            // The shop's data lives only on this PC; it is never replaced by a download from the website.
+            if (!create) throw new InvalidOperationException("Joining is turned off: this PC keeps the shop's data and only publishes the catalogue. Use \"Create the shop\".");
             url = HubClient.NormalizeUrl(url);
             if (!Uri.TryCreate(url, UriKind.Absolute, out _)) throw new InvalidOperationException("Enter the website address, e.g. https://seventen.netlify.app");
             string name = string.IsNullOrWhiteSpace(deviceName) ? Environment.MachineName : deviceName.Trim();
@@ -216,6 +221,7 @@ namespace InventorySystem.Services.Cloud
         {
             foreach (var table in SyncTables.All)
             {
+                if (!table.Outbound) continue;
                 var cols = CloudStore.Columns(conn, tx, table.Name);
                 if (cols.Count == 0) continue;
                 string q = CloudStore.Quote(table.Name);
@@ -272,7 +278,12 @@ namespace InventorySystem.Services.Cloud
                 var cfg = CloudConfig.Load();
                 if (!cfg.IsLinked || cfg.Revoked) return false;
 
-                if (cfg.NeedsSnapshot) await RunSnapshotAsync(cfg, ct);
+                // Never download-and-replace: this PC is the source of the shop's data
+                if (cfg.NeedsSnapshot)
+                {
+                    cfg.NeedsSnapshot = false;
+                    cfg.Save();
+                }
 
                 for (int i = 0; i < 400 && !ct.IsCancellationRequested; i++)
                 {
@@ -418,9 +429,13 @@ namespace InventorySystem.Services.Cloud
 
             if (root.TryGetProperty("resync", out var resync) && resync.GetBoolean())
             {
-                cfg.NeedsSnapshot = true;
-                cfg.Save();
-                await RunSnapshotAsync(cfg, ct);
+                // The website lost track of older changes: republish the catalogue instead of downloading anything
+                using (var tx = conn.BeginTransaction())
+                {
+                    EnqueueEverything(conn, tx);
+                    CloudStore.SetMeta(conn, tx, "cursor", root.TryGetProperty("head", out var h) ? h.GetInt64().ToString() : "0");
+                    tx.Commit();
+                }
                 return true;
             }
 
@@ -584,7 +599,7 @@ namespace InventorySystem.Services.Cloud
             var d = new Dictionary<string, object>();
             foreach (var (col, raw) in values)
             {
-                if (col.Equals(table.Pk, StringComparison.OrdinalIgnoreCase) || table.Counters.Contains(col)) continue;
+                if (col.Equals(table.Pk, StringComparison.OrdinalIgnoreCase) || table.Counters.Contains(col) || !table.Sends(col)) continue;
                 object v = raw;
                 string target = table.TargetOf(col, TypeOf);
                 if (target != null && v != null && TryLong(v, out long fk))
@@ -603,7 +618,21 @@ namespace InventorySystem.Services.Cloud
                     v = new Dictionary<string, string> { ["$b64"] = Convert.ToBase64String(bytes) };
                 d[col] = v;
             }
+            if (table.Name == "parts") d["web_stock"] = WebStock(values);
             return d;
+        }
+
+        /// <summary>
+        /// What the website may sell of a product: real stock minus the shop's reserve, capped, so the website
+        /// can sell while this PC is offline without ever learning the real inventory.
+        /// </summary>
+        private static int WebStock(List<KeyValuePair<string, object>> values)
+        {
+            object V(string col) => values.FirstOrDefault(v => v.Key.Equals(col, StringComparison.OrdinalIgnoreCase)).Value;
+            bool tracked = !(V("is_stock_tracked") is object t && TryLong(t, out long tr) && tr == 0);
+            if (!tracked) return SyncTables.WebStockCap;
+            long qty = V("quantity_in_stock") is object q && TryLong(q, out long n) ? n : 0;
+            return (int)Math.Max(0, Math.Min(SyncTables.WebStockCap, qty - SyncTables.WebStockReserve));
         }
 
         private static bool TryLong(object v, out long result)
@@ -768,10 +797,17 @@ namespace InventorySystem.Services.Cloud
         private static Outcome ApplyDelete(SqliteConnection conn, SqliteTransaction tx, Incoming c)
         {
             var table = SyncTables.Get(c.T);
-            if (table == null || !CloudStore.TableExists(conn, tx, table.Name)) return Outcome.Skipped;
+            // Only website data comes in; the catalogue and everything else are owned by this PC
+            if (table == null || !table.Inbound || !CloudStore.TableExists(conn, tx, table.Name)) return Outcome.Skipped;
             long? lid = CloudStore.LidFor(conn, tx, table.Name, c.G);
             CloudStore.Exec(conn, tx, "DELETE FROM _sync_pending WHERE tbl = @p0 AND gid = @p1", c.T, c.G);
             if (lid == null) return Outcome.Skipped;
+            if (table.Name == "customers")
+            {
+                // The website dropping its entry never deletes a shop customer (it may be matched to a real one)
+                CloudStore.MapDropLid(conn, tx, table.Name, lid.Value);
+                return Outcome.Applied;
+            }
             CloudStore.Exec(conn, tx, $"DELETE FROM {CloudStore.Quote(table.Name)} WHERE {CloudStore.Quote(table.Pk)} = @p0", lid.Value);
             CloudStore.MapDropLid(conn, tx, table.Name, lid.Value);
             return Outcome.Applied;
@@ -780,7 +816,7 @@ namespace InventorySystem.Services.Cloud
         private static Outcome ApplyCounter(SqliteConnection conn, SqliteTransaction tx, Incoming c)
         {
             var table = SyncTables.Get(c.T);
-            if (table == null || !CloudStore.TableExists(conn, tx, table.Name)) return Outcome.Skipped;
+            if (table == null || !table.Inbound || !CloudStore.TableExists(conn, tx, table.Name)) return Outcome.Skipped;
             long? lid = CloudStore.LidFor(conn, tx, table.Name, c.G);
             if (lid == null) return Outcome.Unresolved;
             var cols = CloudStore.Columns(conn, tx, table.Name);
@@ -802,7 +838,7 @@ namespace InventorySystem.Services.Cloud
         private static Outcome ApplyUpsert(SqliteConnection conn, SqliteTransaction tx, CloudConfig cfg, Incoming c, bool force)
         {
             var table = SyncTables.Get(c.T);
-            if (table == null) return Outcome.Skipped;
+            if (table == null || !table.Inbound) return Outcome.Skipped;
             var cols = CloudStore.Columns(conn, tx, table.Name);
             if (cols.Count == 0) return Outcome.Skipped;
             var colSet = new HashSet<string>(cols, StringComparer.OrdinalIgnoreCase);
@@ -826,6 +862,17 @@ namespace InventorySystem.Services.Cloud
             }
 
             long? lid = CloudStore.LidFor(conn, tx, table.Name, c.G);
+            if (table.Name == "customers")
+            {
+                // A website customer entry only seeds a customer: it never overwrites one the shop already has
+                if (lid != null && CloudStore.RowExists(conn, tx, table, lid.Value)) return Outcome.Applied;
+                long? match = MatchShopCustomer(conn, tx, values);
+                if (match != null)
+                {
+                    CloudStore.MapSet(conn, tx, table.Name, c.G, match.Value);
+                    return Outcome.Applied;
+                }
+            }
             if (lid != null)
             {
                 int n = values.Count > 0 ? Update(conn, tx, table, lid.Value, values) : (CloudStore.RowExists(conn, tx, table, lid.Value) ? 1 : 0);
@@ -897,6 +944,24 @@ namespace InventorySystem.Services.Cloud
                   $"VALUES ({string.Join(", ", all.Select((_, i) => "@p" + i))})";
             CloudStore.Exec(conn, tx, sql, all.Select(v => v.Value).ToArray());
             return lid ?? CloudStore.Long(conn, tx, "SELECT last_insert_rowid()");
+        }
+
+        /// <summary>An existing shop customer with the same email, or the same phone (last 8 digits).</summary>
+        private static long? MatchShopCustomer(SqliteConnection conn, SqliteTransaction tx, List<KeyValuePair<string, object>> values)
+        {
+            string V(string col) => values.FirstOrDefault(v => v.Key.Equals(col, StringComparison.OrdinalIgnoreCase)).Value?.ToString()?.Trim() ?? "";
+            string email = V("email").ToLowerInvariant();
+            string digits = new string(V("phone").Where(char.IsDigit).ToArray());
+            string tail = digits.Length >= 6 ? digits.Substring(Math.Max(0, digits.Length - 8)) : "";
+            using var cmd = CloudStore.Command(conn, tx,
+                "SELECT customer_id, LOWER(TRIM(COALESCE(email, ''))), COALESCE(phone, '') FROM customers WHERE date_deleted IS NULL");
+            using var r = cmd.ExecuteReader();
+            while (r.Read())
+            {
+                if (email.Length > 0 && r.GetString(1) == email) return r.GetInt64(0);
+                if (tail.Length > 0 && new string(r.GetString(2).Where(char.IsDigit).ToArray()).EndsWith(tail)) return r.GetInt64(0);
+            }
+            return null;
         }
 
         private static long? FindByUnique(SqliteConnection conn, SqliteTransaction tx, SyncTable table, List<KeyValuePair<string, object>> values)

@@ -147,14 +147,14 @@ namespace InventorySystem.Services
             if (existingId.HasValue)
             {
                 partId = existingId.Value;
+                // Average the new purchase into the cost of the stock on hand, then add the stock
+                FashionStock.AverageInPurchaseCost(partId, qtyInt, item.UnitPrice);
                 DatabaseHelper.ExecuteNonQuery(
                     @"UPDATE parts SET
                         quantity_in_stock = COALESCE(quantity_in_stock, 0) + @qty,
-                        purchase_price = @cost,
                         supplier_id = @sid
                       WHERE id = @id",
                     new SqliteParameter("@qty", qtyInt),
-                    new SqliteParameter("@cost", item.UnitPrice),
                     new SqliteParameter("@sid", item.SupplierId),
                     new SqliteParameter("@id", partId));
                 created = false;

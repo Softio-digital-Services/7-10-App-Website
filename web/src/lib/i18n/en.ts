@@ -173,7 +173,7 @@ export const en = {
     notifyCta: "Notify me",
     notifyDone: "Done — we'll email you when it's back.",
     related: "Complete the look",
-    onlyLeft: "Only {n} left",
+    onlyLeft: "Only a few left",
     inStock: "In stock",
     outOfStock: "Sold out",
     imageOf: "Image {i} of {n}",

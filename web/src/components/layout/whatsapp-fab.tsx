@@ -27,7 +27,7 @@ export function WhatsAppFab() {
       target="_blank"
       rel="noreferrer"
       aria-label={t.help.chat}
-      className={`group fixed end-4 z-30 flex h-12 items-center gap-0 overflow-hidden bg-charcoal text-cream shadow-lg transition-all duration-500 md:end-6 md:bottom-6 ${
+      className={`group fixed end-4 z-30 flex h-12 items-center gap-0 overflow-hidden bg-charcoal text-cream shadow-lg transition-[translate,opacity,bottom] duration-500 ease-[var(--ease-out-expo)] md:end-6 md:bottom-6 ${
         onProduct ? "bottom-24" : "bottom-4"
       } ${visible ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-4 opacity-0"}`}
     >

@@ -143,5 +143,26 @@ namespace InventorySystem.Services
                 new SqliteParameter("@q", total),
                 new SqliteParameter("@id", partId));
         }
+
+        /// <summary>
+        /// Average cost: blends a new purchase into the cost of the stock already on hand.
+        /// 10 on hand at $8 + 10 bought at $10 = $9. Call BEFORE the received quantity is added to stock.
+        /// With no stock on hand (or no known cost yet) the purchase price becomes the cost.
+        /// A purchase with no price (0) leaves the cost unchanged.
+        /// </summary>
+        public static void AverageInPurchaseCost(int partId, int quantity, decimal unitCost)
+        {
+            if (partId <= 0 || quantity <= 0 || unitCost <= 0) return;
+            // SQLite evaluates every expression against the row's old values, so this is one consistent step
+            DatabaseHelper.ExecuteNonQuery(@"
+                UPDATE parts SET purchase_price = CASE
+                    WHEN COALESCE(purchase_price, 0) <= 0 OR COALESCE(quantity_in_stock, 0) <= 0 THEN @cost
+                    ELSE ROUND((quantity_in_stock * purchase_price + @qty * @cost) / (quantity_in_stock + @qty), 4)
+                END
+                WHERE id = @id",
+                new SqliteParameter("@cost", unitCost),
+                new SqliteParameter("@qty", quantity),
+                new SqliteParameter("@id", partId));
+        }
     }
 }

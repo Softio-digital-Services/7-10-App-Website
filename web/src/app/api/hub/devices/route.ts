@@ -4,10 +4,11 @@ import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { checkShopKey, hashToken, hubError, newDeviceId, newToken } from "@/lib/hub/auth";
 import { getMeta, hubState, setMeta } from "@/lib/hub/store";
+import { purgeNonWebsiteData } from "@/lib/hub/purge";
 
 const schema = z.object({
   name: z.string().trim().min(1).max(60),
-  /** create = first laptop uploads its data; join = download the shop's data */
+  /** create = the admin PC publishes its catalogue; join (downloading the shop) is no longer offered */
   mode: z.enum(["create", "join"]),
   appVersion: z.string().max(40).optional(),
 });
@@ -25,8 +26,14 @@ export async function POST(request: Request) {
 
   const outcome = await prisma.$transaction(async (tx) => {
     const state = await hubState(tx);
-    if (mode === "create" && state !== "empty") return { error: "shop_exists", state };
-    if (mode === "join" && state !== "ready") return { error: state === "empty" ? "shop_empty" : "shop_founding", state };
+    // The shop's data lives only on its admin PC: nothing can be downloaded from here.
+    if (mode === "join") return { error: "join_disabled", state };
+    if (mode === "create" && state !== "empty") {
+      // Re-linking the admin PC: it republishes the catalogue from scratch. Website accounts are kept;
+      // anything else (including business data stored by older versions) is removed.
+      await purgeNonWebsiteData(tx, { catalogue: true });
+      await tx.syncDevice.deleteMany({});
+    }
 
     await tx.syncDevice.create({ data: { id, name, tokenHash: hashToken(token), appVersion, lastSeenAt: new Date() } });
     if (mode === "create") {

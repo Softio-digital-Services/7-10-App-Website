@@ -281,11 +281,16 @@ function orderPrepareHtml(order) {
     const firstOpen = sections.find(s => s.checks.some(c => !c.done));
     const isOpen = key => key in orderPackOpen.open ? orderPackOpen.open[key] : firstOpen?.key === key;
 
+    const scanned = orderScanState(order.id);
     const itemBlocks = (order.items || []).map((item, i) => {
         const checks = sections[i].checks;
         const boxes = checks.map(c => orderCheckBox(c, editable)).join('');
         const meta = [item.sku, item.size, item.color].filter(Boolean).join(' · ');
-        const head = `<span class="prod-name">${typeof productThumb === 'function' ? productThumb(item) : ''}<span><strong>${ordEscape(item.name)}</strong><small>${ordEscape(meta)} · ×${item.quantity}</small></span></span>`;
+        const n = Math.min(scanned[item.id] || 0, Number(item.quantity) || 0);
+        const scanPill = editable
+            ? `<span class="scan-pill${n >= Number(item.quantity) ? ' is-done' : ''}" title="${ordEscape(ordTr('scan_scanned'))}"><span class="material-symbols-rounded">barcode_scanner</span>${n}/${item.quantity}</span>`
+            : '';
+        const head = `<span class="prod-name">${typeof productThumb === 'function' ? productThumb(item) : ''}<span><strong>${ordEscape(item.name)}</strong><small>${ordEscape(meta)} · ×${item.quantity}</small></span>${scanPill}</span>`;
         return orderPackSection('item-' + item.id, isOpen('item-' + item.id), head, checks, boxes);
     }).join('');
     const blocks = `<h4 class="pack-section-title">${ordEscape(ordTr('ord_pack_products'))}</h4>${itemBlocks}${orderPackagingHtml(order, editable, isOpen('order'))}`;
@@ -298,6 +303,7 @@ function orderPrepareHtml(order) {
     const label = order.stage === 'New' ? '' : orderLabelButton();
     return `<h3>${ordEscape(ordTr('ord_packing'))}</h3>
         <p class="editor-sub">${ordEscape(ordTr('ord_packing_hint'))} ${total ? ordEscape(ordTr('ord_checks_left').replace('{0}', left)) : ''}</p>
+        ${editable ? `<p class="scan-hint"><span class="material-symbols-rounded">barcode_scanner</span>${ordEscape(ordTr('scan_hint_prepare'))}</p>` : ''}
         ${blocks}
         <div class="order-actions">${label}${action}</div>`;
 }
@@ -905,7 +911,7 @@ function pickOrderProduct(lineIndex, productId) {
     const s = orderStockInfo(product);
     if (!s.ok) { toast(ordTr('ord_out_of_stock'), 'error'); return; }
     draft.partId = Number(product.id);
-    draft.price = Number(product.price) || 0;
+    draft.price = typeof salePrice === 'function' ? salePrice(product) : (Number(product.price) || 0);
     if (!draft.qty || draft.qty < 1) draft.qty = 1;
     if (s.qty != null && draft.qty > s.qty) {
         draft.qty = Math.max(1, Math.floor(s.qty) || 1);
@@ -913,6 +919,109 @@ function pickOrderProduct(lineIndex, productId) {
     }
     closeOrderPickers();
     paintOrderLines();
+}
+
+// --- Barcode scanning: add items to a new order, and check items off while preparing one ---
+
+function ordersViewActive() {
+    return !!document.getElementById('orders')?.classList.contains('active');
+}
+function orderEditorOpen() {
+    return ordersViewActive() && !document.getElementById('order-editor')?.hidden;
+}
+function orderPrepareOpen() {
+    return ordersViewActive() && !!activeOrder && !document.getElementById('order-detail')?.hidden && orderViewStep === 'prepare';
+}
+
+/** Scan in the order editor: add the product, or one more of it if it is already on the order. */
+function orderEditorScan(code) {
+    const product = typeof findProductByScan === 'function' ? findProductByScan(code) : null;
+    if (!product) { toast(ordTr('scan_not_found').replace('{0}', code), 'error'); return; }
+    const s = orderStockInfo(product);
+    if (!s.ok) { toast(`${ordTr('ord_out_of_stock')}: ${product.name}`, 'error'); return; }
+
+    let index = orderDraftLines.findIndex(l => Number(l.partId) === Number(product.id));
+    if (index >= 0) {
+        const line = orderDraftLines[index];
+        const next = (Number(line.qty) || 0) + 1;
+        if (s.qty != null && next > s.qty) {
+            toast(ordTr('ord_exceeds_stock').replace('{0}', orderStockQtyText(s.qty)).replace('{1}', product.name), 'error');
+            return;
+        }
+        line.qty = next;
+    } else {
+        // Fill an empty line first (a new order starts with one), otherwise add a line
+        index = orderDraftLines.findIndex(l => !(Number(l.partId) > 0));
+        if (index < 0) { orderDraftLines.push({ partId: 0, qty: 1, price: 0 }); index = orderDraftLines.length - 1; }
+        Object.assign(orderDraftLines[index], { partId: Number(product.id), qty: 1, price: typeof salePrice === 'function' ? salePrice(product) : (Number(product.price) || 0) });
+    }
+    closeOrderPickers();
+    paintOrderLines();
+    const row = document.querySelector(`#oe-lines .oe-line[data-line="${index}"]`);
+    if (row) {
+        row.classList.remove('scan-flash');
+        void row.offsetWidth; // restart the highlight animation
+        row.classList.add('scan-flash');
+        row.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+    toast(ordTr('scan_added').replace('{0}', product.name).replace('{1}', orderDraftLines[index].qty), 'success');
+}
+
+// Items scanned while preparing, per order: { orderId, counts: { itemId: n } }. Kept in this browser so a
+// refresh mid-pick does not lose count; the ticks themselves are saved on the order.
+var orderScanCounts = { orderId: null, counts: {} };
+
+function orderScanState(orderId) {
+    if (orderScanCounts.orderId !== orderId) {
+        let counts = {};
+        try { counts = JSON.parse(localStorage.getItem('order_scans_' + orderId) || '{}') || {}; } catch { counts = {}; }
+        orderScanCounts = { orderId, counts };
+    }
+    return orderScanCounts.counts;
+}
+function saveOrderScanState() {
+    try { localStorage.setItem('order_scans_' + orderScanCounts.orderId, JSON.stringify(orderScanCounts.counts)); } catch { /* storage unavailable */ }
+}
+
+/**
+ * Scan while preparing: the exact variant proves product type, size and colour; reaching the ordered
+ * quantity proves the quantity. Anything not on the order (wrong size / colour) or extra is flagged.
+ */
+async function orderPrepareScan(code) {
+    const order = activeOrder;
+    if (!order) return;
+    if (order.stage === 'New') { toast(ordTr('scan_start_first'), 'error'); return; }
+    if (order.stage !== 'Preparing') return;
+
+    const product = typeof findProductByScan === 'function' ? findProductByScan(code) : null;
+    if (!product) { toast(ordTr('scan_not_found').replace('{0}', code), 'error'); return; }
+    const lines = (order.items || []).filter(i => Number(i.partId) === Number(product.id));
+    if (!lines.length) { toast(ordTr('scan_not_in_order').replace('{0}', product.name), 'error'); return; }
+
+    const counts = orderScanState(order.id);
+    const item = lines.find(i => (counts[i.id] || 0) < Number(i.quantity)) || null;
+    if (!item) {
+        const qty = lines.reduce((sum, i) => sum + Number(i.quantity || 0), 0);
+        toast(ordTr('scan_already_done').replace('{0}', product.name).replace('{1}', qty), 'error');
+        return;
+    }
+    counts[item.id] = (counts[item.id] || 0) + 1;
+    saveOrderScanState();
+    const complete = counts[item.id] >= Number(item.quantity);
+
+    const keys = complete ? ['match', 'size', 'color', 'qty'] : ['match', 'size', 'color'];
+    const toTick = (order.checks || []).filter(c => c.itemId === item.id && keys.includes(c.key) && !c.done);
+    try {
+        for (const c of toTick) {
+            await postShopOrder('/api/shop-orders/' + order.id + '/checks', { checkId: c.id, checked: true }, false);
+        }
+        if (!toTick.length) paintOrderDetail(); // just refresh the scanned count
+    } catch (err) { toast(err.message, 'error'); return; }
+
+    toast(complete
+        ? ordTr('scan_item_done').replace('{0}', product.name).replace('{1}', item.quantity)
+        : ordTr('scan_progress').replace('{0}', product.name).replace('{1}', counts[item.id]).replace('{2}', item.quantity),
+        'success');
 }
 
 /** Returns an error message if any draft line asks for more than is in stock. */
@@ -1025,6 +1134,10 @@ function setupOrdersUi() {
     root.addEventListener('change', onOrdersChange);
     root.addEventListener('input', onOrdersInput);
     root.addEventListener('keydown', onOrdersKeydown);
+    if (typeof createScanListener === 'function') {
+        createScanListener({ isActive: orderEditorOpen, onScan: orderEditorScan });
+        createScanListener({ isActive: orderPrepareOpen, onScan: orderPrepareScan });
+    }
     document.addEventListener('click', e => {
         const inPicker = (typeof e.composedPath === 'function' && e.composedPath().some(el => el.classList && el.classList.contains('oe-picker')))
             || (e.target && e.target.closest && e.target.closest('.oe-picker'));
@@ -1243,7 +1356,7 @@ function onOrdersChange(e) {
     if (!draft) return;
     const product = orderProducts().find(p => Number(p.id) === Number(e.target.value));
     draft.partId = product ? Number(product.id) : 0;
-    draft.price = product ? Number(product.price) || 0 : 0;
+    draft.price = product ? (typeof salePrice === 'function' ? salePrice(product) : (Number(product.price) || 0)) : 0;
     const price = line.querySelector('[data-field="price"]');
     if (price) price.value = draft.price.toFixed(2);
     const subEl = line.querySelector('.oe-line-subtotal-val');

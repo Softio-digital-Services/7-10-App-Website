@@ -16,6 +16,7 @@ namespace InventorySystem.Services
         {
             ShopOrderApi.Map(app);
             ProfitShareApi.Map(app);
+            PromotionService.Map(app);
             ProductMaterialApi.Map(app);
             app.MapGet("/api/purchase-orders", () =>
             {
@@ -141,6 +142,60 @@ namespace InventorySystem.Services
                 catch (Exception ex) { return Results.Problem(ex.Message); }
             });
 
+            // Edit a pending PO: supplier, delivery date, notes and lines. Received/cancelled POs are locked,
+            // because receiving has already moved stock. Runs in one transaction so lines are never half-replaced.
+            app.MapPost("/api/purchase-orders/{id:int}/update", async (int id, HttpRequest request) =>
+            {
+                try
+                {
+                    var body = await JsonSerializer.DeserializeAsync<PoPayload>(request.Body, JsonOpts);
+                    if (body == null || body.SupplierId <= 0) return Results.BadRequest(new { error = "Supplier required" });
+                    var lines = (body.Items ?? new List<PoLine>()).FindAll(l => l.PartId > 0 && l.Quantity > 0);
+                    if (lines.Count == 0) return Results.BadRequest(new { error = "Add at least one item" });
+
+                    string status = DatabaseHelper.ExecuteScalar<string>(
+                        "SELECT status FROM purchase_orders WHERE po_id = @id", new SqliteParameter("@id", id));
+                    if (string.IsNullOrEmpty(status)) return Results.NotFound();
+                    if (!status.Equals("Pending", StringComparison.OrdinalIgnoreCase))
+                        return Results.BadRequest(new { error = "Only pending purchase orders can be edited" });
+
+                    decimal total = 0;
+                    foreach (var line in lines) total += line.Quantity * line.Cost;
+
+                    using var conn = new SqliteConnection(DatabaseConfig.ConnectionString);
+                    conn.Open();
+                    using var tx = conn.BeginTransaction();
+                    void Exec(string sql, params SqliteParameter[] ps)
+                    {
+                        using var cmd = conn.CreateCommand();
+                        cmd.Transaction = tx;
+                        cmd.CommandText = sql;
+                        cmd.Parameters.AddRange(ps);
+                        cmd.ExecuteNonQuery();
+                    }
+
+                    Exec(@"UPDATE purchase_orders SET supplier_id = @s, total_amount = @t, notes = @n, delivery_date = @d
+                           WHERE po_id = @id",
+                        new SqliteParameter("@s", body.SupplierId),
+                        new SqliteParameter("@t", total),
+                        new SqliteParameter("@n", body.Notes ?? ""),
+                        new SqliteParameter("@d", string.IsNullOrWhiteSpace(body.DeliveryDate) ? DBNull.Value : body.DeliveryDate),
+                        new SqliteParameter("@id", id));
+                    Exec("DELETE FROM purchase_order_items WHERE po_id = @id", new SqliteParameter("@id", id));
+                    foreach (var line in lines)
+                    {
+                        Exec(@"INSERT INTO purchase_order_items (po_id, part_id, quantity, cost_price) VALUES (@po, @p, @q, @c)",
+                            new SqliteParameter("@po", id),
+                            new SqliteParameter("@p", line.PartId),
+                            new SqliteParameter("@q", line.Quantity),
+                            new SqliteParameter("@c", line.Cost));
+                    }
+                    tx.Commit();
+                    return Results.Ok(new { success = true, id });
+                }
+                catch (Exception ex) { return Results.Problem(ex.Message); }
+            });
+
             app.MapPost("/api/purchase-orders/{id:int}/receive", (int id) =>
             {
                 try
@@ -159,13 +214,16 @@ namespace InventorySystem.Services
                     string number = header.Rows[0]["po_number"]?.ToString() ?? ("PO-" + id);
 
                     var items = DatabaseHelper.ExecuteDataTable(
-                        "SELECT part_id, quantity FROM purchase_order_items WHERE po_id = @id",
+                        "SELECT part_id, quantity, cost_price FROM purchase_order_items WHERE po_id = @id",
                         new SqliteParameter("@id", id));
                     foreach (System.Data.DataRow item in items.Rows)
                     {
                         int partId = Convert.ToInt32(item["part_id"]);
                         int qty = Convert.ToInt32(item["quantity"]);
                         if (partId <= 0 || qty <= 0) continue;
+                        // The PO line's cost feeds the product's average cost (before the stock goes up)
+                        decimal unitCost = item["cost_price"] == DBNull.Value ? 0m : Convert.ToDecimal(item["cost_price"]);
+                        FashionStock.AverageInPurchaseCost(partId, qty, unitCost);
                         int current = DatabaseHelper.ExecuteScalar<int>(
                             "SELECT COALESCE(quantity,0) FROM stock_levels WHERE part_id = @p AND warehouse_id = @w",
                             new SqliteParameter("@p", partId),
@@ -213,6 +271,36 @@ namespace InventorySystem.Services
                     foreach (System.Data.DataRow row in dt.Rows)
                         list.Add(new { id = Convert.ToInt32(row["id"]), name = row["name"]?.ToString() ?? "", code = row["code"]?.ToString() ?? "" });
                     return Results.Ok(list);
+                }
+                catch (Exception ex) { return Results.Problem(ex.Message); }
+            });
+
+            // Quick add from the product form. Re-adding an existing name returns that warehouse instead of a duplicate.
+            app.MapPost("/api/warehouses", async (HttpRequest request) =>
+            {
+                try
+                {
+                    using var doc = await JsonDocument.ParseAsync(request.Body);
+                    string name = doc.RootElement.TryGetProperty("name", out var n) ? n.GetString()?.Trim() : null;
+                    if (string.IsNullOrWhiteSpace(name))
+                        return Results.BadRequest(new { error = "Name required" });
+
+                    var existing = DatabaseHelper.ExecuteDataTable(
+                        "SELECT id, name FROM warehouses WHERE COALESCE(is_active,1) = 1 AND LOWER(name) = LOWER(@n) LIMIT 1",
+                        new SqliteParameter("@n", name));
+                    if (existing.Rows.Count > 0)
+                        return Results.Ok(new { id = Convert.ToInt32(existing.Rows[0]["id"]), name = existing.Rows[0]["name"]?.ToString() ?? name });
+
+                    // Unique code; 'MAIN' is reserved for the default warehouse
+                    string code = "WH-" + DateTime.Now.ToString("yyMMddHHmmssfff");
+                    DatabaseHelper.ExecuteNonQuery(
+                        "INSERT INTO warehouses (name, code, is_active) VALUES (@n, @c, 1)",
+                        new SqliteParameter("@n", name),
+                        new SqliteParameter("@c", code));
+                    int id = DatabaseHelper.ExecuteScalar<int>(
+                        "SELECT id FROM warehouses WHERE code = @c LIMIT 1",
+                        new SqliteParameter("@c", code));
+                    return Results.Ok(new { id, name });
                 }
                 catch (Exception ex) { return Results.Problem(ex.Message); }
             });

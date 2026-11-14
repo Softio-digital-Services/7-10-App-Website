@@ -28,7 +28,7 @@
     <link rel="stylesheet" href="css/fonts/fonts.css">
 
 
-    <link rel="stylesheet" href="css/style.css?v=20261024packacc">
+    <link rel="stylesheet" href="css/style.css?v=20261114local">
     <style id="inv-toolbar-fix">
         /* Inventory toolbar: search + scrollable actions with thin under slide bar */
         #inventory .page-search-row {
@@ -327,6 +327,10 @@
                 <a href="#" class="nav-item" data-target="quotations" data-roles="admin,staff,accountant">
                     <span class="material-symbols-rounded nav-icon" aria-hidden="true">request_quote</span><span
                         class="label" data-i18n="nav_quotations">Quotations</span>
+                </a>
+                <a href="#" class="nav-item" data-target="promotions" data-roles="admin">
+                    <span class="material-symbols-rounded nav-icon" aria-hidden="true">sell</span><span
+                        class="label" data-i18n="promo_nav">Promotions</span>
                 </a>
                 <div class="nav-label" data-i18n="nav_group_insights">Insights</div>
                 <a href="#" class="nav-item" data-target="analytics" data-roles="admin,staff,accountant">
@@ -795,14 +799,14 @@
                                 </div>
                                 <div class="form-row">
                                     <div class="form-group">
-                                        <label><span data-i18n="col_category">Category</span><span
-                                                class="req">*</span></label>
+                                        <div class="label-with-action"><label><span data-i18n="col_category">Category</span><span
+                                                class="req">*</span></label><button type="button" class="quick-add" data-quick-add="category" data-target="pe-category"><span aria-hidden="true">+</span> <span data-i18n="quick_add">Add</span></button></div>
                                         <select id="pe-category" class="form-control" required></select>
                                     </div>
                                     <div class="form-group">
                                         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
                                             <label style="margin:0;"><span data-i18n="col_gender_dept">Department / Target</span></label>
-                                            <button type="button" class="btn btn-link btn-xs" id="btn-pe-add-gender" style="font-size:0.75rem; padding:0; text-decoration:none; color:var(--primary-color); background:none; border:none; cursor:pointer;" title="Add new department/target option">+ <span data-i18n="add_option">Add option</span></button>
+                                            <button type="button" class="btn btn-link btn-xs" id="btn-pe-add-gender" style="font-size:0.75rem; padding:0; text-decoration:none; color:var(--action-add); font-weight:600; background:none; border:none; cursor:pointer;" title="Add new department/target option">+ <span data-i18n="add_option">Add option</span></button>
                                         </div>
                                         <select id="pe-gender" class="form-control">
                                             <option value="Unisex">Unisex</option>
@@ -813,7 +817,7 @@
                                         </select>
                                     </div>
                                     <div class="form-group">
-                                        <label data-i18n="col_brand">Brand</label>
+                                        <div class="label-with-action"><label data-i18n="col_brand">Brand</label><button type="button" class="quick-add" data-quick-add="brand" data-target="pe-brand"><span aria-hidden="true">+</span> <span data-i18n="quick_add">Add</span></button></div>
                                         <input id="pe-brand" class="form-control" list="pe-brand-list"
                                             data-i18n-ph="select_brand" placeholder="Select brand">
                                         <datalist id="pe-brand-list"></datalist>
@@ -823,7 +827,7 @@
                                     <div class="form-group">
                                         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
                                             <label style="margin:0;"><span data-i18n="col_collection">Collection / Season</span></label>
-                                            <button type="button" class="btn btn-link btn-xs" id="btn-pe-add-collection" style="font-size:0.75rem; padding:0; text-decoration:none; color:var(--primary-color); background:none; border:none; cursor:pointer;" title="Add new collection option">+ <span data-i18n="add_option">Add option</span></button>
+                                            <button type="button" class="btn btn-link btn-xs" id="btn-pe-add-collection" style="font-size:0.75rem; padding:0; text-decoration:none; color:var(--action-add); font-weight:600; background:none; border:none; cursor:pointer;" title="Add new collection option">+ <span data-i18n="add_option">Add option</span></button>
                                         </div>
                                         <select id="pe-collection" class="form-control">
                                             <option value="Summer">Summer</option>
@@ -842,7 +846,7 @@
                                             placeholder="e.g. 100% Cotton, 320 GSM French Terry, Linen Blend...">
                                     </div>
                                     <div class="form-group">
-                                        <label><span data-i18n="col_supplier">Supplier</span></label>
+                                        <div class="label-with-action"><label><span data-i18n="col_supplier">Supplier</span></label><button type="button" class="quick-add" data-quick-add="supplier" data-target="pe-main-supplier"><span aria-hidden="true">+</span> <span data-i18n="quick_add">Add</span></button></div>
                                         <select id="pe-main-supplier" class="form-control">
                                             <option value="">— Select Supplier —</option>
                                         </select>
@@ -1012,8 +1016,8 @@
                                             data-i18n-ph="enter_qty" placeholder="Enter quantity">
                                     </div>
                                     <div class="form-group" style="flex:1;">
-                                        <label><span data-i18n="col_warehouse">Warehouse</span><span
-                                                class="req">*</span></label>
+                                        <div class="label-with-action"><label><span data-i18n="col_warehouse">Warehouse</span><span
+                                                class="req">*</span></label><button type="button" class="quick-add" data-quick-add="warehouse" data-target="pe-warehouse"><span aria-hidden="true">+</span> <span data-i18n="quick_add">Add</span></button></div>
                                         <select id="pe-warehouse" class="form-control" required></select>
                                     </div>
                                 </div>
@@ -1034,6 +1038,7 @@
                                                 class="req">*</span></label>
                                         <input id="pe-cost" class="form-control" type="number" min="0" step="0.01"
                                             data-i18n-ph="enter_cost" placeholder="Enter cost price" required>
+                                        <p class="form-hint cost-missing-hint" id="pe-cost-missing" hidden data-i18n="cost_missing_editor">Without a cost, this product's profit cannot be calculated correctly.</p>
                                     </div>
                                     <div class="form-group">
                                         <label><span data-i18n="selling_price">Selling Price</span><span
@@ -1059,7 +1064,7 @@
                                         <label class="oe-field"><span data-i18n="mat_unit">Cost each</span><input
                                                 id="mat-cost" class="form-control" type="number" min="0" step="0.01"
                                                 value="0"></label>
-                                        <button type="button" class="btn btn-primary" id="btn-mat-add"><span
+                                        <button type="button" class="btn btn-add" id="btn-mat-add"><span
                                                 class="material-symbols-rounded">add</span><span data-i18n="mat_add">Add
                                                 material</span></button>
                                     </div>
@@ -1172,7 +1177,7 @@
                                             <input id="pe-min" class="form-control" type="number" min="0" value="0">
                                         </div>
                                         <div class="form-group" id="pe-supplier-wrap">
-                                            <label data-i18n="col_supplier">Supplier</label>
+                                            <div class="label-with-action"><label data-i18n="col_supplier">Supplier</label><button type="button" class="quick-add" data-quick-add="supplier" data-target="pe-supplier"><span aria-hidden="true">+</span> <span data-i18n="quick_add">Add</span></button></div>
                                             <select id="pe-supplier" class="form-control">
                                                 <option value="">—</option>
                                             </select>
@@ -1304,7 +1309,7 @@
                                     <label data-i18n="col_collection">Collection / Season</label>
                                     <div class="tp-inline-add">
                                         <select id="tp-meta-season" class="form-control"></select>
-                                        <button type="button" class="btn btn-secondary btn-sm" id="btn-tp-add-season" title="Add new collection option">+</button>
+                                        <button type="button" class="btn btn-add btn-sm" id="btn-tp-add-season" title="Add new collection option">+</button>
                                     </div>
                                 </div>
                                 <div class="tp-field">
@@ -1346,7 +1351,7 @@
                                     <input type="text" id="tp-meta-designer" class="form-control" placeholder="Designer Name">
                                 </div>
                                 <div class="tp-field">
-                                    <label data-i18n="col_supplier">Factory / Garment Supplier</label>
+                                    <div class="label-with-action"><label data-i18n="col_supplier">Factory / Garment Supplier</label><button type="button" class="quick-add" data-quick-add="supplier" data-target="tp-meta-supplier"><span aria-hidden="true">+</span> <span data-i18n="quick_add">Add</span></button></div>
                                     <select id="tp-meta-supplier" class="form-control"></select>
                                 </div>
                                 <div class="tp-field tp-field-full">
@@ -1439,7 +1444,7 @@
                                     <div class="tp-bom-cost-badge">
                                         <span data-i18n="tp_est_garment_cost">Total Materials Cost</span>: <strong id="tp-bom-total-cost">$0.00</strong>
                                     </div>
-                                    <button type="button" class="btn btn-secondary btn-sm" id="btn-tp-add-bom-row">
+                                    <button type="button" class="btn btn-add btn-sm" id="btn-tp-add-bom-row">
                                         <span class="material-symbols-rounded">add</span>
                                         <span data-i18n="tp_add_material">+ Add Component</span>
                                     </button>
@@ -1481,7 +1486,7 @@
                                         <button type="button" class="tp-pill-btn" data-tp-preset="pants">Pants Spec</button>
                                         <button type="button" class="tp-pill-btn" data-tp-preset="dress">Dress Spec</button>
                                     </div>
-                                    <button type="button" class="btn btn-secondary btn-sm" id="btn-tp-add-pom-row">
+                                    <button type="button" class="btn btn-add btn-sm" id="btn-tp-add-pom-row">
                                         <span class="material-symbols-rounded">add</span>
                                         <span data-i18n="tp_add_measurement">+ Add POM Row</span>
                                     </button>
@@ -1566,7 +1571,7 @@
                         <p id="purchase-sub">Track and manage all your purchase orders with suppliers.</p>
                     </div>
                     <div class="page-actions" id="po-actions">
-                        <button class="btn btn-primary" id="btn-new-po" data-roles="admin,staff"><span
+                        <button class="btn btn-add" id="btn-new-po" data-roles="admin,staff"><span
                                 class="material-symbols-rounded">add</span><span data-i18n="new_po">New Purchase
                                 Order</span></button>
                     </div>
@@ -1716,6 +1721,37 @@
                 </div>
             </section>
 
+            <section id="promotions" class="view-section">
+                <div class="page-header">
+                    <div>
+                        <h1 data-i18n="promo_nav">Promotions</h1>
+                        <p data-i18n="promo_sub">Sales that start and stop by themselves, in the shop and on the website.</p>
+                    </div>
+                    <div class="page-actions">
+                        <button type="button" class="btn btn-add" id="btn-add-promotion"><span
+                                class="material-symbols-rounded">add</span><span data-i18n="promo_new">New promotion</span></button>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="table-wrapper">
+                        <table class="promo-table">
+                            <thead>
+                                <tr>
+                                    <th data-i18n="col_name">Name</th>
+                                    <th data-i18n="promo_col_discount">Discount</th>
+                                    <th data-i18n="promo_col_applies">Applies to</th>
+                                    <th data-i18n="promo_col_dates">Dates</th>
+                                    <th data-i18n="promo_col_where">Where</th>
+                                    <th data-i18n="col_status">Status</th>
+                                    <th data-i18n="col_actions">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="promo-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
             <section id="profit-shares" class="view-section">
                 <div class="page-header">
                     <div>
@@ -1732,7 +1768,7 @@
                     <select id="ps-year" class="form-control" aria-label="Year"></select>
                     <select id="ps-month" class="form-control" aria-label="Month" hidden></select>
                     <select id="ps-collection" class="form-control" aria-label="Collection" hidden></select>
-                    <button type="button" class="btn btn-secondary" id="ps-col-add" hidden><span
+                    <button type="button" class="btn btn-add" id="ps-col-add" hidden><span
                             class="material-symbols-rounded">add</span><span data-i18n="ps_add_collection">Add
                             collection</span></button>
                     <button type="button" class="btn btn-secondary" id="ps-col-edit" hidden><span
@@ -1785,7 +1821,7 @@
                                 data-i18n-ph="ps_party_ph" placeholder="Investor, operations, CEO…">
                             <input id="ps-new-percent" class="form-control" type="number" min="0" max="100" step="0.01"
                                 placeholder="%" aria-label="Percent">
-                            <button type="button" class="btn btn-primary" id="ps-add-party"><span
+                            <button type="button" class="btn btn-add" id="ps-add-party"><span
                                     class="material-symbols-rounded">add</span><span data-i18n="ps_add_party">Add
                                     party</span></button>
                         </div>
@@ -2256,6 +2292,7 @@
                                     <div>
                                         <h3 data-i18n="ord_items">Order Items</h3>
                                         <p class="oe-card-subtitle" data-i18n="ord_items_subtitle">Select products, set quantities, and review prices</p>
+                                        <p class="scan-hint"><span class="material-symbols-rounded">barcode_scanner</span><span data-i18n="scan_hint_editor">Scan a barcode to add the item. Scanning it again adds one more.</span></p>
                                     </div>
                                 </div>
                                 <span class="oe-badge-pill" id="oe-items-badge">1 item</span>
@@ -2472,20 +2509,102 @@
                                 data-i18n="export">Export</span></button>
                     </div>
                 </div>
+                <div class="report-scope card">
+                    <div class="report-scope-head">
+                        <span class="material-symbols-rounded" aria-hidden="true">filter_alt</span>
+                        <strong data-i18n="rep_scope_title">Profit for</strong>
+                        <button type="button" class="quick-add" id="btn-report-clear" hidden data-i18n="rep_scope_clear">Clear filters</button>
+                    </div>
+                    <div class="report-scope-fields">
+                        <label class="report-scope-field"><span data-i18n="col_category">Category</span>
+                            <select id="report-category" class="form-control report-scope-control"></select></label>
+                        <label class="report-scope-field"><span data-i18n="rep_scope_product">Product</span>
+                            <select id="report-product" class="form-control report-scope-control"></select></label>
+                        <label class="report-scope-field"><span data-i18n="col_collection">Collection / Season</span>
+                            <select id="report-collection" class="form-control report-scope-control"></select></label>
+                        <label class="report-scope-field"><span data-i18n="col_supplier">Supplier</span>
+                            <select id="report-supplier" class="form-control report-scope-control"></select></label>
+                        <label class="report-scope-field"><span data-i18n="promo_one">Promotion</span>
+                            <select id="report-promotion" class="form-control report-scope-control"></select></label>
+                    </div>
+                    <p class="report-scope-note" id="report-scope-note" hidden></p>
+                </div>
+                <p class="report-cost-warning" id="report-cost-warning" role="status" hidden></p>
                 <div class="stats-grid" id="report-stats"></div>
-                <div class="card">
-                    <h3 style="margin-bottom:1rem;" data-i18n="top_products">Top Products</h3>
+                <div class="report-tables">
+                    <div class="card">
+                        <h3 style="margin-bottom:1rem;" data-i18n="top_products">Top Products</h3>
+                        <div class="table-wrapper">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th data-i18n="col_name">Name</th>
+                                        <th data-i18n="col_qty">Qty</th>
+                                        <th data-i18n="col_sales">Sales</th>
+                                        <th data-i18n="col_profit">Profit</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="report-top-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h3 style="margin-bottom:1rem;" data-i18n="rep_top_categories">Profit by Category</h3>
+                        <div class="table-wrapper">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th data-i18n="col_category">Category</th>
+                                        <th data-i18n="col_qty">Qty</th>
+                                        <th data-i18n="col_sales">Sales</th>
+                                        <th data-i18n="col_profit">Profit</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="report-cat-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="card report-promo-card" id="report-promo-card" hidden>
+                    <h3 style="margin-bottom:0.25rem;" data-i18n="rep_promo_title">Promotion results</h3>
+                    <p class="report-scope-note" data-i18n="rep_promo_hint">Items sold under each promotion in this period, after refunds and order discounts.</p>
                     <div class="table-wrapper">
-                        <table>
+                        <table class="report-monthly-table">
                             <thead>
                                 <tr>
-                                    <th data-i18n="col_name">Name</th>
+                                    <th data-i18n="promo_one">Promotion</th>
                                     <th data-i18n="col_qty">Qty</th>
-                                    <th data-i18n="col_sales">Sales</th>
-                                    <th data-i18n="col_profit">Profit</th>
+                                    <th data-i18n="rep_promo_normal">At normal price</th>
+                                    <th data-i18n="rep_promo_given">Discount given</th>
+                                    <th data-i18n="rep_net_sales">Net sales</th>
+                                    <th data-i18n="rep_profit_before_expenses">Profit</th>
                                 </tr>
                             </thead>
-                            <tbody id="report-top-body"></tbody>
+                            <tbody id="report-promo-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="card report-monthly">
+                    <div class="report-monthly-head">
+                        <h3 data-i18n="rep_monthly_title">Month by month</h3>
+                        <select id="report-year" class="form-control" aria-label="Year"></select>
+                    </div>
+                    <p class="report-scope-note" data-i18n="rep_monthly_hint">Same filters as above, for each month of the selected year.</p>
+                    <div class="table-wrapper">
+                        <table class="report-monthly-table">
+                            <thead>
+                                <tr>
+                                    <th data-i18n="rep_month">Month</th>
+                                    <th data-i18n="rep_net_sales">Net sales</th>
+                                    <th data-i18n="rep_refunds">Refunds</th>
+                                    <th data-i18n="rep_cost">Cost</th>
+                                    <th data-i18n="rep_profit_before_expenses">Profit</th>
+                                    <th class="rep-col-exp" data-i18n="rep_expenses">Expenses</th>
+                                    <th class="rep-col-exp" data-i18n="rep_profit_after_expenses">Net profit</th>
+                                </tr>
+                            </thead>
+                            <tbody id="report-monthly-body"></tbody>
+                            <tfoot id="report-monthly-foot"></tfoot>
                         </table>
                     </div>
                 </div>
@@ -2762,12 +2881,10 @@
                         <div class="card settings-card" id="cloud-card">
                             <div class="settings-card-header">
                                 <span class="material-symbols-rounded" aria-hidden="true">cloud_sync</span>
-                                <h3 data-cs="title">Cloud sync</h3>
+                                <h3 data-cs="title">Website link</h3>
                                 <span class="settings-status-pill" id="cs-pill" hidden></span>
                             </div>
-                            <p class="form-hint settings-card-hint" data-cs="hint">Every linked laptop works on the same
-                                shop data — products, stock, customers and orders — and the website shows the same
-                                catalogue and sends its orders here.</p>
+                            <p class="form-hint settings-card-hint" data-cs="hint">This PC publishes the catalogue to the website (products, prices, photos, promotions and availability only) and receives website orders. Business data — sales, costs, expenses, suppliers, staff and customers — stays on this PC only.</p>
 
                             <div id="cs-link">
                                 <div class="form-group">
@@ -3065,6 +3182,8 @@
                 </table>
             </div>
             <div class="modal-actions">
+                <button type="button" class="btn btn-secondary" id="btn-po-view-edit"><span
+                        class="material-symbols-rounded">edit</span><span data-i18n="edit">Edit</span></button>
                 <button type="button" class="btn btn-secondary" id="btn-po-view-cancel"
                     data-i18n="cancel_po">Cancel</button>
                 <button type="button" class="btn btn-primary" id="btn-po-view-receive"
@@ -3076,13 +3195,13 @@
     <div class="modal-overlay" id="po-modal">
         <div class="modal modal-lg">
             <div class="modal-header">
-                <h2 data-i18n="new_po">New Purchase Order</h2>
+                <h2 id="po-modal-title" data-i18n="new_po">New Purchase Order</h2>
                 <button class="close-btn" data-close="po-modal"><span
                         class="material-symbols-rounded">close</span></button>
             </div>
             <form id="po-form">
                 <div class="form-row">
-                    <div class="form-group"><label data-i18n="col_supplier">Supplier</label><select class="form-control"
+                    <div class="form-group"><div class="label-with-action"><label data-i18n="col_supplier">Supplier</label><button type="button" class="quick-add" data-quick-add="supplier" data-target="po-supplier"><span aria-hidden="true">+</span> <span data-i18n="quick_add">Add</span></button></div><select class="form-control"
                             id="po-supplier" required></select></div>
                     <div class="form-group"><label data-i18n="col_delivery">Delivery Date</label><input type="date"
                             class="form-control" id="po-delivery"></div>
@@ -3090,7 +3209,7 @@
                 <div class="form-group"><label data-i18n="col_desc">Notes</label><input class="form-control"
                         id="po-notes"></div>
                 <div class="po-lines" id="po-lines"></div>
-                <button type="button" class="btn btn-secondary" id="btn-po-add-line" data-i18n="add_line">Add
+                <button type="button" class="btn btn-add" id="btn-po-add-line" data-i18n="add_line">Add
                     line</button>
                 <div class="modal-actions">
                     <button type="button" class="btn btn-secondary" data-close="po-modal"
@@ -3208,7 +3327,7 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label data-i18n="col_category">Category</label>
+                            <div class="label-with-action"><label data-i18n="col_category">Category</label><button type="button" class="quick-add" data-quick-add="category" data-target="p-category"><span aria-hidden="true">+</span> <span data-i18n="quick_add">Add</span></button></div>
                             <select class="form-control" id="p-category"></select>
                         </div>
                         <div class="form-group">
@@ -3400,7 +3519,7 @@
             </div>
             <form id="expense-form">
                 <div class="form-group">
-                    <label data-i18n="col_category">Category</label>
+                    <div class="label-with-action"><label data-i18n="col_category">Category</label><button type="button" class="quick-add" data-quick-add="expense-category" data-target="e-category"><span aria-hidden="true">+</span> <span data-i18n="quick_add">Add</span></button></div>
                     <select class="form-control" id="e-category"></select>
                 </div>
                 <div class="form-row">
@@ -3461,7 +3580,7 @@
             <div id="pos-return-step-customer" class="pos-return-step">
                 <div class="form-row">
                     <div class="form-group flex-grow">
-                        <label data-i18n="col_customer">Customer</label>
+                        <div class="label-with-action"><label data-i18n="col_customer">Customer</label><button type="button" class="quick-add" data-quick-add="customer" data-target="pos-return-customer"><span aria-hidden="true">+</span> <span data-i18n="quick_add">Add</span></button></div>
                         <select id="pos-return-customer" class="form-control"></select>
                     </div>
                     <div class="form-group" style="min-width:140px;">
@@ -3526,7 +3645,7 @@
                     </div>
                 </div>
                 <div class="form-group" style="min-width:160px;">
-                    <label data-i18n="col_customer">Customer</label>
+                    <div class="label-with-action"><label data-i18n="col_customer">Customer</label><button type="button" class="quick-add" data-quick-add="customer" data-target="blind-customer"><span aria-hidden="true">+</span> <span data-i18n="quick_add">Add</span></button></div>
                     <select id="blind-customer" class="form-control"></select>
                 </div>
             </div>
@@ -3699,6 +3818,89 @@
                 <button type="button" class="btn btn-primary" id="btn-update-install" data-roles="admin" hidden
                     data-i18n="update_now">Update now</button>
             </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="promo-modal">
+        <div class="modal modal-lg promo-modal">
+            <div class="modal-header">
+                <h2 id="promo-modal-title" data-i18n="promo_new">New promotion</h2>
+                <button class="close-btn" data-close="promo-modal"><span class="material-symbols-rounded">close</span></button>
+            </div>
+            <form id="promo-form" novalidate>
+                <div class="form-group">
+                    <label for="promo-name" data-i18n="promo_name">Name</label>
+                    <input id="promo-name" class="form-control" maxlength="80" autocomplete="off" data-i18n-ph="promo_name_ph" placeholder="e.g. Summer Sale">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label data-i18n="promo_col_discount">Discount</label>
+                        <div class="promo-kind">
+                            <label class="promo-kind-opt"><input type="radio" name="promo-kind" value="percent" checked><span data-i18n="promo_kind_percent">% off</span></label>
+                            <label class="promo-kind-opt"><input type="radio" name="promo-kind" value="price"><span data-i18n="promo_kind_price">Fixed sale price</span></label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="promo-value" id="promo-value-label" data-i18n="promo_value_percent">Percent off</label>
+                        <input id="promo-value" class="form-control" type="number" min="0" step="0.01" inputmode="decimal">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="promo-scope" data-i18n="promo_col_applies">Applies to</label>
+                    <select id="promo-scope" class="form-control">
+                        <option value="all" data-i18n="promo_scope_all">Whole shop</option>
+                        <option value="category" data-i18n="col_category">Category</option>
+                        <option value="collection" data-i18n="col_collection">Collection / Season</option>
+                        <option value="products" data-i18n="promo_scope_products">Chosen products</option>
+                    </select>
+                </div>
+                <div class="form-group" id="promo-category-wrap" hidden>
+                    <select id="promo-category" class="form-control" aria-label="Category"></select>
+                </div>
+                <div class="form-group" id="promo-collection-wrap" hidden>
+                    <select id="promo-collection" class="form-control" aria-label="Collection"></select>
+                </div>
+                <div class="form-group" id="promo-products-wrap" hidden>
+                    <input id="promo-product-search" class="form-control" type="search" data-i18n-ph="search_ph" placeholder="Search...">
+                    <div class="promo-product-list" id="promo-product-list"></div>
+                    <p class="form-hint" id="promo-product-count"></p>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="promo-from" data-i18n="date_from">From</label>
+                        <input id="promo-from" class="form-control" type="date">
+                    </div>
+                    <div class="form-group">
+                        <label for="promo-to" data-i18n="date_to">To</label>
+                        <input id="promo-to" class="form-control" type="date">
+                    </div>
+                </div>
+                <div class="promo-quick-dates">
+                    <button type="button" class="quick-add" data-promo-range="today" data-i18n="promo_today">Today</button>
+                    <button type="button" class="quick-add" data-promo-range="week" data-i18n="promo_next7">Next 7 days</button>
+                    <button type="button" class="quick-add" data-promo-range="month" data-i18n="promo_this_month">This month</button>
+                    <button type="button" class="quick-add" data-promo-range="next-month" data-i18n="promo_next_month">Next month</button>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="promo-channel" data-i18n="promo_col_where">Where</label>
+                        <select id="promo-channel" class="form-control">
+                            <option value="both" data-i18n="promo_where_both">Shop and website</option>
+                            <option value="shop" data-i18n="promo_where_shop">Shop only</option>
+                            <option value="web" data-i18n="promo_where_web">Website only</option>
+                        </select>
+                    </div>
+                    <div class="form-group promo-active-row">
+                        <label class="pos-check"><input type="checkbox" id="promo-active" checked> <span data-i18n="promo_active">Active</span></label>
+                    </div>
+                </div>
+                <p class="form-hint" data-i18n="promo_overlap_hint">If several promotions cover one item, the lowest price wins. A POS discount can still be added on top.</p>
+                <p id="promo-error" class="form-hint cloud-error" role="alert" hidden></p>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" data-close="promo-modal" data-i18n="cancel">Cancel</button>
+                    <button type="submit" class="btn btn-primary" data-i18n="save">Save</button>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -4535,7 +4737,7 @@
                         class="material-symbols-rounded">close</span></button>
             </div>
             <div class="form-group">
-                <label data-i18n="supplier_pick_supplier">Choose supplier</label>
+                <div class="label-with-action"><label data-i18n="supplier_pick_supplier">Choose supplier</label><button type="button" class="quick-add" data-quick-add="supplier" data-target="fs-supplier"><span aria-hidden="true">+</span> <span data-i18n="quick_add">Add</span></button></div>
                 <select class="form-control" id="fs-supplier">
                     <option value="">—</option>
                 </select>
@@ -4743,13 +4945,14 @@
         </div>
     </div>
 
-    <div id="toast" class="toast"></div>
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
     <script src="js/signalr.min.js"></script>
-    <script src="app.js?v=20261024packacc" charset="utf-8"></script>
-    <script src="orders.js?v=20261024packacc" charset="utf-8"></script>
+    <script src="app.js?v=20261114local" charset="utf-8"></script>
+    <script src="orders.js?v=20261114local" charset="utf-8"></script>
     <script src="shiplabels.js?v=20261024packacc" charset="utf-8"></script>
     <script src="profit.js?v=20260927ps2" charset="utf-8"></script>
-    <script src="cloud.js?v=20260927cs" charset="utf-8"></script>
+    <script src="promotions.js?v=20261114local" charset="utf-8"></script>
+    <script src="cloud.js?v=20261114local" charset="utf-8"></script>
 </body>
 
 </html>

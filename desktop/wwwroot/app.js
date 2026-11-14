@@ -68,6 +68,43 @@ const T = {
         quick_sizes: 'Quick Sizes:',
         confirm_delete_variant: 'Are you sure you want to delete this size/color combination?',
         col_brand: 'Brand', col_gender_dept: 'Target / Department', add_option: 'Add option', add_custom_option: 'Add Custom Option...', enter_new_option_name: 'Enter new department / target option (e.g. Boys, Girls, Babies):', col_po: 'PO Number', col_size: 'Size', col_color: 'Color',
+        new_department_title: 'New department / target', new_collection_title: 'New collection / season',
+        session_expired: 'Your session ended. Please sign in again.',
+        promo_nav: 'Promotions', promo_one: 'Promotion', promo_sub: 'Sales that start and stop by themselves, in the shop and on the website.',
+        promo_new: 'New promotion', promo_edit: 'Edit promotion', promo_name: 'Name', promo_name_ph: 'e.g. Summer Sale', promo_empty: 'No promotions yet. Create one to put items on sale for a period.',
+        promo_col_discount: 'Discount', promo_col_applies: 'Applies to', promo_col_dates: 'Dates', promo_col_where: 'Where',
+        promo_kind_percent: '% off', promo_kind_price: 'Fixed sale price', promo_value_percent: 'Percent off', promo_value_price: 'Sale price',
+        promo_scope_all: 'Whole shop', promo_scope_products: 'Chosen products', promo_n_products: '{0} chosen products', promo_n_items: '{0} items',
+        promo_where_both: 'Shop and website', promo_where_shop: 'Shop only', promo_where_web: 'Website only', promo_active: 'Active',
+        promo_today: 'Today', promo_next7: 'Next 7 days', promo_this_month: 'This month', promo_next_month: 'Next month',
+        promo_status_running: 'Running', promo_status_scheduled: 'Scheduled', promo_status_ended: 'Ended', promo_status_paused: 'Paused',
+        promo_pause: 'Pause', promo_resume: 'Resume', promo_paused_ok: 'Promotion paused: normal prices are back', promo_resumed_ok: 'Promotion resumed',
+        promo_confirm_delete: 'Delete the promotion "{0}"?', promo_deleted: '(deleted promotion)',
+        promo_below_cost: '{0} below cost', promo_below_cost_hint: 'At this discount, some items sell for less than they cost: every sale of them loses money.',
+        promo_overlap_hint: 'If several promotions cover one item, the lowest price wins. A POS discount can still be added on top.',
+        rep_promo_discounts: 'Promotion discounts', rep_promo_discounts_sub: 'Given away by promotions (already taken off sales)',
+        rep_promo_title: 'Promotion results', rep_promo_hint: 'Items sold under each promotion in this period, after refunds and order discounts.',
+        rep_promo_normal: 'At normal price', rep_promo_given: 'Discount given',
+        cost_missing: 'No cost', cost_missing_hint: 'This product has no cost, so its profit shows higher than it really is. Enter its cost.', cost_missing_editor: 'Without a cost, the profit of this product cannot be calculated correctly.',
+        rep_cost_missing: '{0} product(s) sold in this period have no cost, so profit is overstated: {1}. Enter their cost in Inventory.',
+        rep_scope_title: 'Profit for', rep_scope_clear: 'Clear filters', rep_scope_product: 'Product', rep_scope_all: 'All', rep_scope_variants: 'sizes/colours',
+        rep_scope_note: 'Showing: {0}. Shop expenses (rent, salaries…) are not charged to part of the catalogue, so profit here is before expenses.',
+        rep_top_categories: 'Profit by Category', rep_monthly_title: 'Month by month', rep_monthly_hint: 'Same filters as above, for each month of the selected year.',
+        rep_month: 'Month', rep_net_sales: 'Net sales', rep_refunds: 'Refunds', rep_year_total: 'Year total',
+        rep_sales_breakdown: '{0} sold − {1} refunded', rep_exp_not_filtered: 'Not included in a filtered view',
+        scan_hint_editor: 'Scan a barcode to add the item. Scanning it again adds one more.', scan_hint_prepare: 'Scan each item with the barcode scanner: the product, size, colour and quantity checks tick themselves.',
+        scan_added: '{0} added (×{1})', scan_not_found: 'No product matches barcode {0}', scan_not_in_order: '{0} is not in this order. Check the size and colour.',
+        scan_already_done: 'All {1} of {0} are already scanned', scan_progress: '{0}: {1} of {2} scanned', scan_item_done: '{0}: all {1} picked ✓',
+        scan_start_first: 'Click "Start preparing" before scanning items', scan_scanned: 'Scanned',
+        edit_po: 'Edit Purchase Order', po_locked: 'Only pending purchase orders can be edited (received or cancelled ones are locked).', po_preview: 'Preview', po_download: 'Download',
+        no_collection_option: 'No collection',
+        quick_add: 'Add', add_warehouse: 'Add Warehouse', add_warehouse_hint: 'Enter the new warehouse / store location name (e.g. Shop 2, Storage Room):',
+        add_brand: 'Add Brand', add_brand_hint: 'Enter the new brand name:', add_category_hint: 'Enter the new category name (e.g. Hoodies, Jeans):',
+        add_exp_category_hint: 'Enter the new expense category name (e.g. Rent, Packaging):', quick_added: '{name} added and selected',
+        enter_new_collection_name: 'Enter a new collection / season name (e.g. Resort 2026, Eid Collection, Streetwear SS26):',
+        tp_bom_title: 'Load Bill of Materials?', tp_bom_confirm: 'Also load the recommended Bill of Materials (BOM) for this spec preset? It replaces the current BOM rows.', tp_bom_load: 'Load BOM',
+        tp_preset_title: 'Load spec preset', tp_preset_msg: 'Type the preset to load: tshirt, hoodie, pants or dress.', tp_preset_invalid: 'Unknown preset. Use tshirt, hoodie, pants or dress.', tp_load: 'Load',
+        tp_sketch_front_title: 'Front flat sketch', tp_sketch_back_title: 'Back flat sketch', tp_sketch_url_msg: 'Paste the sketch / image URL:', tp_use_image: 'Use image',
         style_code: 'Style code', reset_filters: 'Reset', inv_history: 'Inventory History',
         col_warehouse: 'Warehouse', col_balance: 'Balance', col_user: 'By',
         po_sub: 'Track and manage all your purchase orders with suppliers.',
@@ -711,6 +748,43 @@ const T = {
         quick_sizes: 'مقاسات سريعة:',
         confirm_delete_variant: 'هل أنت متأكد من حذف هذه التركيبة (المقاس واللون)؟',
         col_brand: 'العلامة', col_gender_dept: 'الفئة / القسم المستهدف', add_option: 'إضافة خيار', add_custom_option: 'إضافة خيار مخصص...', enter_new_option_name: 'أدخل اسم القسم أو الخيار الجديد (مثال: ولادي، بناتي، رضع):', col_po: 'رقم الأمر', col_size: 'المقاس', col_color: 'اللون',
+        new_department_title: 'قسم / فئة جديدة', new_collection_title: 'مجموعة / موسم جديد',
+        session_expired: 'انتهت الجلسة. سجّل الدخول مرة أخرى.',
+        promo_nav: 'العروض', promo_one: 'العرض', promo_sub: 'تخفيضات تبدأ وتنتهي تلقائياً، في المحل وعلى الموقع.',
+        promo_new: 'عرض جديد', promo_edit: 'تعديل العرض', promo_name: 'الاسم', promo_name_ph: 'مثال: تخفيضات الصيف', promo_empty: 'لا توجد عروض بعد. أنشئ عرضاً لتخفيض منتجات لفترة محددة.',
+        promo_col_discount: 'الخصم', promo_col_applies: 'يشمل', promo_col_dates: 'التواريخ', promo_col_where: 'أين',
+        promo_kind_percent: 'نسبة خصم %', promo_kind_price: 'سعر عرض ثابت', promo_value_percent: 'نسبة الخصم', promo_value_price: 'سعر العرض',
+        promo_scope_all: 'كل المحل', promo_scope_products: 'منتجات مختارة', promo_n_products: '{0} منتجات مختارة', promo_n_items: '{0} قطعة',
+        promo_where_both: 'المحل والموقع', promo_where_shop: 'المحل فقط', promo_where_web: 'الموقع فقط', promo_active: 'مفعّل',
+        promo_today: 'اليوم', promo_next7: 'الأيام السبعة القادمة', promo_this_month: 'هذا الشهر', promo_next_month: 'الشهر القادم',
+        promo_status_running: 'جارٍ', promo_status_scheduled: 'مجدول', promo_status_ended: 'انتهى', promo_status_paused: 'متوقف',
+        promo_pause: 'إيقاف مؤقت', promo_resume: 'استئناف', promo_paused_ok: 'تم إيقاف العرض: عادت الأسعار العادية', promo_resumed_ok: 'تم استئناف العرض',
+        promo_confirm_delete: 'حذف العرض "{0}"؟', promo_deleted: '(عرض محذوف)',
+        promo_below_cost: '{0} تحت التكلفة', promo_below_cost_hint: 'بهذا الخصم تُباع بعض القطع بأقل من تكلفتها: كل بيعة منها خسارة.',
+        promo_overlap_hint: 'إذا شملت عدة عروض نفس القطعة يُطبَّق السعر الأقل. ويمكن إضافة خصم نقطة البيع فوقه.',
+        rep_promo_discounts: 'خصومات العروض', rep_promo_discounts_sub: 'ما تم التنازل عنه في العروض (مخصوم من المبيعات)',
+        rep_promo_title: 'نتائج العروض', rep_promo_hint: 'القطع المباعة ضمن كل عرض في هذه الفترة، بعد المرتجعات وخصومات الطلبات.',
+        rep_promo_normal: 'بالسعر العادي', rep_promo_given: 'الخصم الممنوح',
+        cost_missing: 'بدون تكلفة', cost_missing_hint: 'لا توجد تكلفة لهذا المنتج، لذا يظهر ربحه أعلى من الحقيقي. أدخل التكلفة.', cost_missing_editor: 'بدون تكلفة لا يمكن حساب ربح هذا المنتج بشكل صحيح.',
+        rep_cost_missing: '{0} منتج بيع في هذه الفترة بدون تكلفة، لذا الربح أعلى من الحقيقي: {1}. أدخل تكلفتها في المخزون.',
+        rep_scope_title: 'الربح لـ', rep_scope_clear: 'مسح الفلاتر', rep_scope_product: 'المنتج', rep_scope_all: 'الكل', rep_scope_variants: 'مقاسات/ألوان',
+        rep_scope_note: 'المعروض: {0}. مصروفات المحل (إيجار، رواتب…) لا تُحمَّل على جزء من المنتجات، لذا الربح هنا قبل المصروفات.',
+        rep_top_categories: 'الربح حسب الفئة', rep_monthly_title: 'شهرياً', rep_monthly_hint: 'نفس الفلاتر أعلاه، لكل شهر من السنة المختارة.',
+        rep_month: 'الشهر', rep_net_sales: 'صافي المبيعات', rep_refunds: 'المرتجعات', rep_year_total: 'إجمالي السنة',
+        rep_sales_breakdown: 'مبيعات {0} − مرتجعات {1}', rep_exp_not_filtered: 'غير مشمولة في العرض المفلتر',
+        scan_hint_editor: 'امسح الباركود لإضافة المنتج. مسحه مرة أخرى يضيف قطعة إضافية.', scan_hint_prepare: 'امسح كل قطعة بقارئ الباركود: تُعلَّم فحوصات المنتج والمقاس واللون والكمية تلقائياً.',
+        scan_added: 'تمت إضافة {0} (×{1})', scan_not_found: 'لا يوجد منتج بالباركود {0}', scan_not_in_order: '{0} غير موجود في هذا الطلب. تحقق من المقاس واللون.',
+        scan_already_done: 'تم مسح كل القطع ({1}) من {0}', scan_progress: '{0}: تم مسح {1} من {2}', scan_item_done: '{0}: تم تجهيز كل القطع ({1}) ✓',
+        scan_start_first: 'اضغط "ابدأ التجهيز" قبل مسح القطع', scan_scanned: 'تم المسح',
+        edit_po: 'تعديل أمر الشراء', po_locked: 'لا يمكن تعديل إلا أوامر الشراء المعلّقة (المستلمة أو الملغاة مقفلة).', po_preview: 'معاينة', po_download: 'تنزيل',
+        no_collection_option: 'بدون مجموعة',
+        quick_add: 'إضافة', add_warehouse: 'إضافة مستودع', add_warehouse_hint: 'أدخل اسم المستودع أو الموقع الجديد (مثال: المحل 2، غرفة التخزين):',
+        add_brand: 'إضافة علامة تجارية', add_brand_hint: 'أدخل اسم العلامة التجارية الجديدة:', add_category_hint: 'أدخل اسم الفئة الجديدة (مثال: هوديز، جينز):',
+        add_exp_category_hint: 'أدخل اسم فئة المصروف الجديدة (مثال: إيجار، تغليف):', quick_added: 'تمت إضافة {name} واختياره',
+        enter_new_collection_name: 'أدخل اسم مجموعة أو موسم جديد (مثال: ريزورت 2026، مجموعة العيد):',
+        tp_bom_title: 'تحميل قائمة المواد؟', tp_bom_confirm: 'تحميل قائمة المواد (BOM) المقترحة لهذا القالب أيضاً؟ ستحل محل الصفوف الحالية.', tp_bom_load: 'تحميل القائمة',
+        tp_preset_title: 'تحميل قالب المقاسات', tp_preset_msg: 'اكتب القالب المطلوب: tshirt أو hoodie أو pants أو dress.', tp_preset_invalid: 'قالب غير معروف. استخدم tshirt أو hoodie أو pants أو dress.', tp_load: 'تحميل',
+        tp_sketch_front_title: 'الرسم الأمامي', tp_sketch_back_title: 'الرسم الخلفي', tp_sketch_url_msg: 'الصق رابط الرسم / الصورة:', tp_use_image: 'استخدام الصورة',
         style_code: 'رمز الموديل', reset_filters: 'إعادة ضبط', inv_history: 'سجل المخزون',
         col_warehouse: 'المستودع', col_balance: 'الرصيد', col_user: 'بواسطة',
         po_sub: 'تتبّع كل أوامر الشراء مع الموردين.',
@@ -1330,9 +1404,11 @@ const LABEL_PRESETS = {
 };
 let products = [], categories = [], sales = [], customers = [], suppliers = [], users = [];
 let purchaseOrders = [], inventorySummary = {}, analyticsData = {}, warehouses = [];
+let fashionCollections = []; // saved collection / season names (Settings of the product editor)
 let poPage = 1;
 let poPageSize = 10;
 let viewingPoId = null;
+let editingPoId = null; // set while the PO form edits an existing (pending) order
 let showAllSellers = false;
 let productPage = 1;
 let productPageSize = 10;
@@ -1346,6 +1422,9 @@ let pdHistoryRows = [];
 let expenses = [], quotations = [], currencies = [], barcodeItems = [], expenseCategories = [];
 let purchasePane = 'orders';
 let dashboard = null, reportSummary = null, reportTop = [];
+let reportCats = [], reportMonthly = null, reportPromos = [], reportPromoResults = [];
+// Promotion prices in effect today for the shop: { [productId]: { promotionId, name, listPrice, price } }
+let promoPrices = {};
 let cart = [], invCat = 'all', posCat = 'all', invFilter = 'all', invView = 'card';
 let invSelected = new Set();
 let barcodeSelected = new Set();
@@ -1826,8 +1905,39 @@ function formatPosStock(p) {
     return `${p.stock} ${tr('col_stock').toLowerCase()}`;
 }
 
+// --- Promotions: looked up live, never written into a product's normal price ---
+async function loadPromoPrices() {
+    try { promoPrices = (await api('/api/promotions/prices')) || {}; }
+    catch { promoPrices = {}; }
+}
+function promoFor(p) {
+    return (p && promoPrices[String(p.id)]) || null;
+}
+/** What the product sells for today: the promotion price while one runs, otherwise its normal price. */
+function salePrice(p) {
+    const promo = promoFor(p);
+    return promo ? Number(promo.price) : (Number(p?.price) || 0);
+}
+function promoPercent(promo) {
+    const list = Number(promo?.listPrice) || 0;
+    return list > 0 ? Math.round((1 - Number(promo.price) / list) * 100) : 0;
+}
+function promoTag(p) {
+    const items = p?.family?.length ? p.family : [p];
+    const promo = items.map(promoFor).find(Boolean);
+    return promo ? ` <span class="promo-tag" title="${escapeHtml(promo.name)}">−${promoPercent(promo)}%</span>` : '';
+}
+function posTilePrice(p) {
+    const promo = isSellByWeight(p) ? null : promoFor(p);
+    if (!promo) return formatPosPrice(p);
+    return `<s class="price-was">${money(promo.listPrice)}</s> ${money(promo.price)}`;
+}
+
 function makeCartLine(p, qty = 1, price = null, opts = {}) {
     const tiers = productPriceTiers(p);
+    // A running promotion replaces the first price (P1) while it lasts; staff can still pick or type another
+    const promo = price == null && !opts.weighted ? promoFor(p) : null;
+    if (promo) tiers[0] = Number(promo.price);
     const unit = price != null ? Number(price) : (tiers[0] || 0);
     const skipStock = !!(opts.skipStock || opts.allowZeroStock || opts.custom || p?.isStockTracked === false
         || p?.isService || p?.itemType === 'Service');
@@ -1844,7 +1954,8 @@ function makeCartLine(p, qty = 1, price = null, opts = {}) {
         stockQty: opts.stockQty != null ? Number(opts.stockQty) : null,
         sellByWeight: isSellByWeight(p),
         skipStock,
-        custom: !!opts.custom
+        custom: !!opts.custom,
+        promo: promo ? { name: promo.name, listPrice: Number(promo.listPrice), price: Number(promo.price) } : null
     };
 }
 
@@ -2204,14 +2315,24 @@ function closeModal(id) {
     modal.classList.remove('active');
 }
 
+let toastTimer = null;
 function toast(msg, type = '') {
     const el = document.getElementById('toast');
     el.textContent = msg; el.className = 'toast show ' + type;
-    setTimeout(() => el.classList.remove('show'), 2800);
+    // A new message restarts the clock (an older timer must not hide it early). Longer text and
+    // errors stay up longer so they can actually be read.
+    clearTimeout(toastTimer);
+    const ms = Math.min(7000, 2200 + String(msg || '').length * 40) + (type === 'error' ? 1500 : 0);
+    toastTimer = setTimeout(() => el.classList.remove('show'), ms);
 }
 
 async function api(path, opts = {}) {
     const res = await fetch(API + path, { headers: { 'Content-Type': 'application/json', ...(opts.headers || {}) }, ...opts });
+    // A shop Wi-Fi device whose sign-in expired: back to the sign-in screen
+    if (res.status === 401 && currentUser) {
+        hideApp();
+        throw new Error(tr('session_expired'));
+    }
     if (!res.ok) {
         let err = res.statusText;
         try { const j = await res.json(); err = j.error || j.title || j.detail || err; } catch {}
@@ -2304,6 +2425,7 @@ function hideApp() {
     if (tools) tools.hidden = true;
     currentUser = null;
     sessionStorage.removeItem('seventen_user');
+    fetch(API + '/api/logout', { method: 'POST' }).catch(() => {}); // ends a shop Wi-Fi device's session
     const userInput = document.getElementById('login-user');
     const passInput = document.getElementById('login-pass');
     if (userInput) userInput.value = '';
@@ -2449,13 +2571,16 @@ async function loadDataCore() {
             api('/api/inventory/summary'),
             api('/api/analytics'),
             api('/api/warehouses'),
-            api('/api/shop-orders')
+            api('/api/shop-orders'),
+            api('/api/fashion-collections')
         ]);
         if (extra[0].status === 'fulfilled') purchaseOrders = extra[0].value || [];
         if (extra[1].status === 'fulfilled') inventorySummary = extra[1].value || {};
         if (extra[2].status === 'fulfilled') analyticsData = extra[2].value || {};
         if (extra[3].status === 'fulfilled') warehouses = extra[3].value || [];
         if (extra[4].status === 'fulfilled' && typeof setShopOrders === 'function') setShopOrders(extra[4].value || []);
+        if (extra[5].status === 'fulfilled') fashionCollections = extra[5].value || [];
+        await loadPromoPrices();
     } catch (e) { console.error('fashion data', e); }
 
     renderDashboard();
@@ -2520,7 +2645,62 @@ async function loadConnectInfo() {
     }
 }
 
+/** One entry per product, with the ids of all its sizes / colours (same grouping as the inventory list). */
+function productFamilies() {
+    const map = new Map();
+    (products || []).forEach(p => {
+        const root = stripVariantFromName(p.name, p.size, p.color);
+        const key = ((p.styleCode || '').trim() || root).toLowerCase();
+        if (!map.has(key)) map.set(key, { name: root, ids: [] });
+        map.get(key).ids.push(p.id);
+    });
+    return [...map.values()].sort((a, b) => a.name.localeCompare(b.name));
+}
+
+function fillReportScope() {
+    const opt = (v, l) => `<option value="${escapeHtml(v)}">${escapeHtml(l)}</option>`;
+    const fill = (id, html) => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        const cur = el.value;
+        el.innerHTML = html;
+        if ([...el.options].some(o => o.value === cur)) el.value = cur;
+    };
+    const all = opt('', tr('rep_scope_all'));
+    fill('report-category', all + (categories || []).map(c => opt(c, c)).join(''));
+    fill('report-product', all + productFamilies().map(f =>
+        opt(f.ids.join(','), f.ids.length > 1 ? `${f.name} (${f.ids.length} ${tr('rep_scope_variants')})` : f.name)).join(''));
+    fill('report-collection', all + knownCollections().map(c => opt(c, c)).join(''));
+    fill('report-supplier', all + (suppliers || []).map(x => opt(String(x.id), x.name)).join(''));
+    fill('report-promotion', all + (reportPromos || []).map(x => opt(String(x.id), x.name)).join(''));
+    const year = document.getElementById('report-year');
+    if (year && !year.options.length) {
+        const now = new Date().getFullYear();
+        year.innerHTML = Array.from({ length: 6 }, (_, i) => opt(String(now - i), String(now - i))).join('');
+    }
+}
+
+/** Adds the chosen category / product / collection / supplier to a report query. */
+function addReportScope(qs) {
+    const val = id => document.getElementById(id)?.value || '';
+    if (val('report-category')) qs.set('category', val('report-category'));
+    if (val('report-product')) qs.set('partIds', val('report-product'));
+    if (val('report-collection')) qs.set('collection', val('report-collection'));
+    if (val('report-supplier')) qs.set('supplierId', val('report-supplier'));
+    if (val('report-promotion')) qs.set('promotionId', val('report-promotion'));
+    return qs;
+}
+
+function reportScopeLabels() {
+    return ['report-category', 'report-product', 'report-collection', 'report-supplier', 'report-promotion']
+        .map(id => document.getElementById(id))
+        .filter(el => el && el.value)
+        .map(el => el.options[el.selectedIndex]?.textContent || el.value);
+}
+
 async function loadReports() {
+    reportPromos = await api('/api/promotions').catch(() => reportPromos || []);
+    fillReportScope();
     const preset = document.getElementById('report-preset')?.value || 'Monthly';
     const fromEl = document.getElementById('report-from');
     const toEl = document.getElementById('report-to');
@@ -2532,9 +2712,17 @@ async function loadReports() {
         qs.set('from', from);
         qs.set('to', to);
     }
+    addReportScope(qs);
+    const year = document.getElementById('report-year')?.value || String(new Date().getFullYear());
+    const monthlyQs = addReportScope(new URLSearchParams({ year }));
     try {
-        reportSummary = await api('/api/reports/summary?' + qs.toString());
-        reportTop = await api('/api/reports/top-products?' + qs.toString());
+        [reportSummary, reportTop, reportCats, reportMonthly, reportPromoResults] = await Promise.all([
+            api('/api/reports/summary?' + qs.toString()),
+            api('/api/reports/top-products?' + qs.toString()),
+            api('/api/reports/top-categories?' + qs.toString()).catch(() => []),
+            api('/api/reports/monthly?' + monthlyQs.toString()).catch(() => null),
+            api('/api/reports/promotions?' + qs.toString()).catch(() => [])
+        ]);
         // Keep date inputs aligned with the range the API actually used
         if (reportSummary?.fromDate && fromEl && preset !== 'Custom') {
             fromEl.value = toInputDate(reportSummary.fromDate);
@@ -2542,7 +2730,7 @@ async function loadReports() {
         if (reportSummary?.toDate && toEl && preset !== 'Custom') {
             toEl.value = toInputDate(reportSummary.toDate);
         }
-    } catch { reportSummary = null; reportTop = []; }
+    } catch { reportSummary = null; reportTop = []; reportCats = []; reportMonthly = null; }
 }
 
 function toInputDate(v) {
@@ -2831,7 +3019,7 @@ function renderPOS() {
             </div>
             <h3>${escapeHtml(p.name)}</h3>
             <p class="${stockClass}">${escapeHtml(stockLabel)}</p>
-            <div class="price">${formatPosPrice(p)}</div>
+            <div class="price">${posTilePrice(p)}</div>
             ${weighBtn}
         </div>`;
     }).join('') : `<div class="empty-state pos-empty-products"><span class="material-symbols-rounded">inventory_2</span><div>${tr('no_products')}</div></div>`;
@@ -3043,12 +3231,22 @@ function renderReports() {
     const rangeLabel = (s.fromDate && s.toDate)
         ? `${toInputDate(s.fromDate)} → ${toInputDate(s.toDate)}`
         : '';
+    // A filtered view (category, product...) leaves out shop expenses: they belong to the whole shop
+    const filtered = s.expensesIncluded === false;
+    const refunds = Number(s.totalReturns) || 0;
     const cards = [
-        { label: tr('rep_sales'), value: money(s.totalSales), sub: rangeLabel, cls: '' },
+        { label: tr('rep_net_sales'), value: money(s.totalSales), cls: '', sub: refunds > 0
+            ? tr('rep_sales_breakdown').replace('{0}', money(s.grossSales)).replace('{1}', money(refunds))
+            : rangeLabel },
+        ...(Number(s.promotionDiscounts) > 0
+            ? [{ label: tr('rep_promo_discounts'), value: money(s.promotionDiscounts), sub: tr('rep_promo_discounts_sub'), cls: '' }]
+            : []),
         { label: tr('rep_cost'), value: money(s.totalCost), sub: '', cls: '' },
-        { label: tr('rep_expenses'), value: money(s.totalExpenses), sub: '', cls: '' },
+        filtered
+            ? { label: tr('rep_expenses'), value: '—', sub: tr('rep_exp_not_filtered'), cls: '' }
+            : { label: tr('rep_expenses'), value: money(s.totalExpenses), sub: '', cls: '' },
         { label: tr('rep_profit_before_expenses'), value: money(s.totalProfit), sub: '', cls: 'stat-profit' },
-        { label: tr('rep_profit_after_expenses'), value: money(s.totalProfitAfterExpenses), sub: '', cls: 'stat-profit-net' },
+        ...(filtered ? [] : [{ label: tr('rep_profit_after_expenses'), value: money(s.totalProfitAfterExpenses), sub: '', cls: 'stat-profit-net' }]),
         { label: tr('pos_orders'), value: String(d.ordersToday ?? 0), sub: tr('orders_today'), cls: '' },
         { label: tr('pos_pending'), value: String(d.pendingOrders ?? 0), sub: '', cls: '' },
     ];
@@ -3068,6 +3266,84 @@ function renderReports() {
         <td>${money(r.total_sales ?? r.TotalSales)}</td>
         <td>${money(r.profit ?? r.Profit)}</td></tr>`).join('')
         : `<tr><td colspan="4" class="empty-state">${tr('empty_list')}</td></tr>`;
+
+    const cats = reportCats || [];
+    const catBody = document.getElementById('report-cat-body');
+    if (catBody) catBody.innerHTML = cats.length ? cats.map(r => `
+        <tr><td>${escapeHtml(r.category_name || '')}</td>
+        <td>${r.quantity_sold ?? 0}</td>
+        <td>${money(r.total_sales)}</td>
+        <td class="${Number(r.profit) < 0 ? 'neg' : ''}">${money(r.profit)}</td></tr>`).join('')
+        : `<tr><td colspan="4" class="empty-state">${tr('empty_list')}</td></tr>`;
+
+    // Say what the numbers cover, and why expenses are not in a filtered view
+    const labels = reportScopeLabels();
+    const note = document.getElementById('report-scope-note');
+    if (note) {
+        note.hidden = !labels.length;
+        note.textContent = labels.length ? tr('rep_scope_note').replace('{0}', labels.join(' · ')) : '';
+    }
+    const clear = document.getElementById('btn-report-clear');
+    if (clear) clear.hidden = !labels.length;
+    const missing = s.missingCostProducts || [];
+    const warn = document.getElementById('report-cost-warning');
+    if (warn) {
+        warn.hidden = !missing.length;
+        warn.textContent = missing.length
+            ? tr('rep_cost_missing').replace('{0}', missing.length).replace('{1}', missing.slice(0, 8).join(', ') + (missing.length > 8 ? '…' : ''))
+            : '';
+    }
+    renderReportMonthly(filtered);
+    renderReportPromotions();
+}
+
+function renderReportPromotions() {
+    const card = document.getElementById('report-promo-card');
+    const body = document.getElementById('report-promo-body');
+    const rows = reportPromoResults || [];
+    if (card) card.hidden = !rows.length;
+    if (!body) return;
+    body.innerHTML = rows.map(r => `<tr>
+        <td><strong>${escapeHtml(r.name || tr('promo_deleted'))}</strong>
+            <small class="report-promo-dates">${escapeHtml(r.kind === 'price' ? money(r.value) : '−' + r.value + '%')} · ${escapeHtml(toInputDate(r.dateFrom))} → ${escapeHtml(toInputDate(r.dateTo))}</small></td>
+        <td>${Number(r.units) || 0}</td>
+        <td>${money(r.listValue)}</td>
+        <td>${money(r.discount)}</td>
+        <td>${money(r.sales)}</td>
+        <td class="${Number(r.profit) < 0 ? 'neg' : ''}"><strong>${money(r.profit)}</strong></td>
+    </tr>`).join('');
+}
+
+function renderReportMonthly(filtered) {
+    const body = document.getElementById('report-monthly-body');
+    const foot = document.getElementById('report-monthly-foot');
+    if (!body) return;
+    document.querySelectorAll('.report-monthly-table .rep-col-exp').forEach(el => { el.hidden = filtered; });
+    const months = reportMonthly?.months || [];
+    if (!months.length) {
+        body.innerHTML = `<tr><td colspan="7" class="empty-state">${tr('empty_list')}</td></tr>`;
+        if (foot) foot.innerHTML = '';
+        return;
+    }
+    const monthName = m => new Date(2000, m - 1, 1).toLocaleString(lang === 'ar' ? 'ar' : 'en', { month: 'long' });
+    const cell = (v, cls = '') => `<td class="${cls}${Number(v) < 0 ? ' neg' : ''}">${money(v)}</td>`;
+    const expCells = r => filtered ? '' : cell(r.expenses, 'rep-col-exp') + cell(r.profitAfterExpenses, 'rep-col-exp rep-strong');
+    const now = new Date();
+    body.innerHTML = months.map(r => {
+        const empty = !Number(r.sales) && !Number(r.cost) && !Number(r.expenses) && !Number(r.returns);
+        const current = Number(reportMonthly.year) === now.getFullYear() && r.month === now.getMonth() + 1;
+        return `<tr class="${empty ? 'is-empty' : ''}${current ? ' is-current' : ''}">
+            <td>${escapeHtml(monthName(r.month))}</td>
+            ${cell(r.sales)}${cell(r.returns)}${cell(r.cost)}${cell(r.profit, 'rep-strong')}${expCells(r)}
+        </tr>`;
+    }).join('');
+    const sum = k => months.reduce((t, r) => t + (Number(r[k]) || 0), 0);
+    const total = {
+        sales: sum('sales'), returns: sum('returns'), cost: sum('cost'), profit: sum('profit'),
+        expenses: sum('expenses'), profitAfterExpenses: sum('profitAfterExpenses')
+    };
+    if (foot) foot.innerHTML = `<tr><td>${escapeHtml(tr('rep_year_total'))}</td>
+        ${cell(total.sales)}${cell(total.returns)}${cell(total.cost)}${cell(total.profit, 'rep-strong')}${expCells(total)}</tr>`;
 }
 
 function updateShippingButton() {
@@ -3150,6 +3426,59 @@ function findProductByScan(code) {
     if (p) return p;
     // Exact name last
     return products.find(x => norm(x.name) === q) || null;
+}
+
+/**
+ * Listens for a barcode scanner (keyboard wedge) anywhere on the page while isActive() is true.
+ * A scanner types very fast (< 55 ms between keys); people do not, so normal typing is left alone.
+ * If the burst landed in a text field (e.g. the quantity box), that field gets its old value back.
+ */
+function createScanListener({ isActive, onScan }) {
+    let buffer = '', lastKeyAt = 0, fastGaps = 0, timer = null;
+    let target = null, targetValue = null;
+
+    const isTextField = (el) => {
+        const tag = (el?.tagName || '').toLowerCase();
+        return tag === 'textarea' || (tag === 'input' && !['checkbox', 'radio', 'button', 'submit'].includes(el.type));
+    };
+    const reset = () => {
+        buffer = ''; fastGaps = 0; target = null; targetValue = null;
+        if (timer) { clearTimeout(timer); timer = null; }
+    };
+    const finish = () => {
+        const code = normalizeScanCode(buffer);
+        const wasScanner = fastGaps >= 3 && code.length >= 4;
+        if (wasScanner && target && targetValue !== null && isTextField(target)) {
+            target.value = targetValue;
+            target.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+        reset();
+        if (wasScanner) onScan(code);
+        return wasScanner;
+    };
+
+    document.addEventListener('keydown', (e) => {
+        // A dialog (e.g. quick-add customer) is on top: scans belong to it, not the page behind
+        if (!isActive() || document.querySelector('.modal-overlay.active')) { if (buffer) reset(); return; }
+        if (e.ctrlKey || e.altKey || e.metaKey) return;
+        if (e.key === 'Enter') {
+            if (buffer && finish()) { e.preventDefault(); e.stopPropagation(); }
+            return;
+        }
+        if (e.key.length !== 1) return;
+        const now = Date.now();
+        if (buffer && now - lastKeyAt < 55) fastGaps++;
+        else {
+            reset();
+            target = e.target;
+            targetValue = isTextField(e.target) ? e.target.value : null;
+        }
+        lastKeyAt = now;
+        buffer += e.key;
+        if (timer) clearTimeout(timer);
+        // Some scanners send no Enter at the end
+        timer = setTimeout(finish, 90);
+    }, true);
 }
 
 let posScanBuffer = '';
@@ -3283,7 +3612,7 @@ function renderCart() {
 
             return `<div class="cart-item" data-i="${i}">
                 <div class="cart-item-top">
-                    <div class="cart-item-info"><strong>${escapeHtml(item.name)}</strong>${item.skipStock || item.custom ? `<span class="cart-item-badge">${escapeHtml(tr('quick_sale_badge'))}</span>` : ''}</div>
+                    <div class="cart-item-info"><strong>${escapeHtml(item.name)}</strong>${item.skipStock || item.custom ? `<span class="cart-item-badge">${escapeHtml(tr('quick_sale_badge'))}</span>` : ''}${item.promo && Math.abs(Number(item.price) - item.promo.price) < 0.005 ? `<span class="cart-item-badge is-promo">${escapeHtml(item.promo.name)} · <s>${posMoney(item.promo.listPrice)}</s></span>` : ''}</div>
                     <strong class="cart-line-total">${posMoney(item.price * item.qty)}</strong>
                 </div>
                 <div class="cart-item-controls">
@@ -4716,9 +5045,8 @@ function promptDialog(options = {}) {
     const inputEl = document.getElementById('prompt-input');
     const okBtn = document.getElementById('prompt-ok');
     const cancelBtn = document.getElementById('prompt-cancel');
-    if (!overlay || !titleEl || !messageEl || !inputEl || !okBtn || !cancelBtn) {
-        return Promise.resolve(window.prompt(message, initialValue));
-    }
+    // The modal is part of index.html; without it there is nothing to show (never fall back to the browser prompt).
+    if (!overlay || !titleEl || !messageEl || !inputEl || !okBtn || !cancelBtn) return Promise.resolve(null);
 
     titleEl.textContent = title;
     messageEl.textContent = message;
@@ -5222,7 +5550,7 @@ function renderVariantsModalContent(p) {
             } else {
                 return `<td style="color:var(--text-muted); font-size:0.8rem; text-align:center;">
                     <span style="opacity:0.4;">—</span>
-                    <div style="margin-top:2px;"><button type="button" class="btn btn-secondary btn-sm vm-create-cell-btn" data-add-size="${escapeHtml(s)}" data-add-color="${escapeHtml(c)}" style="padding:1px 6px; font-size:0.7rem;">+ add</button></div>
+                    <div style="margin-top:2px;"><button type="button" class="btn btn-add btn-sm vm-create-cell-btn" data-add-size="${escapeHtml(s)}" data-add-color="${escapeHtml(c)}" style="padding:1px 6px; font-size:0.7rem;">+ add</button></div>
                 </td>`;
             }
         }).join('');
@@ -7143,7 +7471,98 @@ async function submitBlindReturn() {
     } catch (e) { toast(e.message, 'error'); }
 }
 
+// --- Quick add: create a customer, supplier, warehouse, category or brand from inside another
+// form, then select it there, so the user never has to leave what they were doing. ---
+let quickAddTarget = null; // { kind, selectId } while the customer/supplier form is open for a quick add
+
+const QUICK_ADD_PROMPTS = {
+    warehouse: { title: 'add_warehouse', hint: 'add_warehouse_hint' },
+    category: { title: 'add_category', hint: 'add_category_hint' },
+    'expense-category': { title: 'add_exp_category', hint: 'add_exp_category_hint' },
+    brand: { title: 'add_brand', hint: 'add_brand_hint' },
+};
+
+function selectQuickAdded(selectId, value, label) {
+    const el = document.getElementById(selectId);
+    if (!el) return;
+    if (el.tagName === 'SELECT' && ![...el.options].some(o => o.value === String(value))) {
+        // Keep special entries such as "+ Add new..." at the end of the list
+        const special = [...el.options].find(o => o.value.startsWith('__'));
+        el.insertBefore(new Option(label, String(value)), special || null);
+    }
+    el.value = String(value);
+    el.dispatchEvent(new Event('change', { bubbles: true }));
+    toast(tr('quick_added').replace('{name}', label), 'success');
+}
+
+function findByName(list, name) {
+    const key = String(name || '').trim().toLowerCase();
+    return (list || []).filter(x => String(x.name || '').trim().toLowerCase() === key)
+        .sort((a, b) => (b.id || 0) - (a.id || 0))[0];
+}
+
+async function quickAdd(kind, selectId) {
+    if (kind === 'customer' || kind === 'supplier') {
+        if (kind === 'customer') openCustomerModal(null); else openSupplierModal(null);
+        quickAddTarget = { kind, selectId }; // set after opening: the open functions clear it
+        return;
+    }
+    const cfg = QUICK_ADD_PROMPTS[kind];
+    if (!cfg) return;
+    const name = await promptDialog({ title: tr(cfg.title), message: tr(cfg.hint), confirmText: tr('add'), maxLength: 64 });
+    const clean = String(name || '').trim().replace(/\s+/g, ' ');
+    if (!clean) return;
+    const sameName = (list) => (list || []).find(x => String(x).toLowerCase() === clean.toLowerCase());
+    try {
+        if (kind === 'warehouse') {
+            const w = await api('/api/warehouses', { method: 'POST', body: JSON.stringify({ name: clean }) });
+            warehouses = await api('/api/warehouses').catch(() => [...warehouses, w]);
+            selectQuickAdded(selectId, w.id, w.name);
+        } else if (kind === 'category') {
+            let stored = sameName(categories);
+            if (!stored) {
+                await api('/api/categories', { method: 'POST', body: JSON.stringify({ name: clean }) });
+                categories = [...categories, clean];
+                stored = clean;
+            }
+            selectQuickAdded(selectId, stored, stored);
+        } else if (kind === 'expense-category') {
+            let stored = sameName(expenseCategories);
+            if (!stored) {
+                await api('/api/expense-categories', { method: 'POST', body: JSON.stringify({ name: clean }) });
+                expenseCategories = [...expenseCategories, clean];
+                stored = clean;
+            }
+            selectQuickAdded(selectId, stored, stored);
+        } else if (kind === 'brand') {
+            // Brands are free text saved with the product; offer it in the suggestions right away
+            const list = document.getElementById(document.getElementById(selectId)?.getAttribute('list') || '');
+            if (list && ![...list.options].some(o => o.value.toLowerCase() === clean.toLowerCase()))
+                list.insertAdjacentHTML('beforeend', `<option value="${escapeHtml(clean)}"></option>`);
+            selectQuickAdded(selectId, clean, clean);
+        }
+    } catch (e) { toast(e.message, 'error'); }
+}
+
+/** Called by the customer/supplier form after a successful save. */
+function finishQuickAdd(kind, created) {
+    const target = quickAddTarget;
+    quickAddTarget = null;
+    if (!target || target.kind !== kind || !created) return;
+    selectQuickAdded(target.selectId, created.id, created.name);
+}
+
+function setupQuickAdd() {
+    document.addEventListener('click', e => {
+        const btn = e.target.closest('[data-quick-add]');
+        if (!btn) return;
+        e.preventDefault();
+        quickAdd(btn.dataset.quickAdd, btn.dataset.target);
+    });
+}
+
 function openCustomerModal(id) {
+    quickAddTarget = null;
     const title = document.getElementById('customer-modal-title');
     if (id) {
         const c = customers.find(x => x.id === id);
@@ -7178,6 +7597,7 @@ async function deleteCustomer(id) {
 }
 
 function openSupplierModal(id) {
+    quickAddTarget = null;
     const title = document.getElementById('supplier-modal-title');
     if (id) {
         const s = suppliers.find(x => x.id === id);
@@ -7457,6 +7877,7 @@ async function navigateTo(target, updateHash = true) {
     if (target === 'products') showProductsList();
     if (target === 'orders' && typeof showOrdersBoard === 'function') showOrdersBoard();
     if (target === 'profit-shares' && typeof loadProfitShares === 'function') loadProfitShares();
+    if (target === 'promotions' && typeof loadPromotions === 'function') loadPromotions();
     if (target === 'purchase-orders') showPurchasePane(pane || 'orders');
     if (target === 'techpack') { if (typeof initTechPackUi === 'function') initTechPackUi(); }
     if (target === 'products' || target === 'purchase-orders' || target === 'analytics' || target === 'orders' || target === 'techpack') renderFashion();
@@ -7745,8 +8166,9 @@ function setupActions() {
         };
         const cid = document.getElementById('cust-id').value;
         try {
+            let created = null;
             if (cid) await api('/api/customers/' + cid + '/update', { method: 'POST', body: JSON.stringify(payload) });
-            else await api('/api/customers', { method: 'POST', body: JSON.stringify(payload) });
+            else created = await api('/api/customers', { method: 'POST', body: JSON.stringify(payload) });
             const pickForOrder = !cid && window._orderCustomerPick;
             window._orderCustomerPick = false;
             closeModal('customer-modal'); toast(tr('saved_ok'), 'success'); await loadData();
@@ -7762,6 +8184,8 @@ function setupActions() {
                     const sel = document.getElementById('pos-customer');
                     if (sel) sel.value = String(sorted[0].id);
                 }
+                const newCustomer = customers.find(c => c.id === created?.id) || findByName(customers, payload.name);
+                finishQuickAdd('customer', newCustomer);
             }
         } catch (err) { toast(err.message, 'error'); }
     });
@@ -7827,6 +8251,7 @@ function setupActions() {
             if (sid) await api('/api/suppliers/' + sid + '/update', { method: 'POST', body: JSON.stringify(payload) });
             else await api('/api/suppliers', { method: 'POST', body: JSON.stringify(payload) });
             closeModal('supplier-modal'); toast(tr('saved_ok'), 'success'); await loadData();
+            if (!sid) finishQuickAdd('supplier', findByName(suppliers, payload.name));
         } catch (err) { toast(err.message, 'error'); }
     });
 
@@ -7962,7 +8387,7 @@ function setupActions() {
             }
         });
     });
-    document.getElementById('btn-pos-add-customer')?.addEventListener('click', () => openCustomerModal(null));
+    document.getElementById('btn-pos-add-customer')?.addEventListener('click', () => quickAdd('customer', 'pos-customer'));
     document.getElementById('btn-pos-return')?.addEventListener('click', () => openPosReturnModal());
     document.getElementById('btn-pos-return-load-sales')?.addEventListener('click', () => loadPosReturnSales());
     document.getElementById('btn-pos-return-lookup')?.addEventListener('click', () => {
@@ -7998,7 +8423,7 @@ function setupActions() {
     });
     document.getElementById('btn-manage-drafts')?.addEventListener('click', () => openDraftsModal());
     document.getElementById('btn-add-shipping')?.addEventListener('click', () => openShippingModal());
-    document.getElementById('btn-ship-add-customer')?.addEventListener('click', () => openCustomerModal(null));
+    document.getElementById('btn-ship-add-customer')?.addEventListener('click', () => quickAdd('customer', 'ship-customer'));
     document.getElementById('btn-clear-shipping')?.addEventListener('click', () => {
         posShipping = null;
         document.getElementById('shipping-form')?.reset();
@@ -8093,6 +8518,12 @@ function setupActions() {
     };
     document.getElementById('report-from')?.addEventListener('change', onReportDates);
     document.getElementById('report-to')?.addEventListener('change', onReportDates);
+    const onReportScope = async () => { await loadReports(); renderReports(); };
+    document.querySelectorAll('.report-scope-control, #report-year').forEach(el => el.addEventListener('change', onReportScope));
+    document.getElementById('btn-report-clear')?.addEventListener('click', async () => {
+        document.querySelectorAll('.report-scope-control').forEach(el => { el.value = ''; });
+        await onReportScope();
+    });
     document.getElementById('history-kind').onchange = async () => { await loadHistory(); renderHistory(); };
     document.getElementById('btn-print-barcodes').onclick = () => {
         if (typeof isShipLabelCategory === 'function' && isShipLabelCategory()) printSelectedShipLabels();
@@ -8228,6 +8659,7 @@ function setupActions() {
         const qs = new URLSearchParams({ format: 'xlsx' });
         if (from) qs.set('from', from);
         if (to) qs.set('to', to);
+        addReportScope(qs); // the file matches what is on screen
         downloadServerExport('/api/reports/export?' + qs.toString(), 'report.xlsx', () => {
             const rows = [
                 { row_type: 'summary', metric: tr('date_from'), value: toInputDate(s.fromDate) || '' },
@@ -8401,6 +8833,11 @@ const NOTIF_DISMISS_KEY = 'generic_dismissed_notifs';
 function notifKey(n) {
     if (!n) return '';
     if (n.key) return n.key;
+    return legacyNotifKey(n);
+}
+
+/** Old key built from the translated text: it differed per language, so clears did not carry over. */
+function legacyNotifKey(n) {
     const type = n.type || '';
     const target = n.target || '';
     const raw = n.message || n.title || '';
@@ -8449,7 +8886,22 @@ function saveDismissedNotifs(set) {
 
 function filterActiveNotifications(list) {
     const dismissed = loadDismissedNotifs();
-    return (Array.isArray(list) ? list : []).filter(n => !dismissed.has(notifKey(n)));
+    let migrated = false;
+    const active = (Array.isArray(list) ? list : []).filter(n => {
+        const key = notifKey(n);
+        if (dismissed.has(key)) return false;
+        // Cleared before keys were language-independent: carry it over to the stable key
+        if (n.key && dismissed.has(legacyNotifKey(n))) {
+            dismissed.add(key);
+            migrated = true;
+            return false;
+        }
+        return true;
+    });
+    if (migrated) {
+        try { saveDismissedNotifs(dismissed); } catch { /* storage unavailable */ }
+    }
+    return active;
 }
 
 function dismissNotification(key) {
@@ -9392,6 +9844,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         try { setupActions(); } catch (e) { console.error('setupActions', e); }
         try { setupTools(); } catch (e) { console.error('setupTools', e); }
         try { setupUpdates(); } catch (e) { console.error('setupUpdates', e); }
+        try { setupQuickAdd(); } catch (e) { console.error('setupQuickAdd', e); }
         try { setupSignalR(); } catch (e) { console.error('setupSignalR', e); }
         try { wirePrintSettingsUi(); } catch (e) { console.error('wirePrintSettingsUi', e); }
         try { await loadPrintSettings(); } catch { /* ignore */ }
@@ -9596,6 +10049,25 @@ function productThumb(p) {
     if (!p.image) return `<span class="prod-thumb empty"><span class="material-symbols-rounded">checkroom</span></span>`;
     return `<img class="prod-thumb" src="${escapeHtml(mediaUrl(p.image))}" alt="">`;
 }
+/** Saved collections plus any used on a product, without duplicates (case-insensitive). */
+function knownCollections() {
+    const defaults = ['Summer', 'Winter', 'Spring', 'Autumn / Fall', 'Pre-Fall', 'Resort & Cruise', 'Core Essentials'];
+    const seen = new Map();
+    [...(fashionCollections.length ? fashionCollections : defaults), ...products.map(p => p.collection)]
+        .map(c => String(c || '').trim()).filter(Boolean)
+        .forEach(c => { if (!seen.has(c.toLowerCase())) seen.set(c.toLowerCase(), c); });
+    return [...seen.values()];
+}
+
+/** "No cost" tag when this product (or any of its sizes/colours) has no cost, so its profit would be overstated. */
+function missingCostTag(p) {
+    const items = p.family?.length ? p.family : [p];
+    const missing = items.filter(x => !x.isService && !(Number(x.cost) > 0)).length;
+    if (!missing) return '';
+    const title = tr('cost_missing_hint') + (items.length > 1 ? ` (${missing}/${items.length})` : '');
+    return ` <span class="cost-missing-tag" title="${escapeHtml(title)}">${escapeHtml(tr('cost_missing'))}</span>`;
+}
+
 function renderProducts() {
     const body = document.getElementById('products-body');
     if (!body) return;
@@ -9611,7 +10083,7 @@ function renderProducts() {
     fillSelect('prod-filter-brand', [tr('col_brand'), ...brands], brand, true);
     const supplierNames = [...new Set(products.map(p => p.supplierName).filter(Boolean))].sort();
     fillSelect('prod-filter-supplier', [tr('col_supplier'), ...supplierNames], supplier, true);
-    const collections = [...new Set(products.map(p => p.collection).filter(Boolean))].sort();
+    const collections = knownCollections();
     fillSelect('prod-filter-collection', [tr('col_collection') || 'Collection', ...collections], collection, true);
 
     // Group products by product family (styleCode or root name) so variants appear under their parent product
@@ -9681,7 +10153,7 @@ function renderProducts() {
         <td>${escapeHtml(p.category || '—')}</td>
         <td>${escapeHtml(p.brand || '—')}</td>
         <td>${p.stock ?? 0}</td>
-        <td>${money(p.price)}</td>
+        <td>${money(p.price)}${promoTag(p)}${missingCostTag(p)}</td>
         <td>${stockBadge(p)}</td>
         <td><div class="table-actions">
             <button type="button" class="icon-btn" data-edit-product="${p.id}" title="${escapeHtml(tr('edit'))}"><span class="material-symbols-rounded">edit</span></button>
@@ -9731,7 +10203,7 @@ function renderProductCards(slice) {
             ${p.brand ? `<div class="inv-card-meta">${escapeHtml(p.brand)}</div>` : ''}
             ${p.variantsCount > 1 ? `<div class="inv-card-meta"><span class="badge">${p.variantsCount} ${vt('variants', 'خيارات')}</span></div>` : ''}
             <div class="inv-card-meta">${tr('col_stock')}: ${p.stock ?? 0}</div>
-            <div class="price">${money(p.price)}</div>
+            <div class="price">${money(p.price)}${promoTag(p)}${missingCostTag(p)}</div>
             ${stockBadge(p)}
         </div>`).join('') : `<div class="empty-state">${tr('empty_list')}</div>`;
 
@@ -10170,12 +10642,16 @@ function renderPurchaseOrders() {
         <td>${poBadge(p.status)}</td>
         <td>${money(p.total)}</td>
         <td><div class="table-actions">
-            <button type="button" class="icon-btn" data-view-po="${p.id}" title="${escapeHtml(tr('view'))}"><span class="material-symbols-rounded">visibility</span></button>
-            <button type="button" class="icon-btn" data-download-po="${p.id}" title="${escapeHtml(tr('export'))}"><span class="material-symbols-rounded">download</span></button>
+            <button type="button" class="icon-btn" data-view-po="${p.id}" title="${escapeHtml(tr('po_preview'))}"><span class="material-symbols-rounded">visibility</span></button>
+            ${isPoEditable(p)
+                ? `<button type="button" class="icon-btn" data-edit-po="${p.id}" title="${escapeHtml(tr('edit'))}"><span class="material-symbols-rounded">edit</span></button>`
+                : `<button type="button" class="icon-btn" disabled title="${escapeHtml(tr('po_locked'))}"><span class="material-symbols-rounded">edit_off</span></button>`}
+            <button type="button" class="icon-btn" data-download-po="${p.id}" title="${escapeHtml(tr('po_download'))}"><span class="material-symbols-rounded">download</span></button>
         </div></td>
     </tr>`).join('') : `<tr><td colspan="7" class="empty-state">${tr('empty_list')}</td></tr>`;
     body.querySelectorAll('[data-view-po]').forEach(btn => btn.onclick = () => viewPo(Number(btn.dataset.viewPo)));
     body.querySelectorAll('[data-download-po]').forEach(btn => btn.onclick = () => downloadPo(Number(btn.dataset.downloadPo)));
+    body.querySelectorAll('[data-edit-po]').forEach(btn => btn.onclick = () => editPo(Number(btn.dataset.editPo)));
     const label = document.getElementById('po-pager-label');
     if (label) {
         label.textContent = rows.length
@@ -10216,6 +10692,8 @@ async function viewPo(id) {
         const cancel = document.getElementById('btn-po-view-cancel');
         if (receive) receive.hidden = !pending;
         if (cancel) cancel.hidden = !pending;
+        const edit = document.getElementById('btn-po-view-edit');
+        if (edit) edit.hidden = !pending;
         openModal('po-view-modal');
     } catch (e) { toast(e.message, 'error'); }
 }
@@ -10400,18 +10878,18 @@ function fillEditorChoices(existing) {
 
     const colSel = document.getElementById('pe-collection');
     if (colSel) {
-        const defaultCols = ['Summer', 'Winter', 'Spring', 'Autumn / Fall', 'Pre-Fall', 'Resort & Cruise', 'Core Essentials'];
-        const existingCols = [...new Set(products.map(p => p.collection).filter(Boolean))];
-        const allCols = [...new Set([...defaultCols, ...existingCols])];
+        const allCols = knownCollections();
         if (existing?.collection && !allCols.some(c => c.toLowerCase() === existing.collection.toLowerCase())) {
             allCols.push(existing.collection);
         }
-        colSel.innerHTML = allCols.map(c => `<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join('') +
+        // Explicit "none" so a product without a collection is shown as such (it used to look like "Summer")
+        colSel.innerHTML = `<option value="">— ${escapeHtml(tr('no_collection_option'))} —</option>` +
+            allCols.map(c => `<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join('') +
             `<option value="__custom__">+ ${escapeHtml(tr('add_custom_option') || 'Add Custom Option...')}</option>`;
-        const targetCol = existing?.collection || 'Summer';
+        const targetCol = existing?.collection || '';
         const matchingOpt = [...colSel.options].find(o => o.value.toLowerCase() === targetCol.toLowerCase());
-        if (matchingOpt) colSel.value = matchingOpt.value;
-        else colSel.value = targetCol;
+        colSel.value = matchingOpt ? matchingOpt.value : '';
+        colSel.dataset.prev = colSel.value;
     }
 
     const suppSel = document.getElementById('pe-main-supplier');
@@ -10427,7 +10905,12 @@ function fillEditorChoices(existing) {
 }
 
 async function promptAddProductCollection() {
-    const custom = prompt(tr('enter_new_option_name') || 'Enter new collection / season name (e.g. Resort 2026, Eid Collection, Streetwear SS26):');
+    const custom = await promptDialog({
+        title: tr('new_collection_title'),
+        message: tr('enter_new_collection_name'),
+        confirmText: tr('add'),
+        maxLength: 64,
+    });
     if (!custom || !custom.trim()) return;
     const val = custom.trim();
     try {
@@ -10435,6 +10918,8 @@ async function promptAddProductCollection() {
     } catch (e) {
         // offline or duplicate
     }
+    if (!fashionCollections.some(c => String(c).toLowerCase() === val.toLowerCase()))
+        fashionCollections = [...fashionCollections, val];
     const sel = document.getElementById('pe-collection');
     if (sel) {
         let opt = [...sel.options].find(o => o.value.toLowerCase() === val.toLowerCase());
@@ -10461,8 +10946,13 @@ async function promptAddProductCollection() {
     }
 }
 
-function promptAddProductGender() {
-    const custom = prompt(tr('enter_new_option_name') || 'Enter new department / target option (e.g. Boys, Girls, Babies):');
+async function promptAddProductGender() {
+    const custom = await promptDialog({
+        title: tr('new_department_title'),
+        message: tr('enter_new_option_name'),
+        confirmText: tr('add'),
+        maxLength: 64,
+    });
     if (!custom || !custom.trim()) return;
     const val = custom.trim();
     const sel = document.getElementById('pe-gender');
@@ -10548,6 +11038,14 @@ function productSource() {
 function sourceName(p) {
     return (p?.source === 'made') ? tr('source_made') : tr('source_bought');
 }
+function syncCostMissingHint() {
+    const hint = document.getElementById('pe-cost-missing');
+    const input = document.getElementById('pe-cost');
+    if (!hint || !input) return;
+    const service = typeof editorType === 'function' && editorType() === 'Service';
+    hint.hidden = service || input.value === '' || Number(input.value) > 0;
+}
+
 function costFieldLabel(p) {
     return (p?.source === 'made') ? tr('cost_make') : tr('cost_supplier');
 }
@@ -10731,7 +11229,7 @@ function materialsTotal() {
 function useMaterialsAsCost() {
     const total = materialsTotal();
     const cost = document.getElementById('pe-cost');
-    if (cost) cost.value = total.toFixed(2);
+    if (cost) { cost.value = total.toFixed(2); syncCostMissingHint(); }
     if (typeof calculateEditorMargins === 'function') calculateEditorMargins();
 }
 
@@ -11320,6 +11818,7 @@ async function openProductEditor(id) {
     if (document.getElementById('pe-size')) document.getElementById('pe-size').value = existing?.size || '';
     if (document.getElementById('pe-color')) document.getElementById('pe-color').value = existing?.color || '';
     document.getElementById('pe-cost').value = existing ? (existing.cost ?? 0) : '';
+    syncCostMissingHint();
     document.getElementById('pe-price').value = existing ? (existing.price ?? 0) : '';
     document.getElementById('pe-desc').value = existing?.description || '';
     if (document.getElementById('pe-fabric')) document.getElementById('pe-fabric').value = existing?.fabric || '';
@@ -11513,6 +12012,15 @@ async function saveProductEditor() {
                         method: 'POST',
                         body: JSON.stringify({
                             ...orig,
+                            // Product-level details apply to every size/colour, not just the variant being edited
+                            category: payload.category,
+                            brand: payload.brand,
+                            gender: payload.gender,
+                            fabric: payload.fabric,
+                            collection: payload.collection,
+                            description: payload.description,
+                            supplierId: payload.supplierId,
+                            source: payload.source,
                             name: payload.name,
                             size: v.size || '',
                             color: v.color || '',
@@ -11830,10 +12338,14 @@ function getPomData() {
     return list;
 }
 
-function loadPomPreset(name) {
+async function loadPomPreset(name) {
     const preset = TECH_PACK_PRESETS[name] || TECH_PACK_PRESETS.tshirt;
     if (preset.pom) renderPomTable(preset.pom);
-    if (preset.bom && (!document.querySelectorAll('#tp-bom-body tr').length || confirm('Also load recommended Bill of Materials (BOM) for this spec preset?'))) {
+    if (preset.bom && (!document.querySelectorAll('#tp-bom-body tr').length || await confirmDialog(tr('tp_bom_confirm'), {
+        title: tr('tp_bom_title'),
+        confirmText: tr('tp_bom_load'),
+        danger: false,
+    }))) {
         renderBomTable(preset.bom);
     }
     if (preset.fit && document.getElementById('tp-meta-fit')) document.getElementById('tp-meta-fit').value = preset.fit;
@@ -12088,6 +12600,7 @@ function setupFashionUi() {
     document.getElementById('btn-editor-save')?.addEventListener('click', saveProductEditor);
     document.getElementById('pe-form')?.addEventListener('submit', (e) => { e.preventDefault(); saveProductEditor(); });
     document.getElementById('pe-warehouse')?.addEventListener('change', syncEditorQty);
+    document.getElementById('pe-cost')?.addEventListener('input', syncCostMissingHint);
     document.getElementById('btn-pe-auto-sku')?.addEventListener('click', fillEditorSku);
     document.getElementById('btn-pe-scan')?.addEventListener('click', () => {
         toast(tr('scan'), 'success');
@@ -12095,18 +12608,19 @@ function setupFashionUi() {
     });
     document.getElementById('btn-pe-add-uom')?.addEventListener('click', addEditorUom);
     document.getElementById('btn-pe-add-gender')?.addEventListener('click', promptAddProductGender);
-    document.getElementById('pe-gender')?.addEventListener('change', function() {
+    document.getElementById('pe-gender')?.addEventListener('change', async function() {
         if (this.value === '__custom__') {
-            promptAddProductGender();
+            await promptAddProductGender();
             if (this.value === '__custom__') this.value = 'Unisex';
         }
     });
     document.getElementById('btn-pe-add-collection')?.addEventListener('click', promptAddProductCollection);
-    document.getElementById('pe-collection')?.addEventListener('change', function() {
+    document.getElementById('pe-collection')?.addEventListener('change', async function() {
         if (this.value === '__custom__') {
-            promptAddProductCollection();
-            if (this.value === '__custom__') this.value = 'Summer';
+            await promptAddProductCollection();
+            if (this.value === '__custom__') this.value = this.dataset.prev || '';
         }
+        this.dataset.prev = this.value;
     });
 
     // Tech Pack Workspace event bindings
@@ -12119,12 +12633,18 @@ function setupFashionUi() {
     document.getElementById('btn-tp-add-season')?.addEventListener('click', promptAddProductCollection);
     document.getElementById('btn-tp-add-bom-row')?.addEventListener('click', () => addBomRow());
     document.getElementById('btn-tp-add-pom-row')?.addEventListener('click', () => addPomRow());
-    document.getElementById('btn-tp-load-preset')?.addEventListener('click', () => {
+    document.getElementById('btn-tp-load-preset')?.addEventListener('click', async () => {
         const presets = ['tshirt', 'hoodie', 'pants', 'dress'];
-        const current = prompt('Choose spec preset to load: tshirt, hoodie, pants, dress', 'tshirt');
-        if (current && presets.includes(current.toLowerCase())) {
-            loadPomPreset(current.toLowerCase());
-        }
+        const current = await promptDialog({
+            title: tr('tp_preset_title'),
+            message: tr('tp_preset_msg'),
+            confirmText: tr('tp_load'),
+            initialValue: 'tshirt',
+            maxLength: 16,
+        });
+        if (!current) return;
+        if (presets.includes(current.toLowerCase())) loadPomPreset(current.toLowerCase());
+        else toast(tr('tp_preset_invalid'), 'error');
     });
     document.querySelectorAll('[data-tp-preset]').forEach(btn => {
         btn.addEventListener('click', () => {
@@ -12150,12 +12670,19 @@ function setupFashionUi() {
             if (path) setSketchImage('back', path);
         } catch (err) { toast(err.message, 'error'); }
     });
-    document.getElementById('btn-tp-front-url')?.addEventListener('click', () => {
-        const url = prompt('Enter Front Flat sketch/image URL:');
+    const promptSketchUrl = (side) => promptDialog({
+        title: tr(side === 'front' ? 'tp_sketch_front_title' : 'tp_sketch_back_title'),
+        message: tr('tp_sketch_url_msg'),
+        confirmText: tr('tp_use_image'),
+        placeholder: 'https://',
+        maxLength: 2048,
+    });
+    document.getElementById('btn-tp-front-url')?.addEventListener('click', async () => {
+        const url = await promptSketchUrl('front');
         if (url && url.trim()) setSketchImage('front', url.trim());
     });
-    document.getElementById('btn-tp-back-url')?.addEventListener('click', () => {
-        const url = prompt('Enter Back Flat sketch/image URL:');
+    document.getElementById('btn-tp-back-url')?.addEventListener('click', async () => {
+        const url = await promptSketchUrl('back');
         if (url && url.trim()) setSketchImage('back', url.trim());
     });
     document.getElementById('tp-meta-status')?.addEventListener('change', function() {
@@ -12198,8 +12725,9 @@ function setupFashionUi() {
     document.getElementById('po-filter-status')?.addEventListener('change', () => { poPage = 1; renderPurchaseOrders(); });
     document.getElementById('po-page-size')?.addEventListener('change', () => { poPage = 1; renderPurchaseOrders(); });
     document.getElementById('btn-po-export')?.addEventListener('click', exportPurchaseOrders);
-    document.getElementById('btn-new-po')?.addEventListener('click', openPoModal);
+    document.getElementById('btn-new-po')?.addEventListener('click', () => openPoModal());
     document.getElementById('btn-po-view-receive')?.addEventListener('click', () => { if (viewingPoId) receivePo(viewingPoId); });
+    document.getElementById('btn-po-view-edit')?.addEventListener('click', () => { if (viewingPoId) editPo(viewingPoId); });
     document.getElementById('btn-po-view-cancel')?.addEventListener('click', () => { if (viewingPoId) cancelPo(viewingPoId); });
     document.getElementById('an-chart-month')?.addEventListener('change', renderAnalytics);
     document.getElementById('an-rev-month')?.addEventListener('change', renderAnalytics);
@@ -12274,7 +12802,7 @@ function setupFashionUi() {
 function productOptions() {
     return products.filter(p => !p.isInactive).map(p => `<option value="${p.id}">${escapeHtml(p.name)} ${p.sku ? '(' + p.sku + ')' : ''}</option>`).join('');
 }
-function addPoLine() {
+function addPoLine(item = null) {
     const wrap = document.getElementById('po-lines');
     if (!wrap) return;
     const row = document.createElement('div');
@@ -12284,16 +12812,48 @@ function addPoLine() {
         <input class="form-control po-cost" type="number" min="0" step="0.01" value="0">
         <button type="button" class="btn btn-secondary btn-sm po-remove">×</button>`;
     row.querySelector('.po-remove').onclick = () => row.remove();
+    if (item) {
+        const sel = row.querySelector('.po-part');
+        // The product may since have been made inactive; keep it selectable on this order
+        if (item.partId && ![...sel.options].some(o => o.value === String(item.partId)))
+            sel.insertAdjacentHTML('afterbegin', `<option value="${item.partId}">${escapeHtml(item.name || ('#' + item.partId))}${item.sku ? ' (' + escapeHtml(item.sku) + ')' : ''}</option>`);
+        sel.value = String(item.partId);
+        row.querySelector('.po-qty').value = item.quantity || 1;
+        row.querySelector('.po-cost').value = item.cost ?? 0;
+    }
     wrap.appendChild(row);
 }
-function openPoModal() {
+function isPoEditable(po) {
+    return String(po?.status || 'Pending').toLowerCase() === 'pending';
+}
+
+/** New order when po is null; otherwise edits that (pending) order. */
+function openPoModal(po = null) {
+    editingPoId = po ? po.id : null;
+    const title = document.getElementById('po-modal-title');
+    if (title) title.textContent = po ? `${tr('edit_po')} · ${po.number || '#' + po.id}` : tr('new_po');
     const sel = document.getElementById('po-supplier');
-    if (sel) sel.innerHTML = suppliers.map(s => `<option value="${s.id}">${escapeHtml(s.name)}</option>`).join('');
-    document.getElementById('po-notes').value = '';
-    document.getElementById('po-delivery').value = '';
+    if (sel) {
+        sel.innerHTML = suppliers.map(s => `<option value="${s.id}">${escapeHtml(s.name)}</option>`).join('');
+        if (po?.supplierId && ![...sel.options].some(o => o.value === String(po.supplierId)))
+            sel.insertAdjacentHTML('afterbegin', `<option value="${po.supplierId}">${escapeHtml(po.supplier || '#' + po.supplierId)}</option>`);
+        if (po?.supplierId) sel.value = String(po.supplierId);
+    }
+    document.getElementById('po-notes').value = po?.notes || '';
+    document.getElementById('po-delivery').value = (po?.deliveryDate || '').slice(0, 10);
     document.getElementById('po-lines').innerHTML = '';
-    addPoLine();
+    if (po?.items?.length) po.items.forEach(it => addPoLine(it));
+    else addPoLine();
     openModal('po-modal');
+}
+
+async function editPo(id) {
+    try {
+        const po = await api('/api/purchase-orders/' + id);
+        if (!isPoEditable(po)) { toast(tr('po_locked'), 'error'); return; }
+        closeModal('po-view-modal');
+        openPoModal(po);
+    } catch (e) { toast(e.message, 'error'); }
 }
 async function submitPo(e) {
     e.preventDefault();
@@ -12303,7 +12863,8 @@ async function submitPo(e) {
         cost: Number(row.querySelector('.po-cost').value) || 0
     })).filter(x => x.partId > 0 && x.quantity > 0);
     try {
-        await api('/api/purchase-orders', {
+        const url = editingPoId ? '/api/purchase-orders/' + editingPoId + '/update' : '/api/purchase-orders';
+        await api(url, {
             method: 'POST',
             body: JSON.stringify({
                 supplierId: Number(document.getElementById('po-supplier').value),
@@ -12312,6 +12873,7 @@ async function submitPo(e) {
                 items
             })
         });
+        editingPoId = null;
         closeModal('po-modal');
         toast(tr('saved_ok'), 'success');
         await loadData();

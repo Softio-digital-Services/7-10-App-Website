@@ -811,20 +811,24 @@ namespace InventorySystem.Services
 
             dt.Rows.Add("Date From", summary.FromDate.ToString("yyyy-MM-dd"));
             dt.Rows.Add("Date To", summary.ToDate.ToString("yyyy-MM-dd"));
-            dt.Rows.Add("Total Sales", Money(summary.TotalSales));
+            dt.Rows.Add("Gross Sales", Money(summary.GrossSales));
+            dt.Rows.Add("Refunds", Money(summary.TotalReturns));
+            dt.Rows.Add("Net Sales", Money(summary.TotalSales));
             dt.Rows.Add("Total Cost", Money(summary.TotalCost));
             dt.Rows.Add("Total Expenses", Money(summary.TotalExpenses));
             dt.Rows.Add("Profit Before Expenses", Money(summary.TotalProfit));
             dt.Rows.Add("Profit After Expenses", Money(summary.TotalProfitAfterExpenses));
+            if (!summary.ExpensesIncluded)
+                dt.Rows.Add("Note", "Filtered report: shop expenses are not charged to a category or product.");
             return dt;
         }
 
         /// <summary>
         /// Sold-products detail for the given range, with export-friendly column names.
         /// </summary>
-        public static DataTable BuildReportProductsExportTable(DateTime fromDate, DateTime toDate)
+        public static DataTable BuildReportProductsExportTable(DateTime fromDate, DateTime toDate, ReportFilter filter = null)
         {
-            var dt = new ReportService().GetSoldProductsDetail(fromDate, toDate);
+            var dt = new ReportService().GetSoldProductsDetail(fromDate, toDate, filter);
             RenameColumn(dt, "product_name", "Product");
             RenameColumn(dt, "quantity_sold", "Quantity Sold");
             RenameColumn(dt, "unit_price", "Unit Price");

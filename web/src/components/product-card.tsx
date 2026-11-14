@@ -17,9 +17,32 @@ type ProductCardProps = {
   index?: number;
 };
 
-/** Swatch colours for the colour names the desktop app uses. */
-const swatchHex: Record<string, string> = { olive: "#313B2B", khaki: "#8A8863", linen: "#D5D4C2", black: "#1E231A", white: "#F7F6F3", sand: "#D5D4C2", grey: "#9A9A9A", gray: "#9A9A9A" };
-export const swatchColor = (name: string) => swatchHex[name.trim().toLowerCase()] ?? "#ADB1AA";
+/** Swatch colours for the colour names the desktop app uses (brand tones first, then the common names). */
+const swatchHex: Record<string, string> = {
+  olive: "#313B2B", "olive green": "#5A6255", khaki: "#8A8863", linen: "#D5D4C2", sand: "#D5D4C2",
+  black: "#1E231A", white: "#F7F6F3", cream: "#F2EFE6", ivory: "#F4F1E8", grey: "#9A9A9A", gray: "#9A9A9A",
+  "haze grey": "#B7B7B7", "haze gray": "#B7B7B7", charcoal: "#3A3D38", navy: "#1E3A5F", "navy blue": "#1E3A5F",
+  blue: "#2F5D8C", "light blue": "#9DBAD5", red: "#B51515", burgundy: "#6D1A2A", maroon: "#6D1A2A",
+  pink: "#D48AA0", "dusty pink": "#C9A0A0", green: "#4F6B3A", "forest green": "#2F4A2C", mint: "#BFD8C5",
+  beige: "#E6D3B3", camel: "#B9935A", tan: "#C7A27C", taupe: "#8B7D6B", brown: "#6B4F3A", chocolate: "#4A3326",
+  yellow: "#E2C044", mustard: "#C9A227", orange: "#D9783B", purple: "#6A4C82", lilac: "#B9A6CF",
+  bronze: "#8C6A3F", caramel: "#A9713B", sage: "#9CA889", "sage olive": "#7D8466", nude: "#D9B8A0",
+};
+// Longest names first, so "navy blue" wins over "blue" inside a longer name
+const swatchKeys = Object.keys(swatchHex).sort((a, b) => b.length - a.length);
+/** Exact colour name, else a known colour word inside it ("Nude Beige" -> beige, "Caramel Tan" -> tan). */
+export const swatchColor = (name: string) => {
+  const key = name.trim().toLowerCase();
+  if (swatchHex[key]) return swatchHex[key];
+  const words = ` ${key.replace(/[^a-z]+/g, " ")} `;
+  const hit = swatchKeys.find((k) => words.includes(` ${k} `));
+  return hit ? swatchHex[hit] : "#ADB1AA";
+};
+/** Light swatches get a thin ring so they stay visible on white. */
+const isLight = (hex: string) => {
+  const n = parseInt(hex.slice(1), 16);
+  return ((n >> 16) & 255) * 0.299 + ((n >> 8) & 255) * 0.587 + (n & 255) * 0.114 > 200;
+};
 
 /** Soft panel tints behind product photos, cycled by grid position. */
 const tints = ["bg-stone", "bg-sand", "bg-cream-2", "bg-[#d6d8d4]"];
@@ -48,6 +71,12 @@ export function ProductCard({ product, priority = false, sizes = "(min-width:128
   const [qty, setQty] = useState(1);
   const [added, setAdded] = useState(false);
   const oneSize = sizeOptions.length === 1;
+  // Colours: every colour of this style, or just this product's own colour when it comes in one
+  const colours = product.swatches.length > 1
+    ? product.swatches
+    : product.colorName
+      ? [{ color: product.colorName, slug: product.slug }]
+      : [];
 
   const add = () => {
     if (!selected) return;
@@ -115,24 +144,29 @@ export function ProductCard({ product, priority = false, sizes = "(min-width:128
         </div>
       </div>
 
-      {product.swatches.length > 1 && (
-        <div className="mt-3 flex gap-1.5" aria-label={t.design.colours}>
-          {product.swatches.map((s) => {
-            const on = s.slug === product.slug;
-            return (
-              <Link
-                key={s.slug}
-                href={`/products/${s.slug}`}
-                aria-label={s.color}
-                aria-current={on ? "true" : undefined}
-                className="rh-press h-4 w-4 rounded-full"
-                style={{
-                  background: swatchColor(s.color),
-                  boxShadow: on ? "0 0 0 2px #fff, 0 0 0 3px #313B2B" : s.color.toLowerCase() === "linen" ? "inset 0 0 0 1px #9A9A8C" : undefined,
-                }}
-              />
-            );
-          })}
+      {colours.length > 0 && (
+        <div className="mt-3 flex items-center gap-2" aria-label={t.design.colours}>
+          <div className="flex gap-1.5">
+            {colours.map((s) => {
+              const on = s.slug === product.slug;
+              const hex = swatchColor(s.color);
+              const ring = on && colours.length > 1 ? "0 0 0 2px #fff, 0 0 0 3px #313B2B" : isLight(hex) ? "inset 0 0 0 1px #9A9A8C" : undefined;
+              return (
+                <Link
+                  key={s.slug}
+                  href={`/products/${s.slug}`}
+                  aria-label={s.color}
+                  title={s.color}
+                  aria-current={on ? "true" : undefined}
+                  className="rh-press h-4 w-4 rounded-full"
+                  style={{ background: hex, boxShadow: ring }}
+                />
+              );
+            })}
+          </div>
+          <span className="truncate text-[12px] text-charcoal/65">
+            {colours.length > 1 ? `${product.colorName ?? ""} · ${colours.length} ${t.design.colours.toLowerCase()}` : product.colorName}
+          </span>
         </div>
       )}
 
@@ -186,7 +220,12 @@ export function ProductCard({ product, priority = false, sizes = "(min-width:128
           </label>
           <div className="hidden md:block">
           {oneSize ? (
-            <p className="grid h-9 place-items-center rounded bg-charcoal text-[13px] font-semibold text-white">{sizeOptions[0].size}</p>
+            // A single size is a chip like the others, not a full-width bar
+            <div className="flex" dir="ltr">
+              <span className="inline-grid h-9 min-w-11 place-items-center rounded border border-charcoal bg-charcoal px-3 text-[13px] font-semibold text-white">
+                {sizeOptions[0].size}
+              </span>
+            </div>
           ) : (
             <div className="flex flex-wrap gap-1.5" dir="ltr" role="radiogroup" aria-label={t.product.size}>
               {sizeOptions.map((s) => {
@@ -199,7 +238,7 @@ export function ProductCard({ product, priority = false, sizes = "(min-width:128
                     aria-checked={on}
                     disabled={s.stock <= 0}
                     onClick={() => setPicked(s.size)}
-                    className={`h-9 min-w-10 flex-1 rounded border px-2 text-[13px] font-medium transition-colors ${
+                    className={`h-9 min-w-11 rounded border px-3 text-[13px] font-medium transition-colors ${
                       on ? "border-charcoal bg-charcoal text-white" : "border-charcoal/30 bg-white hover:border-charcoal"
                     } disabled:cursor-not-allowed disabled:border-charcoal/10 disabled:text-charcoal/30 disabled:line-through`}
                   >

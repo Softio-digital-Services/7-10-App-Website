@@ -76,7 +76,7 @@ export function ProductGallery({ images, name, badges }: GalleryProps) {
             {list.map((_, i) => (
               <span
                 key={i}
-                className={`h-2 rounded-full transition-all duration-500 ease-[var(--ease-out-expo)] ${i === active ? "w-6 bg-charcoal" : "w-2 bg-charcoal/30"}`}
+                className={`h-2 rounded-full transition-[width,background-color] duration-500 ease-[var(--ease-out-expo)] ${i === active ? "w-6 bg-charcoal" : "w-2 bg-charcoal/30"}`}
               />
             ))}
           </div>

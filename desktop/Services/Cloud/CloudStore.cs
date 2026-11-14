@@ -158,6 +158,8 @@ namespace InventorySystem.Services.Cloud
             ResetColumnCache();
             foreach (var table in SyncTables.All)
             {
+                // Tables this PC never sends (the shop's customer list) get no change tracking at all
+                if (!table.Outbound) continue;
                 var cols = Columns(conn, tx, table.Name);
                 if (cols.Count == 0 || !cols.Contains(table.Pk, StringComparer.OrdinalIgnoreCase)) continue;
 

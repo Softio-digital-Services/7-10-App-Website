@@ -192,7 +192,7 @@ export const ar: Dict = {
     notifyCta: "أبلغني",
     notifyDone: "تم — سنراسلك عند توفّره.",
     related: "أكمل الإطلالة",
-    onlyLeft: "بقي {n} فقط",
+    onlyLeft: "الكمية محدودة",
     inStock: "متوفر",
     outOfStock: "نفدت الكمية",
     imageOf: "الصورة {i} من {n}",

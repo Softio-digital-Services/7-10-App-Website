@@ -471,6 +471,17 @@ namespace InventorySystem
 
                 app.UseCors();
 
+                // Shop Wi-Fi devices must sign in; anything outside the private network is refused (see LanAccess)
+                app.Use(async (ctx, next) =>
+                {
+                    if (LanAccess.Admit(ctx)) await next();
+                });
+                app.MapPost("/api/logout", (Microsoft.AspNetCore.Http.HttpContext ctx) =>
+                {
+                    LanAccess.EndSession(ctx);
+                    return Microsoft.AspNetCore.Http.Results.Ok(new { success = true });
+                });
+
                 // Camera requires HTTPS OR the Chrome Flag (chrome://flags/#unsafely-treat-insecure-origin-as-secure)
                 // We'll allow both HTTP and HTTPS to co-exist for easier access
                 // if (!builder.Environment.IsDevelopment()) { app.UseHsts(); }
@@ -1018,6 +1029,16 @@ namespace InventorySystem
                         int orderId = new OrderService().PlaceOrder(customerId, orderItems, total, isPaid, status,
                             body.DueDate, body.ShippingAddress, body.DeliveryDate);
 
+                        // Discount = what the items were worth (plus VAT and shipping) minus what was charged.
+                        // Covers the discount field and a total typed in lower by hand. Kept for profit reports.
+                        decimal discount = Math.Round(Math.Max(0, subtotal + vat + ship - total), 2);
+                        if (discount > 0)
+                        {
+                            DatabaseHelper.ExecuteNonQuery("UPDATE orders SET discount_amount = @d WHERE order_id = @id",
+                                new Microsoft.Data.Sqlite.SqliteParameter("@d", Math.Min(discount, subtotal)),
+                                new Microsoft.Data.Sqlite.SqliteParameter("@id", orderId));
+                        }
+
                         _ = InventoryBroadcaster.Broadcast(
                             status == "Completed" ? "SaleCompleted" : "InventoryChanged",
                             $"{status} #{orderId} - Total: {total:F2}");
@@ -1348,53 +1369,104 @@ namespace InventorySystem
                 });
 
                 // - Reports -
-                app.MapGet("/api/reports/summary", (string preset, string from, string to) =>
+                // - Reports -
+                // Every report takes the same period (preset or from/to) and the same optional filter:
+                // category, partIds (comma list, e.g. all sizes/colours of a product), collection, supplierId.
+                static (DateTime from, DateTime to) ReportRange(Microsoft.AspNetCore.Http.HttpRequest r, ReportService svc)
+                {
+                    string preset = r.Query["preset"], from = r.Query["from"], to = r.Query["to"];
+                    if (!string.IsNullOrWhiteSpace(from) && !string.IsNullOrWhiteSpace(to)
+                        && DateTime.TryParse(from, out DateTime f) && DateTime.TryParse(to, out DateTime t))
+                        return t < f ? (t, f) : (f, t);
+                    return svc.GetPresetRange(string.IsNullOrWhiteSpace(preset) ? "Monthly" : preset);
+                }
+                static ReportFilter ReportFilterFrom(Microsoft.AspNetCore.Http.HttpRequest r)
+                {
+                    var filter = new ReportFilter
+                    {
+                        Category = r.Query["category"],
+                        Collection = r.Query["collection"],
+                        SupplierId = int.TryParse(r.Query["supplierId"], out int sid) && sid > 0 ? sid : (int?)null,
+                        PromotionId = int.TryParse(r.Query["promotionId"], out int pid) && pid > 0 ? pid : (int?)null
+                    };
+                    foreach (string part in r.Query["partIds"].ToString().Split(',', StringSplitOptions.RemoveEmptyEntries))
+                        if (int.TryParse(part.Trim(), out int id) && id > 0) filter.PartIds.Add(id);
+                    return filter;
+                }
+
+                app.MapGet("/api/reports/summary", (Microsoft.AspNetCore.Http.HttpRequest request) =>
                 {
                     try
                     {
                         var svc = new ReportService();
-                        DateTime fromDate, toDate;
-                        if (!string.IsNullOrWhiteSpace(from) && !string.IsNullOrWhiteSpace(to)
-                            && DateTime.TryParse(from, out fromDate) && DateTime.TryParse(to, out toDate))
-                        {
-                            if (toDate < fromDate) (fromDate, toDate) = (toDate, fromDate);
-                        }
-                        else
-                        {
-                            (fromDate, toDate) = svc.GetPresetRange(string.IsNullOrWhiteSpace(preset) ? "Monthly" : preset);
-                        }
-                        var s = svc.GetSummary(fromDate, toDate);
+                        var (fromDate, toDate) = ReportRange(request, svc);
+                        var s = svc.GetSummary(fromDate, toDate, ReportFilterFrom(request));
                         return Microsoft.AspNetCore.Http.Results.Ok(new
                         {
                             fromDate = s.FromDate,
                             toDate = s.ToDate,
+                            grossSales = s.GrossSales,
+                            totalReturns = s.TotalReturns,
                             totalSales = s.TotalSales,
                             totalCost = s.TotalCost,
                             totalExpenses = s.TotalExpenses,
                             totalProfit = s.TotalProfit,
-                            totalProfitAfterExpenses = s.TotalProfitAfterExpenses
+                            totalProfitAfterExpenses = s.TotalProfitAfterExpenses,
+                            expensesIncluded = s.ExpensesIncluded,
+                            missingCostProducts = s.MissingCostProducts,
+                            promotionDiscounts = s.PromotionDiscounts
                         });
                     }
                     catch (Exception ex) { return Microsoft.AspNetCore.Http.Results.Problem(ex.Message); }
                 });
 
-                app.MapGet("/api/reports/top-products", (string preset, string from, string to, int? limit) =>
+                app.MapGet("/api/reports/top-products", (Microsoft.AspNetCore.Http.HttpRequest request) =>
                 {
                     try
                     {
                         var svc = new ReportService();
-                        DateTime fromDate, toDate;
-                        if (!string.IsNullOrWhiteSpace(from) && !string.IsNullOrWhiteSpace(to)
-                            && DateTime.TryParse(from, out fromDate) && DateTime.TryParse(to, out toDate))
-                        {
-                            if (toDate < fromDate) (fromDate, toDate) = (toDate, fromDate);
-                        }
-                        else
-                        {
-                            (fromDate, toDate) = svc.GetPresetRange(string.IsNullOrWhiteSpace(preset) ? "Monthly" : preset);
-                        }
-                        var dt = svc.GetTopSellingProducts(fromDate, toDate, limit ?? 20);
+                        var (fromDate, toDate) = ReportRange(request, svc);
+                        int limit = int.TryParse(request.Query["limit"], out int l) && l > 0 ? Math.Min(l, 500) : 20;
+                        var dt = svc.GetTopSellingProducts(fromDate, toDate, limit, ReportFilterFrom(request));
                         return Microsoft.AspNetCore.Http.Results.Ok(DataTableToList(dt));
+                    }
+                    catch (Exception ex) { return Microsoft.AspNetCore.Http.Results.Problem(ex.Message); }
+                });
+
+                app.MapGet("/api/reports/top-categories", (Microsoft.AspNetCore.Http.HttpRequest request) =>
+                {
+                    try
+                    {
+                        var svc = new ReportService();
+                        var (fromDate, toDate) = ReportRange(request, svc);
+                        int limit = int.TryParse(request.Query["limit"], out int l) && l > 0 ? Math.Min(l, 500) : 20;
+                        var dt = svc.GetTopSellingCategories(fromDate, toDate, limit, ReportFilterFrom(request));
+                        return Microsoft.AspNetCore.Http.Results.Ok(DataTableToList(dt));
+                    }
+                    catch (Exception ex) { return Microsoft.AspNetCore.Http.Results.Problem(ex.Message); }
+                });
+
+                app.MapGet("/api/reports/promotions", (Microsoft.AspNetCore.Http.HttpRequest request) =>
+                {
+                    try
+                    {
+                        var svc = new ReportService();
+                        var (fromDate, toDate) = ReportRange(request, svc);
+                        return Microsoft.AspNetCore.Http.Results.Ok(svc.GetPromotionResults(fromDate, toDate, ReportFilterFrom(request)));
+                    }
+                    catch (Exception ex) { return Microsoft.AspNetCore.Http.Results.Problem(ex.Message); }
+                });
+
+                app.MapGet("/api/reports/monthly", (Microsoft.AspNetCore.Http.HttpRequest request) =>
+                {
+                    try
+                    {
+                        int year = int.TryParse(request.Query["year"], out int y) && y >= 2000 && y <= 2100 ? y : DateTime.Today.Year;
+                        return Microsoft.AspNetCore.Http.Results.Ok(new
+                        {
+                            year,
+                            months = new ReportService().GetMonthly(year, ReportFilterFrom(request))
+                        });
                     }
                     catch (Exception ex) { return Microsoft.AspNetCore.Http.Results.Problem(ex.Message); }
                 });
@@ -2478,18 +2550,19 @@ namespace InventorySystem
                 });
 
                 // Reports export ships two sheets: the headline metrics and the sold-products detail.
-                app.MapGet("/api/reports/export", (string format, string from, string to) =>
+                app.MapGet("/api/reports/export", (string format, string from, string to, Microsoft.AspNetCore.Http.HttpRequest request) =>
                 {
                     try
                     {
                         var svc = new ReportService();
+                        var filter = ReportFilterFrom(request);
                         DateTime fromDate = DateTime.TryParse(from, out var f) ? f.Date : DateTime.Today;
                         DateTime toDate = DateTime.TryParse(to, out var t) ? t.Date : DateTime.Today;
                         if (toDate < fromDate) (fromDate, toDate) = (toDate, fromDate);
 
-                        var summary = svc.GetSummary(fromDate, toDate);
+                        var summary = svc.GetSummary(fromDate, toDate, filter);
                         var summaryTable = CsvImportExportService.BuildReportSummaryExportTable(summary);
-                        var productsTable = CsvImportExportService.BuildReportProductsExportTable(fromDate, toDate);
+                        var productsTable = CsvImportExportService.BuildReportProductsExportTable(fromDate, toDate, filter);
 
                         string stamp = $"{fromDate:yyyyMMdd}_{toDate:yyyyMMdd}";
                         if (string.Equals(format, "csv", StringComparison.OrdinalIgnoreCase))
@@ -2862,6 +2935,8 @@ namespace InventorySystem
                         var list = new DashboardService().GetNotifications(lang);
                         return Microsoft.AspNetCore.Http.Results.Ok(list.Select(n => new
                         {
+                            // Language-independent id, so a cleared notification stays cleared in both languages
+                            key = n.Key,
                             title = n.Title,
                             message = n.Message,
                             type = n.Type,
@@ -3535,7 +3610,8 @@ namespace InventorySystem
                 SellByWeight = byWeight,
                 QuantityInStock = body.Stock,
                 MinimumStockLevel = body.MinStock,
-                PurchasePrice = body.Cost > 0 ? body.Cost : (body.Price * 0.7m),
+                // No guessing: an unknown cost stays 0 and is flagged as "cost missing" (it used to become 70% of the price)
+                PurchasePrice = Math.Max(0, body.Cost),
                 SellingPrice = body.Price,
                 Price2 = body.Price2,
                 Price3 = body.Price3,
